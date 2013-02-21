@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="checkedChat">읽은 목록</string>
+    <string name="unCheckedChat">읽지않은 목록</string>
+    <string name="checkedDocument">확인한 업무연락</string>
+    <string name="unCheckedDocument">확인하지 않은 업무연락</string>
+    <string name="openedSurvey">진행중인 설문</string>
+    <string name="closedSurvey">지난 설문</string>
+    
+    <string name="menu">메뉴</string>
+    <string name="add">추가</string>
+    <string name="back">뒤로</string>
+    <string name="list">목록</string>
+    <string name="done">완료</string>
+    <string name="cancel">취소</string>
+    <string name="compose">작성</string>
+    <string name="submit">제출</string>
+    <string name="send">전송</string>
+    <string name="previous">이전</string>
+    <string name="next">다음</string>
+    <string name="edit">편집</string>
+    <string name="modify">수정</string>
+    <string name="survey">설문</string>
+    <string name="document">문서</string>
+    <string name="doc">문서</string>
+    <string name="command">지시보고</string>
+    <string name="forward">전달</string>
+    <string name="fwd">전달</string>
+    <string name="title">제목</string>
+    <string name="duration">기간</string>
+    <string name="result">결과</string>
+    <string name="did">참여</string>
+    <string name="didnot">미참여</string>
+    
+    
+    <string name="memberTitle">조직도</string>
+    <string name="commandTitle">지시와 보고</string>
+    <string name="meeting">회의</string>
+    <string name="surveyTitle">설문</string>
+    <string name="registration">등록</string>
+    <string name="documentTitle">업무연락</string>
+    <string name="documentReceivedTitle">받은 업무연락</string>
+    <string name="documentDepartedTitle">보낸 업무연락</string>
+    <string name="surveyDepartedTitle">보낸 설문</string>
+    <string name="surveyReceivedTitle">받은 설문</string>
+    <string name="documentFavoriteTitle">즐겨찾는 업무연락</string>
+    <string name="memberFavoriteTitle">즐겨찾는 그룹</string>
+    
+    <string name="app_name">Romeo</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+
+    <string name="properties">SlidingMenu Properties</string>
+    <string name="general">General</string>
+    <string name="viewpager">ViewPager</string>
+    <string name="attach">Attach</string>
+    <string name="title_bar">Title Bar Options</string>
+    <string name="title_bar_slide">Sliding Title Bar</string>
+    <string name="title_bar_content">Sliding Content Only</string>
+    <string name="animations">Custom Animations</string>
+    <string name="anim_zoom">Zoom</string>
+    <string name="anim_scale">Scale</string>
+    <string name="anim_fold">Fold</string>
+    <string name="anim_slide">Slide Up</string>
+    <string name="changing_fragments">Changing Fragments</string>
+    <string name="responsive_ui">Responsive UI</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="left_and_right">Left and Right</string>
+    <string name="what_is_this">What is this?</string>
+    <string name="responsive_explanation">This is an example of a UI that responds well to device type. On phones, the menu will be placed inside a SlidingMenu, while on tablets the menu will be exposed alongside the content because we have enough room to always show it.</string>
+    <string name="about">About</string>
+    <string name="licenses">Licenses</string>
+    <string name="contact">Contact</string>
+    <string name="about_msg">&lt;b>SlidingMenu&lt;/b> is an Open Source Android library 
+        that allows developers to easily create applications with sliding menus like those 
+        made popular in the Google+, YouTube, and Facebook applications. 
+        You can find it on GitHub by clicking the little octocat icon in the ActionBar. 
+        Feel free to use it all you want in your Android apps provided 
+        that you cite this project and include the license in your app.
+        &lt;br>&lt;br>
+		SlidingMenu is currently used in some incredibly popular Android 
+		apps such as Zappos, Plume, VLC for Android, and The Verge. 
+		If you are using SlidingMenu in your app and would like to be 
+		listed here, please let me know via Twitter (@slidingmenu)!</string>
+    <string name="apache_license">&lt;b>SlidingMenu &lt;/b>&lt;br>
+        \u00A9 2012 Jeremy Feinstein&lt;br>
+        SlidingMenu is licensed under the Apache License Version 2.0.
+        &lt;br>&lt;br>
+        &lt;b>ActionBarSherlock &lt;/b>&lt;br>
+        \u00A9 2012 Jake Wharton&lt;br>
+        ActionBarSherlock is licensed under the Apache License Version 2.0.
+        &lt;br>&lt;br>
+		&lt;b>The Apache License Version 2.0&lt;/b>&lt;br>
+		You may obtain a copy of the License at&lt;br>
+		&lt;center>&lt;a href=\'http://www.apache.org/licenses/LICENSE-2.0\'>
+				"http://www.apache.org/licenses/LICENSE-2.0&lt;/a>&lt;/center>&lt;br>
+		Unless required by applicable law or agreed to in writing, 
+		software distributed under the License is distributed on an 
+		\'AS IS\' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+		either express or implied. See the License for the specific 
+		language governing permissions and limitations under the License.</string>
+    <string name="no_email">Sorry, I couldn\'t find any e-mail apps on your phone</string>
+    
+    
+    
+    <string name="placehold_search">Search</string>
+    
+</resources>

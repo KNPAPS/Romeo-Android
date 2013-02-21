@@ -1,0 +1,161 @@
+package kr.go.KNPA.Romeo.Base;
+
+import java.util.ArrayList;
+
+import kr.go.KNPA.Romeo.Member.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Packet {
+	public static int NOT_SPECIFIED = -777;
+	
+	public long departingTS;
+	public int deviceStatus;
+	public Payload payload;
+	
+	public Packet() {
+	}
+	
+	public Packet(JSONObject json) {
+		
+		long departingTS;
+		try {
+			departingTS = json.getLong("departingTS");
+		} catch (JSONException e) {
+			departingTS = 0;
+		}
+		
+		int deviceStatus;
+		try {
+			deviceStatus = json.getInt("deviceStatus");
+		} catch (JSONException e) {
+			deviceStatus = NOT_SPECIFIED;
+		}
+		
+		JSONObject _payload;
+		try {
+			_payload = json.getJSONObject("payload");
+		} catch (JSONException e) {
+			_payload = null;
+		}
+		
+		String event				= null;
+		User sender					= null;
+		ArrayList<User>	receivers	= null;
+		String roomCode				= null;
+		
+		JSONObject _message			= null;
+		long idx					= NOT_SPECIFIED;
+		int type					= NOT_SPECIFIED;
+		String title				= null;
+		String content				= null;
+		Appendix appendix			= null;
+
+		if(_payload != null){
+			try {
+				 event = _payload.getString("event");
+			} catch (JSONException e) {
+				event = null;
+			}
+			
+			int _sender;
+			try {
+				_sender = _payload.getInt("sender");
+			} catch (JSONException e) {
+				_sender = NOT_SPECIFIED;
+			}
+			if(_sender != NOT_SPECIFIED) {
+				// TODO : get User instance from _sender(idx)
+			}
+			
+			JSONArray _receivers		= null;
+			try {
+				_receivers = _payload.getJSONArray("receivers");
+			} catch (JSONException e) {
+				_receivers = null;
+			}
+			
+			if(_receivers != null) {
+				// TODO : parsing _receivers;
+			}
+			
+			try {
+				roomCode = _payload.getString("roomCode");
+			} catch (JSONException e) {
+				roomCode = null;
+			}
+			
+			
+			try {
+				_message = _payload.getJSONObject("message");
+			} catch (JSONException e) {
+				_message = null;
+			}
+			
+			if(_message != null) {
+				
+				try {
+					idx = _message.getLong("idx");
+				} catch (JSONException e) {
+					idx = NOT_SPECIFIED;
+				}
+				
+				try {
+					type = _message.getInt("type");
+				} catch (JSONException e) {
+					type = NOT_SPECIFIED;
+				}
+				try {
+					title = _message.getString("title");
+				} catch (JSONException e) {
+					title = null;
+				}
+				
+				try {
+					content = _message.getString("content");
+				} catch (JSONException e) {
+					content = null;
+				}
+				
+				JSONObject _appendix		= null;
+				try {
+					_appendix = _message.getJSONObject("appendix");
+				} catch (JSONException e) {
+					_appendix = null;
+				}
+				
+				if(_appendix != null) {
+					// TODO : make Appendix appendix;
+				}
+				
+			}
+		}
+		
+		Message message = null;
+		if(_message != null) {
+			message = new Message();
+			message.appendix = appendix;
+			message.content = content;
+			message.title = title;
+			message.type = type;
+			message.idx = idx;
+		}
+		
+		Payload payload = null;
+		if(_payload != null) {
+			payload = new Payload.Builder().message(message)
+										   .event(event)
+										   .roomCode(roomCode)
+										   .sender(sender)
+										   .receivers(receivers)
+										   .build();
+		}
+		
+		this.departingTS = departingTS;
+		this.deviceStatus = deviceStatus;
+		this.payload = payload;
+	}
+
+}
