@@ -21,6 +21,6 @@
         android:layout_height="17dp"
         android:layout_marginRight="11dp"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/arrow_right" />
+        android:background="@drawable/arrow_right_gray" />
 
 </LinearLayout>

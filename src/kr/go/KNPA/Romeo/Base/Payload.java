@@ -12,12 +12,14 @@ public class Payload {
 	public String 			roomCode;
 	public Message 			message;
 	
+	// TODO : abandon raw Types
+	public int _sender;
+	public int[] _receivers;
 	
 	public static class Builder {
 		private String 				_event;
 		private User 				_sender;
 		private ArrayList<User> 	_receivers;
-		private String 				_roomCode;
 		private Message	 			_message;
 		
 		public Builder event (String event) {
@@ -35,11 +37,7 @@ public class Payload {
 			return this;
 		}
 		
-		public Builder roomCode (String roomCode) {
-			_roomCode = roomCode;
-			return this;
-		}
-		
+
 		public Builder message (Message message) {
 			_message = message;
 			return this;
@@ -50,7 +48,6 @@ public class Payload {
 			payload.event = this._event;
 			payload.sender = this._sender;
 			payload.receivers = this._receivers;
-			payload.roomCode = this._roomCode;
 			payload.message = this._message;
 			return payload;
 		}

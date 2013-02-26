@@ -20,6 +20,10 @@
     <dimen name="list_padding">0dp</dimen>
     <dimen name="shadow_width">15dp</dimen>
 
+    <dimen name="gap">11dp</dimen>
+    <dimen name="gapSmall">5dp</dimen>
+    <dimen name="gapSmaller">3dp</dimen>
+    
     <dimen name="section_header_height">32dp</dimen>
     <dimen name="section_header_padding">5dp</dimen>
     <dimen name="section_header_padding_left">15dp</dimen>
@@ -38,4 +42,6 @@
 		<dimen name="menu_list_cell_icon_width">48dp</dimen>
 		<dimen name="menu_list_cell_icon_height">48dp</dimen>
 		<dimen name="menu_list_cell_icon_padding">10dp</dimen>				
+		
+		<dimen name="survey_result_webview_height_default">200dp</dimen>
 </resources>

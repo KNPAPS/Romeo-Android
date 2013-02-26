@@ -16,7 +16,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="5dp"
-            android:background="@drawable/circle_coss" />
+            android:background="@drawable/circle_cross_gray" />
     </LinearLayout>
 
     <LinearLayout
@@ -26,13 +26,13 @@
         android:paddingTop="11dp"
         android:paddingRight="0dp"
         android:paddingLeft="0dp"
-        android:background="@color/white"
+        android:background="@drawable/member_detail_background"
         android:paddingBottom="0dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="126dp"
-            android:layout_marginLeft="11dp"
+            android:layout_marginLeft="18dp"
             android:orientation="horizontal" >
 
             <ImageView
@@ -40,7 +40,7 @@
                 android:layout_width="104dp"
                 android:layout_height="104dp"
                 android:layout_gravity="center_vertical"
-                android:src="@color/black" />
+                android:src="@drawable/user_pic_default" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -57,7 +57,7 @@
                     android:layout_marginBottom="11dp"
                     android:layout_marginLeft="22dp"
                     android:layout_marginTop="11dp"
-                    android:background="@drawable/icon_star"
+                    android:background="@drawable/star_gray"
                     android:layout_marginRight="11dp" />
 
                 <TextView

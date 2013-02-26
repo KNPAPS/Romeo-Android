@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/index"
+        android:layout_marginLeft="10dp"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:text="@string/sampleListIndex" />
+
+    <EditText
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/option_title_placehold"
+        android:ems="10" >
+
+    </EditText>
+
+    <FrameLayout 
+        android:layout_gravity="center_vertical"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginLeft="@dimen/gapSmall"
+		    android:padding = "0dp">
+    <Button
+		    android:id="@+id/add"
+		    android:layout_width="32dp"
+		    android:layout_height="32dp"
+		    android:scaleType="fitCenter"
+				android:background="@drawable/circle_plus_active"		  
+		    android:visibility="visible"/>
+
+    <Button
+        android:id="@+id/remove"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/circle_minus_gray"
+        android:contentDescription="@string/button" 
+        android:visibility="invisible"/>
+		</FrameLayout>
+</LinearLayout>

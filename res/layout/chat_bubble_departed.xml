@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatBubbleDeparted"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/gapSmall"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="right"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="12dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/department"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="@string/department" />
+
+            <TextView
+                android:id="@+id/rankName"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/userPic"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/user_pic_default" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="right"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="-5dp"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/goUnchecked"
+            android:layout_width="32dp"
+            android:layout_height="32dp" 
+            android:layout_gravity="bottom"
+            android:background="@drawable/bubble_active"/>
+
+        <TextView
+            android:id="@+id/arrivalDT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:padding="@dimen/gapSmaller"
+            android:text="@string/sampleTime" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="150dp"
+            android:padding="@dimen/gapSmall"
+            android:background="@drawable/chat_bubble_departed"
+            android:text="@string/loremIpsumShort" />
+
+    </LinearLayout>
+
+</LinearLayout>

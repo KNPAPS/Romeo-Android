@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lighter"
+    android:orientation="vertical" >
+
+    <include 
+        layout="@layout/navigation_bar"/>
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginBottom="11dp"
+        android:paddingLeft="5dp"
+        android:gravity="center_horizontal" />
+    
+    <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="9dp"
+    android:padding = "0dp">
+
+		    <EditText
+		        android:id="@+id/edit"
+		        android:layout_gravity="center_horizontal"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="11dp"
+		        android:layout_marginLeft="11dp"
+		        android:layout_marginRight="11dp"
+		        android:ems="10"
+		        android:inputType="text"
+		        android:singleLine="true" />
+		    
+		        
+		    <Button
+		        android:id="@+id/clearEdit"      
+		        android:layout_width="18dp"
+		        android:layout_height="18dp"
+		        android:layout_marginRight="25dp"
+		        android:layout_gravity="right|center_vertical"
+		        android:background="@drawable/cross_gray" />
+    
+    </FrameLayout>
+    
+    <TextView
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginBottom="11dp"
+        android:paddingLeft="5dp"
+        android:gravity="center_horizontal"
+        android:text="" />
+    
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginBottom="11dp"
+        android:visibility="invisible" />
+
+</LinearLayout>

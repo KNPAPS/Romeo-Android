@@ -25,6 +25,22 @@ public class CollectionFactory {
 		return hashMap;
 	}
 	
+	public static HashMap<String, String> hashMapWithKeysAndStrings(String ...strings) {
+		HashMap<String, String> hashMap = new HashMap<String, String>();
+		if(strings.length % 2 != 0) {
+			RuntimeException e = new RuntimeException("strings length must be even");
+			throw e;
+		}
+		for(int i=0; i<strings.length; i+=2) {
+			String key = strings[i];
+			String value = strings[i+1];
+			
+			hashMap.put(key, value);
+		}
+		
+		return hashMap;
+	}
+	
 	public static ArrayList<Object> arrayListwithKeysAndValues(Object ...objects) {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 

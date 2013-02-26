@@ -1,59 +1,116 @@
 package kr.go.KNPA.Romeo.Chat;
 
-import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.BaseColumns;
+import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
 public class ChatListView extends ListView {
-	private SimpleSectionAdapter<Cursor> sectionAdapter; 
-	private DBManager dbManager;
+	// Constants
+	private final int NUMBER_OF_INITIAL_RECENT_ITEM = 10;
+		
+	// Database
 	private SQLiteDatabase db;
+	public String tableName;
 	
+	// Adapter	
+	public CursorAdapter listAdapter; 
+	
+	public String roomCode;
+	private Room _room;
+	
+	private Context context = null;
+	private int currentNumberOfRecentItem = NUMBER_OF_INITIAL_RECENT_ITEM;
+
+	// Constructor
 	public ChatListView(Context context) {
-		this(context, null);
+		this(context,null);
 	}
 
 	public ChatListView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
+		this(context, attrs,0);
 	}
 
 	public ChatListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		this.context = context;
+	}
+	
+	
+	// Manage NumberOfItems
+	public void increaseNumberOfItemsBy(int nItem) {
+		this.currentNumberOfRecentItem += nItem;
+	}
+	
+	public void decreaseNumberOfItemsBy(int nItem) {
+		this.currentNumberOfRecentItem = Math.max(this.currentNumberOfRecentItem - nItem, 0); 
+	}
+	
+	
+	// Manage Model (Room)
+	public void setRoom(Room room) {
+		_room = room;
+		this.roomCode = room.roomCode;
+		this.tableName = room.getTableName();
 		
-		final Context ctx = context;
-		
-		// DB Manager를 생성한다.
-		dbManager = new DBManager(getContext());
-		db = dbManager.getWritableDatabase();
-		
-		
-		Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
-			@Override
-			public String getSectionTitleForItem(Cursor c) {
-				long checkTS = c.getLong(c.getColumnIndex("checkTS"));
-				return ((checkTS == Chat.NOT_SPECIFIED || checkTS < 1000) ?  ctx.getString(R.string.unCheckedChat) : ctx.getString(R.string.checkedChat));
-			}
-		};
-		ChatListAdapter chatListAdapter = new ChatListAdapter(context, selectAll(), false);		
-		
-		sectionAdapter = new SimpleSectionAdapter<Cursor>(context, chatListAdapter, R.layout.section_header, R.id.cell_title, sectionizer);
-		this.setAdapter(sectionAdapter);
+		Cursor c = selectRecent(NUMBER_OF_INITIAL_RECENT_ITEM);
+		listAdapter = new ChatListAdapter(context, c, false, room.type);
+
+		this.setAdapter(listAdapter);
+		scrollToBottom();
+	}
+	
+	private Room getRoom() {
+		return _room;
 	}
 
-	protected Cursor selectAll() {
-		String sql = "SELECT * FROM "+DBManager.TABLE_COMMAND+" ORDER BY checkTS desc;";
-		// sectionizer 를 위해 정렬을 한다.
-		Cursor c = db.rawQuery(sql, null);
+	// Database
+	public void setDatabase(SQLiteDatabase db) {
+		this.db = db;
+	}
+	
+	public void unsetDatabase() {
+		this.db = null;
+	}
+	
+	public Cursor selectRecent(int nItems) {
+		Cursor c = null;
+		if(this.tableName != null && this.roomCode != null) {	// TODO
+//			String sql = "SELECT * FROM "+this.tableName+
+//						 " WHERE roomCode=\""+this.roomCode+"\""+
+//						 " ORDER BY TS ASC"+
+//						 " LIMIT "+nItems+";";
+	
+			String subSql = "SELECT "+BaseColumns._ID+" FROM " + this.tableName +
+					 " WHERE roomCode=\""+this.roomCode+"\""+
+					 " ORDER BY TS DESC"+
+					 " LIMIT "+nItems;
+			String sql = "SELECT * FROM "+this.tableName+
+					 " WHERE "+BaseColumns._ID+" IN ("+subSql+")"+
+					 " ORDER BY TS ASC"+
+					 " LIMIT "+nItems+";";
+
+			c = db.rawQuery(sql, null);
+		}
 		return c;
 	}
 	
+	public void refresh() {
+		if(listAdapter == null) return;
 
+		listAdapter.changeCursor(selectRecent(currentNumberOfRecentItem));
+		if(this.getAdapter() instanceof SimpleSectionAdapter)
+			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
+		
+		scrollToBottom();
+	}
 	
-
+	public void scrollToBottom() {
+		this.setSelectionFromTop(this.getCount(), 0);
+	}
 }

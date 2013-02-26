@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:padding="@dimen/gap"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <!-- android:paddingRight="5px"  -->
+            <LinearLayout
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content" >
+				
+				        <TextView
+				            android:layout_marginLeft="5dp"
+				            android:layout_marginRight="5dp"
+				            android:gravity="center_horizontal"
+				            android:layout_width="40dp"
+				            android:layout_height="wrap_content"
+				            android:text="@string/title" />
+				
+				        <EditText
+				            android:id="@+id/title"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_title_placehold"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="1"
+				            android:ems="10" >
+				
+				            <requestFocus />
+				        </EditText>
+				
+				    </LinearLayout>
+				
+				    <LinearLayout
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content" >
+				
+				        <TextView
+				            android:layout_marginLeft="5dp"
+				            android:layout_marginRight="5dp"
+				            android:layout_width="40dp"
+				            android:layout_height="wrap_content"
+				            android:layout_gravity="center_vertical"
+				            android:gravity="center_horizontal"
+				            android:text="@string/receiver" />
+				
+				        <FrameLayout
+				            android:layout_width="0dp"
+				            android:layout_weight="1"
+				            android:layout_height="wrap_content" >
+				
+				            <EditText
+				                android:id="@+id/receivers"
+				                android:hint="@string/survey_receivers_placehold"
+				                android:layout_width="match_parent"
+				                android:layout_height="wrap_content" />
+				
+				            <Button
+				                android:id="@+id/receivers_search"
+				                android:layout_gravity="right|center_vertical"
+				                android:layout_width="18dp"
+				                android:layout_height="18dp"
+				                android:layout_marginRight="@dimen/gap"
+				                android:background="@drawable/arrow_right_gray" />
+				
+				        </FrameLayout>
+				
+				    </LinearLayout>
+				
+				    <LinearLayout
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content" >
+				
+				        <TextView
+				            android:layout_marginLeft="5dp"
+				            android:layout_marginRight="5dp"
+				            android:layout_width="40dp"
+				            android:layout_height="wrap_content"
+				            android:layout_gravity="center_vertical"
+				            android:gravity="center_horizontal"
+				            android:text="@string/duration" />
+				
+				        <EditText
+				            android:id="@+id/open_year"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_open_year_placehold"
+				            android:gravity="center"
+				            android:padding="@dimen/gapSmaller"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="2"
+				            android:textSize="12sp"
+				            android:ems="10" />
+				
+				        <EditText
+				            android:id="@+id/open_month"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_open_month_placehold"
+				            android:gravity="center"
+				            android:padding="@dimen/gapSmaller"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="1"
+				            android:textSize="12sp"
+				            android:ems="10" />
+				
+				        <EditText
+				            android:id="@+id/open_day"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_open_day_placehold"
+				            android:gravity="center"
+				            android:padding="@dimen/gapSmaller"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="1"
+				            android:textSize="12sp"
+				            android:ems="10" />
+				
+				        <TextView
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:text="@string/fromTo" />
+				
+				        <EditText
+				            android:id="@+id/close_year"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_close_year_placehold"
+				            android:gravity="center"
+				            android:padding="@dimen/gapSmaller"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="2"
+				            android:textSize="12sp"
+				            android:ems="10" />
+				
+				        <EditText
+				            android:id="@+id/close_month"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_close_month_placehold"
+				            android:gravity="center"
+				            android:padding="@dimen/gapSmaller"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="1"
+				            android:textSize="12sp"
+				            android:ems="10" />
+				
+				        <EditText
+				            android:id="@+id/close_day"
+				            android:layout_width="0dp"
+				            android:hint="@string/survey_close_day_placehold"
+				            android:gravity="center"
+				            android:padding="@dimen/gapSmaller"
+				            android:layout_height="wrap_content"
+				            android:layout_weight="1"
+				            android:textSize="12sp"
+				            android:ems="10" />
+				
+				    </LinearLayout>
+				
+				    <EditText
+				        android:id="@+id/content"
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:layout_marginTop="5dp"
+				        android:layout_marginBottom="5dp"
+				        android:ems="10"
+				        android:inputType="textMultiLine" />
+				
+				    <LinearLayout
+				        android:id="@+id/questions"
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:orientation="vertical" >
+				        <include layout="@layout/survey_question_compose" />
+				    </LinearLayout>
+				
+				    <Button
+				        android:id="@+id/add_question"
+				        android:layout_width="match_parent"
+				        android:layout_height="40dp"
+				        android:layout_marginTop="@dimen/gap"
+				        android:background="@color/white"
+				        android:text="@string/add_question" />
+        </LinearLayout>
+    </ScrollView>
+
+    
+
+</LinearLayout>

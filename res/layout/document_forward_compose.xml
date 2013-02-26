@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light"
+    android:orientation="vertical" >
+
+    <include layout = "@layout/navigation_bar"/>
+    <LinearLayout
+        android:layout_marginBottom="@dimen/gap"
+        android:layout_width="match_parent"
+        android:layout_marginTop ="@dimen/gap"
+        android:layout_marginLeft ="@dimen/gap"
+        android:layout_marginRight ="@dimen/gap"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:gravity="center"
+            android:layout_margin="@dimen/gap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/receiver" />
+				
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/receivers"
+                android:hint="@string/document_receivers_placehold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/receivers_search"
+                android:layout_gravity="right|center_vertical"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginRight="@dimen/gap"
+                android:background="@drawable/magnifier_gray" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:layout_marginRight ="@dimen/gap"
+        android:layout_marginBottom ="@dimen/gap"
+        android:layout_marginLeft ="@dimen/gap"
+        android:inputType="textMultiLine" />
+
+</LinearLayout>

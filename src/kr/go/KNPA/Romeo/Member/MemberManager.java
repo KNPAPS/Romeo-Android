@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
 import kr.go.KNPA.Romeo.Util.Connection;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -138,7 +139,14 @@ public class MemberManager {
 									.type(Connection.TYPE_GET)
 									.dataType(Connection.DATATYPE_JSON)
 									.build();
-			if(conn.request() == Connection.HTTP_OK) {
+			int requestCode;
+			try {
+				requestCode = conn.request();
+			} catch (RuntimeException e) {
+				throw e;
+			}
+			
+			if( requestCode == Connection.HTTP_OK) {
 				//Gson gson = new Gson();
 				//String json = conn.getResponse();
 				//result = gson.fromJson(json, HashMap.class);

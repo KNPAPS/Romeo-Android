@@ -1,113 +1,161 @@
 package kr.go.KNPA.Romeo.Document;
 
-import java.util.ArrayList;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Base.Payload;
+import kr.go.KNPA.Romeo.Util.DBManager;
 
-public class Document extends Message {
-	public long idx	= NOT_SPECIFIED;
+public class Document extends Message implements Parcelable{
 	
-	public final int type = Message.MESSAGE_TYPE_DOCUMENT;
-	// public String title = null;
-	// public String content	= null;
-	// public Appendix appendix;
+	// Message Sub Type Constants
+	public static final int TYPE_RECEIVED = 0;
+	public static final int TYPE_DEPARTED = 1;
+	public static final int TYPE_FAVORITE = 2;
 	
-	public User sender	= null;
-	public ArrayList<User> receivers;
-	public long TS	= NOT_SPECIFIED;
-	public long checkTS	= NOT_SPECIFIED;
+	// Specific Variables not to be sent
 	public boolean favorite = false;
-	public String roomCode = null;
 	
+
+	// Constructor
 	public Document() {
+		
+	}
+	
+	public Document(Cursor c) {
+		super(c);
+		
+		this.type = getType();
+		
+		Appendix _appendix = new Appendix();// TODO
+		this.appendix = _appendix; 
+		
+		boolean _favorite = (c.getInt(c.getColumnIndex("favorite")) == 1? true : false);
+		this.favorite = _favorite;
 	}
 
+	public Document(Parcel source) {
+		readFromParcel(source);
+	}
 	
-	public static class Builder {
-		private long _idx	= NOT_SPECIFIED;
-		
-		private String _title = null;
-		private String _content	= null;
-		private Appendix _appendix = null;
-		private boolean _received = true;
-		private User _sender	= null;
-		private ArrayList<User> _receivers = null;
-		private long _TS	= NOT_SPECIFIED;
-		private long _checkTS	= NOT_SPECIFIED;
-		private boolean _favorite = false;
-		private String _roomCode = null;
-		
-		public Builder idx(long idx) {
-			_idx = idx;
-			return this;
+	public Document(Payload payload) {
+		this.idx = payload.message.idx;
+		this.title = payload.message.title;
+		this.type = payload.message.type;
+		this.content = payload.message.content;
+		this.sender = payload.sender;
+		this.receivers = payload.receivers;
+		this.TS = System.currentTimeMillis();
+		//this.received = true;
+		//this.checkTS = NOT_SPECIFIED;
+		//this.checked = false;
+		this.appendix = payload.message.appendix;
+		//this.favorite = false;
+	}
+	
+	public Document(Payload payload, boolean received, long checkTS, boolean favorite) {
+		this(payload);
+		this.received = received;
+		this.checkTS = checkTS;
+		this.favorite = favorite;
+		if(this.checkTS == Message.NOT_SPECIFIED) {
+			this.checked = false;
 		}
-		
-		public Builder title(String title) {
-			_title = title;
-			return this;
-		}
-		
-		public Builder content( String content) {
-			_content = content;
-			return this;
-		}
-		
-		public Builder sender(User  sender) {
-			_sender = sender;
-			return this;
-		}
-		
-		public Builder receivers(ArrayList<User> receivers) {
-			_receivers = receivers;
-			return this;
-		}
-		
-		public Builder received(boolean received) {
-			_received = received;
-			return this;
-		}
-		
-		public Builder TS(long TS) {
-			_TS = TS;
-			return this;
-		}
-		
-		public Builder checkTS(long checkTS) {
-			_checkTS = checkTS;
-			return this;
-		}
+	}
+	
+	public static class Builder extends Message.Builder {
+		protected boolean _favorite = false;
 		
 		public Builder favorite(boolean favorite) {
 			_favorite = favorite;
 			return this;
 		}
 		
-		public Builder roomCode(String roomCode) {
-			_roomCode = roomCode;
-			return this;
-		}
-		public Builder appendix(Appendix appendix) {
-			_appendix = appendix;
-			return this;
-		}
 		public Document build() {
 			
-			Document document = new Document();
-			document.idx = this._idx;
-			document.title = this._title;
-			document.content = this._content;
-			document.received = this._received;
-			document.TS = this._TS;
-			document.checkTS = this._checkTS;
-			document.favorite = this._favorite;
-			document.roomCode = this._roomCode;
-			document.appendix = this._appendix;
-			document.sender = this._sender;
-			document.receivers = this._receivers;
-			
+			Document document = (Document) new Document.Builder()
+													   .idx(_idx)
+													   .title(_title)
+													   .type(_type)
+													   .content(_content)
+													   .appendix(_appendix)
+													   .sender(_sender)
+													   .receivers(_receivers)
+													   .TS(_TS)
+													   .received(_received)
+													   .checkTS(_checkTS)
+													   .checked(_checked)
+													   .buildMessage();
+			document.favorite = this._favorite;			
 			return document;
 		}
 	}
+
+	protected int getType() {
+		int subType = Document.NOT_SPECIFIED;
+		if( received == true ) {
+			subType = Document.TYPE_RECEIVED ;
+		} else {
+			subType = Document.TYPE_DEPARTED;
+		}
+		if(favorite == true) {// && received == ture)
+			subType = Document.TYPE_FAVORITE;
+		}
+		
+		return Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
+	}
+	
+	// Manage if Favorite
+	public void setFavorite(boolean fav, Context context) {
+		DBManager dbManager = new DBManager(context);
+		SQLiteDatabase db = dbManager.getWritableDatabase();
+		
+		int f = (fav? 1 : 0);
+		String sql = "UPDATE "+DBManager.TABLE_DOCUMENT+
+					 " SET favorite="+f+
+					 " WHERE idx="+this.idx+";";
+		
+		db.execSQL(sql);
+		
+		this.favorite = fav;
+	}
+	
+	public void toggleFavorite(Context context) {
+		setFavorite(!this.favorite, context);
+	}
+	
+	
+	// Implements Parcelable
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		boolean[] ba = {favorite};
+		dest.writeBooleanArray(ba);
+
+	}
+	
+	public void readFromParcel(Parcel source) {
+		super.readFromParcel(source);
+		boolean[] ba = source.createBooleanArray();
+		favorite = ba[0]; 
+	}
+	
+	public static final Parcelable.Creator<Document> CREATOR = new Parcelable.Creator<Document>() {
+
+		@Override
+		public Document createFromParcel(Parcel source) {
+			return new Document(source);
+		}
+
+		@Override
+		public Document[] newArray(int size) {
+			return new Document[size];
+		}
+		
+	};
 }

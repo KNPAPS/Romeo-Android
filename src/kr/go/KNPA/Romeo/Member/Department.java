@@ -13,7 +13,10 @@ import org.json.JSONObject;
 import android.util.Log;
 
 public class Department {
-
+	public static final int NOT_SPECIFIED = -777;
+	public static final int TYPE_MEMBERLIST = 0;
+	public static final int TYPE_FAVORITE = 1;
+	
 	public long sequence;
 	public String title;
 

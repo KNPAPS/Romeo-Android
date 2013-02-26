@@ -1,29 +1,39 @@
 package kr.go.KNPA.Romeo.GCM;
 
-import java.util.Iterator;
+import java.util.List;
 
-import org.json.JSONObject;
-
+import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Base.Packet;
 import kr.go.KNPA.Romeo.Base.Payload;
 import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Util.DBManager;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 
 public class GCMMessageManager {
 	
-	public static final int NOT_SPECIFIED = -777;
-	private static final String tag = "GCMMessageManager";
-    
-	private static GCMMessageManager _sharedManager = null;
-	public GCMMessageManager() {
-	}
+	//
+	public static final int NOT_SPECIFIED = Message.NOT_SPECIFIED;
+	private static final String TAG = "GCMMessageManager";
 	
+	// preDefined Variables
+	private static final String EVENT_TYPE_MESSAGE = "MESSAGE";
+	private static final String EVENT_ACTION_RECEIVED = "RECEIVED";
+	
+	// GCMMessageManager Single-Tone
+	private static GCMMessageManager _sharedManager = null;
 	public static GCMMessageManager sharedManager() {
 		if(_sharedManager == null) {
 			_sharedManager = new GCMMessageManager();
@@ -31,71 +41,197 @@ public class GCMMessageManager {
 		return _sharedManager;
 	}
 
-	public void onMessage(Context context, Intent intent) {			/** 푸시로 받은 메시지 */
-        Bundle b = intent.getExtras();
 
-        Iterator<String> iterator = (Iterator<String>)b.keySet().iterator();
-        while(iterator.hasNext()) {
-            String key = iterator.next();
-            String value = b.get(key).toString();
-            Log.d(tag, "onMessage. "+key+" : "+value);
-        }
+	
+	//// On Process Variables
+	// Class Variables associated with DB
+	private DBManager 		dbManager 		= null;
+	private SQLiteDatabase 	db 				= null;
+	private String 			tableName 		= null;
+	//
+	private Context			context			= null;
+	private Packet 			packet 			= null;
+	private Payload 		payload 		= null;
+	private String[] 		events 			= null;
+	private int 			messageType 	= NOT_SPECIFIED;
+	private int 			messageSubType 	= NOT_SPECIFIED;
+	
+	// OnMessage
+	public void onMessage(Context context, Intent intent) {			/** 푸시로 받은 메시지 */
+		
+		// Context Setting
+		this.context = context;
+		
+		// DB Open & Setting
+		dbManager = new DBManager(context);
+		db = dbManager.getWritableDatabase();
         
+        // Platform-Based(Bundle) Packet to Packet
+		Bundle b = intent.getExtras();        
+        packet = new Packet(b);
         
-        // 메시지를 받으면, _packet이다. TODO
-        JSONObject _p = null;
-        // 이를 Packet에게 넘긴다.
-        Packet packet = new Packet(_p);
-        
-        Payload payload = packet.payload;
+        // Specify Payload and Event
+        payload = packet.payload;
         String event = payload.event;
+        events = event.split(":");
         
-        // event를 파싱한다. TODO
-        String[] events = event.split("/:/");
         
-        // 파싱된 event에 따라 작업을 분류한다. TODO
-        if(events[0].equalsIgnoreCase("CHAT")) {
-        	Chat chat = new Chat.Builder()
-								.idx(payload.message.idx)
-        						.sender(payload.sender)
-        						.receivers(payload.receivers)
-        						.title(payload.message.title)
-        						.content(payload.message.content)
-        						.appendix(payload.message.appendix)
-        						.received(true)
-        						.favorite(false)
-        						.roomCode(payload.roomCode)
-        						.TS(System.currentTimeMillis())
-        						.checkTS(NOT_SPECIFIED)
-        						.build();
-        	
-        } else if(events[0].equalsIgnoreCase("DOCUMENT")) {
-        	Document document = new Document.Builder()
-											.idx(payload.message.idx)
-											.sender(payload.sender)
-											.receivers(payload.receivers)
-											.title(payload.message.title)
-											.content(payload.message.content)
-											.appendix(payload.message.appendix)
-											.received(true)
-											.favorite(false)
-											.roomCode(payload.roomCode)
-											.TS(System.currentTimeMillis())
-											.checkTS(NOT_SPECIFIED)
-											.build();
-        } else if(events[0].equalsIgnoreCase("SURVEY")) {
-        	Survey survey = new Survey.Builder()
-										.idx(payload.message.idx)
-										.sender(payload.sender)
-										.receivers(payload.receivers)
-										.title(payload.message.title)
-										.content(payload.message.content)
-										.appendix(payload.message.appendix)
-										.received(true)
-										.roomCode(payload.roomCode)
-										.TS(System.currentTimeMillis())
-										.checkTS(NOT_SPECIFIED)
-										.build();
-        }
+        if(events[0].equalsIgnoreCase(EVENT_TYPE_MESSAGE)) {
+        	if(events[1].equalsIgnoreCase(EVENT_ACTION_RECEIVED)) {
+        		
+		    	messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
+		    	messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
+		
+		        // 파싱된 event에 따라 작업을 분류한다. TODO
+		    	
+		    	switch(messageType) {
+			    	case Message.MESSAGE_TYPE_CHAT 		:	onChat();		break;
+			    	case Message.MESSAGE_TYPE_DOCUMENT 	:	onDocument();	break;
+			    	case Message.MESSAGE_TYPE_SURVEY 	:	onSurvey();		break;
+		    	}
+
+        	}	// MESSAGE : RECEIVED  - END
+        }	// MESSAGE : ?? - END
+        
+        
+        //// Destroy
+        // DB Close
+        db.close();
+        dbManager.close();
+        db = null;
+        dbManager = null;
+        
+        packet = null;
+        payload = null;
+        events = null;
+        
+        messageType = NOT_SPECIFIED;
+        messageSubType = NOT_SPECIFIED;
+        
+        
     }
+	
+	// on Message in cases
+	private void onChat () {
+		Chat chat = new Chat(payload, true, NOT_SPECIFIED);
+
+		switch(messageSubType) {
+			case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
+			case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
+		}
+		
+
+		if(isRunningProcess(context)) {		// 실행중인지 아닌지. 판단.
+		// DB에 삽입.
+			ContentValues vals = new ContentValues();
+			vals.put("content", chat.content);
+			vals.put("appendix", chat.appendix.toBlob());
+			vals.put("sender", chat.sender.idx);
+			vals.put("receivers", User.usersToString(chat.receivers));
+			vals.put("received", 1);
+			vals.put("TS", chat.TS);
+			vals.put("checked", 0);
+			vals.put("roomCode", chat.getRoomCode());
+			vals.put("checkTS", chat.checkTS);
+			vals.put("idx", chat.idx);
+			db.insert(tableName, null, vals);
+
+		// 현재 챗방에 올리기. 및 알림
+			ChatFragment.receive(chat);
+		} else {
+		// 알림만 띄우장
+		}
+	}
+	
+	private void onDocument() {
+		Document document = new Document(payload, true, NOT_SPECIFIED, false);
+		
+		switch(messageSubType) {
+			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
+			case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
+			case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
+		}
+		
+
+		if(isRunningProcess(context)) {
+			//DB에 삽입.
+			ContentValues vals = new ContentValues();
+			vals.put("title", document.content);
+			vals.put("content", document.content);
+			vals.put("appendix", document.appendix.toBlob());
+			vals.put("sender", document.sender.idx);
+			vals.put("receivers", User.usersToString(document.receivers));
+			vals.put("received", 1);
+			vals.put("TS", document.TS);
+			vals.put("checked", 0);
+			vals.put("checkTS", document.checkTS);
+			vals.put("favorite", document.favorite);
+			vals.put("idx", document.idx);
+			db.insert(tableName, null, vals);
+	
+			//리스트뷰에 notify
+			DocumentFragment.receive(document);
+		} else {
+		//알림만 띄우자
+		}
+	}
+	
+	private void onSurvey() {
+		Survey survey = new Survey(payload, true, NOT_SPECIFIED);
+		
+		if(messageSubType == Survey.TYPE_DEPARTED){
+			tableName = DBManager.TABLE_SURVEY;
+		} else if(messageSubType == Survey.TYPE_RECEIVED) {
+			tableName = DBManager.TABLE_SURVEY;
+		} 
+		
+		if(isRunningProcess(context)) {
+			//DB에 삽입.
+			ContentValues vals = new ContentValues();
+			vals.put("title", survey.content);
+			vals.put("content", survey.content);
+			vals.put("appendix", survey.appendix.toBlob());
+			vals.put("sender", survey.sender.idx);
+			vals.put("receivers", User.usersToString(survey.receivers));
+			vals.put("received", 1);
+			vals.put("TS", survey.TS);
+			vals.put("checked", 0);
+			vals.put("openTS", survey.openTS);
+			vals.put("closeTS", survey.closeTS);
+			vals.put("checkTS", survey.checkTS);
+			vals.put("idx", survey.idx);
+			db.insert(tableName, null, vals);
+			
+			//리스트뷰에 notify
+			SurveyFragment.receive(survey);
+		} else {
+		//알림만 띄우지
+		}
+	}
+	
+	//// Helper Procedures	//// 
+	
+	private List<ActivityManager.RunningAppProcessInfo> processList(Context context) {
+        /* 실행중인 process 목록 보기*/
+		
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appList = am.getRunningAppProcesses();
+ 
+        return appList;
+    }
+	
+	private boolean isRunningProcess(Context context) {
+		final String packageName = "kr.go.KNPA.Romeo";
+		boolean isRunning = false;
+		List<ActivityManager.RunningAppProcessInfo> list = processList(context);
+		
+		for (RunningAppProcessInfo rapi : list)
+		{
+			if(rapi.processName.equals(packageName)) {
+				isRunning = true;
+				break;
+			}
+		}
+		return isRunning;
+	}
 }

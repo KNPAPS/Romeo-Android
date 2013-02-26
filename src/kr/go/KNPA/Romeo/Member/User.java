@@ -1,9 +1,18 @@
 package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class User implements Parcelable{
 	public final static int NOT_SPECIFIED = -777;
+	public static final int TYPE_MEMBERLIST = 0;
+	public static final int TYPE_FAVORITE = 1;
+	public static final int MAX_LEVEL_DEPTH = 6;
+	
 	public final static String[] RANK = {"치안총감", "치안정감", "치안감", "경무관", "총경", "경정", "경감", "경위", "경사", "경장", "순경", "의경"};
 	
 	private static ArrayList<User> _users = null;
@@ -21,6 +30,10 @@ public class User {
 	
 	public User() {
 		
+	}
+	
+	public User(Parcel in) {
+		readFromPalcel(in);
 	}
 
 	public static class Builder {
@@ -87,7 +100,6 @@ public class User {
 	public ArrayList<User> users() {
 		if(_users == null || _users.size() < 1) {
 			//FETCH USERS FROM DEPARTMENTS
-			Department.root().fetch();
 		}
 		
 		return _users;
@@ -97,4 +109,182 @@ public class User {
 		_users = users;
 	}
 
+	public static User getUserWithIdx(long idx) {
+		// TODO : 캐싱 순환주기 맞추기.
+		ListIterator<User> itr = null;
+		if(_users.size() > 0)
+			itr = _users.listIterator();
+		User user = null;
+		
+		User _user = null;
+		while(itr!= null && itr.hasNext()) {
+			_user = itr.next();
+			if(_user.idx == idx) {
+				user = _user;
+			}
+		}
+		
+		return user;
+	}
+	
+	public static User userWithIdx(long idx) {
+		User _user = getUserWithIdx(idx);
+		
+		return _user.clone();
+	}
+	
+	public User clone() {
+		return new User.Builder()
+		.department(department)
+		.idx(this.idx)
+		.levels(this.levels[0], this.levels[1], this.levels[2], this.levels[3], this.levels[4], this.levels[5])
+		.name(this.name)
+		.pic(this.pic)
+		.rank(this.rank)
+		.TS(this.TS)
+		.build();
+	}
+	
+	public static String idexesToString (int[] _receivers) {
+		StringBuffer sb = new StringBuffer();
+		for(int i=0; i<_receivers.length; i++) {
+			sb.append(_receivers[i]);
+			if(i!=(_receivers.length-1)) {
+				sb.append(':');
+			}
+		}
+		
+		return sb.toString();
+	}
+	public static String usersToString(ArrayList<User> receivers) {
+		StringBuffer sb = new StringBuffer();
+		
+		Iterator<User> itr = (Iterator<User>) receivers.iterator();
+		while(itr.hasNext()) {
+			User u = itr.next();
+			sb.append(u.idx);
+			if(itr.hasNext()) {
+				sb.append(':');
+			}
+ 		}
+		
+		return sb.toString();
+	}
+	
+	public static int[] indexesInStringToIntArray(String _receivers) {
+		String[] parsed = _receivers.split(":");
+		int[] result = new int[parsed.length];
+		for(int i=0; i<result.length; i++) {
+			result[i] = Integer.parseInt(parsed[i]);
+		}
+		
+		return result;
+	}
+	
+	public static ArrayList<Integer> indexesInStringToArrayListOfInteger(String _receivers) {
+		int[] _rs = User.indexesInStringToIntArray(_receivers);
+		
+		ArrayList<Integer> result = new ArrayList<Integer>(_rs.length);
+		for(int i=0; i<_rs.length; i++) {
+			result.add(Integer.valueOf(_rs[i]));
+		}
+		
+		return result;
+	}
+	
+	public static ArrayList<User> indexesInStringToArrayListOfUser(String _receivers) {
+		int[] _rs = User.indexesInStringToIntArray(_receivers);
+		
+		ArrayList<User> result = new ArrayList<User>(_rs.length);
+		for(int i=0; i<_rs.length; i++) {
+			result.add(User.getUserWithIdx(_rs[i]));
+		}
+	
+		return result;
+	}
+
+	public String getDepartmentFull() {
+		StringBuffer sb = new StringBuffer();
+		for(int i=0; i<levels.length ; i++) {
+			String p = levels[i].trim();
+			boolean isEmpty = false;
+			if(p.length() <1 || p == "")
+				isEmpty = true;
+			
+			if(isEmpty != true) {
+				sb.append(p);
+				if(i!= levels.length-1)
+					sb.append(" ");
+			}
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(idx);
+		dest.writeInt(department);
+		dest.writeString(name);
+		dest.writeInt(pic);
+		dest.writeInt(rank);
+		dest.writeLong(TS);
+		String s = null;
+		for(int i=0; i<MAX_LEVEL_DEPTH; i++) {
+			s = levels[i];
+			if(s == null) s = "";
+			dest.writeString(s);	
+		}
+		
+
+	}
+	
+	private void readFromPalcel(Parcel in) {
+		idx = in.readInt();
+		department = in.readInt();
+		
+/*		String[] _levels = new String[6];
+		in.readStringArray(_levels);
+		in.readStringArray(_levels);
+		
+		int _length = 0;
+		String _temp = null;
+		for(int i=0; i<_levels.length; i++) {
+			_temp = _levels[i].trim();
+			if(_temp.length() == 0 || _temp.equals("")) continue;
+			_length++;
+		}
+		levels = new String[_length];
+		for(int i=0; i<_length; i++) {
+			levels[i] = _levels[i];
+		}
+*/		
+		name = in.readString();
+		pic = in.readInt();
+		rank = in.readInt();
+		TS = in.readLong();
+		levels = new String[MAX_LEVEL_DEPTH];
+		for(int i=0; i<MAX_LEVEL_DEPTH; i++) {
+			levels[i] = in.readString();
+		}
+		//levels = in.createStringArray();
+	}
+	
+	public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+
+		@Override
+		public User createFromParcel(Parcel source) {
+			return new User(source);
+		}
+
+		@Override
+		public User[] newArray(int size) {
+			return new User[size];
+		}
+		
+	};
 }

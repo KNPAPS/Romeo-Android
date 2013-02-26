@@ -15,6 +15,7 @@ public class DBManager extends SQLiteOpenHelper {
 	public static final String TABLE_MEETING = "meeting";
 	public static final String TABLE_SURVEY = "survey";
 	public static final String TABLE_DOCUMENT = "document";
+	public static final String TABLE_MEMBER = "member";
 
 	private static final String TAG = "DBManager";
 	
@@ -32,9 +33,11 @@ public class DBManager extends SQLiteOpenHelper {
 				" ("+BaseColumns._ID+
 				" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,"+
 				" content VARCHAR, appendix BLOB,"+
+				" roomCode VARCHAR,"+
 				" sender INTEGER, receivers TEXT,"+
-				" received BOOL, TS DATETIME DEFAULT CURRENT_TIMESTAMP,"+
-				" checkTS DATETIME, idx INTEGER)";
+				" received BOOL, TS INTEGER,"+
+				" checked BOOL DEFAULT 0, " +
+				" checkTS INTEGER, idx INTEGER)";
 		try {
 			db.execSQL(sql);
 		} catch (SQLException e ) {
@@ -45,9 +48,11 @@ public class DBManager extends SQLiteOpenHelper {
 				" ("+BaseColumns._ID+
 				" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,"+
 				" content VARCHAR, appendix BLOB, sender INTEGER,"+
+				" roomCode VARCHAR,"+
 				" receivers TEXT, received BOOL,"+
-				" TS DATETIME DEFAULT CURRENT_TIMESTAMP,"+
-				" checkTS DATETIME, idx INTEGER)";
+				" TS INTEGER,"+
+				" checked BOOL DEFAULT 0, " +
+				" checkTS INTEGER, idx INTEGER)";
 		try {
 			db.execSQL(sql);
 		} catch (SQLException e ) {
@@ -60,9 +65,10 @@ public class DBManager extends SQLiteOpenHelper {
 				" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,"+
 				" title VARCHAR, content TEXT, appendix BLOB,"+
 				" sender INTEGER, receivers TEXT, received BOOL,"+
-				" TS DATETIME DEFAULT CURRENT_TIMESTAMP,"+
-				" checkTS DATETIME, openTS DATETIME,"+
-				" closeTS DATETIME, idx INTEGER)";
+				" TS INTEGER,"+
+				" checked BOOL DEFAULT 0, " +
+				" checkTS INTEGER, openTS INTEGER,"+
+				" closeTS INTEGER, idx INTEGER)";
 		try {
 			db.execSQL(sql);
 		} catch (SQLException e ) {
@@ -76,8 +82,9 @@ public class DBManager extends SQLiteOpenHelper {
 				" title VARCHAR, content TEXT,"+
 				" appendix BLOB, sender INTEGER,"+
 				" receivers TEXT, received BOOL,"+
-				" TS DATETIME DEFAULT CURRENT_TIMESTAMP,"+
-				" checkTS DATETIME, favorite BOOL,"+
+				" TS INTEGER,"+
+				" checked BOOL DEFAULT 0, " +
+				" checkTS INTEGER, favorite BOOL,"+
 				" idx INTEGER)";
 		try {
 			db.execSQL(sql);
@@ -85,6 +92,20 @@ public class DBManager extends SQLiteOpenHelper {
 			Log.w(TAG, "create document "+e.getMessage());
 		}
 		
+		// Favorite Members Table
+		sql = "CREATE  TABLE "+TABLE_MEMBER+
+				" ("+BaseColumns._ID+
+				" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,"+
+				" idxs VARCHAR NOT NULL ," +
+				" isGroup BOOL DEFAULT 0 ," +
+				" title VARCHAR,"+
+				" TS INTEGER)";
+		try {
+			db.execSQL(sql);
+		} catch (SQLException e ) {
+			Log.w(TAG, "create member(favorite) "+e.getMessage());
+		}
+	
 	}
 
 	@Override

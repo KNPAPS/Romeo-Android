@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="@dimen/gap"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/index"
+            android:layout_marginLeft="0dp"
+            android:layout_width="20dp"
+            android:gravity="center"
+            android:layout_height="36dp"
+            android:text="@string/question_index" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/gap"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/webView1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/survey_result_webview_height_default" />
+
+    <LinearLayout
+        android:id="@+id/options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <!-- 
+	        ViewGroup v = (ViewGroup)getLayoutInflater().inflate(R.layout.image_preview,vg);
+					ImageView imv = (ImageView) v.getChildAt(0);    
+					TextView dt = (TextView) v.getChildAt(1);
+					TextView ttl = (TextView) v.getChildAt(2);
+				-->
+				<!-- <include layout="@layout/survey_option_result"></include>  -->
+    </LinearLayout>
+
+</LinearLayout>

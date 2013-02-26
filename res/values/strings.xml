@@ -32,9 +32,17 @@
     <string name="result">결과</string>
     <string name="did">참여</string>
     <string name="didnot">미참여</string>
+    <string name="rank">계급</string>
+    <string name="role">직책</string>
+    <string name="department">부서</string>
+    <string name="name">이름</string>
+    <string name="subTitle">부제목</string>
     
+    <string name="sender">발신자</string>
+    <string name="receiver">수신자</string>
     
-    <string name="memberTitle">조직도</string>
+    <!-- <string name="memberTitle">조직도</string> -->
+    <string name="memberListTitle">조직도</string>
     <string name="commandTitle">지시와 보고</string>
     <string name="meeting">회의</string>
     <string name="surveyTitle">설문</string>
@@ -44,8 +52,51 @@
     <string name="documentDepartedTitle">보낸 업무연락</string>
     <string name="surveyDepartedTitle">보낸 설문</string>
     <string name="surveyReceivedTitle">받은 설문</string>
-    <string name="documentFavoriteTitle">즐겨찾는 업무연락</string>
+    <string name="documentFavoriteTitle">중요 업무연락</string>
     <string name="memberFavoriteTitle">즐겨찾는 그룹</string>
+    <string name="meetingTitle">회의</string>
+    <string name="commandTitle">지시와 보고</string>
+    <string name="documentForwardTitle">전달 문서</string>
+    
+    <string name="button">버튼</string>
+    <string name="question_index">Q.</string>
+    <string name="question_title_placehold">질문 제목을 입력하세요.</string>
+    <string name="option_title_placehold">선택지 내용을 입력하세요.</string>
+    <string name="question_is_multiple">복수 답변 가능</string>
+    <string name="add_question">질문 추가 하기</string>
+    <string name="survey_title_placehold">설문 제목을 입력하세요.</string>
+    <string name="survey_content_placehold">설문 요지를 입력하세요.</string>
+    <string name="survey_receivers_placehold">수신자를 선택하세요.</string>
+    <string name="survey_open_year_placehold">시작년도</string>
+    <string name="survey_open_month_placehold">월</string>
+    <string name="survey_open_day_placehold">일</string>
+    <string name="survey_close_year_placehold">종료년도</string>
+    <string name="survey_close_month_placehold">월</string>
+    <string name="survey_close_day_placehold">일</string>
+    <string name="document_receivers_placehold">수신자를 선택하세요.</string>
+    <string name="receivers_placehold">수신자를 선택하세요.</string>
+    
+    <string name="fromTo">~</string>
+    <string name="dummy"> </string>
+    <string name="sampleListIndex">1.</string>
+    <string name="sampleDT">2012.02.22 오후 07:13:40</string>
+    <string name="sampleSender">경찰청 경비국 경비3계 이영철</string>
+    <string name="sampleForwarder">경찰청 경비국 경비3계 이영철</string>
+    <string name="sampleSurveyOpenDT">2012.10.02</string>
+    <string name="sampleSurveyCloseDT">2013.07.11</string>
+    <string name="sampleTime">12:34</string>
+    <string name="labelReceiver">수신자 : </string>
+    <string name="labelSurveyDuration">설문기간</string>
+    <string name="labelForwarder">전달자 : </string>
+    <string name="labelSender">발신자 : </string>
+    <string name="loremIpsumShort">국회의원은 청렴의 의무가 있다. 국회의원은 국회에서 ...e</string>
+    <string name="loremIpsum">모든 국민은 자기의 행위가 아닌 친족의 행위로 인하여 불이익한 처우를 받지 아니한다. 모든 국민은 그 보호하는 자녀에게 적어도 초등교육과 법률이 정하는 교육을 받게 할 의무를 진다. 국가는 법률...e</string>
+    <string name="loremIpsumLong">모든 국민은 근로의 권리를 가진다. 국가는 개인이 가지는 불가침의 기본적 인권을 확인하고 이를 보장할 의무를 진다. 모든 국민은 근로의 권리를 가진다. 모든 국민은 능력에 따라 균등하게 교육을 받을 권리를 가진다. 연소자의 근로는 특별한 보호를 받는다. 대통령이 임시회의 집회를 요구할 때에는 기간과 집회요구의 이유를 명시하여야 한다. 정당의 목적이나 활동이 민주적 기본질서에 위배될 때에는 정부는 헌법재판소에 그 해산을 제소할 수 있고, 정당은 헌법재판소의 심판에 의하여 해산된다. 의무교육은 무상으로 한다. 타인의 범죄행위로 인하여 생명·신체에 대한 피해를 받은 국민은 법률이 정하는 바에 의하여 국가로부터 구조를 받을 수 있다.e</string>
+        
+        
+    <string name="formatString_openDT">yyyy.mm.dd</string>
+    <string name="formatString_closeDT">yyyy.mm.dd</string>
+    <string name="formatString_regular">yyyy.MM.dd HH:mm:ss</string>
     
     <string name="app_name">Romeo</string>
     <string name="hello_world">Hello world!</string>

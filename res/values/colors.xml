@@ -5,6 +5,9 @@
     <color name="blue">#009</color>
     <color name="white">#FFF</color>
     <color name="black">#000</color>
+    <color name="grayDark">#333</color>
+    <color name="gray">#888</color>
+    <color name="grayLight">#CCC</color>
     <color name="transparent">#00000000</color>
     <color name="dark">#1F2B5B</color>
     <color name="midium">#8DAFD2</color>

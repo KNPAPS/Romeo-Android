@@ -2,32 +2,38 @@ package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
 
-import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
-import kr.go.KNPA.Romeo.Util.IndexPath.Iterator;
-
-
-import android.app.Activity;
-import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class MemberListView extends ListView {
 
-	public Department rootDepartment = null;
+	public static Department rootDepartment = null;
+	public int type = User.NOT_SPECIFIED;
+	private Context context = null;
+	public String tableName = null;
+	private DBManager dbManager;
+	private SQLiteDatabase db;
+
+	public ListAdapter listAdapter;
 	public MemberListView(Context context) {
 		this(context, null);
 	}
@@ -38,19 +44,141 @@ public class MemberListView extends ListView {
 
 	public MemberListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		
-		if(this.rootDepartment == null) {
-			MemberManager.sharedManager().getMembers();
-			this.rootDepartment = Department.root();
-		}	
-		
-		
-		MemberListAdapter adapter = new MemberListAdapter();
-		this.setOnItemClickListener(adapter);
-		this.setAdapter(adapter);
+		dbManager = new DBManager(getContext());
+		db = dbManager.getWritableDatabase();
+		this.context = context;
 	}
 	
+	public void setType (int type) {
+		this.type = type;
 
+		if(!(type == User.TYPE_FAVORITE || type==User.TYPE_MEMBERLIST)) {
+			return;
+		}
+		
+		final Context ctx = this.context;
+		
+		switch(this.type) {
+		case User.TYPE_FAVORITE :
+			tableName = DBManager.TABLE_MEMBER;
+			Cursor c = selectAll();
+			if(c.getCount() == 0) {
+				this.setBackgroundResource(R.drawable.empty_set_background);
+			} else {
+				this.setBackgroundResource(R.color.light);
+			}
+			FavoriteMemberAdapter fmAdapter = new FavoriteMemberAdapter(ctx, c, false);
+			
+			this.setOnItemClickListener(fmAdapter);
+			this.setAdapter(fmAdapter);
+			break;
+		default :
+		case User.TYPE_MEMBERLIST :
+			if(rootDepartment == null) {
+				try {
+					MemberManager.sharedManager().getMembers();
+				} catch(RuntimeException e) {
+					throw e;
+				}
+				rootDepartment = Department.root();
+			}	
+			MemberListAdapter adapter = new MemberListAdapter();
+			this.setOnItemClickListener(adapter);
+			this.setAdapter(adapter);
+			
+			break;		
+		}
+		
+		
+	}
+	
+	public void refresh() {
+		if(listAdapter == null) return;
+		if(listAdapter instanceof SimpleSectionAdapter) {
+			((SimpleSectionAdapter)listAdapter).notifyDataSetChanged();
+		} else if(listAdapter instanceof MemberListAdapter) {
+			((MemberListAdapter)listAdapter).notifyDataSetChanged();
+		}
+		
+	}
+	
+	protected Cursor selectAll() {
+		String sql = "SELECT * FROM "+this.tableName+";"; // sectionizer 를 위해 정렬을 한다.
+		
+		Cursor c = db.rawQuery(sql, null);
+		return c;
+	}
+	
+	private class FavoriteMemberAdapter extends CursorAdapter implements OnItemClickListener {
+		public FavoriteMemberAdapter(Context ctx, Cursor c, boolean autoRequery) {
+			super(ctx, c, autoRequery);
+		}
+		@Override
+		public View newView(Context ctx, Cursor c, ViewGroup parent) {
+			String idxs = c.getString(c.getColumnIndex("idxs"));
+			long TS = c.getLong(c.getColumnIndex("TS"));
+			String title = c.getString(c.getColumnIndex("title"));
+			boolean isGroup = c.getInt(c.getColumnIndex("isGroup")) == 1 ? true : false;
+			
+			LayoutInflater inflater = LayoutInflater.from(ctx);
+			View v = null;
+			if(isGroup) { 
+				v = inflater.inflate(R.layout.member_favorite_group_cell, parent,false);
+			} else {
+				v = inflater.inflate(R.layout.member_favorite_user_cell, parent,false);
+			}
+			return v; 
+		}
+		
+		@Override
+		public void bindView(View v, Context ctx, Cursor c) {
+			String idxs = c.getString(c.getColumnIndex("idxs"));
+			long TS = c.getLong(c.getColumnIndex("TS"));
+			String title = c.getString(c.getColumnIndex("title"));
+			boolean isGroup = c.getInt(c.getColumnIndex("isGroup")) == 1 ? true : false;
+			
+			ImageView userPicIV= (ImageView)v.findViewById(R.id.userPic);
+			TextView departmentTV= (TextView)v.findViewById(R.id.department);
+			TextView rankTV= (TextView)v.findViewById(R.id.rank);
+			TextView nameTV= (TextView)v.findViewById(R.id.name);
+			TextView roleTV= (TextView)v.findViewById(R.id.role);
+			Button goDetail = null;
+			if(isGroup) {
+				goDetail = (Button)v.findViewById(R.id.goDetail);
+			}
+			
+			String department = "";
+			String rank = "";
+			String name = "";
+			String role = "";
+			
+			departmentTV.setText(department);
+			rankTV.setText(rank);
+			nameTV.setText(name);
+			roleTV.setText(role);
+			
+			if(isGroup) {
+				goDetail.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO
+					}
+				});
+			}
+		}
+		
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,	long l_position) {
+			Intent intent = new Intent(getContext(), MemberDetailActivity.class);
+			//intent.putExtra("KEY", VALUE); TODO
+			int userIdx = MemberDetailActivity.NOT_SPECIFIED;
+			intent.putExtra("idx", 1);
+			getContext().startActivity(intent);
+			
+		}
+	}
+	
 	private class MemberListAdapter extends BaseAdapter implements OnItemClickListener {
 		
 		private CellNode models = new CellNode();
@@ -346,7 +474,7 @@ public class MemberListView extends ListView {
 				if(cn.type == CellNode.CELLNODE_USER) {
 				// node의 type이 USER이면 상세안내창 띄우기
 					Intent intent = new Intent(getContext(), MemberDetailActivity.class);
-					//intent.putExtra("KEY", VALUE);
+					//intent.putExtra("KEY", VALUE);	//TODO
 					int userIdx = MemberDetailActivity.NOT_SPECIFIED;
 					intent.putExtra("idx", 1);
 					getContext().startActivity(intent);
@@ -408,17 +536,6 @@ public class MemberListView extends ListView {
 			// TODO : register dataset??
 		}
 		
-		/*
-		 	ArrayList<Department> deps = rootDepartment.departments;
-
-			for(int i=0; i<deps.size(); i++) {
-				CellNode node = new CellNode.Builder().unfolded(true)
-													  .type(CellNode.CELLNODE_DEPARTMENT)
-													  .parentIndexPath(null)
-													  .index(i)
-													  .build();
-				models.add(node);
-		 */
 	}
 	
 	
@@ -545,304 +662,4 @@ public class MemberListView extends ListView {
 		
 	}
 	
-	/*
-	
-	class CellModel<String, V> extends HashMap<String, V> {
-		private static final long serialVersionUID = 7832721165457767737L;
-		public static final int CELLMODEL_NULL = -1;
-		public static final int CELLMODEL_USER = 1;
-		public static final int CELLMODEL_GROUP = 2;
-		
-		
-		private boolean _folded;
-		private int _index = -1;
-		private IndexPath _parentIndexPath = null;
-		public int type = CELLMODEL_NULL;
-		
-		public boolean isFolded() {
-			return _folded;
-		}
-		
-		public IndexPath getIndexPath() {
-			int idx = 0;
-			if(!(_index < 0)) {
-				idx = _index;
-			}
-			
-			return _parentIndexPath.indexPathByAddingIndex(idx);
-		}
-		
-		public void setParentIndexPath(IndexPath path) {
-			_parentIndexPath = path;
-		}
-		
-		public void setIndex(int index) {
-			_index = index;
-		}
-		
-		public int count() {
-			int result = 0;
-			
-			Collection<?> coll = this.values();
-			java.util.Iterator<?> itr =  coll.iterator();
-			
-			while(itr.hasNext()) {
-				Object obj = (Object)itr.next();
-				CellModelArray cma = null;
-				if(obj instanceof CellModelArray) {
-					cma = (CellModelArray)obj;
-					
-					int _temp = cma.count();
-					if(_temp > 0) {
-						result += _temp;
-					} else {
-						result += 0;
-					}
-				}
-			}
-			return (result+1);	// Cell을 의미하는 Object 자기 자신.
-		}
-	}
-	*/
-	/*
-	
-	class CellModelArray extends ArrayList<CellModel> {
-		public static final int CELLMODEL_NULL = -1;
-		public static final int CELLMODEL_USER = 1;
-		public static final int CELLMODEL_GROUP = 2;
-		
-		public int type = CELLMODEL_NULL;
-		
-		private IndexPath _parentIndexPath = null;
-		
-		public void setParentIndexPath(IndexPath path) {
-			_parentIndexPath = path;
-		}
-		public IndexPath getParentIndexPath() {
-			return _parentIndexPath;
-		}
-		public int count() {
-			int result = 0;
-			for(int i=0; i< this.size(); i++) {
-				result += this.get(i).count();
-			}
-			return result;
-		}
-	}
-	*/
-	
-	/*
-	private class MemberExpandableListAdapter extends BaseExpandableListAdapter {
-		private ArrayList<String> groupList = null;
-		private ArrayList<ArrayList<String>> childList = null;
-		private LayoutInflater inflater = null;
-		
-		public MemberExpandableListAdapter(Context context, JSONObject data) {
-			super();
-			this.inflater = LayoutInflater.from(context);
-			this.groupList = makeGroupList(data);
-			this.childList = makeChildList(data);
-			Log.v("MELA", "MELA!!");
-		}
-		
-		private ArrayList<String> makeGroupList(JSONObject data) {
-			ArrayList<String>list = new ArrayList<String>();
-			
-
-			
-			
-//			HashMap mDepartments = (HashMap)data.get("departments");
-//			ArrayList<HashMap> aDepartments = (ArrayList<HashMap>) mDepartments.values();
-//			Collections.sort(aDepartments, departmentComparator);
-			
-			//data는 DEP 준것이다. (안에는 departments와 users, title, sequece 이 있다.
-//			for(int i=0; i< aDepartments.size(); i++) {
-//				list.add((String)aDepartments.get(i).get("title"));
-//			}
-			
-			JSONArray departments = null;		
-			try {
-				JSONObject _json = data.getJSONObject("departments");
-				 departments = _json.toJSONArray(_json.names());
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-			ArrayList<JSONObject> sortedDepartments = sortDepartments(departments);
-			
-			ListIterator<JSONObject> li = sortedDepartments.listIterator();
-			while(li.hasNext()) {
-				JSONObject jo = li.next();
-				try {
-					list.add(jo.getString("title"));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return null;
-				}
-			}
-			
-			
-			return list;
-		}
-		
-		private ArrayList<JSONObject> sortDepartments (JSONArray departments)  {
-			ArrayList<JSONObject> sortedDepartments = new ArrayList<JSONObject>();
-			
-			for(int i=0; i<departments.length(); i++) {
-				try {
-					sortedDepartments.add(departments.getJSONObject(i));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					return (ArrayList<JSONObject>)null;
-				}
-			}
-			
-			final Comparator<JSONObject> departmentsComparator =
-					new Comparator<JSONObject>() {
-				@Override
-				public int compare(JSONObject jo1, JSONObject jo2) {
-					int i1;
-					int i2;
-					try {
-						i1 = jo1.getInt("sequence");
-						i2 = jo2.getInt("sequence");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return 0;
-					}
-					
-					if( i1 > i2) return 1;
-					if( i1 < i2) return -1;
-					return 0;
-				}
-			
-			};
-			
-			Collections.sort(sortedDepartments, departmentsComparator);
-			
-			return sortedDepartments;
-		
-		}
-		private ArrayList<ArrayList<String>> makeChildList(JSONObject data){
-			ArrayList<ArrayList<String>>list = new ArrayList<ArrayList<String>>();
-			ArrayList<String>subList = null;
-			
-			JSONArray departments = null;		
-			try {
-				JSONObject _json = data.getJSONObject("departments");
-				 departments = _json.toJSONArray(_json.names());
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-			ArrayList<JSONObject> sortedDepartments = sortDepartments(departments);
-			
-			ListIterator<JSONObject> li = sortedDepartments.listIterator();
-			while(li.hasNext()) {
-				subList = new ArrayList<String>();
-				//  각 
-				JSONObject jo = li.next();
-				
-				JSONArray subDepartments=null;
-				try {
-					JSONObject _subJo = jo.getJSONObject("departments");
-					subDepartments = _subJo.toJSONArray(_subJo.names());
-				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				
-				ArrayList<JSONObject> subSortedDepartments = sortDepartments(subDepartments);
-				
-				ListIterator<JSONObject> subLi = subSortedDepartments.listIterator();
-				while(subLi.hasNext()) {
-					JSONObject _jo = subLi.next();
-					try {
-						subList.add(_jo.getString("title"));
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return null;
-					}
-				}
-				
-				list.add(subList);
-			}
-					
-			return list;
-		}
-		
-//		public MemberExpandableListAdapter(Context context, ArrayList<String> groupList, ArrayList<ArrayList<String>> childList) {
-//			super();
-//			this.inflater = LayoutInflater.from(context);
-//			this.groupList = groupList;
-//			this.childList = childList;
-//		}
-		
-		@Override
-		public String getGroup(int groupPosition) {
-			return groupList.get(groupPosition);
-		}
-		
-		@Override
-		public int getGroupCount() {
-			return groupList.size();
-		}
-		
-		@Override
-		public long getGroupId(int groupPosition) {
-			return groupPosition;
-		}
-		
-		@Override
-		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-			View v = convertView;
-			
-			if(v == null) {
-				
-			}
-			return v;
-		}
-
-		@Override
-		public Object getChild(int arg0, int arg1) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public long getChildId(int arg0, int arg1) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public View getChildView(int arg0, int arg1, boolean arg2, View arg3,
-				ViewGroup arg4) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public int getChildrenCount(int arg0) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public boolean hasStableIds() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean isChildSelectable(int arg0, int arg1) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-	}
-	*/
 }
