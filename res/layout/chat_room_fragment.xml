@@ -11,8 +11,7 @@
         android:id="@+id/chatListView"
         android:layout_width="match_parent"
         android:layout_height="0dp" 
-        android:layout_weight="1" >
-    </kr.go.KNPA.Romeo.Chat.ChatListView>
+        android:layout_weight="1" />
 
     <include layout="@layout/chat_input_bar" />
 </LinearLayout>

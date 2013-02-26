@@ -66,25 +66,10 @@ public class SurveyListView extends ListView implements OnItemClickListener{
 		case Survey.NOT_SPECIFIED :	tableName = null;	break;
 		}
 		
-		if(tableName != null) {
-			Cursor c = selectAll();
-			if(c.getCount() == 0) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = 1;
-				options.inPreferredConfig = Config.RGB_565;
-				
-				Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.empty_set_background, options);
-				int height = src.getHeight();
-				int width = src.getWidth();
-				Bitmap resized = Bitmap.createScaledBitmap(src, width/options.inSampleSize, height/options.inSampleSize, true);
-				this.setBackgroundDrawable(new BitmapDrawable(getResources(), resized));			} else {
-				this.setBackgroundResource(R.color.light);
-			}
-			SurveyListAdapter surveyListAdapter = new SurveyListAdapter(context, c, false, this.type);		
-			this.setAdapter(surveyListAdapter);
-			this.setOnItemClickListener(this);
-			listAdapter = surveyListAdapter;
-		}
+		SurveyListAdapter surveyListAdapter = new SurveyListAdapter(context, null, false, this.type);		
+		this.setAdapter(surveyListAdapter);
+		this.setOnItemClickListener(this);
+		listAdapter = surveyListAdapter;
 		
 	}
 	
@@ -104,8 +89,24 @@ public class SurveyListView extends ListView implements OnItemClickListener{
 	}
 
 	public void refresh() {
-		if(listAdapter == null) return;
-		listAdapter.changeCursor(selectAll());		
+		if(listAdapter == null || tableName != null) return;
+		
+		Cursor c = selectAll();
+		if(c.getCount() == 0) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = 1;
+			options.inPreferredConfig = Config.RGB_565;
+			
+			Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.empty_set_background, options);
+			int height = src.getHeight();
+			int width = src.getWidth();
+			Bitmap resized = Bitmap.createScaledBitmap(src, width/options.inSampleSize, height/options.inSampleSize, true);
+			this.setBackgroundDrawable(new BitmapDrawable(getResources(), resized));			
+		} else {
+			this.setBackgroundResource(R.color.light);
+		}
+		
+		listAdapter.changeCursor(c);		
 		if(this.getAdapter() instanceof SimpleSectionAdapter)
 			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
 	}

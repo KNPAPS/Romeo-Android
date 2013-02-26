@@ -93,6 +93,7 @@ public class ChatFragment extends Fragment {
 		
 		RoomListView lv = getListView();
 		lv.setDatabase(db);
+		lv.refresh();
 	}
 	
 	@Override
@@ -121,6 +122,7 @@ public class ChatFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = setup(inflater, container, savedInstanceState);
+//		((RoomListView)view.findViewById(R.id.roomListView)).refresh();
 		return view;
 	}
 

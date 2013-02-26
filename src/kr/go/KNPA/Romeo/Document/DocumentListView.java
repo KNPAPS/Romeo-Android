@@ -58,23 +58,7 @@ public class DocumentListView extends ListView implements OnItemClickListener{
 		}
 	
 		final Context ctx = this.context;
-		DocumentListAdapter documentListAdapter = null;
-		if(tableName != null) {
-			Cursor c = selectAll();
-			if(c.getCount() == 0) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = 1;
-				options.inPreferredConfig = Config.RGB_565;
-				
-				Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.empty_set_background, options);
-				int height = src.getHeight();
-				int width = src.getWidth();
-				Bitmap resized = Bitmap.createScaledBitmap(src, width/options.inSampleSize, height/options.inSampleSize, true);
-				this.setBackgroundDrawable(new BitmapDrawable(getResources(), resized));			} else {
-				this.setBackgroundResource(R.color.light);
-			}
-			documentListAdapter = new DocumentListAdapter(context, c, false, this.type);
-		}
+		DocumentListAdapter documentListAdapter = new DocumentListAdapter(context, null, false, this.type);
 		switch(this.type) {
 		case Document.TYPE_DEPARTED :
 		case Document.TYPE_RECEIVED :
@@ -131,9 +115,22 @@ public class DocumentListView extends ListView implements OnItemClickListener{
 	}
 	
 	public void refresh() {
-		if(listAdapter == null) return;
-
- 		listAdapter.changeCursor(selectAll());
+		if(listAdapter == null || tableName==null) return;
+		Cursor c = selectAll();
+		if(c.getCount() == 0) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = 1;
+			options.inPreferredConfig = Config.RGB_565;
+			
+			Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.empty_set_background, options);
+			int height = src.getHeight();
+			int width = src.getWidth();
+			Bitmap resized = Bitmap.createScaledBitmap(src, width/options.inSampleSize, height/options.inSampleSize, true);
+			this.setBackgroundDrawable(new BitmapDrawable(getResources(), resized));			
+		} else {
+			this.setBackgroundResource(R.color.light);
+		}
+ 		listAdapter.changeCursor(c);
 		if(this.getAdapter() instanceof SimpleSectionAdapter)
 			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
 	}

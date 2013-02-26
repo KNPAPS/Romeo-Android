@@ -26,14 +26,19 @@ import android.widget.TextView;
 
 public class MemberListView extends ListView {
 
+	// Database
+	private SQLiteDatabase db;
+	public String tableName = null;
+	
+	// Variables
 	public static Department rootDepartment = null;
 	public int type = User.NOT_SPECIFIED;
 	private Context context = null;
-	public String tableName = null;
-	private DBManager dbManager;
-	private SQLiteDatabase db;
-
+	
+	// Adapter
 	public ListAdapter listAdapter;
+	
+	// Constructor
 	public MemberListView(Context context) {
 		this(context, null);
 	}
@@ -44,11 +49,27 @@ public class MemberListView extends ListView {
 
 	public MemberListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		dbManager = new DBManager(getContext());
-		db = dbManager.getWritableDatabase();
 		this.context = context;
 	}
 	
+	
+	// Database management
+	public void setDatabase(SQLiteDatabase db) {
+		this.db = db;
+	}
+	
+	public void unsetDatabase() {
+		this.db = null;
+	}
+	
+	protected Cursor selectAll() {
+		String sql = "SELECT * FROM "+this.tableName+";"; // sectionizer 를 위해 정렬을 한다.
+		
+		Cursor c = db.rawQuery(sql, null);
+		return c;
+	}
+	
+	// View management
 	public void setType (int type) {
 		this.type = type;
 
@@ -102,13 +123,7 @@ public class MemberListView extends ListView {
 		
 	}
 	
-	protected Cursor selectAll() {
-		String sql = "SELECT * FROM "+this.tableName+";"; // sectionizer 를 위해 정렬을 한다.
-		
-		Cursor c = db.rawQuery(sql, null);
-		return c;
-	}
-	
+	// Inner Class Favorite Member Adapter //
 	private class FavoriteMemberAdapter extends CursorAdapter implements OnItemClickListener {
 		public FavoriteMemberAdapter(Context ctx, Cursor c, boolean autoRequery) {
 			super(ctx, c, autoRequery);
@@ -179,6 +194,7 @@ public class MemberListView extends ListView {
 		}
 	}
 	
+	// Inner Class Member List Adapter //
 	private class MemberListAdapter extends BaseAdapter implements OnItemClickListener {
 		
 		private CellNode models = new CellNode();
@@ -538,7 +554,7 @@ public class MemberListView extends ListView {
 		
 	}
 	
-	
+	// Inner Class Cell node MODEL
 	static class CellNode extends ArrayList<CellNode> {
 
 		private static final long serialVersionUID = 498188955518204141L;

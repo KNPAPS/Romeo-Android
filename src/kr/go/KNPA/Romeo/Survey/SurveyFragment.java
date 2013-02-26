@@ -95,7 +95,11 @@ public class SurveyFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return setup(inflater, container, savedInstanceState);
+		View view = setup(inflater, container, savedInstanceState); 
+//		SurveyListView lv = ((SurveyListView)view.findViewById(R.id.surveyListView));
+//		lv.setD
+//				.refresh();
+		return view; 
 	}
 
 	private View setup(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

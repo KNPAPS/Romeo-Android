@@ -93,25 +93,9 @@ public class RoomListView extends ListView implements OnItemClickListener {
 			}
 		};
 		
-		RoomListAdapter roomListAdapter = null; 
-		if(this.tableName != null) {
-			Cursor c = selectAll();
-			if(c.getCount() == 0) {
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = 1;
-				options.inPreferredConfig = Config.RGB_565;
-				
-				Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.empty_set_background, options);
-				int height = src.getHeight();
-				int width = src.getWidth();
-				Bitmap resized = Bitmap.createScaledBitmap(src, width/options.inSampleSize, height/options.inSampleSize, true);
-				this.setBackgroundDrawable(new BitmapDrawable(getResources(), resized));
-			} else {
-				this.setBackgroundResource(R.color.light);
-			}
-			roomListAdapter = new RoomListAdapter(context, c, false, this.type);
-			listAdapter = roomListAdapter; 
-		}
+		RoomListAdapter roomListAdapter = new RoomListAdapter(context, null, false, this.type);
+		listAdapter = roomListAdapter;
+	
 		 SimpleSectionAdapter<Cursor> sectionAdapter
 			= new SimpleSectionAdapter<Cursor>(context, roomListAdapter, R.layout.section_header, R.id.cell_title, sectionizer);
 		this.setAdapter(sectionAdapter);
@@ -120,9 +104,24 @@ public class RoomListView extends ListView implements OnItemClickListener {
 	}
 	
 	public void refresh() {
-		if(listAdapter == null) return;
+		if(listAdapter == null || this.tableName == null) return;
+ 
+		Cursor c = selectAll();
+		if(c.getCount() == 0) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inSampleSize = 1;
+			options.inPreferredConfig = Config.RGB_565;
+			
+			Bitmap src = BitmapFactory.decodeResource(getResources(), R.drawable.empty_set_background, options);
+			int height = src.getHeight();
+			int width = src.getWidth();
+			Bitmap resized = Bitmap.createScaledBitmap(src, width/options.inSampleSize, height/options.inSampleSize, true);
+			this.setBackgroundDrawable(new BitmapDrawable(getResources(), resized));
+		} else {
+			this.setBackgroundResource(R.color.light);
+		}
 
-		listAdapter.changeCursor(selectAll());
+		listAdapter.changeCursor(c);
 		if(this.getAdapter() instanceof SimpleSectionAdapter)
 			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
 	}

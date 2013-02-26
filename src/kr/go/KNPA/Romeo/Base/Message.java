@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.database.Cursor;
 import android.os.Parcel;
@@ -9,6 +10,7 @@ import android.os.Parcelable;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.Chat.Builder;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.Connection;
 
 public class Message implements Parcelable{
 
@@ -80,7 +82,18 @@ public class Message implements Parcelable{
 		return NOT_SPECIFIED;
 	}
 	public static void send() {
+		// Appendix
 		
+		// Message
+		
+		// Payload
+		HashMap<String, Object> data = null;
+		Connection conn = new Connection.Builder()
+										.url(Connection.HOST_URL + "/Message/sendMessageWithGCM")
+										.type(Connection.TYPE_POST)
+										.dataType(Connection.DATATYPE_JSON)
+										.data(data)
+										.build();
 	}
 	
 	

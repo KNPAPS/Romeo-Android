@@ -5,7 +5,9 @@ package kr.go.KNPA.Romeo.Member;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Document.DocumentListView;
 import kr.go.KNPA.Romeo.Util.DBManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,14 +23,19 @@ import android.widget.Toast;
  *
  */
 public class MemberFragment extends Fragment {
-
+	// preDefined Constants
 	public static final int NOT_SPECIFIED = -777;
 	public static final int TYPE_MEMBERLIST = 0;
 	public static final int TYPE_FAVORITE = 1;
 	
+	// Database
 	private DBManager dbManager;
+	private SQLiteDatabase db;
+	
+	// Variables
 	public int type = NOT_SPECIFIED;
 	
+	// Constructor
 	public MemberFragment() {
 		this(TYPE_MEMBERLIST);
 	}
@@ -37,11 +44,34 @@ public class MemberFragment extends Fragment {
 		this.type = type;
 	}
 	
+	// Fragment Life-cycle
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onResume() {
 		dbManager = new DBManager(getActivity());
+		db = dbManager.getWritableDatabase();
+
+		MemberListView lv = getListView();
+		lv.setDatabase(db);
+		//lv.refresh();
+		
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		MemberListView lv = getListView();
+		lv.unsetDatabase();
+		db.close();
+		db = null;
+		dbManager.close();
+		dbManager = null;
+		super.onPause();
 	}
 	
 	@Override
@@ -123,4 +153,14 @@ public class MemberFragment extends Fragment {
 		return view;
 	}
 
+	public MemberListView getListView() {
+		View view = ((ViewGroup)getView());
+		MemberListView lv = null;
+		
+		if(view!=null) {
+			lv = (MemberListView)view.findViewById(R.id.memberListView);
+		}
+		
+		return lv;
+	}
 }

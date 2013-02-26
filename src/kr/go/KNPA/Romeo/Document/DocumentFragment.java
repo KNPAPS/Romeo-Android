@@ -98,8 +98,9 @@ public class DocumentFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
-		return setup(inflater, container, savedInstanceState);
+		View view = setup(inflater, container, savedInstanceState);
+//		((DocumentListView)view.findViewById(R.id.documentListView)).refresh();
+		return view;
 	}
 
 	private View setup(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
