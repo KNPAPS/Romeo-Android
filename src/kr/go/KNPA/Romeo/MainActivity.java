@@ -1,17 +1,23 @@
 package kr.go.KNPA.Romeo;
 import com.google.android.gcm.GCMRegistrar;
 
+import android.app.FragmentManager.BackStackEntry;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.GetChars;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.widget.Toast;
 
 import kr.go.KNPA.Romeo.BaseActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Util.Preference;
 
@@ -19,6 +25,7 @@ import com.slidingmenu.lib.SlidingMenu;
 
 public class MainActivity extends BaseActivity {
 	static MainActivity _sharedActivity = null;
+	public static final int MEMBER_SEARCH_ACTIVITY = 1;
 	
 	private Fragment mContent;		// 현재 프레그먼트 
 	private Fragment oldFragment;
@@ -37,7 +44,7 @@ public class MainActivity extends BaseActivity {
 		Preference.initSharedPreference(getBaseContext());
 		registerGCM();
 		
-		
+		setUserInfo();
 		
 		// set the Above View
 				if (savedInstanceState != null)
@@ -134,6 +141,71 @@ public class MainActivity extends BaseActivity {
 		//http://raid79.tistory.com/661
 		//https://www.google.co.kr/#hl=ko&newwindow=1&sclient=psy-ab&q=GCM+%ED%86%A0%EC%8A%A4%ED%8A%B8&oq=GCM+%ED%86%A0%EC%8A%A4%ED%8A%B8&gs_l=hp.3...1011.7643.0.7696.17.13.3.0.0.3.132.1266.8j5.13.0.eappsweb..0.0...1.1j4.4.psy-ab.zyA55BqdMYc&pbx=1&bav=on.2,or.r_gc.r_pw.r_cp.r_qf.&bvm=bv.42768644,d.aGc&fp=45d2175d682c5ba8&biw=1024&bih=1185
 	}
+	
+
+	private void setUserInfo() {
+	// 임시로 사용되는 중이며, 
+	// 사용자 인증과정 도입 후 삭제한다.
+		Context context = MainActivity.this;
+		User.UserInfo.setUserIdx(context, 1);
+		User.UserInfo.setName(context, "유저1");
+		User.UserInfo.setDepartment(context, "부서165");
+		User.UserInfo.setDepartmentIdx(context, 165);
+		User.UserInfo.setRankIdx(context, 11);
+		User.UserInfo.setRank(context, "계급11");
+		Log.i("MainActivity", "UserInfo Set");
+		//User.UserInfo.setPicPath(context, path);
+		
+	}
+	
+
+	
+	 /* (non-Javadoc) * @see android.app.Activity#onKeyDown(int, android.view.KeyEvent) */ 
+	@Override 
+	public boolean onKeyUp(int keyCode, KeyEvent event) { 
+		if ( keyCode == KeyEvent.KEYCODE_MENU ) { 
+			toggle();
+			
+			return true; 
+		} 
+		
+		if ( keyCode == KeyEvent.KEYCODE_BACK) {
+			FragmentManager fm = getSupportFragmentManager(); 
+			int count = fm.getBackStackEntryCount();
+			if(count == 0) {
+				if(getSlidingMenu().isMenuShowing() == true) {
+					 finish();
+				} else {
+					showMenu();
+				}
+				return true;
+			} else {
+				fm.popBackStack();
+				return true;
+			}
+			
+		}
+		
+		return super.onKeyDown(keyCode, event); 
+	} 
+
+	/*
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		
+		return true;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(getSlidingMenu().isMenuShowing() == true) {
+			super.onBackPressed();
+		} else {
+			showMenu();
+		}
+		//Log.i("MainActivity", "BackbuttonPressed");
+	}
+	*/
 }
 
 

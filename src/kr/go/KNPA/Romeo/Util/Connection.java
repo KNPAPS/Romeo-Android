@@ -66,6 +66,7 @@ public class Connection {
 	private HttpURLConnection conn = null;
 
 	public String data = null;
+	public boolean isJSON = false;
 	public String response = null;
 
 	public int request() {//throws IOException {
@@ -118,24 +119,31 @@ public class Connection {
 
 		
 		if(data != null) {
-			
-			StringBuffer sb = new StringBuffer();
-			
-			Gson gson = new Gson();
-			HashMap<String, Object> hmap = gson.fromJson(data, HashMap.class);
-			Set keyset = hmap.keySet();
-			Object[] hKeys = keyset.toArray();
-			
-			for(int i=0; i<hKeys.length; i++) {
-				String key = (String)hKeys[i];
-				Object value = hmap.get(key);
+			String out = null;
+			if(isJSON == false) {
+				StringBuffer sb = new StringBuffer();
 				
-				sb.append(key).append("=").append(value.toString());//gson.toJson(value));
-				if(i != hKeys.length-1) {
-					sb.append("&");
+				Gson gson = new Gson();
+				HashMap<String, Object> hmap = gson.fromJson(data, HashMap.class);
+				Set keyset = hmap.keySet();
+				Object[] hKeys = keyset.toArray();
+				
+				for(int i=0; i<hKeys.length; i++) {
+					String key = (String)hKeys[i];
+					Object value = hmap.get(key);
+					
+					sb.append(key).append("=").append(value.toString());//gson.toJson(value));
+					if(i != hKeys.length-1) {
+						sb.append("&");
+					}
 				}
+				out = sb.toString();
+			} else {
+				out = "payload="+data;
 			}
-
+			
+			
+			
 			conn.setDoOutput(true);
 
 			OutputStream _os;
@@ -153,7 +161,7 @@ public class Connection {
 				throw re;
 			}
 			PrintWriter ps = new PrintWriter(_osw);
-			ps.write(sb.toString());
+			ps.write(out);
 			ps.flush();		
 //			os = conn.getOutputStream();
 //			os.write(data.getBytes());
@@ -167,7 +175,6 @@ public class Connection {
 		try {
 			responseCode = conn.getResponseCode();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			RuntimeException re = new RuntimeException(e);
 			throw re;
 		}
@@ -241,8 +248,6 @@ public class Connection {
 		try {
 			json = new JSONObject(response);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		return json;
@@ -323,8 +328,10 @@ public class Connection {
 			connection.type = this.type;
 			if(jsonData != null) {
 				connection.data = jsonData;
+				connection.isJSON = true;
 			} else if(data != null) {
 				connection.data = gson.toJson(this.data);
+				connection.isJSON = false;
 			}
 			connection.dataType = this.dataType;
 			connection.timeout = this.timeout;

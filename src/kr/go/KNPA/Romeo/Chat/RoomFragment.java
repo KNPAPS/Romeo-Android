@@ -1,39 +1,42 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.Base.Appendix;
+import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Member.MemberSearch;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 
-public class RoomFragment extends Fragment {
+public class RoomFragment extends RomeoFragment {
 
-	// Database
-	private	DBManager 		dbManager;
-	private	SQLiteDatabase	db;
-	
 	public Room room;
 	
 	// Constructor
-	public RoomFragment() {
-		// Empty Constructor
-	}
+	public RoomFragment() {	}
 	
 	public RoomFragment(Room room) {
 		this.room = room;
 	}
 
 	// Manage List View
-	private ChatListView getListView() {
+	public ChatListView getListView() {
 		View view = ((ViewGroup)getView());
 		ChatListView lv = null;
 		
@@ -48,32 +51,15 @@ public class RoomFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 	}
 
 	@Override
 	public void onResume() {
+		ChatFragment.setCurrentRoom(this);
 		super.onResume();
-	
-		dbManager = new DBManager(getActivity());
-		db = dbManager.getWritableDatabase();
-		
-		ChatListView clv = getListView();
-		clv.setDatabase(db);
-		// refresh?
-		clv.scrollToBottom();
-
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		ChatListView lv = getListView();
-		lv.unsetDatabase();
-		db.close();
-		db = null;
-		
-		dbManager.close();
-		dbManager = null;
+		getListView().scrollToBottom();
 	}
 
 	@Override
@@ -83,39 +69,108 @@ public class RoomFragment extends Fragment {
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		ChatFragment.setCurrentRoom(this);
+		OnClickListener lbbOnClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MainActivity.sharedActivity().toggle();
+			}
+		};
 		
-		String chatRoomTitle = null; // TODO //b.getString("title");
-		if(chatRoomTitle == null) chatRoomTitle = this.room.type==Chat.TYPE_COMMAND?getString(R.string.commandTitle):getString(R.string.meetingTitle);
+		OnClickListener rbbOnClickListener = new OnClickListener() {		
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), MemberSearch.class);
+				startActivity(intent);
+			}
+		};
 		
 		View view = inflater.inflate(R.layout.chat_room_fragment, null, false);
-		
-		ViewGroup navBar = (ViewGroup)view.findViewById(R.id.navigationBar);
-		TextView navBarTitleView = (TextView)navBar.findViewById(R.id.title);
-		navBarTitleView.setText(chatRoomTitle);
-		
-		Button lbb = (Button)navBar.findViewById(R.id.left_bar_button);
-		lbb.setText(R.string.menu);
-		
-		if(lbb.getVisibility() == View.VISIBLE) {
-			lbb.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					MainActivity.sharedActivity().toggle();
-				}
-			});
-		}
-		
-		Button rbb = (Button)navBar.findViewById(R.id.right_bar_button);
-		rbb.setText(R.string.edit);
+		initNavigationBar(
+				view, 
+				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
+				true, 
+				false, 
+				R.string.menu, 
+				R.string.edit, 
+				lbbOnClickListener, rbbOnClickListener);
 		
 		ChatListView listView = (ChatListView)view.findViewById(R.id.chatListView);
 		listView.setRoom(room);
-		return view; 
+		
+		
+		
+		
+		// Room Setting
+		final EditText inputET = (EditText)view.findViewById(R.id.edit);
+		final Button submitBT = (Button)view.findViewById(R.id.submit);
+		
+		inputET.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) { // 눌린 키 반영하기 전
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {// 눌린 키 반영 후
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {	// 결과		
+				if(s.length() > 0) submitBT.setEnabled(true);
+				else	submitBT.setEnabled(false);
+				Log.i("after", "e : "+submitBT.isEnabled());
+			}
+		});
+		
+		submitBT.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EditText et = inputET;
+				
+
+				
+				long senderIdx = User.UserInfo.getUserIdx(getActivity());
+				User sender = User.getUserWithIdx(senderIdx);
+				
+				ArrayList<User> roomUsers = room.users;
+				ArrayList<User> receivers = User.usersRemoveUserHavingIndex(roomUsers, senderIdx);
+				
+				
+				Appendix adx = new Appendix();
+				String roomCode = room.roomCode;
+				if(roomCode ==null) roomCode = senderIdx+":"+System.currentTimeMillis(); // TODO 같은방 채팅, 새 방 채팅.
+				Appendix.Attachment att = new Appendix.Attachment("roomCode", Appendix.makeType(Appendix.TYPE_1_PRIMITIVE, Appendix.TYPE_2_STRING), null, roomCode);
+				adx.add(att);
+				
+				
+				Chat chat = new Chat.Builder()
+									//.idx()
+									.type(room.type)
+									.content(et.getText().toString())
+									.appendix(adx)
+									.sender(sender)
+									.receivers(receivers)
+									.TS(System.currentTimeMillis())
+									.checked(true)
+									//.checkTS()
+									.toChatBuilder()
+									.build();
+				
+				// 마무리
+				et.setText("");
+				
+				// sending
+				chat.send(getActivity(), room);
+				
+				// 뷰에 추가 (refresh)?
+				getListView().refresh();
+				getListView().scrollToBottom();
+			}
+		});
+		
+		return view;
 	}
 	
 	// Message Receiving
@@ -138,4 +193,25 @@ public class RoomFragment extends Fragment {
 	}
 	
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		if(requestCode == MemberSearch.REQUEST_CODE) {
+			if(resultCode == Activity.RESULT_OK) {
+				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				ArrayList<User> newUsers = new ArrayList<User>();
+				
+				for(int i=0; i< receiversIdx.length; i++ ){
+					User user = User.getUserWithIdx(receiversIdx[i]);
+					if(room.users.contains(user)) continue;
+					newUsers.add(user);
+				}
+				room.users.addAll(newUsers);
+				
+				// TODO 초대했다는 메시지를 띄운다.
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 }

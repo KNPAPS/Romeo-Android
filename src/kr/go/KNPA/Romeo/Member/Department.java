@@ -28,6 +28,7 @@ public class Department {
 	private static Department _root;
 	public static JSONObject rootData;
 
+	public int selected = 0;
 	public Department() {
 		super();
 	}
@@ -158,8 +159,6 @@ public class Department {
 				try {
 					jDepartment = jDepartments.getJSONObject(i);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 				_departments.add(parseJSONObjectToDepartment(jDepartment));
 			}
@@ -171,7 +170,6 @@ public class Department {
 			try {
 				sequence = json.getLong("sequence");
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -181,8 +179,6 @@ public class Department {
 			try {
 				title = json.getString("title");
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 
@@ -193,7 +189,6 @@ public class Department {
 			try {
 				jUsers = json.getJSONArray("users");
 			} catch (JSONException e) {
-				e.printStackTrace();
 			}
 			
 			for(int i=0; i < jUsers.length(); i++) {
@@ -450,7 +445,6 @@ public class Department {
 		try {
 			result = from.getInt(key);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;

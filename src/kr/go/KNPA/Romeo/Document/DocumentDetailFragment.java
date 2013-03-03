@@ -1,5 +1,8 @@
 package kr.go.KNPA.Romeo.Document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,32 +18,34 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 
 public class DocumentDetailFragment extends Fragment {
 	private Document document;
 	private Context context;
-	
+	public int type;
 	public DocumentDetailFragment() {
 	}
 	
-	public DocumentDetailFragment(Document document) {
+	public DocumentDetailFragment(Document document, int type) {
 		super();
 		this.document = document;
+		this.type = type;
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		
+		document.setChecked(getActivity());
+		DocumentFragment.documentFragment(type).getListView().refresh();
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,6 +92,40 @@ public class DocumentDetailFragment extends Fragment {
 		// TODO
 		LinearLayout forwardsLL = (LinearLayout)view.findViewById(R.id.forwards);
 		
+		Appendix adx = this.document.appendix;
+		if(adx!=null) {
+			ArrayList<HashMap<String,String>> forwards = adx.getForwards();
+			if(forwards != null) {
+				HashMap<String, String> forward = null;
+				
+				TextView fForwarderTV = null;
+				TextView fArrivalDTTV = null;
+				TextView fContentTV = null;
+				String fForwarder = null;
+				String fArrivalDT = null;
+				String fContent = null;
+				
+				for(int i=forwards.size()-1 ; i>=0 ; i--) {
+					View forwardView = inflater.inflate(R.layout.document_forward, forwardsLL, false);
+					
+					forward = forwards.get(i);
+					fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
+					User u = User.getUserWithIdx(Integer.parseInt(forward.get("forwarder")));
+					fForwarder = u.getDepartmentFull() + " " + User.RANK[u.rank] + " " + u.name;
+					fForwarderTV.setText(fForwarder);
+					
+					fArrivalDTTV = (TextView)forwardView.findViewById(R.id.arrivalDT);
+					fArrivalDT = Formatter.timeStampToStringInRegularFormat(Long.parseLong(forward.get("TS")), context);
+					fArrivalDTTV.setText(fArrivalDT);
+					
+					fContentTV = (TextView)forwardView.findViewById(R.id.content);
+					fContent = forward.get("content");
+					fContentTV.setText(fContent);
+					
+					forwardsLL.addView(forwardView);
+				}
+			}
+		}
 		LinearLayout metaData = (LinearLayout)view.findViewById(R.id.metadata);
 		TextView titleTV = (TextView)metaData.findViewById(R.id.title);
 		titleTV.setText(this.document.title);
@@ -123,7 +162,7 @@ public class DocumentDetailFragment extends Fragment {
 				favorite.setBackgroundResource(_favoriteBackground);
 				
 				// 리스트 리로드??
-				
+				DocumentFragment.documentFragment(type).getListView().refresh();
 			}
 		});
 

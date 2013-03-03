@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
 import android.os.Bundle;
 
 public class Packet {
@@ -25,10 +27,11 @@ public class Packet {
 		// TODO ambiguous Type
 		int deviceStatus = Integer.parseInt(b.getString("deviceStatus"));
 		long departingTS = Long.parseLong(b.getString("departingTS"));
-		String collapse_key = b.getString("collapse_key");
-		long from = b.getLong("from");
+		//String collapse_key = b.getString("collapse_key");
+		//long from = b.getLong("from");
 		String __payload = b.getString("payload");
 
+		Gson gson = new Gson();
 		
 		JSONObject _payload;
 		try {
@@ -49,7 +52,6 @@ public class Packet {
 		String content				= null;
 		Appendix appendix			= null;
 		
-		// TODO : abandon raw Types
 		JSONArray _receivers		= null;
 		int _sender					= NOT_SPECIFIED;
 		JSONObject _appendix		= null;
@@ -125,7 +127,7 @@ public class Packet {
 				}
 				
 				if(_appendix != null) {
-					// TODO : make Appendix appendix;
+					appendix = new Appendix(_appendix.toString());///gson.fromJson(_appendix.toString(), Appendix.class);
 				} else {
 					appendix = new Appendix();
 				}
@@ -142,9 +144,7 @@ public class Packet {
 			message.title = title;
 			message.type = type;
 			message.idx = idx;
-			message._appendix = null;
-			if(_appendix != null)
-			 message._appendix = _appendix.toString();
+
 		}
 		
 		
@@ -155,20 +155,6 @@ public class Packet {
 										   .sender(sender)
 										   .receivers(receivers)
 										   .build();
-			
-			// TODO : abandon raw Types
-			int[] _receiversInt = new int[_receivers.length()];
-			if(_receivers != null) {
-				for(int i= 0; i<_receivers.length(); i++) {
-					try {
-						_receiversInt[i] = _receivers.getInt(i);
-					} catch (JSONException e) {
-					}
-				}
-			}
-			
-			payload._receivers = _receiversInt;
-			payload._sender = _sender;
 		}
 		
 		this.departingTS = departingTS;

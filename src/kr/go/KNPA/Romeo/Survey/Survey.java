@@ -1,12 +1,21 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Base.Payload;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.Room;
+import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.Encrypter;
 
 public class Survey extends Message implements Parcelable{
 	
@@ -14,10 +23,10 @@ public class Survey extends Message implements Parcelable{
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
 
-	// TODO : in to Appendix
 	public long openTS = NOT_SPECIFIED;
 	public long closeTS = NOT_SPECIFIED;
-
+	public boolean answered = false;
+	
 	// Constructor
 	public Survey() {
 	}
@@ -25,15 +34,12 @@ public class Survey extends Message implements Parcelable{
 	public Survey(Cursor c) {
 		super(c);
 		
-		this.type = getType();		
-
-		Appendix _appendix = new Appendix();// TODO
-		this.appendix = _appendix;
+		this.type = getType();
 
 		long _openTS = c.getLong(c.getColumnIndex("openTS"));
 		long _closeTS = c.getLong(c.getColumnIndex("closeTS"));
-		this.openTS = _openTS;
-		this.closeTS = _closeTS;
+		this.openTS = _openTS;		//???
+		this.closeTS = _closeTS;	//???
 	}
 
 	public Survey(Parcel source) {
@@ -54,6 +60,7 @@ public class Survey extends Message implements Parcelable{
 		this.appendix = payload.message.appendix;
 		this.openTS = payload.message.appendix.getOpenTS();
 		this.closeTS = payload.message.appendix.getCloseTS();
+		this.answered = payload.message.appendix.getAnswered();
 	}
 	
 	public Survey(Payload payload, boolean received, long checkTS) {
@@ -65,20 +72,61 @@ public class Survey extends Message implements Parcelable{
 		} else {
 			this.checked = true;
 		}
+		// answered TODO
 	}
 	
+	public Survey clone() {
+		Survey survey = new Survey();
+		
+		survey.idx = this.idx;
+		survey.title = this.title;
+		survey.type = this.type;
+		survey.content = this.content;
+		survey.appendix = this.appendix;
+		survey.sender = this.sender;
+		survey.receivers = this.receivers;
+		survey.TS = this.TS;
+		survey.received = this.received;
+		survey.checkTS = this.checkTS;
+		survey.checked = this.checked;			
+		survey.answered = this.answered;
+		survey.openTS = this.openTS;
+		survey.closeTS = this.closeTS;
+		return survey;
+	}
 	protected int getType() {
-		return Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + (received ? Survey.TYPE_RECEIVED : Survey.TYPE_DEPARTED);
+		return Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + (received ? Survey.TYPE_RECEIVED : Survey.TYPE_DEPARTED);
+	}
+	
+	public long openTS() {
+		return appendix.getOpenTS();
+	}
+	public long closeTS() {
+		return appendix.getCloseTS();
+	}
+	
+	public boolean answered() {
+		return false; // TODO
+	}
+	
+	
+	public void insertIntoDatabase(String tableName) {
+		
 	}
 	
 	public static class Builder extends Message.Builder{
 
 		protected long _openTS = NOT_SPECIFIED;
 		protected long _closeTS = NOT_SPECIFIED;
-
+		protected boolean _answered = false;
+		public Builder appendixAndTS(Appendix appendix) {
+			_appendix = appendix;
+			_openTS = appendix.getOpenTS();
+			_closeTS = appendix.getCloseTS();
+			return this;
+		}
 		public Builder appendix(Appendix appendix) {
 			_appendix = appendix;
-			//TODO openTS closeTS
 			return this;
 		}
 		public Builder openTS(long openTS) {
@@ -89,11 +137,15 @@ public class Survey extends Message implements Parcelable{
 			_closeTS = closeTS;
 			return this;
 		}
+		public Builder answered(boolean answered) {
+			_answered = answered;
+			return this;
+		}
 		public Builder toSurveyBuilder() {
 			return this;
 		}
 		public Survey build() {
-			
+			/*
 			Survey survey = (Survey)new Survey.Builder()
 											  .idx(_idx)
 											  .title(_title)
@@ -107,13 +159,90 @@ public class Survey extends Message implements Parcelable{
 											  .checkTS(_checkTS)
 											  .checked(_checked)
 											  .buildMessage();
+											  */
+			
+			Survey survey = new Survey();
+			
+			survey.idx = this._idx;
+			survey.title = this._title;
+			survey.type = this._type;
+			survey.content = this._content;
+			survey.appendix = this._appendix;
+			survey.sender = this._sender;
+			survey.receivers = this._receivers;
+			survey.TS = this._TS;
+			survey.received = this._received;
+			survey.checkTS = this._checkTS;
+			survey.checked = this._checked;			
+			survey.answered = this._answered;
 			survey.openTS = this._openTS;
 			survey.closeTS = this._closeTS;
 			return survey;
 		}
 	}
 
+	public boolean sendAnswerSheet(String json, Context context) {
+		boolean result = GCMMessageSender.sendSurveyAnswerSheet(json);
+		
+		// TODO : make Async
+		if(result == true) {
+			setAnswered(json, context);
+		}
+		
+		return result;
+	}
+	
+	public void setAnswered(String json, Context context) {
+		if(this.checked != false) {
 
+			DBManager dbManager = new DBManager(context);
+			SQLiteDatabase db = dbManager.getWritableDatabase();
+			
+			String tableName =  Message.getTableNameWithMessageType(this.type);
+			
+			ContentValues vals = new ContentValues();
+			vals.put("answered", 1);
+			vals.put("answersheet", Encrypter.objectToBytes(json));
+			db.update(tableName, vals, "idx=?", new String[] {this.idx+""});
+			
+			this.checked = true;
+			this.answered = true;
+		}
+	}
+	
+
+	public void send(Context context) {
+		long idx = super.send();
+		
+		
+		DBManager dbManager = new DBManager(context);
+		SQLiteDatabase db = dbManager.getWritableDatabase();
+		
+		// DB¿¡ µî·Ï
+		long currentTS = System.currentTimeMillis();
+		ContentValues vals = new ContentValues();
+		vals.put("title", this.title);
+		vals.put("content", this.content);
+		vals.put("appendix", this.appendix.toBlob());
+		vals.put("sender", this.sender.idx);
+		vals.put("receivers", User.usersToString(this.receivers));
+		vals.put("received", 0);
+		vals.put("TS", currentTS);
+		vals.put("checked", 1);
+		vals.put("openTS", this.openTS());
+		vals.put("closeTS", this.closeTS());
+		vals.put("checkTS", this.checkTS);
+		vals.put("answered", 0);
+		vals.put("idx", idx);
+		db.insert(DBManager.TABLE_SURVEY, null, vals);
+		
+		db.close();
+		dbManager.close();
+	}
+	
+	
+	
+	
 	
 
 	// Implements Parcelable
@@ -123,6 +252,8 @@ public class Survey extends Message implements Parcelable{
 		
 		dest.writeLong(openTS);
 		dest.writeLong(closeTS);
+		boolean[] ba = {answered}; 
+		dest.writeBooleanArray(ba);
 	}
 	
 	private void readRomParcel(Parcel source) {
@@ -130,6 +261,8 @@ public class Survey extends Message implements Parcelable{
 		
 		openTS = source.readLong();
 		closeTS = source.readLong();
+		boolean[] ba = source.createBooleanArray();
+		answered = ba[0];
 	}
 	
 	public static final Parcelable.Creator<Survey> CREATOR = new Parcelable.Creator<Survey>() {

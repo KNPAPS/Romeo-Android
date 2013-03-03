@@ -1,5 +1,6 @@
 package kr.go.KNPA.Romeo.Document;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +10,10 @@ import android.os.Parcelable;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Base.Payload;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.Room;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Document extends Message implements Parcelable{
@@ -32,7 +37,7 @@ public class Document extends Message implements Parcelable{
 		
 		this.type = getType();
 		
-		Appendix _appendix = new Appendix();// TODO
+		Appendix _appendix = Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
 		this.appendix = _appendix; 
 		
 		boolean _favorite = (c.getInt(c.getColumnIndex("favorite")) == 1? true : false);
@@ -68,6 +73,53 @@ public class Document extends Message implements Parcelable{
 		}
 	}
 	
+	public Document clone() {
+		Document document = new Document();
+		
+		document.idx = this.idx;
+		document.title = this.title;
+		document.type = this.type;
+		document.content = this.content;
+		document.appendix = this.appendix;
+		document.sender = this.sender;
+		document.receivers = this.receivers;
+		document.TS = this.TS;
+		document.received = this.received;
+		document.checkTS = this.checkTS;
+		document.checked = this.checked;			
+		
+		document.favorite = this.favorite;			
+		return document;
+	}
+	
+	public void insertIntoDatabase(Context context) {
+		
+		String tableName = null;
+		switch(this.type%MESSAGE_TYPE_DIVIDER) {
+			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
+			case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
+			case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
+		}
+		
+		DBManager dbManager = new DBManager(context);
+		SQLiteDatabase db = dbManager.getWritableDatabase();
+		ContentValues vals = new ContentValues();
+		vals.put("title", this.title);
+		vals.put("content", this.content);
+		vals.put("appendix", this.appendix.toBlob());
+		vals.put("sender", this.sender.idx);
+		vals.put("receivers", User.usersToString(this.receivers));
+		vals.put("received", (this.received?1:0));
+		vals.put("TS", System.currentTimeMillis());
+		vals.put("checked", (this.checked?1:0));							
+		vals.put("checkTS", this.checkTS);
+		vals.put("favorite", (this.favorite?1:0));
+		vals.put("idx", this.idx);
+		db.insert(tableName, null, vals);
+		db.close();
+		dbManager.close();
+	}
+	
 	public static class Builder extends Message.Builder {
 		protected boolean _favorite = false;
 		
@@ -77,7 +129,7 @@ public class Document extends Message implements Parcelable{
 		}
 		
 		public Document build() {
-			
+			/*
 			Document document = (Document) new Document.Builder()
 													   .idx(_idx)
 													   .title(_title)
@@ -91,6 +143,21 @@ public class Document extends Message implements Parcelable{
 													   .checkTS(_checkTS)
 													   .checked(_checked)
 													   .buildMessage();
+													   */
+			Document document = new Document();
+			
+			document.idx = this._idx;
+			document.title = this._title;
+			document.type = this._type;
+			document.content = this._content;
+			document.appendix = this._appendix;
+			document.sender = this._sender;
+			document.receivers = this._receivers;
+			document.TS = this._TS;
+			document.received = this._received;
+			document.checkTS = this._checkTS;
+			document.checked = this._checked;			
+			
 			document.favorite = this._favorite;			
 			return document;
 		}
@@ -107,8 +174,9 @@ public class Document extends Message implements Parcelable{
 			subType = Document.TYPE_FAVORITE;
 		}
 		
-		return Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
+		return Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
 	}
+
 	
 	// Manage if Favorite
 	public void setFavorite(boolean fav, Context context) {
@@ -158,4 +226,37 @@ public class Document extends Message implements Parcelable{
 		}
 		
 	};
+	
+	public void send(Context context) {
+		long idx = super.send();
+		
+		String tableName = null;
+		switch(this.type%MESSAGE_TYPE_DIVIDER) {
+			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
+			case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
+			case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
+		}
+		
+		DBManager dbManager = new DBManager(context);
+		SQLiteDatabase db = dbManager.getWritableDatabase();
+		long currentTS = System.currentTimeMillis();
+		
+		ContentValues vals = new ContentValues();
+		vals.put("title", this.title);
+		vals.put("content", this.content);
+		vals.put("appendix", this.appendix.toBlob());
+		vals.put("sender", this.sender.idx);
+		vals.put("receivers", User.usersToString(this.receivers));
+		vals.put("received", false);
+		vals.put("TS", currentTS);
+		vals.put("checked", true);							
+		vals.put("checkTS", this.checkTS);
+		vals.put("favorite", 0); //(this.favorite?1:0)
+		vals.put("idx", idx);
+		db.insert(tableName, null, vals);
+
+		db.close();
+		dbManager.close();
+
+	}
 }

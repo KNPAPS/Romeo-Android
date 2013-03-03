@@ -5,6 +5,8 @@
     android:background="@color/light"
     android:orientation="vertical" >
     
+    <include layout="@layout/navigation_bar" />
+    
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -130,7 +132,6 @@
 				    		android:layout_marginBottom = "@dimen/gapSmaller"
 				        android:orientation="vertical" >
 				
-				        <include layout="@layout/survey_question_result" />
 				    </LinearLayout>
 				    
 				</LinearLayout>

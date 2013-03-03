@@ -1,9 +1,11 @@
 package kr.go.KNPA.Romeo.Member;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Util.Formatter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +17,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MemberDetailActivity extends Activity implements OnClickListener {
 
@@ -27,24 +31,43 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 	Button goCommand;
 	Button goMeeting;
 	public MemberDetailActivity() {
-		// TODO Auto-generated constructor stub
 	}
 
  	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		
 		Intent intent = getIntent();
 		// intent.getStringExtra("KEY");
-		int idx = intent.getIntExtra("idx", NOT_SPECIFIED);
-		if(idx == NOT_SPECIFIED) {
-			finish();
-		} else {
-			// USer 정보를 얻어온다. TODO
+		
+		Bundle b = intent.getExtras();
+		
+		
+		boolean fromFavorite = b.getBoolean("fromFavorite");
+		boolean isGroup = false;
+		if(fromFavorite == true) {
+			isGroup = b.getBoolean("isGroup");	
 		}
+		
+		String title = b.getString("title");
+		long TS = b.getLong("TS");
+		
+		long[] idxs = b.getLongArray("idxs");
+		long idx = b.getLong("idx");
+		if(idxs == null) {
+			idxs = new long[1];
+			idxs[0] = idx;
+		}
+		
+		if((idxs.length==1 && idxs[0] == 0L) || idx == NOT_SPECIFIED) {
+			finish();
+		} //else {
+		
+		// User 정보를 얻어온다.
+		ArrayList<User> users = User.getUsersWithIndexes(idxs);
+		//}
 		
         //배경투명처리
 		/*
@@ -96,6 +119,23 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		goCommand.setOnClickListener(this);
 		goDocument.setOnClickListener(this);
 		goSurvey.setOnClickListener(this);
+		
+		
+		
+		ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
+		TextView departmentTV = (TextView)findViewById(R.id.department);
+		TextView rankTV = (TextView)findViewById(R.id.rank);
+		TextView nameTV = (TextView)findViewById(R.id.name);
+		
+		if(isGroup) {
+			nameTV.setText(title);
+		} else {
+			User user = users.get(0); 
+			departmentTV.setText(user.getDepartmentFull());
+			rankTV.setText(User.RANK[user.rank]);
+			nameTV.setText(user.name);
+			// TODO : userPic Setting
+		}
 	}
 
 	@Override

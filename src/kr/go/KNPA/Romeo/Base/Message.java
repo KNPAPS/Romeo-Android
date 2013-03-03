@@ -2,15 +2,25 @@ package kr.go.KNPA.Romeo.Base;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import com.google.gson.Gson;
+
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.Chat.Builder;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Connection;
+import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Message implements Parcelable{
 
@@ -23,6 +33,13 @@ public class Message implements Parcelable{
 	public static final int MESSAGE_TYPE_DOCUMENT = 1;
 	public static final int MESSAGE_TYPE_SURVEY = 2;
 
+	
+	public static final String MESSAGE_KEY_CHAT = "CHAT";
+	public static final String MESSAGE_KEY_MEETING = "MEETING";
+	public static final String MESSAGE_KEY_COMMAND = "COMMAND";
+	public static final String MESSAGE_KEY_DOCUMENT = "DOCUMENT";
+	public static final String MESSAGE_KEY_SURVEY = "SURVEY";
+	
 	
 	// Variables to be sent
 	public long 			idx 		= NOT_SPECIFIED;
@@ -44,10 +61,6 @@ public class Message implements Parcelable{
 	// Variables NOT to be sent
 	public boolean received;
 	
-	// TODO : abandon raw Types
-	public String _appendix;
-	
-	
 	
 	public Message() {
 		
@@ -58,16 +71,17 @@ public class Message implements Parcelable{
 		//type
 		String 			_title 		= c.getString(c.getColumnIndex("title"));
 		String 			_content 	= c.getString(c.getColumnIndex("content"));
-		//appendix
-		User 			_sender		= User.getUserWithIdx(c.getLong(c.getColumnIndex("idx")));
+		Appendix		_appendix	= Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
+		User 			_sender		= User.getUserWithIdx(c.getLong(c.getColumnIndex("sender")));
 		ArrayList<User> _receivers 	= User.indexesInStringToArrayListOfUser(c.getString(c.getColumnIndex("receivers")));
 		long 			_TS			= c.getLong(c.getColumnIndex("TS"));
 		boolean 		_checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
 		long 			_checkTS	= c.getLong(c.getColumnIndex("checkTS"));
-		boolean 		_received 	= (c.getInt(c.getColumnIndex("idx")) == 1 ? true : false);
+		boolean 		_received 	= (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);
 		
 		this.idx 		= _idx;
 		this.title 		= _title;
+		this.appendix 	= _appendix;
 		this.content 	= _content;
 		this.sender		= _sender;
 		this.receivers 	= _receivers;
@@ -81,21 +95,34 @@ public class Message implements Parcelable{
 	protected int getType() {
 		return NOT_SPECIFIED;
 	}
-	public static void send() {
-		// Appendix
-		
-		// Message
-		
-		// Payload
-		HashMap<String, Object> data = null;
-		Connection conn = new Connection.Builder()
-										.url(Connection.HOST_URL + "/Message/sendMessageWithGCM")
-										.type(Connection.TYPE_POST)
-										.dataType(Connection.DATATYPE_JSON)
-										.data(data)
-										.build();
+	
+	public static int makeType(int type, int subType) {
+		return type * Message.MESSAGE_TYPE_DIVIDER + subType;
 	}
 	
+	public String toJSON() {
+		final String q = "\"";
+		final String c = ":";
+		final String lb = "[";
+		final String rb = "]";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append(q).append("type").append(q).append(c).append(type).append(",");
+		sb.append(q).append("idx").append(q).append(c).append(idx).append(",");
+		sb.append(q).append("title").append(q).append(c).append(q).append(title).append(q).append(",");
+		sb.append(q).append("content").append(q).append(c).append(q).append(content).append(q).append(",");
+		sb.append(q).append("appendix").append(q).append(c).append(appendix.toJSON());
+		sb.append("}");
+		
+		return sb.toString();
+		
+	}
+	
+
+	public long send() {
+		return GCMMessageSender.sendMessage(this);
+	}
 	
 	public static class Builder {
 		protected long 			_idx 		= NOT_SPECIFIED;
@@ -180,6 +207,7 @@ public class Message implements Parcelable{
 			return (kr.go.KNPA.Romeo.Survey.Survey.Builder)this;
 		}
 		
+		
 		public Message buildMessage() {
 			Message message = new Message();
 			message.idx = this._idx;
@@ -195,12 +223,12 @@ public class Message implements Parcelable{
 			message.checked = this._checked;			
 			return message;
 		}
+		
 	}
 	
 	// Implements Parcelable
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	
@@ -232,5 +260,100 @@ public class Message implements Parcelable{
 		boolean[] ba = source.createBooleanArray();
 		received = ba[0];
 		checked = ba[1];		
+	}
+	
+	//	getting Message Uncheckers
+	public static long[] getUncheckersInIntArrayWithMessageTypeAndIndex(int type, long index) {
+		String __uncheckers = GCMMessageSender.requestUncheckers(type, index);
+		String[] _uncheckers = __uncheckers.split("/[^0-9]+");
+		long[] uncheckers = new long[(_uncheckers.length-2)];
+		for(int i=0; i< uncheckers.length; i++) {
+			uncheckers[i] = Long.getLong(_uncheckers[i+1]);
+		}
+		
+		return uncheckers;
+	}
+	
+	public static long[] getUncheckersInIntArrayWithMessage(Message message) {
+		return getUncheckersInIntArrayWithMessageTypeAndIndex(message.type, message.idx);
+	}
+	
+	public static ArrayList<User> getUncheckersInUsersWithMessageTypeAndIndex(int type, long index) {
+		long[] uncheckers = getUncheckersInIntArrayWithMessageTypeAndIndex(type, index);
+		return User.getUsersWithIndexes(uncheckers);
+	}
+	
+	public static ArrayList<User> uncheckersInUsersWithMessageTypeAndIndex(int type, long index) {
+		long[] uncheckers = getUncheckersInIntArrayWithMessageTypeAndIndex(type, index);
+		return User.usersWithIndexes(uncheckers);
+	}
+	
+	public static ArrayList<User> getUncheckersInUsersWithMessage(Message message) {
+		long[] uncheckers = getUncheckersInIntArrayWithMessage(message);
+		return User.getUsersWithIndexes(uncheckers);
+	}
+	
+	public static ArrayList<User> uncheckersInUsersWithMessage(Message message) {
+		long[] uncheckers = getUncheckersInIntArrayWithMessage(message);
+		return User.usersWithIndexes(uncheckers);
+	}
+	
+	public void setChecked(Context context) {
+		if(this.checked == false) {
+			
+			// TODO : make Async
+			boolean result = GCMMessageSender.setMessageChecked(context, this.type, this.idx);
+			
+			if(result == true) {
+				
+				DBManager dbManager = new DBManager(context);
+				SQLiteDatabase db = dbManager.getWritableDatabase();
+				
+				String tableName =  Message.getTableNameWithMessageType(this.type);
+				
+				ContentValues vals = new ContentValues();
+				vals.put("checked", 1);
+				db.update(tableName, vals, "idx=?", new String[] {this.idx+""});
+				
+				this.checked = true;
+				
+			}
+			
+		} else {
+			return;
+		}
+	}
+	
+	
+	public static String getTableNameWithMessageType(int type) {
+		int messageType = type/MESSAGE_TYPE_DIVIDER;
+		int messageSubType = type%MESSAGE_TYPE_DIVIDER;
+		
+		String tableName = null;
+		if(messageType == Message.MESSAGE_TYPE_CHAT) {
+			switch(messageSubType) {
+				case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
+				case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
+			}
+		} else if(messageType == Message.MESSAGE_TYPE_DOCUMENT) {
+			switch(messageSubType) {
+				case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
+				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
+				case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
+			}
+			
+		} else if(messageType == Message.MESSAGE_TYPE_SURVEY) {
+			switch(messageSubType) {
+				case Survey.TYPE_DEPARTED : tableName = DBManager.TABLE_SURVEY; break;
+				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_SURVEY; break;
+			}
+		}
+		
+		return tableName;
+		
+	}
+	
+	public static String getTableNameWithMassage(Message message) {
+		return getTableNameWithMessageType(message.type);
 	}
 }

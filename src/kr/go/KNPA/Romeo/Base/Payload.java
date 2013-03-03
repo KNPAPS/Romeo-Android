@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Base;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import kr.go.KNPA.Romeo.Member.User;
 
@@ -9,13 +10,35 @@ public class Payload {
 	public String 			event;
 	public User 			sender;
 	public ArrayList<User> 	receivers;
-	public String 			roomCode;
+//	public String 			roomCode;
 	public Message 			message;
 	
-	// TODO : abandon raw Types
-	public int _sender;
-	public int[] _receivers;
-	
+	public String toJSON() {
+		final String q = "\"";
+		final String c = ":";
+		final String lb = "[";
+		final String rb = "]";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append(q).append("event").append(q).append(c).append(q).append(event).append(q).append(",");
+		sb.append(q).append("sender").append(q).append(c).append(message.sender.toJSON()).append(",");
+		sb.append(q).append("receivers").append(q).append(c).append(lb);
+		Iterator<User> itr = message.receivers.iterator();
+		User receiver = null;
+		while(itr.hasNext()) {
+			receiver = itr.next();
+			sb.append(receiver.toJSON());
+			if(itr.hasNext())
+				sb.append(",");
+		}
+		sb.append(rb).append(",");
+		
+		sb.append(q).append("message").append(q).append(c).append(message.toJSON());
+		sb.append("}");
+		
+		return sb.toString();
+	}
 	public static class Builder {
 		private String 				_event;
 		private User 				_sender;

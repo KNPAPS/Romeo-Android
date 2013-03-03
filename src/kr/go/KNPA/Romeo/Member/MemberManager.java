@@ -10,6 +10,10 @@ import org.json.JSONObject;
 
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
 import kr.go.KNPA.Romeo.Util.Connection;
+import kr.go.KNPA.Romeo.Util.DBManager;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -159,5 +163,34 @@ public class MemberManager {
 		Department.root().fetch(jo);
 	}
 	
+	public String dbToJSON(Context context) {
+		StringBuilder json = new StringBuilder();
+		
+		DBManager dbManager = new DBManager(context);
+		SQLiteDatabase db = dbManager.getReadableDatabase();
+		
+		String sql = "SELECT * FROM "+DBManager.TABLE_DEPARTMENT+ 
+					" WHERE enabled=1 AND shown=1 ORDERBY sequence ASC";
+		Cursor c = db.rawQuery(sql, null);
+		
+		;
+		for(int i=0; i<c.getCount(); i++) {
+			String level1 = (c.getString(c.getColumnIndex("level1"))).trim();
+			String level2 = (c.getString(c.getColumnIndex("level2"))).trim();
+			String level3 = (c.getString(c.getColumnIndex("level3"))).trim();
+			String level4 = (c.getString(c.getColumnIndex("level4"))).trim();
+			String level5 = (c.getString(c.getColumnIndex("level5"))).trim();
+			String level6 = (c.getString(c.getColumnIndex("level6"))).trim();
+			
+			
+			
+			if(!c.isLast()) c.moveToNext();
+		}
+		
+		
+		db.close();
+		dbManager.close();
+		return json.toString();
+	}
 	
 }

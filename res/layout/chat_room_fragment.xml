@@ -10,6 +10,7 @@
     <kr.go.KNPA.Romeo.Chat.ChatListView
         android:id="@+id/chatListView"
         android:layout_width="match_parent"
+        android:isScrollContainer="true"
         android:layout_height="0dp" 
         android:layout_weight="1" />
 

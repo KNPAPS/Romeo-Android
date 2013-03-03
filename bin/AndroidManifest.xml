@@ -25,12 +25,14 @@
 		
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"  >
         <activity
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:name="kr.go.KNPA.Romeo.MainActivity"  
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|keyboardHidden"
+            android:name="kr.go.KNPA.Romeo.MainActivity" 
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,9 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity  android:name="kr.go.KNPA.Romeo.FragmentChangeActivity" ></activity>
-				<activity  android:name="kr.go.KNPA.Romeo.BaseActivity" ></activity>
-				
+
 				<activity 
 						android:name="kr.go.KNPA.Romeo.Member.MemberDetailActivity"
             android:theme="@android:style/Theme.Dialog"
@@ -49,14 +49,13 @@
 				</activity>
 				
 				<activity 
-						android:name="kr.go.KNPA.Romeo.Chat.RoomFragment"
+						android:name="kr.go.KNPA.Romeo.Survey.SurveyComposeFragment"
             android:theme="@android:style/Theme.NoTitleBar"
 						android:windowSoftInputMode="stateHidden" >
 				</activity>
 				
-				
 				<activity 
-						android:name="kr.go.KNPA.Romeo.Survey.SurveyComposeActivity"
+						android:name="kr.go.KNPA.Romeo.Member.MemberSearch"
             android:theme="@android:style/Theme.NoTitleBar"
 						android:windowSoftInputMode="stateHidden" >
 				</activity>

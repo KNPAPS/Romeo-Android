@@ -28,6 +28,13 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/isMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="22dp"
+        android:text="@string/question_is_multiple" />
+
     <LinearLayout
         android:id="@+id/options"
         android:layout_width="match_parent"

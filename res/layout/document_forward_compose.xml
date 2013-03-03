@@ -35,6 +35,12 @@
 
             <Button
                 android:id="@+id/receivers_search"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginRight="@dimen/gap"
+                android:background="@color/transparent" />
+            <Button
+                
                 android:layout_gravity="right|center_vertical"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
@@ -51,6 +57,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:ems="10"
+        android:gravity="top"
         android:layout_marginRight ="@dimen/gap"
         android:layout_marginBottom ="@dimen/gap"
         android:layout_marginLeft ="@dimen/gap"

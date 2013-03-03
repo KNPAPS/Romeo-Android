@@ -18,7 +18,7 @@ public class IndexPath {
 		initPath();
 	}
 	
-	public IndexPath copy() {
+	public IndexPath clone() {
 		int[] indexes = this.getIndexes(null);
 		IndexPath ip = indexPathWithIndexesAndLength(indexes, indexes.length);
 		return ip;
@@ -88,7 +88,7 @@ public class IndexPath {
 	}
 	
 	public IndexPath indexPathByAddingIndex(int index) {
-		IndexPath ip = this.copy();
+		IndexPath ip = this.clone();
 		int _len = ip.length();
 		ip.p[_len] = index;
 		
@@ -110,7 +110,7 @@ public class IndexPath {
 	}
 	
 	public IndexPath indexPathByRemovingLastIndex() {
-		IndexPath ip = this.copy();
+		IndexPath ip = this.clone();
 		int _len = Math.max(ip.length(), 1);
 		ip.p[_len-1] = INDEXPATH_NULL;
 		

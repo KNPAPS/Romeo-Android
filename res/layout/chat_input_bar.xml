@@ -37,6 +37,7 @@
         android:layout_marginLeft="@dimen/gapSmaller"
         android:background="@color/lighter"
         android:minWidth="48dp"
+        android:enabled="false"
         android:text="@string/send" />
 
 </LinearLayout>

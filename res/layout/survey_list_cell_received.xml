@@ -76,6 +76,7 @@
 			    android:layout_marginRight="@dimen/gap"
 			    android:layout_gravity="center_vertical"
 			    android:background="@color/transparent"
+			    android:focusable="false"
 			    android:textSize="12sp"
 			    android:textColor="@color/black" />
 				

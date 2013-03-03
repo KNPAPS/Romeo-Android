@@ -15,7 +15,9 @@ public class DBManager extends SQLiteOpenHelper {
 	public static final String TABLE_MEETING = "meeting";
 	public static final String TABLE_SURVEY = "survey";
 	public static final String TABLE_DOCUMENT = "document";
+	public static final String TABLE_MEMBER_FAVORITE = "member_favorite";
 	public static final String TABLE_MEMBER = "member";
+	public static final String TABLE_DEPARTMENT = "department";
 
 	private static final String TAG = "DBManager";
 	
@@ -68,6 +70,7 @@ public class DBManager extends SQLiteOpenHelper {
 				" TS INTEGER,"+
 				" checked BOOL DEFAULT 0, " +
 				" checkTS INTEGER, openTS INTEGER,"+
+				" answersheet BLOB, answered BOOL DEFAULT 0,"+
 				" closeTS INTEGER, idx INTEGER)";
 		try {
 			db.execSQL(sql);
@@ -93,7 +96,7 @@ public class DBManager extends SQLiteOpenHelper {
 		}
 		
 		// Favorite Members Table
-		sql = "CREATE  TABLE "+TABLE_MEMBER+
+		sql = "CREATE  TABLE "+TABLE_MEMBER_FAVORITE+
 				" ("+BaseColumns._ID+
 				" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,"+
 				" idxs VARCHAR NOT NULL ," +
@@ -110,7 +113,6 @@ public class DBManager extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
-		// TODO Auto-generated method stub
 
 	}
 

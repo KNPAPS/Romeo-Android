@@ -4,13 +4,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Util.Encrypter;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class User implements Parcelable{
-	public final static int NOT_SPECIFIED = -777;
+	// preDefined Constants
+	public static final int NOT_SPECIFIED = -777;
 	public static final int TYPE_MEMBERLIST = 0;
 	public static final int TYPE_FAVORITE = 1;
+	public static final int TYPE_MEMBERLIST_SEARCH = 10;
+	public static final int TYPE_FAVORITE_SEARCH = 11;
+	
 	public static final int MAX_LEVEL_DEPTH = 6;
 	
 	public final static String[] RANK = {"치안총감", "치안정감", "치안감", "경무관", "총경", "경정", "경감", "경위", "경사", "경장", "순경", "의경"};
@@ -25,6 +34,7 @@ public class User implements Parcelable{
 	public int rank;
 	public long TS;
 	
+	public int selected = 0;
 	public User(int idx) {
 	}
 	
@@ -133,6 +143,23 @@ public class User implements Parcelable{
 		return _user.clone();
 	}
 	
+	public static ArrayList<User> getUsersWithIndexes(long[] idxs) {
+		ArrayList<User> result = new ArrayList<User>(idxs.length);
+		for(int i=0; i<idxs.length; i++) {
+			result.add(getUserWithIdx(idxs[i]));
+		}
+		
+		return result;
+	}
+	
+	public static ArrayList<User> usersWithIndexes(long[] idxs) {
+		ArrayList<User> result = new ArrayList<User>(idxs.length);
+		for(int i=0; i<idxs.length; i++) {
+			result.add(userWithIdx(idxs[i]));
+		}
+		return result;
+	}
+	
 	public User clone() {
 		return new User.Builder()
 		.department(department)
@@ -203,6 +230,36 @@ public class User implements Parcelable{
 		return result;
 	}
 
+	public static ArrayList<User> removeUserHavingIndex(ArrayList<User>users, long idx) {
+		Iterator<User> itr = users.iterator();
+		int i=0;
+		User u = null;
+		while(itr.hasNext()) {
+			u = itr.next();
+			if(u.idx == idx) {
+				users.remove(u);
+				break;
+			}
+			i++;
+		}
+		return users;
+	}
+	
+	public static ArrayList<User> usersRemoveUserHavingIndex(ArrayList<User>users, long idx) {
+		ArrayList<User> _users = (ArrayList<User>)users.clone();
+		Iterator<User> itr = _users.iterator();
+		int i=0;
+		User u = null;
+		while(itr.hasNext()) {
+			u = itr.next();
+			if(u.idx == idx) {
+				_users.remove(u);
+				break;
+			}
+			i++;
+		}
+		return _users;
+	}
 	public String getDepartmentFull() {
 		StringBuffer sb = new StringBuffer();
 		for(int i=0; i<levels.length ; i++) {
@@ -220,6 +277,17 @@ public class User implements Parcelable{
 		return sb.toString();
 	}
 
+	public long toJSON() {
+		return idx;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public int describeContents() {
 		return 0;
@@ -287,4 +355,88 @@ public class User implements Parcelable{
 		}
 		
 	};
+	
+	public static class UserInfo {
+		public static String PREFERENCE_NAME = "userInfo";
+		public static void setName(Context context, String name) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("name", Encrypter.sharedEncrypter().encrypteString(name));
+			e.commit();
+		}
+		public static String getName(Context context) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("name", context.getString(R.string.name)));
+		}
+		
+		public static void setDepartment(Context context, String department) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("department", Encrypter.sharedEncrypter().encrypteString(department));
+			e.commit();
+			
+		}
+		public static String getDepartment(Context context) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("department", context.getString(R.string.department)));
+		}
+		
+		public static void setDepartmentIdx(Context context, long idx) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("departmentIdx", Encrypter.sharedEncrypter().encrypteString(""+idx));
+			e.commit();
+		}
+		public static long getDepartmentIdx(Context context) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("departmentIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
+			return Long.parseLong(_var);
+		}
+		
+		public static void setUserIdx(Context context, long idx) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("userIdx", Encrypter.sharedEncrypter().encrypteString(""+idx));
+			e.commit();
+		}
+		public static long getUserIdx(Context context) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("userIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
+			return Long.parseLong(_var); 
+		}
+		
+		public static void setRankIdx(Context context, int rank) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("rankIdx", Encrypter.sharedEncrypter().encrypteString(""+rank));
+			e.commit();
+		}
+		public static int getRankIdx(Context context, int rank) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("rankIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
+			return Integer.parseInt(_var);
+		}
+		
+		public static void setRank(Context context, String rank) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("rank", Encrypter.sharedEncrypter().encrypteString(rank));
+			e.commit();
+		}
+		public static String getRank(Context context) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("rank", context.getString(R.string.rank)));
+		}
+		
+		public static void setPicPath(Context context, String path) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor e = prefs.edit();
+			e.putString("picPath", Encrypter.sharedEncrypter().encrypteString(path));
+			e.commit();
+		}
+		public static String getPicPath(Context context, String path) {
+			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("picPath", null));
+		}
+	}
 }

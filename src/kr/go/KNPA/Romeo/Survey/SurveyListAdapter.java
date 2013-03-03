@@ -2,24 +2,28 @@ package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 class SurveyListAdapter extends CursorAdapter {
 	// Variables
-	public int type = Document.NOT_SPECIFIED;
+	public int type = Survey.NOT_SPECIFIED;
 	
 	// Constructor
 	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) {
@@ -69,7 +73,7 @@ class SurveyListAdapter extends CursorAdapter {
 			TextView senderTV = (TextView)v.findViewById(R.id.sender);
 			TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
 			TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
-			Button goResult = (Button)v.findViewById(R.id.goResult);
+			Button goResultBT = (Button)v.findViewById(R.id.goResult);
 
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
@@ -81,12 +85,30 @@ class SurveyListAdapter extends CursorAdapter {
 			long openTS = c.getLong(c.getColumnIndex("openTS"));
 			long closeTS = c.getLong(c.getColumnIndex("closeTS"));
 			String openDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_openDT));
-			String closeDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_closeDT));
+			String closeDT = Formatter.timeStampToStringWithFormat(closeTS, ctx.getString(R.string.formatString_closeDT));
 			
 			titleTV.setText(title);
 			senderTV.setText(sender);
 			openDTTV.setText(openDT);
 			closeDTTV.setText(closeDT);
+			
+			boolean answered = (c.getInt(c.getColumnIndex("answered")) == 1 ? true : false);
+			String answeredStatus = null;
+			int answeredColor = ctx.getResources().getColor(R.color.black);
+			if(answered) {
+				answeredStatus =ctx.getString(R.string.statusAnswered);
+				answeredColor = ctx.getResources().getColor(R.color.grayDark);
+				Survey survey = new Survey(c);
+				goResultBT.setOnClickListener(goResult);
+				goResultBT.setTag(survey);
+			} else {
+				answeredStatus =ctx.getString(R.string.statusNotAnswered);
+				answeredColor = ctx.getResources().getColor(R.color.maroon);
+			}
+			
+			goResultBT.setText(answeredStatus);
+			goResultBT.setTextColor(answeredColor);
+			
 		}
 		//department.setText(c.getString(c.getColumnIndex("department")));
 		//content.setText(c.getString(c.getColumnIndex("content")));
@@ -114,4 +136,15 @@ class SurveyListAdapter extends CursorAdapter {
 		return new Survey(c);  
 	}
 	*/
+	
+	private final OnClickListener goResult = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Survey survey = (Survey)v.getTag();
+			SurveyResultFragment f = new SurveyResultFragment(survey, type);// 추가 정보
+
+			MainActivity.sharedActivity().pushContent(f);
+		}
+	};
 }

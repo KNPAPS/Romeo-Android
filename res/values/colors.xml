@@ -18,4 +18,14 @@
     <color name="background_dark">#E1E1E1</color>
     <color name="background_light">#E9E9E9</color>
     <color name="section_header_title">#E9E9E9</color>
+    <color name="maroon">#AF0452</color>
+    <color name="orange">#FF8500</color>
+    <color name="teal">#008196</color>
+    <color name="navy">#002787</color>
+    <color name="indogo">#49037C</color>
+    <color name="color0">#AF0452</color>
+    <color name="color1">#FF8500</color>
+    <color name="color2">#008196</color>
+    <color name="color3">#002787</color>
+    <color name="color4">#49037C</color>    
 </resources>

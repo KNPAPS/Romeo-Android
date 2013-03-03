@@ -15,7 +15,6 @@ import kr.go.KNPA.Romeo.R;
 public class Formatter {
 
 	public Formatter() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static String timeStampToStringWithFormat(long timestamp, String formatString) {

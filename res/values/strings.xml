@@ -52,18 +52,29 @@
     <string name="documentDepartedTitle">보낸 업무연락</string>
     <string name="surveyDepartedTitle">보낸 설문</string>
     <string name="surveyReceivedTitle">받은 설문</string>
+    <string name="surveyComposeTitle">설문 작성</string>
     <string name="documentFavoriteTitle">중요 업무연락</string>
     <string name="memberFavoriteTitle">즐겨찾는 그룹</string>
     <string name="meetingTitle">회의</string>
     <string name="commandTitle">지시와 보고</string>
     <string name="documentForwardTitle">전달 문서</string>
+    <string name="conditionalSearchTitle">조건부검색</string>
+    <string name="condition_location">지역</string>
+    <string name="condition_department">소속</string>
+    <string name="condition_rank">계급</string>
+    <string name="condition_role">직책</string>
     
+    <string name="statusChecked">확인</string>
+    <string name="statusUnchecked">미확인</string>
+    <string name="statusAnswered">참여</string>
+    <string name="statusNotAnswered">미참여</string>
     <string name="button">버튼</string>
     <string name="question_index">Q.</string>
     <string name="question_title_placehold">질문 제목을 입력하세요.</string>
     <string name="option_title_placehold">선택지 내용을 입력하세요.</string>
     <string name="question_is_multiple">복수 답변 가능</string>
     <string name="add_question">질문 추가 하기</string>
+    <string name="add_condition">조건 추가 하기</string>
     <string name="survey_title_placehold">설문 제목을 입력하세요.</string>
     <string name="survey_content_placehold">설문 요지를 입력하세요.</string>
     <string name="survey_receivers_placehold">수신자를 선택하세요.</string>
@@ -94,11 +105,11 @@
     <string name="loremIpsumLong">모든 국민은 근로의 권리를 가진다. 국가는 개인이 가지는 불가침의 기본적 인권을 확인하고 이를 보장할 의무를 진다. 모든 국민은 근로의 권리를 가진다. 모든 국민은 능력에 따라 균등하게 교육을 받을 권리를 가진다. 연소자의 근로는 특별한 보호를 받는다. 대통령이 임시회의 집회를 요구할 때에는 기간과 집회요구의 이유를 명시하여야 한다. 정당의 목적이나 활동이 민주적 기본질서에 위배될 때에는 정부는 헌법재판소에 그 해산을 제소할 수 있고, 정당은 헌법재판소의 심판에 의하여 해산된다. 의무교육은 무상으로 한다. 타인의 범죄행위로 인하여 생명·신체에 대한 피해를 받은 국민은 법률이 정하는 바에 의하여 국가로부터 구조를 받을 수 있다.e</string>
         
         
-    <string name="formatString_openDT">yyyy.mm.dd</string>
-    <string name="formatString_closeDT">yyyy.mm.dd</string>
+    <string name="formatString_openDT">yyyy.MM.dd</string>
+    <string name="formatString_closeDT">yyyy.MM.dd</string>
     <string name="formatString_regular">yyyy.MM.dd HH:mm:ss</string>
-    
-    <string name="app_name">Romeo</string>
+    <string name="formatString_FullDate">yyyy.MM.dd</string>
+    <string name="app_name">다On</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
 

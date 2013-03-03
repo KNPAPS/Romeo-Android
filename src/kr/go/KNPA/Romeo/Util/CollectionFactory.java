@@ -6,7 +6,6 @@ import java.util.HashMap;
 public class CollectionFactory {
 
 	public CollectionFactory() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static HashMap<String, Object> hashMapWithKeysAndValues(Object ...objects) {

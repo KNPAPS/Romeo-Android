@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/gapSmaller"
+    android:paddingRight="@dimen/gapSmall"
+    android:paddingBottom="@dimen/gapSmaller"
+    android:paddingLeft="@dimen/gapSmall"
+    android:background="@color/light"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/categoryLocation"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <TextView
+            android:id="@+id/labelLocation"
+            android:layout_width="54dp"
+            android:layout_height="36dp"
+            android:padding="@dimen/gapSmall"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/gapSmaller"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginBottom="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:background="@color/white"
+            android:text="@string/condition_location" />
+
+        <Spinner
+            android:id="@+id/conditionLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+        <LinearLayout
+        android:id="@+id/categoryDepartment"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <TextView
+            android:id="@+id/labelDepartment"
+            android:layout_width="54dp"
+            android:layout_height="36dp"
+            android:padding="@dimen/gapSmall"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/gapSmaller"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginBottom="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:background="@color/white"
+            android:text="@string/condition_department" />
+
+        <Spinner
+            android:id="@+id/conditionDepartment"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:layout_weight="1" />
+    </LinearLayout>
+        <LinearLayout
+        android:id="@+id/categoryRank"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <TextView
+            android:id="@+id/labelRank"
+            android:layout_width="54dp"
+            android:layout_height="36dp"
+            android:padding="@dimen/gapSmall"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/gapSmaller"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginBottom="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:background="@color/white"
+            android:text="@string/condition_rank" />
+
+        <Spinner
+            android:id="@+id/conditionRank"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:layout_weight="1" />
+    </LinearLayout>
+        <LinearLayout
+        android:id="@+id/categoryRole"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <TextView
+            android:id="@+id/labelRole"
+            android:layout_width="54dp"
+            android:layout_height="36dp"
+            android:padding="@dimen/gapSmall"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/gapSmaller"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginBottom="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:background="@color/white"
+            android:text="@string/condition_role" />
+
+        <Spinner
+            android:id="@+id/conditionRole"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="@dimen/gapSmaller"
+            android:textSize="16sp"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

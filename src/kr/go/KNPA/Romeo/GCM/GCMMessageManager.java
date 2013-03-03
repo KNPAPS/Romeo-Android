@@ -156,7 +156,7 @@ public class GCMMessageManager {
 		if(isRunningProcess(context)) {
 			//DB¿¡ »ğÀÔ.
 			ContentValues vals = new ContentValues();
-			vals.put("title", document.content);
+			vals.put("title", document.title);
 			vals.put("content", document.content);
 			vals.put("appendix", document.appendix.toBlob());
 			vals.put("sender", document.sender.idx);
@@ -188,7 +188,7 @@ public class GCMMessageManager {
 		if(isRunningProcess(context)) {
 			//DB¿¡ »ğÀÔ.
 			ContentValues vals = new ContentValues();
-			vals.put("title", survey.content);
+			vals.put("title", survey.title);
 			vals.put("content", survey.content);
 			vals.put("appendix", survey.appendix.toBlob());
 			vals.put("sender", survey.sender.idx);

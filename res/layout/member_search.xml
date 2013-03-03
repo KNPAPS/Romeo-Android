@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include
+        layout="@layout/navigation_bar" />
+    
+    <LinearLayout
+        android:id="@+id/tabBar"
+        android:layout_width="match_parent"
+        android:layout_height="38dp" >
+
+        <Button
+            android:id="@+id/tabMemberList"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:text="대화상대 선택" 
+            android:background="@color/midium" />
+	<!-- 
+        <Button
+            android:id="@+id/tabCondition"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:text="조건부 검색" 
+            android:background="@color/midium" />
+ -->
+        <Button
+            android:id="@+id/tabFavorite"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:text="즐겨찾기" 
+            android:background="@color/midium" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/tabContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+        
+        <kr.go.KNPA.Romeo.Member.MemberListView
+		       android:id="@+id/memberListView"
+		       android:layout_width="match_parent"
+		       android:layout_height="match_parent"
+		       android:divider="@color/light"
+		       android:background="@color/white"
+		       android:dividerHeight="1dp"
+	      />
+        
+        <kr.go.KNPA.Romeo.Member.MemberFavoriteListView
+		       android:id="@+id/favoriteListView"
+		       android:layout_width="match_parent"
+		       android:layout_height="match_parent"
+		       android:divider="@color/light"
+		       android:background="@color/white"
+		       android:dividerHeight="1dp"
+ 				 />
+        
+        <!-- 
+         <kr.go.KNPA.Romeo.Member.ConditionalSearch
+		       android:id="@+id/conditionalSearchView"
+		       android:layout_width="match_parent"
+		       android:layout_height="match_parent"
+		       android:background="@color/white"
+	      />
+         -->
+    </FrameLayout>
+
+</LinearLayout>

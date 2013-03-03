@@ -3,4 +3,8 @@
     <issue id="DefaultLocale">
         <ignore path="src/kr/go/KNPA/Romeo/Menu/MenuListFragment.java" />
     </issue>
+    <issue id="NewApi">
+        <ignore path="src/kr/go/KNPA/Romeo/MainActivity.java" />
+        <ignore path="src/kr/go/KNPA/Romeo/Member/ConditionalSearch.java" />
+    </issue>
 </lint>

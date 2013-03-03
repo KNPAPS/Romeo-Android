@@ -75,6 +75,7 @@
 			    android:layout_height="32dp"
 			    android:layout_marginRight="@dimen/gap"
 			    android:layout_gravity="center_vertical"
+			    android:focusable="false"
 			    android:background="@drawable/bubble_active"
 			    android:textColor="@color/white"  />
     <!--  
