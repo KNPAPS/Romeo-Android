@@ -7,10 +7,14 @@ import java.util.ListIterator;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.UUID;
+import android.telephony.TelephonyManager;
 
 public class User implements Parcelable{
 	// preDefined Constants
@@ -343,7 +347,7 @@ public class User implements Parcelable{
 	}
 	
 	public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
-
+		
 		@Override
 		public User createFromParcel(Parcel source) {
 			return new User(source);
@@ -356,87 +360,4 @@ public class User implements Parcelable{
 		
 	};
 	
-	public static class UserInfo {
-		public static String PREFERENCE_NAME = "userInfo";
-		public static void setName(Context context, String name) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("name", Encrypter.sharedEncrypter().encrypteString(name));
-			e.commit();
-		}
-		public static String getName(Context context) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("name", context.getString(R.string.name)));
-		}
-		
-		public static void setDepartment(Context context, String department) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("department", Encrypter.sharedEncrypter().encrypteString(department));
-			e.commit();
-			
-		}
-		public static String getDepartment(Context context) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("department", context.getString(R.string.department)));
-		}
-		
-		public static void setDepartmentIdx(Context context, long idx) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("departmentIdx", Encrypter.sharedEncrypter().encrypteString(""+idx));
-			e.commit();
-		}
-		public static long getDepartmentIdx(Context context) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("departmentIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
-			return Long.parseLong(_var);
-		}
-		
-		public static void setUserIdx(Context context, long idx) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("userIdx", Encrypter.sharedEncrypter().encrypteString(""+idx));
-			e.commit();
-		}
-		public static long getUserIdx(Context context) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("userIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
-			return Long.parseLong(_var); 
-		}
-		
-		public static void setRankIdx(Context context, int rank) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("rankIdx", Encrypter.sharedEncrypter().encrypteString(""+rank));
-			e.commit();
-		}
-		public static int getRankIdx(Context context, int rank) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("rankIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
-			return Integer.parseInt(_var);
-		}
-		
-		public static void setRank(Context context, String rank) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("rank", Encrypter.sharedEncrypter().encrypteString(rank));
-			e.commit();
-		}
-		public static String getRank(Context context) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("rank", context.getString(R.string.rank)));
-		}
-		
-		public static void setPicPath(Context context, String path) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			SharedPreferences.Editor e = prefs.edit();
-			e.putString("picPath", Encrypter.sharedEncrypter().encrypteString(path));
-			e.commit();
-		}
-		public static String getPicPath(Context context, String path) {
-			SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-			return Encrypter.sharedEncrypter().decrypteString(prefs.getString("picPath", null));
-		}
-	}
 }

@@ -1,11 +1,13 @@
 package kr.go.KNPA.Romeo.Member;
 
+import kr.go.KNPA.Romeo.IntroActivity;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
@@ -51,7 +53,7 @@ public class MemberListView extends RomeoListView {
 	public MemberListView initWithType (int type) {
 		this.type = type;
 
-		if(!(type == User.TYPE_FAVORITE || type==User.TYPE_MEMBERLIST)) return null;
+		if(!(type == User.TYPE_FAVORITE || type==User.TYPE_MEMBERLIST || type==User.TYPE_FAVORITE_SEARCH || type==User.TYPE_MEMBERLIST_SEARCH)) return null;
 	
 		switch(this.type) {
 			case User.TYPE_MEMBERLIST_SEARCH :
@@ -59,7 +61,7 @@ public class MemberListView extends RomeoListView {
 				// TODO
 				if(rootDepartment == null) {
 					try {
-						MemberManager.sharedManager().getMembers();
+						MemberManager.sharedManager().getMembers(getContext());
 					} catch(RuntimeException e) {
 						throw e;
 					}
@@ -72,6 +74,10 @@ public class MemberListView extends RomeoListView {
 			
 			break;		
 		}
+		
+		// introView
+		IntroActivity.sharedActivity().removeIntroView((ViewGroup) getParent());
+		
 		return this;
 	}
 

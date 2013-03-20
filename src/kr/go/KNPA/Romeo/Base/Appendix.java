@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import kr.go.KNPA.Romeo.Base.Appendix.Attachment;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
 
 public class Appendix implements Parcelable, Serializable{
 	
@@ -98,7 +100,6 @@ public class Appendix implements Parcelable, Serializable{
 		if(_appendixes == null) return;
 		
 		appendixes = new ArrayList<Attachment>();
-		Gson gson = new Gson();
 		for( int i=0; i<_appendixes.length(); i++) {
 			JSONObject _att = null;
 			try {
@@ -313,8 +314,31 @@ public class Appendix implements Parcelable, Serializable{
 	
 	// Manage Data
 	public String toJSON() {
-		Gson gson = new Gson();
-		return gson.toJson(this, Appendix.class);
+		final String q = "\"";
+		final String c = ":";
+		final String lb = "[";
+		final String rb = "]";
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append(q).append("type").append(q).append(c).append(q).append(type).append(q).append(",");
+		sb.append(q).append("content").append(q).append(c).append(this.content).append(",");
+		sb.append(q).append("appendixes").append(q).append(c).append(lb);
+		Iterator<Attachment> itr = appendixes.iterator();
+		Attachment att = null;
+		while(itr.hasNext()) {
+			att = itr.next();
+			sb.append(att.toJSON());
+			if(itr.hasNext())
+				sb.append(",");
+		}
+		sb.append(rb);
+		// "appendix":{
+		//"appendixes":[]
+		//,"type":0}
+		sb.append("}");
+		
+		return sb.toString();
 	}
 	
 	// Implements Parcelable
@@ -358,8 +382,7 @@ public class Appendix implements Parcelable, Serializable{
 		public String key;
 		public int type;
 		public String name;
-		public String sValue;
-		public byte[] bValue;
+		public String _value;
 		
 		public Attachment() {
 			
@@ -374,24 +397,45 @@ public class Appendix implements Parcelable, Serializable{
 			att.key = this.key;
 			att.type = this.type;
 			att.name = this.name;
-			att.sValue = this.sValue;
-			att.bValue = this.bValue;
+			att._value = this._value;
 			return att;
+		}
+		
+		public String toJSON() {
+			final String q = "\"";
+			final String c = ":";
+			final String lob = "{";
+			final String rob = "}";
+			final String lab = "[";
+			final String rab = "]";
+			//{"key":"forwards","value":"[
+			//{\"content\":\"°í\",\"TS\":\"1362480368154\",\"forwarder\":\"1\"}
+			//]","type":131072}
+			StringBuilder sb = new StringBuilder();
+			sb.append(lob);
+			
+			if(_value != null) {
+				sb.append(q).append("value").append(q).append(c).append("\"").append(_value).append("\"").append(",");
+			}
+			if(name != null)
+				sb.append(q).append("name").append(q).append(c).append(q).append(name).append(q).append(",");
+			sb.append(q).append("type").append(q).append(c).append(type).append(",");
+			sb.append(q).append("key").append(q).append(c).append(q).append(key).append(q);
+			sb.append(rob);
+			return sb.toString();
 		}
 		public int getType() {
 			return type;
 		}
-		
-		public String valueType() {
-			boolean sb = (sValue != null);
-			boolean bb = (bValue != null);
-			if(sb && bb)  { return null;  
-			} else if(sb && !bb)  { return "STRING";
-			} else if(!sb && bb)  { return "BYTES";
-			} else { return "EMPTY";}
+	
+		public void setValue(String value){
+			if(this._value == null) this._value=null;
+			this._value = Base64.encodeToString(value.getBytes(), 0).trim(); 
 		}
-		
-
+		public String getValue() {
+			if(this._value == null) return null;
+			return new String(Base64.decode(_value, 0));
+		}
 		public Attachment(String key, int type, String name) {
 			this(type, name);
 			this.key = key;
@@ -402,11 +446,7 @@ public class Appendix implements Parcelable, Serializable{
 			this.key = key;
 		}
 		
-		public Attachment(String key, int type, String name, byte[] bytes) {
-			this(type, name, bytes);
-			this.key = key;
-		}
-		
+
 		public Attachment(int type, String name) {
 			this.type = type;
 			this.name = name;
@@ -414,13 +454,9 @@ public class Appendix implements Parcelable, Serializable{
 		
 		public Attachment(int type, String name, String value) {
 			this(type, name);
-			this.sValue = value;
+			this.setValue(value);
 		}
-		
-		public Attachment(int type, String name, byte[] value) {
-			this(type, name);
-			this.bValue = value;
-		}
+
 
 		public Attachment(String json) {
 			JSONObject jo = null;
@@ -443,55 +479,48 @@ public class Appendix implements Parcelable, Serializable{
 				this.name = jo.getString("name");
 			} catch (JSONException e) {
 			}
+		
 			
-			if( jo.has("sValue") ) {
+			
+			if( jo.has("value") ) {
 				try {
-					this.sValue = jo.getString("sValue");
+					this.setValue(jo.getString("value"));
 				} catch (JSONException e) {
 					try {
-						this.sValue = jo.getJSONObject("sValue").toString();
+						this.setValue(new String(Base64.decode(jo.getJSONObject("value").toString(),0)));
 					} catch (JSONException e1) {
-						this.sValue = null;
+						this.setValue(null);
 					}
 				}
 			}
 			
-			if(jo.has("bValue")) {
-				//this.bValue = jo.getString("bValue");	//TODO
-			}
 			
 		}
 
-		public byte[] getBytes() {
-			return bValue;
-		}
 		public String getString() {
-			return sValue;
+			return getValue();
 		}
 		public String getJSON() {
-			return sValue;
+			return getValue();
 		}
 		public String getURL() {
-			return sValue;
+			return getValue();
 		}
 		public String getPath() {
-			return sValue;
+			return getValue();
 		}
 		
-		public void setBytes(byte[] bytes) {
-			bValue = bytes;
-		}
 		public void setString(String string) {
-			sValue = string;
+			setValue(string);
 		}
 		public void setJSON(String json) {
-			sValue = json;
+			setValue(json);
 		}
 		public void setURL(String url) {
-			sValue = url;
+			setValue(url);
 		}
 		public void setPath(String path) {
-			sValue = path;
+			setValue(path);
 		}
 
 	}

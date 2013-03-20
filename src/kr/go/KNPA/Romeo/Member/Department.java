@@ -6,10 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.Util.UserInfo;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.util.Log;
 
 public class Department {
@@ -106,20 +109,20 @@ public class Department {
 	
 
 	
-	public void fetch() {
+	public void fetch(Context context) {
 		if(this != _root) return;
-		setRoot(parseJSONObjectToDepartment(Department.rootData));
+		setRoot(parseJSONObjectToDepartment(context, Department.rootData));
 		User.setUsers(_allUsers);
 	}
 	
-	public void fetch(JSONObject _rootData) {
+	public void fetch(Context context, JSONObject _rootData) {
 		if(this != _root) return;
 		rootData = _rootData;
-		fetch();
+		fetch(context);
 	}
 	
-	public Department parseJSONObjectToDepartment(JSONObject json) {
-		
+	public Department parseJSONObjectToDepartment(Context context, JSONObject json) {
+		long myIdx = UserInfo.getUserIdx(context);
 		
 		ArrayList<Department> _departments = new ArrayList<Department>();
 		
@@ -136,10 +139,10 @@ public class Department {
 				Collections.sort(jsonValues, new Comparator<JSONObject>() {
 					@Override
 					public int compare(JSONObject lhs, JSONObject rhs) {
-						int lSeq=0, rSeq=0;
+						long lSeq=0, rSeq=0;
 						try {
-							lSeq = lhs.getInt("sequence");
-							rSeq = rhs.getInt("sequence"); 
+							lSeq = lhs.getLong("sequence");
+							rSeq = rhs.getLong("sequence"); 
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -160,7 +163,7 @@ public class Department {
 					jDepartment = jDepartments.getJSONObject(i);
 				} catch (JSONException e) {
 				}
-				_departments.add(parseJSONObjectToDepartment(jDepartment));
+				_departments.add(parseJSONObjectToDepartment(context, jDepartment));
 			}
 			
 		}
@@ -200,7 +203,7 @@ public class Department {
 				}
 				
 				User user = parseJSONObjectToUser(jUser);
-				_users.add( user );
+				if(user.idx != myIdx)	_users.add( user );
 				_allUsers.add(user);
 
 			}

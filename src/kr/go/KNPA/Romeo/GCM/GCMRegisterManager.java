@@ -4,8 +4,12 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.android.gcm.GCMRegistrar;
+
+import kr.go.KNPA.Romeo.MainActivity;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Connection;
-import kr.go.KNPA.Romeo.Util.Preference;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.util.Log;
 
@@ -13,6 +17,8 @@ public class GCMRegisterManager {
 	private static final String tag = "GCMRegisterManager";
     
 	private static GCMRegisterManager _sharedManager = null;
+	//public boolean isRegistered = false;
+	
 	
 	public GCMRegisterManager() {
 	}
@@ -24,6 +30,28 @@ public class GCMRegisterManager {
 		return _sharedManager;
 	}
 
+	public static void registerGCM(Context context) {
+		GCMRegistrar.checkDevice(context);
+		GCMRegistrar.checkManifest(context);
+		GCMRegistrar.register(context, "44570658441");
+
+		
+		   /*
+		   	private void registerGCM() {
+		GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		final String regId = GCMRegistrar.getRegistrationId(this);
+		
+		if("".equals(regId) )   //구글 가이드에는 regId.equals("")로 되어 있는데 Exception을 피하기 위해 수정
+		    GCMRegistrar.register(this, "44570658441");
+		else {
+		      Log.d("============== Already Registered ==============", regId);
+		}
+		
+		}
+		    */
+	}
+	
 	public void onError(Context context, String errorId) {			/**에러 발생시*/
         Log.d(tag, "on_error. errorId : "+errorId);
     	// 다시시작하도록 유도.
@@ -32,20 +60,28 @@ public class GCMRegisterManager {
     }
 
 	public void onRegistered(Context context, String regId) {		 /**단말에서 GCM 서비스 등록 했을 때 등록 id를 받는다*/
-        Log.d(tag, "onRegistered. regId : "+regId);
+
+		Log.d(tag, "onRegistered. regId : "+regId);
         
 		// 다음의 과정은 Server단(ACTION : INSERT)에서 알아서 이루어지므로, UUID값과 REGID값만 찾아서 잘 넘겨준다.
 		// DB상에 UUID 값과 regid 값, id값을 찾는다		
 			// 등록된 regid값과 DB상의 regid 값이 같으면 pass
 			// 등록된 regid값과 DB상의 regid 값이 다르면 UPDATE
 		// DB상에 해당 기기의 UUID 값이 없으면 INSERT
-        String uuid = Preference.sharedPreference().getUUID();
+        
+        UserInfo.setRegid(context, regId);
+        String uuid = UserInfo.getUUID(context);
+        if(uuid == null) {
+        	UserInfo.setUUID(context);
+        	uuid = UserInfo.getUUID(context);
+        }
+        long userIdx = UserInfo.getUserIdx(context);
+        
         HashMap<String, String> data = new HashMap<String,String>();
         data.put("regid", regId);
         data.put("uuid", uuid);
-        data.put("user", ""+1);//TODO
+        data.put("user", ""+userIdx);
         data.put("type", "a");
-        //data.put("action", "insert"); => method register
         
         Connection con = new Connection.Builder()
         							   .url(Connection.HOST_URL + "/device/register")
@@ -73,7 +109,7 @@ public class GCMRegisterManager {
 		// 존재한다면 DELETE
 		// 없으면.... PASS
         
-        String uuid = Preference.sharedPreference().getUUID();
+        String uuid = UserInfo.getUUID(MainActivity.sharedActivity());
         HashMap<String, Object> data = new HashMap<String,Object>();
         
         ArrayList<String> regidids = new ArrayList<String>();

@@ -1,25 +1,26 @@
 package kr.go.KNPA.Romeo;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.android.gcm.GCMRegistrar;
 
-import android.app.FragmentManager.BackStackEntry;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.text.GetChars;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import kr.go.KNPA.Romeo.BaseActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
-import kr.go.KNPA.Romeo.Util.Preference;
+import kr.go.KNPA.Romeo.Util.Connection;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import com.slidingmenu.lib.SlidingMenu;
 
@@ -29,6 +30,9 @@ public class MainActivity extends BaseActivity {
 	
 	private Fragment mContent;		// 현재 프레그먼트 
 	private Fragment oldFragment;
+	
+	public boolean isRegistered = false;
+	
 	public MainActivity() {		// 생성자 
 		super(R.string.changing_fragments);
 		_sharedActivity = this;
@@ -41,10 +45,6 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		// 부모 클래스의 온크리에잇
-		Preference.initSharedPreference(getBaseContext());
-		registerGCM();
-		
-		setUserInfo();
 		
 		// set the Above View
 				if (savedInstanceState != null)
@@ -52,6 +52,8 @@ public class MainActivity extends BaseActivity {
 				if (mContent == null)
 					mContent = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
 				
+				((MemberFragment)mContent).showIntroView = true;
+
 				// set the Above View
 				setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰   
 				getSupportFragmentManager()
@@ -115,24 +117,8 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	////////////////////////////////////////
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
 	
-	private void registerGCM() {
-		GCMRegistrar.checkDevice(this);
-		GCMRegistrar.checkManifest(this);
-		final String regId = GCMRegistrar.getRegistrationId(this);
-		if("".equals(regId))   //구글 가이드에는 regId.equals("")로 되어 있는데 Exception을 피하기 위해 수정
-			// TODO : 존재하더라도, 서버상에 등록이 되어있지 않으면 등록하도록 시킴.
-		      GCMRegistrar.register(this, "44570658441");
-		else
-		      Log.d("==============", regId);
-	}
+
 
 	public static void showToast(String string) {
 		Toast.makeText(_sharedActivity, string, Toast.LENGTH_SHORT).show();
@@ -143,20 +129,7 @@ public class MainActivity extends BaseActivity {
 	}
 	
 
-	private void setUserInfo() {
-	// 임시로 사용되는 중이며, 
-	// 사용자 인증과정 도입 후 삭제한다.
-		Context context = MainActivity.this;
-		User.UserInfo.setUserIdx(context, 1);
-		User.UserInfo.setName(context, "유저1");
-		User.UserInfo.setDepartment(context, "부서165");
-		User.UserInfo.setDepartmentIdx(context, 165);
-		User.UserInfo.setRankIdx(context, 11);
-		User.UserInfo.setRank(context, "계급11");
-		Log.i("MainActivity", "UserInfo Set");
-		//User.UserInfo.setPicPath(context, path);
-		
-	}
+
 	
 
 	
@@ -206,6 +179,108 @@ public class MainActivity extends BaseActivity {
 		//Log.i("MainActivity", "BackbuttonPressed");
 	}
 	*/
+	
+	public static Bundle isUserRegistered(Context context ){
+		boolean hasPreference = false;
+		if(UserInfo.getName(context) != null) {
+			hasPreference = true;
+		}
+		
+		Bundle b = new Bundle();
+		
+		if(hasPreference == false) {
+			b.putBoolean("isRegistered", false);
+			b.putBoolean("isEnabled", false);
+			return b;
+		}
+		
+		
+		String json = "{\"idx\":"+UserInfo.getUserIdx(context)+"}";
+
+		
+		if(hasPreference) {
+			Connection conn = new Connection.Builder()
+											.url(Connection.HOST_URL + "/member/isRegistered")
+											.type(Connection.TYPE_GET)
+											.dataType(Connection.DATATYPE_JSON)
+											.data(json)
+											.build();
+			
+			String result = null;
+			int requestCode = conn.request();
+			if(requestCode == Connection.HTTP_OK) {
+				result = conn.getResponse();
+			} else {
+			
+			}
+			
+			if(result != null) {
+				JSONObject jo;
+				try {
+					jo = new JSONObject(result);
+					b.putBoolean("isRegistered", (jo.getInt("isRegistered") == 1 ? true : false));
+					b.putBoolean("isEnabled", (jo.getInt("isEnabled") == 1 ? true : false));
+				} catch (JSONException e) {
+				}
+			}
+		}
+		return b;
+		
+	}
+	
+	public static Bundle isDeviceRegistered(Context context) {
+		Bundle b = new Bundle();
+		
+		long userIdx = UserInfo.getUserIdx(context);
+		String regid = UserInfo.getRegid(context);
+		//if(regid == null) regid = GCMRegistrar.getRegistrationId(this);
+		String uuid = UserInfo.getUUID(context);
+		
+		if(regid == null || regid.trim().length() < 0 || regid.equals("") ||
+				uuid == null || uuid.trim().length()<0 || regid.equals("") ) {
+			b.putBoolean("isRegistered", false);
+			b.putBoolean("isEnabled", false);
+			return b;
+		}
+		
+		String json = "{\"idx\":"+userIdx+", \"regid\":\""+regid+"\", \"uuid\":\""+uuid+"\"}";
+		
+		//String _permission = null;
+		
+		
+		Connection conn = new Connection.Builder()
+										.url(Connection.HOST_URL + "/device/isRegistered")
+										.type(Connection.TYPE_GET)
+										.dataType(Connection.DATATYPE_JSON)
+										.data(json)
+										.build();
+
+		String result = null;
+		int requestCode = conn.request();
+		if(requestCode == Connection.HTTP_OK) {
+			result = conn.getResponse();
+		} else {
+			
+		}
+
+		if(result != null) {
+			JSONObject jo;
+			try {
+				jo = new JSONObject(result);
+				b.putBoolean("isRegistered", (jo.getInt("isRegistered") == 1 ? true : false));
+				b.putBoolean("isEnabled", (jo.getInt("isEnabled") == 1 ? true : false));
+				//_permission = (jo.getString("permission"));
+			} catch (JSONException e) {
+			}
+		}
+	
+		
+		// 분실?
+		
+		//String permission = _permission; // TODO
+		
+		return b;
+	}
 }
 
 

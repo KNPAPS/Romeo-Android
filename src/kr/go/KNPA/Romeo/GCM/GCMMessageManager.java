@@ -2,6 +2,8 @@ package kr.go.KNPA.Romeo.GCM;
 
 import java.util.List;
 
+import kr.go.KNPA.Romeo.MainActivity;
+import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Base.Packet;
 import kr.go.KNPA.Romeo.Base.Payload;
@@ -15,7 +17,10 @@ import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.DBManager;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -140,7 +145,34 @@ public class GCMMessageManager {
 			ChatFragment.receive(chat);
 		} else {
 		// 알림만 띄우장
+			
 		}
+		NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+		nm.cancel(chat.type);
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				context, 
+				chat.type, 
+				new Intent(context, MainActivity.class), 
+				0);
+		
+		String ticker = "";
+		if(messageSubType == Chat.TYPE_COMMAND) {
+			ticker = context.getString(R.string.notification_command_ticker);
+		} else if (messageSubType == Chat.TYPE_MEETING){
+			ticker = context.getString(R.string.notification_meeting_ticker);
+		}
+		
+		String contentTitle = chat.content.substring(0, Math.min(chat.content.length(), 30));
+		String contentText = "";
+		int iconRId = R.drawable.icon;
+		
+		Notification nt = new Notification(iconRId, ticker, System.currentTimeMillis());
+		
+		nt.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		
+		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
+		
+		nm.notify(chat.type, nt);
 	}
 	
 	private void onDocument() {
@@ -172,8 +204,32 @@ public class GCMMessageManager {
 			//리스트뷰에 notify
 			DocumentFragment.receive(document);
 		} else {
-		//알림만 띄우자
+
 		}
+		
+		//알림만 띄우자
+		NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+		nm.cancel(document.type);
+		
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				context, 
+				document.type, 
+				new Intent(context, MainActivity.class), 
+				0);
+		
+		String ticker = context.getString(R.string.notification_document_ticker);
+		
+		String contentTitle = document.title.substring(0, Math.min(document.title.length(), 15));
+		String contentText = document.content.substring(0, Math.min(document.content.length(), 30));
+		int iconRId = R.drawable.icon;
+		
+		Notification nt = new Notification(iconRId, ticker, System.currentTimeMillis());
+		
+		nt.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		
+		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
+		
+		nm.notify(document.type, nt);
 	}
 	
 	private void onSurvey() {
@@ -205,8 +261,30 @@ public class GCMMessageManager {
 			//리스트뷰에 notify
 			SurveyFragment.receive(survey);
 		} else {
-		//알림만 띄우지
+
 		}
+		//알림만 띄우지
+		NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+		nm.cancel(survey.type);
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				context, 
+				survey.type, 
+				new Intent(context, MainActivity.class), 
+				0);
+		
+		String ticker = context.getString(R.string.notification_survey_ticker);
+		
+		String contentTitle = survey.title.substring(0, Math.min(survey.title.length(), 15));
+		String contentText = survey.content.substring(0, Math.min(survey.content.length(),30));
+		int iconRId = R.drawable.icon;
+		
+		Notification nt = new Notification(iconRId, ticker, System.currentTimeMillis());
+		
+		nt.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		
+		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
+		
+		nm.notify(survey.type, nt);
 	}
 	
 	//// Helper Procedures	//// 

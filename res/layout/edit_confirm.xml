@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="500dp"
     android:background="@color/lighter"
     android:orientation="vertical" >
 
-    <include 
-        layout="@layout/navigation_bar"/>
     <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -31,25 +29,7 @@
         android:background="@drawable/no_image"
         android:layout_height="104dp"
         android:contentDescription="@string/title" />
-    
-        
-    <Button
-        android:id="@+id/edit"      
-        android:layout_gravity="center_horizontal"
-        android:layout_width="104dp"
-        android:background="@color/transparent"
-        android:layout_height="104dp" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="104dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:gravity="center"
-        android:background="@color/light"
-        android:layout_height="wrap_content"
-        android:paddingTop = "5dp"
-        android:paddingBottom = "5dp"
-        android:text="@string/edit" />
     
     </FrameLayout>
     
@@ -76,6 +56,19 @@
         android:layout_marginBottom="11dp"
         android:paddingLeft="5dp"
         android:gravity="center_horizontal"/>
+		
+		<TextView
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"        
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginBottom="11dp"
+        android:paddingLeft="5dp"
+        android:gravity="center_horizontal"/>
+    
     <TextView
         android:id="@+id/footer3"
         android:layout_width="match_parent"

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory>
+        <CheckBoxPreference
+            android:title = "Visual Checkbox"
+            android:defaultValue="true"
+            android:summary="Summary"
+            android:summaryOn="SummaryOn"
+            android:summaryOff="SummaryOff"
+            android:key="checkboxPref" />
+        <EditTextPreference 
+            android:title="ListPreference Title"
+            android:defaultValue="FFFFFFFF"
+            android:summary="summary"
+            android:key="listPref"
+            
+            />
+        <ListPreference />
+        <MultiSelectListPreference />
+        <RingtonePreference />
+        <SwitchPreference />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

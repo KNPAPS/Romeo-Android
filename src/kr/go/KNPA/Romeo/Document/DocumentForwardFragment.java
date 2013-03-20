@@ -10,6 +10,7 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -109,16 +110,11 @@ public class DocumentForwardFragment extends Fragment {
 		Document fwdDocument = document.clone();
 		
 		HashMap<String,String> forward = new HashMap<String,String>();
-		forward.put("forwarder", ""+User.UserInfo.getUserIdx(getActivity()));
+		forward.put("forwarder", ""+UserInfo.getUserIdx(getActivity()));
 		forward.put("TS", ""+System.currentTimeMillis());
 		forward.put("content", contentET.getText().toString());
 		fwdDocument.appendix.addForward(forward);
 		
-		//favDocument.receivers = receivers;
-		User user = User.getUserWithIdx(1);
-		receivers.add(user);
-		user = User.getUserWithIdx(3);
-		receivers.add(user);
 		fwdDocument.receivers = receivers;
 		
 		// Send
@@ -126,12 +122,11 @@ public class DocumentForwardFragment extends Fragment {
 		
 	}
 	
-	static final int MEMBER_SEARCH_ACTIVITY = 1;
 	private void callMemberSearchActivity() {
 		
 		Intent intent = new Intent(getActivity(), MemberSearch.class);
 		
-		startActivityForResult(intent, MEMBER_SEARCH_ACTIVITY);
+		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
 	}
 	
 	@Override
@@ -156,6 +151,9 @@ public class DocumentForwardFragment extends Fragment {
 				receivers.addAll(newUsers);
 				
 				if(receivers.size() > 0) {
+					User fReceiver = receivers.get(0);
+					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
+				} else if (receivers.size() > 1) {
 					User fReceiver = receivers.get(0);
 					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" µξ "+receivers.size()+"Έν");
 				} else {

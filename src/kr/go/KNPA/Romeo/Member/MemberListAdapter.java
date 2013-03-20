@@ -7,10 +7,12 @@ import kr.go.KNPA.Romeo.Util.IndexPath;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -25,7 +27,8 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	private Context context;
 	private CellNode models = new CellNode();
 	public int type = User.NOT_SPECIFIED;
-	
+	public static CellNode.NodeManager nodeManager;
+	public boolean nodeManagerReady = false;
 	
 	// related with SEARCH
 	public static int[] search;
@@ -39,12 +42,23 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		rootDepartment = root;
 		this.type = type;
 		
-		ArrayList<Department> deps = rootDepartment.departments;
+		
 
+		nodeManager = new CellNode.NodeManager(context, this);
+		
+	}
+	
+	
+	public void refresh() {
+		String json = nodeManager.command("test("+System.currentTimeMillis()+"+\"\")");
+		if(json == null) json = "null";
+		Log.d("REFRESH", json);
+		
+		ArrayList<Department> deps = rootDepartment.departments;
 		models.isRoot = true;
 		models.setUnfolded(true);
 		for(int i=0; i<deps.size(); i++) {
-			CellNode node = new CellNode.Builder().unfolded(true)
+			CellNode node = new CellNode.Builder()
 												  .type(CellNode.CELLNODE_DEPARTMENT)
 												  .parentIndexPath(null)
 												  .index(i)
@@ -52,11 +66,17 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 												  .build();
 			models.add(node);
 		}
+
+		this.notifyDataSetChanged();
 	}
 	
 	@Override
 	public int getCount() {
-		return models.count();
+		if(nodeManagerReady == true) {
+			return models.count();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -92,12 +112,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				control.setTag(path);
 				control.setOnClickListener(searchCheck);
 				
-				if(getNodeChecked(path) == 0) {
-					control.setBackgroundResource(R.drawable.circle_check_active);
-				} else if(getNodeChecked(path) == 1) {
-					control.setBackgroundResource(R.drawable.circle_check_gray);
-				} else {
-					control.setBackgroundResource(R.drawable.circle_check_gray);	// TODO half-active
+				switch(node.status) {
+					case 0 : control.setBackgroundResource(R.drawable.circle); break;
+					case 2 : control.setBackgroundResource(R.drawable.circle_check_gray); break;
+					case 1 : control.setBackgroundResource(R.drawable.circle_check_active); break;
 				}
 
 			}
@@ -123,12 +141,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				control.setTag(path);
 				control.setOnClickListener(searchCheck);
 				
-				if(getNodeChecked(path) == 0) {
-					control.setBackgroundResource(R.drawable.circle_check_active);
-				} else if(getNodeChecked(path) == 1) {
-					control.setBackgroundResource(R.drawable.circle_check_gray);
-				} else {
-					control.setBackgroundResource(R.drawable.circle_check_gray);	// TODO half-active
+				switch(node.status) {
+					case 0 : control.setBackgroundResource(R.drawable.circle); break;
+					case 2 : control.setBackgroundResource(R.drawable.circle_check_gray); break;
+					case 1 : control.setBackgroundResource(R.drawable.circle_check_active); break;
 				}
 			}
 			TextView rankTV = (TextView)convertView.findViewById(R.id.rank);
@@ -279,8 +295,8 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		int cnt = 0;
 		int li = 0;
 		while( true ){
-			CellNode _cn = cn.get(li).copy(); //
-			
+			//CellNode _cn = cn.get(li).copy(); // TODO
+			CellNode _cn = cn.get(li); 
 			
 			int _cnt = cnt + _cn.count(); 
 			
@@ -363,8 +379,8 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				Intent intent = new Intent(this.context, MemberDetailActivity.class);
 				Bundle b = new Bundle();
 				User user = (User)getItem(position);
-				b.putLong("idx", user.idx);
-				b.putBoolean("fromFavorite", false);
+				b.putString("idxs", ""+user.idx);
+				//b.putBoolean("fromFavorite", false);
 				intent.putExtras(b);
 				this.context.startActivity(intent);
 
@@ -432,84 +448,9 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		@Override
 		public void onClick(View v) {
 			IndexPath path = (IndexPath)v.getTag();
-			int nodeType = getNodeTypeAtIndexPath(path);
-			
-			if(nodeType == CellNode.CELLNODE_DEPARTMENT) {
-				int isChecked = getNodeChecked(path);
-				Department model = (Department)objectForRowAtIndexPath(path);
-				if(isChecked == 0) {
-				// 부서를 체크했을 경우
-					model.selected = 1;
-					//addIndexToSearchArray(path);
-					v.setBackgroundResource(R.drawable.circle_check_active);
-					
-				// 하위 부서와 사람들까지 모두 선택이 되어야 한다.
-					setChildrenNodeChecked(path);
-				}  else if(isChecked == 2) {
-				// 반-체크 되어있을 경우
-				// 체크를 누르면 온전한 체크로 바뀌어야 한다.
-					model.selected = 1;
-					//addIndexToSearchArray(path);
-					v.setBackgroundResource(R.drawable.circle_check_active);
-					
-				} else if(isChecked == 1) {
-				// 완전한 체크인 영우
-					model.selected = 0;
-					//removeIndexFromSearchArray(path);
-					v.setBackgroundResource(R.drawable.circle_check_gray);
-					setChildrenNodeUnchecked(path);
-				// 체크를 다시 한번 누르면 하위부서와 사람들까지 모두 해지되어야한다.
-				}
-
-			} else if (nodeType == CellNode.CELLNODE_USER){
-				User model = (User)objectForRowAtIndexPath(path);
-				int isChecked = getNodeChecked(path);
-				if(isChecked == 0) {
-				// 사람을 체크했을경우 체크 -> 부서는 반체크.
-					model.selected = 1;
-					addIndexToSearchArray(path);
-					
-					// 하위사람 다 체크 되어있으면 체크로, 아니면 반체크로.
-					IndexPath dip = path.indexPathByRemovingLastIndex();
-					Department dep = (Department)objectForRowAtIndexPath(path);
-					dep.selected = 2;
-					// TODO 부서를 반체크화
-				} else if (isChecked == 1) {
-				// 사람을 체크 해지했을 경우 체크 해지.
-					model.selected = 0;
-					removeIndexFromSearchArray(path);
-				// 다만, 해당 부서가 선택되어있을 경우, 해당 부서는 반체크로 변한다.
-					IndexPath dip = path.indexPathByRemovingLastIndex();
-					Department dep = (Department)objectForRowAtIndexPath(path);
-					dep.selected = 2;
-				}
-			}
+			CellNode node = CellNode.nodeAtIndexPath(models, path);
+			node.check();
+			notifyDataSetChanged();
 		}
 	};
-	
-	private int getNodeChecked(IndexPath path) {
-		int nodeType = getNodeTypeAtIndexPath(path);
-		if(nodeType == CellNode.CELLNODE_DEPARTMENT) {
-			Department model = (Department)objectForRowAtIndexPath(path);
-			return model.selected;
-		} else {
-			User model = (User)objectForRowAtIndexPath(path);
-			return model.selected;
-		}
-	}
-	
-	private void setChildrenNodeChecked(IndexPath path) {
-		
-	}
-	private void setChildrenNodeUnchecked(IndexPath path) {
-		
-	}
-	
-	private void addIndexToSearchArray(IndexPath path) {
-		
-	}
-	
-	private void removeIndexFromSearchArray(IndexPath path) {
-		
-	}
 }

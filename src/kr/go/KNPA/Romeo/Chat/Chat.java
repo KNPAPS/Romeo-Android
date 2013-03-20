@@ -1,5 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,7 +30,13 @@ public class Chat extends Message {
 		content = c.getString(c.getColumnIndex("content"));
 		appendix = Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
 		sender = User.getUserWithIdx(c.getInt(c.getColumnIndex("sender")));
-		receivers = User.indexesInStringToArrayListOfUser(c.getString(c.getColumnIndex("receivers")));
+		String _rec = c.getString(c.getColumnIndex("receivers"));
+		if(_rec != null && _rec.trim().length() > 0) {
+			receivers = User.indexesInStringToArrayListOfUser(_rec);
+		} else {
+			receivers = new ArrayList<User>();
+		}
+		
 		TS = c.getLong(c.getColumnIndex("TS"));
 		checked = (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);;
 		checkTS = c.getLong(c.getColumnIndex("checkTS"));

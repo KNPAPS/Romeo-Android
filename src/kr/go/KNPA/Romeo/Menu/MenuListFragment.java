@@ -54,7 +54,7 @@ public class MenuListFragment extends ListFragment {
         groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"업무연락", 		"iconImage", ""+R.drawable.icon_document,		"code",	"document") );
         groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"설문",		 	"iconImage", ""+R.drawable.icon_pie_graph,		"code",	"survey") );
         groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"자료실", 		"iconImage", ""+R.drawable.icon_folder,			"code", "library") );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"설정", 			"iconImage", ""+R.drawable.sub_indicator,	"code",	"settings") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"설정", 			"iconImage", ""+R.drawable.icon_gear,	"code",	"settings") );
         
         
         List<Map<String, String>> l = null;

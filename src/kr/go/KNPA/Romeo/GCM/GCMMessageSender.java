@@ -1,5 +1,8 @@
 package kr.go.KNPA.Romeo.GCM;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +41,7 @@ public class GCMMessageSender {
 		Connection conn = new Connection.Builder()
 										.dataType(Connection.DATATYPE_JSON)
 										.type(Connection.TYPE_POST)
-										.url(Connection.HOST_URL + "/Message/sendMessageWithGCM")
+										.url(Connection.HOST_URL + "/message/sendMessageWithGCM")
 										.data(CollectionFactory.hashMapWithKeysAndValues("payload", p))
 										.build();
 		String result = null;
@@ -54,11 +57,11 @@ public class GCMMessageSender {
 	}
 	
 	public static boolean setMessageChecked(Context context, int type, long idx) {
-		String json = "{\"type\":"+type+",\"idx\":"+idx+",\"user\":"+User.UserInfo.getUserIdx(context)+"}";
+		String json = "{\"type\":"+type+",\"idx\":"+idx+",\"user\":"+UserInfo.getUserIdx(context)+"}";
 		Connection conn = new Connection.Builder()
 										.dataType(Connection.DATATYPE_JSON)
 										.type(Connection.TYPE_POST)
-										.url(Connection.HOST_URL + "/Message/setMessageChecked")
+										.url(Connection.HOST_URL + "/message/setMessageChecked")
 										.data(json)
 										.build();
 		String result = null;
@@ -93,7 +96,7 @@ public class GCMMessageSender {
 	public static String requestUncheckers(int type, long idx) {
 		String json = "{type:"+type+",idx:"+idx+"}";
 		Connection conn = new Connection.Builder()
-										.url(Connection.HOST_URL + "/Message/getUncheckers")
+										.url(Connection.HOST_URL + "/message/getUncheckers")
 										.type(Connection.TYPE_GET)
 										.dataType(Connection.DATATYPE_JSON)
 										.data(json)
@@ -143,7 +146,7 @@ public class GCMMessageSender {
 		// Payload
 		//HashMap<String, Object> data = null;
 		Connection conn = new Connection.Builder()
-										.url(Connection.HOST_URL + "/Message/sendMessageWithGCM")
+										.url(Connection.HOST_URL + "/message/sendMessageWithGCM")
 										.type(Connection.TYPE_POST)
 										.dataType(Connection.DATATYPE_JSON)
 										.data(json)
@@ -153,7 +156,8 @@ public class GCMMessageSender {
 		if(responseCode == Connection.HTTP_OK) {
 			response = conn.getResponse();
 		}
-		
+		// TODO with response
+		// TODO 
 		return getMessageIndexFromJSONResponse(response);
 	}
 	
@@ -166,12 +170,13 @@ public class GCMMessageSender {
 			Log.w(TAG, "Cannot get MessageIdx From Responsed JSON Message");
 			return Message.NOT_SPECIFIED;
 		}
+		
 	}
 	
 	public static boolean sendSurveyAnswerSheet(String json) {
 		
 		Connection conn = new Connection.Builder()
-				.url(Connection.HOST_URL + "/Survey/answerSurvey")
+				.url(Connection.HOST_URL + "/survey/answerSurvey")
 				.type(Connection.TYPE_POST)
 				.dataType(Connection.DATATYPE_JSON)
 				.data(json)
@@ -203,5 +208,54 @@ public class GCMMessageSender {
 		}
 		
 		return status;
+	}
+	
+	public static ArrayList<Department> getSubDepartment(String json) {
+		Connection conn = new Connection.Builder()
+										.url(Connection.HOST_URL + "/member/getSubDepartment")
+										.type(Connection.TYPE_GET)
+										.dataType(Connection.DATATYPE_JSON)
+										.data(json)
+										.build();
+		
+		String result = null;
+		int requestCode = conn.request();
+		if(requestCode == Connection.HTTP_OK) {
+			result = conn.getResponse();
+		} else {
+			return null;
+		}
+		
+		JSONObject jo = null;
+		
+		try {
+			jo = new JSONObject(result);
+		} catch (JSONException e) {
+			return null;
+		}
+		
+		JSONArray ja = null;
+		try {
+			ja  = jo.getJSONArray("departments");
+		} catch (JSONException e) {
+			return null;
+		}
+		
+		if(ja == null) return null;
+		
+		ArrayList<Department> departments = new ArrayList<Department>(ja.length());
+		
+		for(int i=0; i < ja.length(); i++) {
+			try {
+				JSONObject _dep = ja.getJSONObject(i);
+				Department dep = new Department();
+				dep.title = _dep.getString("title");
+				dep.sequence = _dep.getLong("sequence");
+				departments.add(dep);
+			} catch (JSONException e) {
+			}
+		}
+		
+		return departments;
 	}
 }

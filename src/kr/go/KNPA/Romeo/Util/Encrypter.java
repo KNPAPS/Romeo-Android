@@ -9,6 +9,9 @@ import java.io.Serializable;
 
 import org.kisa.SEED;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
@@ -80,16 +83,40 @@ public class Encrypter {
 	public byte[] encrypteBytes (byte[] input) {
 		return enc(input);
 	}
-	public byte[] decryteBytes (byte[] input) {
+	public byte[] decrypteBytes (byte[] input) {
 		return dec(input);
 	}
+	/*
+	public String encrypteBytesToString(byte[] input) {
+		byte[] cipherText = encrypte(input);
+		// byteArray - > hex string
+		String hexText = new java.math.BigInteger(cipherText).toString(16);
+		String output = new String(hexText);
+		output = output.trim();
+		return output;
+	}
+	
+	public byte[] decrypteStringToByte(String input) {
+		byte[] output = null;
+		if(input == null ||  input.equals("") || input=="") {
+		} else {
+			// hex string -> byteArray
+			byte[] cipherText = new java.math.BigInteger(input.trim(), 16).toByteArray();
+			output = dec(cipherText);
+		}
+		
+		return output;
+	}
+*/
 	
 	private byte[] dec (byte[] cipherText) {
 		SEED seed = new SEED();
 		seed.init(SEED.DEC, key, iv);
-		byte[] plainText = new byte[144];
-		int outputTextlen = seed.process(cipherText, cipherText.length, plainText, 0);
-		seed.close(plainText,outputTextlen);
+		
+		byte[] plainText = new byte[cipherText.length+16];//new byte[144];
+		int outputTextLen = seed.process(cipherText, cipherText.length, plainText, 0);
+
+		seed.close(plainText,outputTextLen);
 		return plainText;
 	}
 	
@@ -99,6 +126,7 @@ public class Encrypter {
 		
 		byte[] cipherText = new byte[plainText.length+16];
 		int outputTextLen = seed.process(plainText, plainText.length, cipherText, 0);
+		
 		seed.close(cipherText, outputTextLen);
 		
 		return cipherText;
@@ -216,4 +244,5 @@ public class Encrypter {
 		}
 		return null;
 	}
+	
 }

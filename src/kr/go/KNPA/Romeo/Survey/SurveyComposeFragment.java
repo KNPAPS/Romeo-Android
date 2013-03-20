@@ -15,6 +15,7 @@ import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -310,7 +311,7 @@ public class SurveyComposeFragment extends Fragment {
 //TODO
 		String title = titleET.getText().toString();
 		String content = contentET.getText().toString();
-		User sender = User.getUserWithIdx(User.UserInfo.getUserIdx(getActivity()));
+		User sender = User.getUserWithIdx(UserInfo.getUserIdx(getActivity()));
 		
 		receivers.add(User.userWithIdx(1));
 		receivers.add(User.userWithIdx(2));
@@ -424,7 +425,7 @@ public class SurveyComposeFragment extends Fragment {
 		
 		Intent intent = new Intent(getActivity(), MemberSearch.class);
 		
-		startActivityForResult(intent, MainActivity.MEMBER_SEARCH_ACTIVITY);
+		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
 	}
 	
 	@Override
@@ -448,9 +449,12 @@ public class SurveyComposeFragment extends Fragment {
 				}
 				receivers.addAll(newUsers);
 				
-				if(receivers.size() > 0) {
+				if (receivers.size() > 1) {
 					User fReceiver = receivers.get(0);
 					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
+				} else if(receivers.size() > 0) {
+					User fReceiver = receivers.get(0);
+					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
 				} else {
 					receiversET.setText("선택된 사용자가 없습니다.");
 				}

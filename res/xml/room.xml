@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:title="그룹 정보" >
+        <Preference 
+            android:title="그룹 이름 수정하기"
+            android:key="roomGroupName" />
+        <Preference 
+            android:title="대화상대 더 보기"
+            android:key="roomMembers" />
+        <Preference 
+            android:title="대화상대 추가"
+            android:key="roomMemberSearch" />
+    </PreferenceCategory>
+    <PreferenceCategory 
+        android:title="그룹으로 보내기" >
+		    <Preference 
+		            android:title="그룹으로 설문 보내기"
+		            android:key="roomGoSurvey" />
+		    <Preference 
+		            android:title="그룹으로 업무 연락 보내기"
+		            android:key="roomGoDocument" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="채팅방 설정" >
+        <CheckBoxPreference
+		            android:title="알림"
+		            android:key="roomNotify" />
+        <CheckBoxPreference 
+            		android:title="그룹 즐겨찾기 추가" 
+            		android:key="roomFavorite"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>

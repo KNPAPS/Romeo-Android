@@ -1,6 +1,8 @@
 package kr.go.KNPA.Romeo.Member;
 
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
@@ -108,7 +110,7 @@ public class MemberSearch extends Activity {
 		container = tabContentFL;
 		
 		memberListView = (MemberListView)container.findViewById(R.id.memberListView);
-		memberListView.initWithType(User.TYPE_MEMBERLIST);
+		memberListView.initWithType(User.TYPE_MEMBERLIST_SEARCH);
 		//conditionalSearch = (ConditionalSearch)container.findViewById(R.id.conditionalSearchView); // TODO 조건부 검색
 		
 		
@@ -116,7 +118,7 @@ public class MemberSearch extends Activity {
 		LayoutParams flp = favoriteListView.getLayoutParams();
 		flp.height = LayoutParams.MATCH_PARENT;
 		favoriteListView.setLayoutParams(flp);
-		favoriteListView.initWithType(User.TYPE_FAVORITE);
+		favoriteListView.initWithType(User.TYPE_FAVORITE_SEARCH);
 		setContentView(view);
 		
 	}
@@ -168,8 +170,12 @@ public class MemberSearch extends Activity {
 	}
 	
 	private void result() {
-		Intent intent = new Intent();
+		
+		long[] fromMemberList = memberListView.listAdapter.nodeManager.collectInLongArray();
+		long[] fromFavoriteList = ((MemberFavoriteListAdapter)favoriteListView.listAdapter).collect();
+		
 		//intent.putExtra(, value)...
+		/*
 		Bundle b = new Bundle();
 		if(searchResult == null) searchResult = "";
 		String[] sr = searchResult.split(":");
@@ -178,6 +184,36 @@ public class MemberSearch extends Activity {
 			result[i] = Long.parseLong(sr[i]);
 		}
 		b.putLongArray("receivers", result);
+		*/
+		
+		ArrayList<Long> _result = new ArrayList<Long>();
+		
+		if(fromMemberList != null) {
+			for(int i=0; i<fromMemberList.length; i++) {
+				_result.add(new Long(fromMemberList[i]));
+			}
+		}
+		
+		if( fromFavoriteList != null ) {
+			for(int i=0; i<fromFavoriteList.length; i++) {
+				Long l = new Long(fromFavoriteList[i]);
+				if(!_result.contains(l)) {
+					_result.add(l);
+				}
+			}
+		}
+		
+		long[] result = new long[_result.size()];
+		
+		for(int i=0; i<result.length; i++) {
+			result[i] = _result.get(i).longValue();
+		}
+		
+		Bundle b = new Bundle();
+		b.putLongArray("receivers", result);
+		Intent intent = new Intent();
+		intent.putExtras(b);
+		
 		setResult(RESULT_OK, intent);
 		finish();
 	}

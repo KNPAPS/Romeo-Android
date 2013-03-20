@@ -10,10 +10,14 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -81,7 +85,7 @@ public class RoomFragment extends RomeoFragment {
 		OnClickListener rbbOnClickListener = new OnClickListener() {		
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), MemberSearch.class);
+				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
 				startActivity(intent);
 			}
 		};
@@ -91,7 +95,7 @@ public class RoomFragment extends RomeoFragment {
 				view, 
 				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
 				true, 
-				false, 
+				true, 
 				R.string.menu, 
 				R.string.edit, 
 				lbbOnClickListener, rbbOnClickListener);
@@ -131,7 +135,7 @@ public class RoomFragment extends RomeoFragment {
 				
 
 				
-				long senderIdx = User.UserInfo.getUserIdx(getActivity());
+				long senderIdx = UserInfo.getUserIdx(getActivity());
 				User sender = User.getUserWithIdx(senderIdx);
 				
 				ArrayList<User> roomUsers = room.users;
@@ -167,6 +171,7 @@ public class RoomFragment extends RomeoFragment {
 				// ºä¿¡ Ãß°¡ (refresh)?
 				getListView().refresh();
 				getListView().scrollToBottom();
+				ChatFragment.chatFragment(room.type).listView.refresh();
 			}
 		});
 		
@@ -213,5 +218,19 @@ public class RoomFragment extends RomeoFragment {
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
+	}
+	
+	
+	
+	
+	
+	public static class RoomSettingActivity extends PreferenceActivity {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.room);
+		}
+		
+		
 	}
 }

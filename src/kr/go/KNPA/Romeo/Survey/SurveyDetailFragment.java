@@ -13,6 +13,7 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -250,7 +251,7 @@ public class SurveyDetailFragment extends Fragment {
 	
 	private void submit() {
 		String qJson = qm.toJSON();
-		String json = "{\"idx\":"+survey.idx+",\"answersheet\":"+qJson+",\"userIdx\":"+User.UserInfo.getUserIdx(context)+"}";
+		String json = "{\"idx\":"+survey.idx+",\"answersheet\":"+qJson+",\"userIdx\":"+UserInfo.getUserIdx(context)+"}";
 		boolean result = survey.sendAnswerSheet(json, getActivity());
 		
 		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).listView.refresh();

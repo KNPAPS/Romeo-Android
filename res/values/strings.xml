@@ -37,6 +37,8 @@
     <string name="department">부서</string>
     <string name="name">이름</string>
     <string name="subTitle">부제목</string>
+    <string name="none">해당 없음</string>
+    <string name="letSelect">선택해주세요</string>
     
     <string name="sender">발신자</string>
     <string name="receiver">수신자</string>
@@ -85,7 +87,25 @@
     <string name="survey_close_month_placehold">월</string>
     <string name="survey_close_day_placehold">일</string>
     <string name="document_receivers_placehold">수신자를 선택하세요.</string>
-    <string name="receivers_placehold">수신자를 선택하세요.</string>
+    <string name="receivers_placehold">수신자를 선택하세요</string>
+    
+    
+    <string name="notification_command_ticker">지시∙보고가 도착했습니다.</string>
+    <string name="notification_command_title"></string>
+    <string name="notification_command_content"></string>
+    
+    <string name="notification_meeting_ticker">회의 내용이 도착했습니다.</string>
+    <string name="notification_meeting_title"></string>
+    <string name="notification_meeting_content"></string>
+    
+    <string name="notification_document_ticker">업무연락이 도착했습니다.</string>
+    <string name="notification_document_title"></string>
+    <string name="notification_document_content"></string>
+    
+    <string name="notification_survey_ticker">설문이 도착했습니다.</string>
+    <string name="notification_survey_title"></string>
+    <string name="notification_survey_content"></string>
+    
     
     <string name="fromTo">~</string>
     <string name="dummy"> </string>

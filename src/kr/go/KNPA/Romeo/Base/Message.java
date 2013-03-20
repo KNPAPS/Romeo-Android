@@ -52,7 +52,7 @@ public class Message implements Parcelable{
 	public User 			sender		= null;
 	public ArrayList<User> 	receivers 	= null;
 	public long 			TS			= NOT_SPECIFIED;
-	
+	public ArrayList<User>	uncheckers 	= null;
 	
 	// Variables to be sent only in asynchronous way
 	public boolean 			checked 	= false;
@@ -78,6 +78,7 @@ public class Message implements Parcelable{
 		boolean 		_checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
 		long 			_checkTS	= c.getLong(c.getColumnIndex("checkTS"));
 		boolean 		_received 	= (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);
+		ArrayList<User> _uncheckers = User.indexesInStringToArrayListOfUser(c.getString(c.getColumnIndex("uncheckers")));
 		
 		this.idx 		= _idx;
 		this.title 		= _title;
@@ -89,7 +90,7 @@ public class Message implements Parcelable{
 		this.checkTS 	= _checkTS;
 		this.checked 	= _checked;
 		this.TS 		= _TS;
-
+		this.uncheckers = _uncheckers;
 	}
 	
 	protected int getType() {
@@ -138,7 +139,6 @@ public class Message implements Parcelable{
 		
 		protected boolean 		_checked 	= false;
 		protected long 			_checkTS	= NOT_SPECIFIED;
-		
 		public Builder idx(long idx) {
 			_idx = idx;
 			return this;
@@ -221,6 +221,10 @@ public class Message implements Parcelable{
 			message.received = this._received;
 			message.checkTS = this._checkTS;
 			message.checked = this._checked;			
+			message.uncheckers = new ArrayList<User>();
+			for(int i=0; i< _receivers.size(); i++) {
+				message.uncheckers.add(_receivers.get(i).clone());
+			}
 			return message;
 		}
 		

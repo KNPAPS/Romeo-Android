@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 	private Context context;
 	public int type = User.NOT_SPECIFIED;
 	
+	private ArrayList<String> _collect;
+	
 	ArrayList<HashMap<String,String>> search;
 	
 	public MemberFavoriteListAdapter(Context ctx, int type, Cursor c, boolean autoRequery) {
@@ -34,6 +37,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		context = ctx;
 		if(type == User.TYPE_FAVORITE_SEARCH)
 			search = new ArrayList<HashMap<String,String>>();
+		_collect = new ArrayList<String>();
 	}
 	@Override
 	public View newView(Context ctx, Cursor c, ViewGroup parent) {
@@ -71,6 +75,14 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		String title = c.getString(c.getColumnIndex("title"));
 		boolean isGroup = c.getInt(c.getColumnIndex("isGroup")) == 1 ? true : false;
 		
+		String[] _idxs = idxs.split(":");
+		long[] indexes = new long[_idxs.length];
+		
+		for(int i=0; i<_idxs.length; i++) {
+			indexes[i] = Long.parseLong(_idxs[i]);
+		}
+		
+		
 		ImageView userPicIV= (ImageView)v.findViewById(R.id.userPic);
 		TextView departmentTV= (TextView)v.findViewById(R.id.department);
 		TextView rankTV= (TextView)v.findViewById(R.id.rank);
@@ -82,6 +94,17 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		String rank = "";
 		String name = "";
 		String role = "";
+		
+		if(indexes.length > 1) {
+			// 그룹
+		} else {
+			// 개인
+			User user = User.userWithIdx(indexes[0]);
+			rank = User.RANK[user.rank];
+			name = user.name;
+			department = user.getDepartmentFull();
+		}
+		
 		
 		departmentTV.setText(department);
 		rankTV.setText(rank);
@@ -101,15 +124,17 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		}
 		
 		if(type == User.TYPE_FAVORITE_SEARCH) {
+			
+			Bundle b = new Bundle();
+			b.putBoolean("isGroup", isGroup);
+			b.putLong("TS", TS);
+			b.putString("title", title);
+			b.putString("idxs", idxs);
+			b.putBoolean("fromFavorite", true);	
+			
 			Button searchButton = (Button)v.findViewById(R.id.control);
 			searchButton.setOnClickListener(this);
-			String tag = null;
-			if(isGroup) {
-				tag = "GROUP";
-			} else {
-				tag = "USER";
-			}
-			searchButton.setTag(tag + ":NOTSET");
+			searchButton.setTag(b);
 			
 		}
 
@@ -120,6 +145,8 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		Intent intent = new Intent(context, MemberDetailActivity.class);
 		Cursor c = (Cursor)getItem(position);
 		String idxs = c.getString(c.getColumnIndex("idxs"));
+		long idx = c.getLong(c.getColumnIndex(BaseColumns._ID));
+		/*
 		String[] _idxs = idxs.split(":");
 		long[] indexes = new long[_idxs.length];
 		
@@ -130,13 +157,9 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		String title = c.getString(c.getColumnIndex("title"));
 		long TS = c.getLong(c.getColumnIndex("TS"));
 		boolean isGroup = (c.getInt(c.getColumnIndex("isGroup")) == 1 ? true : false);
-		
+		*/
 		Bundle b = new Bundle();
-		b.putBoolean("isGroup", isGroup);
-		b.putLong("TS", TS);
-		b.putString("title", title);
-		b.putLongArray("idxs", indexes);
-		b.putBoolean("fromFavorite", true);
+		b.putString("idxs", idxs);
 		intent.putExtras(b);		
 		
 		context.startActivity(intent);
@@ -144,28 +167,50 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 	}
 	@Override
 	public void onClick(View v) {		
-		String tag = (String)v.getTag();
-		String[] tags = tag.split(":");
-		boolean isGroup = (tags[0]).equalsIgnoreCase("GROUP") ? true : false;
-		boolean isSet = (tags[1].equalsIgnoreCase("SET")?true:false);
+		Bundle b = (Bundle)v.getTag();
 		
-		if(isGroup) {
-			if(isSet) {
-				
-			} else {
-				//search.add(CollectionFactory.hashMapWithKeysAndStrings("GROUP",))
-			}
+		boolean isGroup = b.getBoolean("isGroup");
+		long TS = b.getLong("TS");
+		String title = b.getString("title");
+		String idxs = b.getString("idxs");
+		boolean fromFavorite = b.getBoolean("fromFavorite");	
+		
+		if(_collect.contains(idxs)) {
+			// 이미 가지고 있다. (체크된 상태)
+			// 뺀다. 체크 해지.
+			_collect.remove(idxs);
+			v.setBackgroundResource(R.drawable.circle);
 		} else {
-			if(isSet) {
-				
-			} else {
-				
+			// 가지고 있지 않다. 체크되지 않은 상태.
+			// 넣는다. 체크 등록.
+			_collect.add(idxs);
+			v.setBackgroundResource(R.drawable.circle_check_active);
+		}
+	}
+	
+	public long[] collect() {
+		String s = null;
+		String[] ss = null;
+		
+		ArrayList<Long> _indexes = new ArrayList<Long>();
+		
+		for(int i=0; i< _collect.size();i++) {
+			s = _collect.get(i);
+			ss = s.split(":");
+			for(int j=0; j< ss.length; j++ ) {
+				Long l = new Long(Long.parseLong(ss[j]));
+				if(!_indexes.contains(l)) {
+					_indexes.add(l);
+				}
 			}
 		}
 		
+		long[] result = new long[_indexes.size()];
+		for(int i=0; i< _indexes.size(); i++) {
+			result[i] = _indexes.get(i);
+		}
 		
-		tag = tags[0]+":"+tags[1];
-		v.setTag(tag);
+		return result;
 	}
 	
 	

@@ -5,12 +5,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -37,36 +42,25 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		
 		Intent intent = getIntent();
-		// intent.getStringExtra("KEY");
-		
 		Bundle b = intent.getExtras();
-		
-		
-		boolean fromFavorite = b.getBoolean("fromFavorite");
-		boolean isGroup = false;
-		if(fromFavorite == true) {
-			isGroup = b.getBoolean("isGroup");	
-		}
-		
-		String title = b.getString("title");
-		long TS = b.getLong("TS");
-		
-		long[] idxs = b.getLongArray("idxs");
-		long idx = b.getLong("idx");
-		if(idxs == null) {
-			idxs = new long[1];
-			idxs[0] = idx;
-		}
-		
-		if((idxs.length==1 && idxs[0] == 0L) || idx == NOT_SPECIFIED) {
+		String idxs = b.getString("idxs");
+		String title = null;
+		if(idxs == null|| idxs.trim().length() < 1) {
 			finish();
 		} //else {
 		
+
+		String[] _idxs = idxs.split(":");
+		long[] __idxs = new long[_idxs.length];
+		for(int i=0; i<__idxs.length; i++) {
+			__idxs[i] = Long.parseLong(_idxs[i]);
+		}
 		// User 정보를 얻어온다.
-		ArrayList<User> users = User.getUsersWithIndexes(idxs);
+		ArrayList<User> users = User.getUsersWithIndexes(__idxs);
 		//}
 		
         //배경투명처리
@@ -106,7 +100,37 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		// Bind Click Events
 		background = (Button)findViewById(R.id.backgroundButton);
 		close = (Button)findViewById(R.id.close);
+		
+		
+		DBManager dbManager = new DBManager(MemberDetailActivity.this);
+		SQLiteDatabase db = dbManager.getReadableDatabase();	
+		Cursor c = null;
+		String sql = "SELECT * FROM "+DBManager.TABLE_MEMBER_FAVORITE+" WHERE idxs=\""+idxs+"\";";
+		c = db.rawQuery(sql, null);
+		boolean isFavorite = (c.getCount() > 0) ? true : false;
+		if(isFavorite) {
+			c.moveToFirst();
+			title = c.getString(c.getColumnIndex("title"));
+		} else {
+			title = "";
+		}
+		if(c != null) c.close();
+		db.close();
+		dbManager.close();
+		
 		favorite = (Button)findViewById(R.id.favorite);
+		if(isFavorite) {
+			favorite.setBackgroundResource(R.drawable.star_active);
+		} else {
+			favorite.setBackgroundResource(R.drawable.star_gray);
+		}
+		Bundle b2 = new Bundle();
+		b2.putString("idxs", idxs);
+		favorite.setTag(b);
+		
+		
+		
+		
 		goMeeting = (Button)findViewById(R.id.goMeeting);
 		goCommand = (Button)findViewById(R.id.goCommand);
 		goDocument = (Button)findViewById(R.id.goDocument);
@@ -127,6 +151,7 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		TextView rankTV = (TextView)findViewById(R.id.rank);
 		TextView nameTV = (TextView)findViewById(R.id.name);
 		
+		boolean isGroup = (_idxs.length > 1)? true : false;
 		if(isGroup) {
 			nameTV.setText(title);
 		} else {
@@ -136,10 +161,14 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 			nameTV.setText(user.name);
 			// TODO : userPic Setting
 		}
+
 	}
 
 	@Override
 	public void onClick(View view) {
+		
+		
+		
 		final long TD = 300;
 		Button btn = (Button)view;
 		if(background == btn) {
@@ -147,16 +176,37 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		} else if (close == btn) {
 			finish();
 		} else if (favorite == btn) {
-			final android.widget.Toast t = android.widget.Toast.makeText(this, "Favorite", android.widget.Toast.LENGTH_SHORT);
-			t.show();
-			Timer timer = new Timer();
-			TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					t.cancel();
-				}
-			};
-			timer.schedule(task, TD);
+			DBManager dbManager = new DBManager(MemberDetailActivity.this);
+			SQLiteDatabase db = dbManager.getReadableDatabase();
+			
+			Bundle b = (Bundle)view.getTag();
+			String idxs = b.getString("idxs");
+			String _idxs[] = idxs.split(":");
+			boolean isGroup = (_idxs.length > 1)? true : false;
+			
+			Cursor c = null;
+			String sql = "SELECT * FROM "+DBManager.TABLE_MEMBER_FAVORITE+" WHERE idxs=\""+idxs+"\";";
+			c = db.rawQuery(sql, null);
+			
+			boolean isFavorite = (c.getCount() >0 ? true :false );
+			
+			if(isFavorite) {
+				db.delete(DBManager.TABLE_MEMBER_FAVORITE, "idxs=?", new String[]{idxs});
+				btn.setBackgroundResource(R.drawable.star_gray);
+			} else {
+				long currentTS = System.currentTimeMillis();
+				ContentValues vals = new ContentValues();
+				vals.put("TS", currentTS);
+				vals.put("isGroup", isGroup);
+				vals.put("idxs", idxs);
+				db.insert(DBManager.TABLE_MEMBER_FAVORITE, null, vals);
+				btn.setBackgroundResource(R.drawable.star_active);
+			}
+			
+			if(c != null) c.close();
+			db.close();
+			dbManager.close();
+			
 		} else if (goDocument == btn) {
 			final android.widget.Toast t = android.widget.Toast.makeText(this, "goDocument", android.widget.Toast.LENGTH_SHORT);
 			t.show();
@@ -202,6 +252,8 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 			};
 			timer.schedule(task, TD);
 		}
+		
+		
 	}
  
 }

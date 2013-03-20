@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -52,7 +53,8 @@ public class Connection {
 	public final static int RETURNTYPE_TEXT = 3;
 	public final static int RETURNTYPE_XML = 4;
 	
-	public final static String HOST_URL = "http://172.16.7.52/Projects/CI/index.php";
+	//public final static String HOST_URL = "http://172.16.7.52/Projects/CI/index.php";
+	public final static String HOST_URL = "http://116.67.94.11:9876/index.php";
 	public URL url = null;
 	public String userId = null;
 	public String password = null;
@@ -78,7 +80,7 @@ public class Connection {
 		}
 
 		conn.setUseCaches(false);
-
+		System.setProperty("http.keepAlive","false");
 		String methodType = null;
 		switch(type) {
 		case TYPE_GET 	: 	methodType = "GET"; break;
@@ -337,29 +339,43 @@ public class Connection {
 			connection.timeout = this.timeout;
 			
 			if(type == TYPE_GET && connection.data != null) {
-				StringBuffer sb = new StringBuffer();
-				
-				
-				//HashMap<String, Object> hmap = gson.fromJson(data, HashMap.class);
-				HashMap<String, ?> hmap = data;
-				Set keyset = hmap.keySet();
-				String[] hKeys = (String[])keyset.toArray();
-				
-				for(int i=0; i<hKeys.length; i++) {
-					String key = hKeys[i];
+				if(connection.isJSON == false) {
+					StringBuffer sb = new StringBuffer();
 					
-					Object value = hmap.get(key);
 					
-					sb.append(key).append("=").append(gson.toJson(value));
-					if(i != hKeys.length-1) {
-						sb.append("&");
+					//HashMap<String, Object> hmap = gson.fromJson(data, HashMap.class);
+					HashMap<String, ?> hmap = data;
+					Set keyset = hmap.keySet();
+					String[] hKeys = (String[])keyset.toArray();
+					
+					for(int i=0; i<hKeys.length; i++) {
+						String key = hKeys[i];
+						
+						Object value = hmap.get(key);
+						
+						sb.append(key).append("=").append(gson.toJson(value));
+						if(i != hKeys.length-1) {
+							sb.append("&");
+						}
 					}
+					
+					try {	connection.url = new URL(this.url + "?" + sb.toString());	} 
+					catch (MalformedURLException e) {	e.printStackTrace();	}
+					//TODO PAYLOAD=
+					connection.data = null;
+				} else {
+					// GET && JSON
+					String encoded = null;
+					try {
+						encoded = URLEncoder.encode(connection.data,"UTF-8");
+					} catch (UnsupportedEncodingException e1) {
+						encoded = "";
+					}
+					try {	connection.url = new URL(this.url + "?" + "payload=" + encoded );	} 
+					catch (MalformedURLException e) {	e.printStackTrace();	}
+					connection.data = null;
+					
 				}
-				
-				try {	connection.url = new URL(this.url + "?" + sb.toString());	} 
-				catch (MalformedURLException e) {	e.printStackTrace();	}
-
-				connection.data = null;
 			} else {
 				try {	connection.url = new URL(this.url);	} 
 				catch (MalformedURLException e) {	e.printStackTrace();	}

@@ -6,26 +6,25 @@
 <script src="lib/plugin/d3.v3.min.js"></script>
 <script src="lib/plugin/json2.js"></script>
 <script src="lib/plugin/underscore-min.js"></script>
+<script src="lib/plugin/excanvas.js"></script>
 <script src="lib/plugin/jit.js"></script>
 </head>
 
 <body>
 <div id="holder"></div>
 <ul id="legend"></ul>
-<div id="center-container">
-    <div id="infovis"></div>    
-</div>
+<div id="infovis"></div>    
 
 <script>
 
 var labelType, useGradients, nativeTextSupport, animate;
 
 (function() {
-  var ua = navigator.userAgent,
-      iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-      typeOfCanvas = typeof HTMLCanvasElement,
-      nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-      textSupport = nativeCanvasSupport 
+  var ua = navigator.userAgent;
+  var iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i);
+  var typeOfCanvas = typeof HTMLCanvasElement;
+  var nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function');
+  textSupport = nativeCanvasSupport 
         && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
   //I'm setting this based on the fact that ExCanvas provides text support for IE
   //and that as of today iPhone/iPad current text support is lame
@@ -47,113 +46,14 @@ var Log = {
 
 
 function init(){
-    //init data
-    var json = {
-        'label': ['label A', 'label B', 'label C', 'label D'],
-        'values': [
-        {
-          'label': 'date A',
-          'values': [20, 40, 15, 5]
-        }, 
-        {
-          'label': 'date B',
-          'values': [30, 10, 45, 10]
-        }, 
-        {
-          'label': 'date E',
-          'values': [38, 20, 35, 17]
-        }, 
-        {
-          'label': 'date F',
-          'values': [58, 10, 35, 32]
-        }, 
-        {
-          'label': 'date D',
-          'values': [55, 60, 34, 38]
-        }, 
-        {
-          'label': 'date C',
-          'values': [26, 40, 25, 40]
-        }]
-        
-    };
+	//init data
+    
     //end
-    var json2 = {
-        'values': [
-        {
-          'label': 'date A',
-          'values': [10, 40, 15, 7]
-        }, 
-        {
-          'label': 'date B',
-          'values': [30, 40, 45, 9]
-        }, 
-        {
-          'label': 'date D',
-          'values': [55, 30, 34, 26]
-        }, 
-        {
-          'label': 'date C',
-          'values': [26, 40, 85, 28]
-        }]
-        
-    };
-    //init PieChart
-    var pieChart = new $jit.PieChart({
-      //id of the visualization container
-      injectInto: 'infovis',
-      //whether to add animations
-      animate: true,
-      //offsets
-      offset: 30,
-      sliceOffset: 0,
-      labelOffset: 20,
-      //slice style
-      type: useGradients? 'stacked:gradient' : 'stacked',
-      //whether to show the labels for the slices
-      showLabels:true,
-      //resize labels according to
-      //pie slices values set 7px as
-      //min label size
-      resizeLabels: 7,
-      //label styling
-      Label: {
-        type: labelType, //Native or HTML
-        size: 20,
-        family: 'Arial',
-        color: 'white'
-      },
-      //enable tips
-      Tips: {
-        enable: true,
-        onShow: function(tip, elem) {
-           tip.innerHTML = "<b>" + elem.name + "</b>: " + elem.value;
-        }
-      }
-    });
-    //load JSON data.
-    pieChart.loadJSON(json);
-    //end
-/*
-    var list = $jit.id('id-list'),
-        button = $jit.id('update');
-    //update json on click
-    $jit.util.addEvent(button, 'click', function() {
-      var util = $jit.util;
-      if(util.hasClass(button, 'gray')) return;
-      util.removeClass(button, 'white');
-      util.addClass(button, 'gray');
+   
+    /*
+    setTimeout(function() {
       pieChart.updateJSON(json2);
-    });
-    //dynamically add legend to list
-
-    var legend = pieChart.getLegend(),
-        listItems = [];
-    for(var name in legend) {
-      listItems.push('<div class=\'query-color\' style=\'background-color:'
-          + legend[name] +'\'>&nbsp;</div>' + name);
-    }
-    list.innerHTML = '<li>' + listItems.join('</li><li>') + '</li>';
+    }, 3000);
 */
 }
 
@@ -177,9 +77,9 @@ $(document).ready(function(e) {
 		
 		var data = Array();
 		for(var i=0; i<results.length; i++) {
-			data.push({"label":results[i][0], "value" : results[i][1], "ratio": 1.0*results[i][1]/nResponders});
+			data.push({"label":results[i][0], "values" : results[i][1]});
 		}
-	init();
+
   render(data);
 });
 
@@ -209,123 +109,50 @@ function pushSurveyIdx(idx) {
 	$(document).trigger('idxArrived');
 }
 
-function render(data) {
+function render(givenData) {
 	var colors = ["#AF0452", "#FF8500", "#008196", "#002787", "#4903C7"];
 	
-	/*
-	var r = Raphael("holder");
-
-	
-	r.text(320, 70, "static Pie Chart").attr({font:"20px sans-serif"});
-	var pie = r.piechart(320,240,100, data, {colors : colors, legend: ['%%', '%%', '%%', '%%', '%%']});	
-	var mask = r.piechart(320,240,30, [1], {colors: ["#FFFFFF"]}); 
-
-	pie.each(function() {
-    r.label(this.x, this.y, this.label[1].attrs.text).attr([
-		{
-			fill : "#FFFFFF", 'fill-opacity' : 0
-		}, 
-		{
-			  font: '13px sans-serif', fill : "#FFFFFF"
-    }]).show();
-	}); 
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-	var w = 200;  //width
-  var h = 200; //height
-  var r = 100; //radius
-	var color = function (i) { return ["#AF0452", "#FF8500", "#008196", "#002787", "#4903C7"][i%5]};
-	//d3.scale.category20c();     //builtin range of colors
- 
-
-    
-    var vis = d3.select("#holder")
-        .append("svg:svg")              //create the SVG element inside the <body>
-        .data([data])                   //associate our data with the document
-        .attr("width", w)           //set the width and height of our visualization (these will be attributes of the <svg> tag
-        .attr("height", h)
-        .append("svg:g")                //make a group to hold our pie chart
-        .attr("transform", "translate(" + r + "," + r + ")")    //move the center of the pie chart from 0, 0 to radius, radius
- 
-    var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
-        				.outerRadius(r)
-								.innerRadius(r*0.5);
- 
-    var pie = d3.layout.pie()           //this will create arc data for us given a list of values
-        				.value(function(d) { return d.value; });    //we must tell it out to access the value of each element in our data array
- 
-    var arcs = vis.selectAll("g.slice")     //this selects all <g> elements with class slice (there aren't any yet)
-        .data(pie)                          //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
-        .enter()                            //this will create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array
-        .append("svg:g")                //create a group to hold each slice (we will have a <path> and a <text> element associated with each slice)
-        .attr("class", "slice");    //allow us to style things in the slices (like text)
- 
-        arcs.append("svg:path")
-            .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
-            .attr("d", arc);                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing function
- 
-        arcs.append("svg:text")                                     //add a label to each slice
-            .attr("transform", function(d) {                    //set the label's origin to the center of the arc
-                //we have to make sure to set these before calling arc.centroid
-        	d.innerRadius = r*0,5;
-          d.outerRadius = r;
-          return "translate(" + arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
-        }).attr("text-anchor", "middle")                          //center the text on it's origin
-        	.text(function(d, i) { return Math.round(data[i].ratio*100)+"%"; });        //get the label from our original data array
-					
-			d3.selectAll("text").style("color", "white");
-
-	//var template = 	;
-	
-	for(var i=0; i<data.length; i++) {
-		var $template = $('<li>' +
-			'<div class="label"></div>' +
-			'<div class="blank">……………………………………………………</div>' +
-			'<div class="ratio"></div>' +
-			'</li>');
-			$template.find(".label").append(data[i].label);
-			$template.find(".ratio").css("color", color(i));
-			$template.find(".ratio").append(Math.round(data[i].ratio*1000)*0.1+" %");
-		$("#legend").append($template);
-	}
-
-
-
-
-
-
-
-
+	var data = {
+					'color':["#AF0452", "#FF8500", "#008196", "#002787", "#4903C7"],
+	        'values': givenData
+	    };
+	    
+	    var infovis = document.getElementById('infovis');
+	    //init PieChart
+	    pieChart = new $jit.PieChart({
+	        injectInto: 'infovis',
+	        animate: true,
+	        offset: 60,
+	        sliceOffset: 5,
+	        labelOffset: 20,
+	        type:'stacked:gradient',
+	        updateHeights:false,
+	        showLabels:true,
+	        Label: {
+	          size: 13,
+	          family: 'Arial',
+	          color: 'white'
+	        },
+	        Tips: {
+	          'enable': true,
+	          'onShow': function(tip, elem) {
+	             tip.innerHTML = "<b>" + elem.label + "</b>: " + elem.value;
+	          }
+	        }
+	    });
+	    //load JSON data.
+	    pieChart.loadJSON(data);
 
 
 }
 </script>
 <style>
-#holder {
-	width : 50%;
-	height : 200px;
-	position:absolute;
-	left:25%;
-	right:25%;
+
+#infovis {
+width : 500px;
+height:500px;
 }
-ul, li {list-style:none;}
-#legend{position:relative;}
-li {display:block; height : 20px;}
-ul {display:absolute; top:250px;}
-.label{ color : rgb(102,102,102); display:inline-block; position:absolute; left:20px;}
-.blank{display:block; position:absolute; left : 200px;right:50px; overflow:hidden; text-align:right;}
-.ratio{display:inline-block; position:absolute; right:0px;}
+
 </style>
 </body>
 </html>

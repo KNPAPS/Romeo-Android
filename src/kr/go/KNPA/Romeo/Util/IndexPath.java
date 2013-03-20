@@ -66,14 +66,20 @@ public class IndexPath {
 	}
 	
 	public static IndexPath indexPathWithString(String iString) {
-		String[] _paths = iString.split("/[^0-9]/");
-		int[] _intPath = new int[_paths.length];
-		for(int i=0; i< _paths.length; i++) {
-			if(_paths[i].length() ==0 ) continue;
-			_intPath[i] = Integer.parseInt(_paths[i]);
-		}
 		
-		IndexPath path = IndexPath.indexPathWithIndexesAndLength(_intPath, _intPath.length);
+		
+		IndexPath path = null; 
+		if( iString == null || iString.trim().length() < 1) {
+			path = IndexPath.indexPathWithIndexesAndLength(new int[0], 0);
+		} else {
+			String[] _paths = iString.split("[^0-9]");
+			int[] _intPath = new int[_paths.length];
+			for(int i=0; i< _paths.length; i++) {
+				if(_paths[i].length() ==0 ) continue;
+				_intPath[i] = Integer.parseInt(_paths[i]);
+			}
+			path = IndexPath.indexPathWithIndexesAndLength(_intPath, _intPath.length);
+		}
 		return path;
 	}
 	
@@ -135,6 +141,10 @@ public class IndexPath {
 			if(this.p[i] != INDEXPATH_NULL) {
 				length = i+1;
 			}
+		}
+		
+		if(this.p[0] == INDEXPATH_NULL) {
+			length = 0;
 		}
 		return length;
 	}

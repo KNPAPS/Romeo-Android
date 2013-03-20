@@ -3,17 +3,28 @@
  */
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.Member.MemberSearch;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.SurveyComposeFragment;
 import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.UserInfo;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
 
 public class ChatFragment extends RomeoFragment {
@@ -100,9 +111,8 @@ public class ChatFragment extends RomeoFragment {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), SurveyComposeFragment.class);
-				//TODO
-				startActivity(intent);
+				Intent intent = new Intent(getActivity(), MemberSearch.class);
+				startActivityForResult(intent, MemberSearch.REQUEST_CODE);
 			}
 		};
 		
@@ -113,9 +123,9 @@ public class ChatFragment extends RomeoFragment {
 							view, 
 							R.string.meetingTitle, 
 							true, 
-							false, 
+							true, 
 							R.string.menu, 
-							R.string.dummy, 
+							R.string.add, 
 							lbbOnClickListener, rbbOnClickListener);
 
 			break;
@@ -125,9 +135,9 @@ public class ChatFragment extends RomeoFragment {
 					view, 
 					R.string.commandTitle, 
 					true, 
-					false, 
+					true, 
 					R.string.menu, 
-					R.string.dummy, 
+					R.string.add, 
 					lbbOnClickListener, rbbOnClickListener);
 			break;
 		}
@@ -163,4 +173,34 @@ public class ChatFragment extends RomeoFragment {
 		});
 	}
 
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == MemberSearch.REQUEST_CODE) {
+			if(resultCode != MemberSearch.RESULT_OK) {
+				// onError
+			} else {
+				//data.getExtras().get;
+				
+				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				
+				ArrayList<User> newUsers = new ArrayList<User>();
+				for(int i=0; i< receiversIdx.length; i++ ){
+					User user = User.getUserWithIdx(receiversIdx[i]);
+					// TODO 이미 선택되어 잇는 사람은 ..
+					newUsers.add(user);
+				}
+
+				
+				Room room = new Room();
+				room.type = this.type;
+				room.roomCode = UserInfo.getUserIdx(getActivity())+":"+System.currentTimeMillis();
+				room.users = newUsers;
+				RoomFragment fragment = new RoomFragment(room);
+				MainActivity.sharedActivity().pushContent(fragment);
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 }
