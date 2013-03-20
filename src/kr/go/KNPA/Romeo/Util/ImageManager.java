@@ -17,7 +17,7 @@ import android.util.Log;
 
 public class ImageManager {
 	
-	// ÀüÃ¼ Media ScanningÇÏÁö ¾Ê°í Æ¯Á¤ ÆÄÀÏ¸¸ ½ºÄ³´× ÇÏ±â :: http://www.androidpub.com/1953144
+	// ì „ì²´ Media Scanningí•˜ì§€ ì•Šê³  íŠ¹ì • íŒŒì¼ë§Œ ìŠ¤ìºë‹ í•˜ê¸° :: http://www.androidpub.com/1953144
 	public static byte[] bitmapToByteArray( Bitmap $bitmap ) {  
         ByteArrayOutputStream stream = new ByteArrayOutputStream() ;  
         $bitmap.compress( CompressFormat.JPEG, 50, stream) ;  
@@ -132,7 +132,7 @@ public class ImageManager {
 				}
 			}
 		} catch(Exception e) {
-			Log.wtf("ImageManager", "ÆÄÀÏ »èÁ¦ ½ÇÆĞ");
+			Log.wtf("ImageManager", "íŒŒì¼ ì‚­ì œ ì‹¤íŒ¨");
 		}
 
 

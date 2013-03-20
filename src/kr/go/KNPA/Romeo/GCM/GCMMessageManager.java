@@ -62,7 +62,7 @@ public class GCMMessageManager {
 	private int 			messageSubType 	= NOT_SPECIFIED;
 	
 	// OnMessage
-	public void onMessage(Context context, Intent intent) {			/** Çª½Ã·Î ¹ŞÀº ¸Ş½ÃÁö */
+	public void onMessage(Context context, Intent intent) {			/** í‘¸ì‹œë¡œ ë°›ì€ ë©”ì‹œì§€ */
 		
 		// Context Setting
 		this.context = context;
@@ -87,7 +87,7 @@ public class GCMMessageManager {
 		    	messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
 		    	messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
 		
-		        // ÆÄ½ÌµÈ event¿¡ µû¶ó ÀÛ¾÷À» ºĞ·ùÇÑ´Ù. TODO
+		        // íŒŒì‹±ëœ eventì— ë”°ë¼ ì‘ì—…ì„ ë¶„ë¥˜í•œë‹¤. TODO
 		    	
 		    	switch(messageType) {
 			    	case Message.MESSAGE_TYPE_CHAT 		:	onChat();		break;
@@ -126,8 +126,8 @@ public class GCMMessageManager {
 		}
 		
 
-		if(isRunningProcess(context)) {		// ½ÇÇàÁßÀÎÁö ¾Æ´ÑÁö. ÆÇ´Ü.
-		// DB¿¡ »ğÀÔ.
+		if(isRunningProcess(context)) {		// ì‹¤í–‰ì¤‘ì¸ì§€ ì•„ë‹Œì§€. íŒë‹¨.
+		// DBì— ì‚½ì….
 			ContentValues vals = new ContentValues();
 			vals.put("content", chat.content);
 			vals.put("appendix", chat.appendix.toBlob());
@@ -141,10 +141,10 @@ public class GCMMessageManager {
 			vals.put("idx", chat.idx);
 			db.insert(tableName, null, vals);
 
-		// ÇöÀç Ãª¹æ¿¡ ¿Ã¸®±â. ¹× ¾Ë¸²
+		// í˜„ì¬ ì±—ë°©ì— ì˜¬ë¦¬ê¸°. ë° ì•Œë¦¼
 			ChatFragment.receive(chat);
 		} else {
-		// ¾Ë¸²¸¸ ¶ç¿ìÀå
+		// ì•Œë¦¼ë§Œ ë„ìš°ì¥
 			
 		}
 		NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
@@ -186,7 +186,7 @@ public class GCMMessageManager {
 		
 
 		if(isRunningProcess(context)) {
-			//DB¿¡ »ğÀÔ.
+			//DBì— ì‚½ì….
 			ContentValues vals = new ContentValues();
 			vals.put("title", document.title);
 			vals.put("content", document.content);
@@ -201,13 +201,13 @@ public class GCMMessageManager {
 			vals.put("idx", document.idx);
 			db.insert(tableName, null, vals);
 	
-			//¸®½ºÆ®ºä¿¡ notify
+			//ë¦¬ìŠ¤íŠ¸ë·°ì— notify
 			DocumentFragment.receive(document);
 		} else {
 
 		}
 		
-		//¾Ë¸²¸¸ ¶ç¿ìÀÚ
+		//ì•Œë¦¼ë§Œ ë„ìš°ì
 		NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
 		nm.cancel(document.type);
 		
@@ -242,7 +242,7 @@ public class GCMMessageManager {
 		} 
 		
 		if(isRunningProcess(context)) {
-			//DB¿¡ »ğÀÔ.
+			//DBì— ì‚½ì….
 			ContentValues vals = new ContentValues();
 			vals.put("title", survey.title);
 			vals.put("content", survey.content);
@@ -258,12 +258,12 @@ public class GCMMessageManager {
 			vals.put("idx", survey.idx);
 			db.insert(tableName, null, vals);
 			
-			//¸®½ºÆ®ºä¿¡ notify
+			//ë¦¬ìŠ¤íŠ¸ë·°ì— notify
 			SurveyFragment.receive(survey);
 		} else {
 
 		}
-		//¾Ë¸²¸¸ ¶ç¿ìÁö
+		//ì•Œë¦¼ë§Œ ë„ìš°ì§€
 		NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
 		nm.cancel(survey.type);
 		PendingIntent contentIntent = PendingIntent.getActivity(
@@ -290,7 +290,7 @@ public class GCMMessageManager {
 	//// Helper Procedures	//// 
 	
 	private List<ActivityManager.RunningAppProcessInfo> processList(Context context) {
-        /* ½ÇÇàÁßÀÎ process ¸ñ·Ï º¸±â*/
+        /* ì‹¤í–‰ì¤‘ì¸ process ëª©ë¡ ë³´ê¸°*/
 		
         ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appList = am.getRunningAppProcesses();

@@ -21,7 +21,7 @@ public class NotRegisteredActivity extends Activity {
 		TextView header = (TextView)view.findViewById(R.id.header);
 		TextView footer = (TextView)view.findViewById(R.id.footer);
 		
-		header.setText("»ç¿ëÀÚ µî·ÏÀÌ µÇÁö ¾Ê¾Ò°Å³ª,\nµî·Ï ¿äÃ» Áß¿¡ ÀÖ½À´Ï´Ù.\n\n»ç¿ëÀÚ µî·ÏÀÌ ¿Ï·áµÈ ÈÄ\n´Ù½Ã ½ÇÇàÇØ ÁÖ¼¼¿ä.");
+		header.setText("ì‚¬ìš©ì ë“±ë¡ì´ ë˜ì§€ ì•Šì•˜ê±°ë‚˜,\në“±ë¡ ìš”ì²­ ì¤‘ì— ìˆìŠµë‹ˆë‹¤.\n\nì‚¬ìš©ì ë“±ë¡ì´ ì™„ë£Œëœ í›„\në‹¤ì‹œ ì‹¤í–‰í•´ ì£¼ì„¸ìš”.");
 		footer.setText("");
 		
 		setContentView(view);

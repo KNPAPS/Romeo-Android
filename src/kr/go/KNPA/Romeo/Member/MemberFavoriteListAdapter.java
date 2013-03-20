@@ -96,9 +96,9 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		String role = "";
 		
 		if(indexes.length > 1) {
-			// ±×·ì
+			// ê·¸ë£¹
 		} else {
-			// °³ÀÎ
+			// ê°œì¸
 			User user = User.userWithIdx(indexes[0]);
 			rank = User.RANK[user.rank];
 			name = user.name;
@@ -176,13 +176,13 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		boolean fromFavorite = b.getBoolean("fromFavorite");	
 		
 		if(_collect.contains(idxs)) {
-			// ÀÌ¹Ì °¡Áö°í ÀÖ´Ù. (Ã¼Å©µÈ »óÅÂ)
-			// »«´Ù. Ã¼Å© ÇØÁö.
+			// ì´ë¯¸ ê°€ì§€ê³  ìˆë‹¤. (ì²´í¬ëœ ìƒíƒœ)
+			// ëº€ë‹¤. ì²´í¬ í•´ì§€.
 			_collect.remove(idxs);
 			v.setBackgroundResource(R.drawable.circle);
 		} else {
-			// °¡Áö°í ÀÖÁö ¾Ê´Ù. Ã¼Å©µÇÁö ¾ÊÀº »óÅÂ.
-			// ³Ö´Â´Ù. Ã¼Å© µî·Ï.
+			// ê°€ì§€ê³  ìˆì§€ ì•Šë‹¤. ì²´í¬ë˜ì§€ ì•Šì€ ìƒíƒœ.
+			// ë„£ëŠ”ë‹¤. ì²´í¬ ë“±ë¡.
 			_collect.add(idxs);
 			v.setBackgroundResource(R.drawable.circle_check_active);
 		}

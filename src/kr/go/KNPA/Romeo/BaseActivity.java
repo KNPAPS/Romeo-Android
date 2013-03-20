@@ -34,58 +34,58 @@ public class BaseActivity extends SlidingFragmentActivity {
 		// set the Behind View
 		setBehindContentView(R.layout.menu_frame);
 		
-		// Fragment¸¦ ProgrammaticallyÇÏ°Ô ¹èÄ¡ÇÏ±â À§ÇÏ¿© Fragment Transaction ÀÎ½ºÅÏ½º¸¦ ¸Å´ÏÀú·ÎºÎÅÍ ¹Ş¾Æ¿Â´Ù.
+		// Fragmentë¥¼ Programmaticallyí•˜ê²Œ ë°°ì¹˜í•˜ê¸° ìœ„í•˜ì—¬ Fragment Transaction ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë§¤ë‹ˆì €ë¡œë¶€í„° ë°›ì•„ì˜¨ë‹¤.
 		FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
 		
-		// ¸®½ºÆ®¸¦ ´ã´çÇÏ´Â FragmentÀÌ´Ù.
+		// ë¦¬ìŠ¤íŠ¸ë¥¼ ë‹´ë‹¹í•˜ëŠ” Fragmentì´ë‹¤.
 		mFrag = new MenuListFragment();
 		
-		// Behind View?? ¸¦ ¸®½ºÆ®ºä·Î ÀüÈ¯ÇÑ´Ù.
+		// Behind View?? ë¥¼ ë¦¬ìŠ¤íŠ¸ë·°ë¡œ ì „í™˜í•œë‹¤.
 		ft.replace(R.id.menu_frame, mFrag);
-		ft.commit();		// ¹ß»ç!!
+		ft.commit();		// ë°œì‚¬!!
 
-		// customize the SlidingMenu(¹ºÁø ¸ğ¸£°ÚÁö¸¸, SlideingMenu¾È¿¡ Á¤ÀÇµÇ¾îÀÖ´Ù.)
+		// customize the SlidingMenu(ë­”ì§„ ëª¨ë¥´ê² ì§€ë§Œ, SlideingMenuì•ˆì— ì •ì˜ë˜ì–´ìˆë‹¤.)
 		SlidingMenu sm = getSlidingMenu();
 		sm.setShadowWidthRes(R.dimen.shadow_width);
-		sm.setShadowDrawable(R.drawable.shadow);	// res/drawble/shadow.xmlÀº ±×¶óµğ¾ğÆ® Á¤º¸¸¦ ´ã°íÀÖ´Ù.
+		sm.setShadowDrawable(R.drawable.shadow);	// res/drawble/shadow.xmlì€ ê·¸ë¼ë””ì–¸íŠ¸ ì •ë³´ë¥¼ ë‹´ê³ ìˆë‹¤.
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		sm.setFadeDegree(0.35f);
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
 		
-		//³ªÁß¿¡ NavigationBar¸¦ ¸¸µé¸é¼­ Áö¿ö¹ö¸®µµ·ÏÇÏÀÚ. ¸®½º³Ê¸¦ µî·Ï?
+		//ë‚˜ì¤‘ì— NavigationBarë¥¼ ë§Œë“¤ë©´ì„œ ì§€ì›Œë²„ë¦¬ë„ë¡í•˜ì. ë¦¬ìŠ¤ë„ˆë¥¼ ë“±ë¡?
 		
 	}
 	
-	// È¾½ºÅ©·Ñºä¸¦ ¸¸µå·Á³ªº¸´Ù.
+	// íš¡ìŠ¤í¬ë¡¤ë·°ë¥¼ ë§Œë“œë ¤ë‚˜ë³´ë‹¤.
 	public class BasePagerAdapter extends FragmentPagerAdapter {
-		// ÇÁ·¹±×¸ÕÆ®µéÀÌ µé¾îÀÖ´Â ¸®½ºÆ®¸¦ ÇÏ³ª ¼±¾ğÇÏ°í,
+		// í”„ë ˆê·¸ë¨¼íŠ¸ë“¤ì´ ë“¤ì–´ìˆëŠ” ë¦¬ìŠ¤íŠ¸ë¥¼ í•˜ë‚˜ ì„ ì–¸í•˜ê³ ,
 		private List<Fragment> mFragments = new ArrayList<Fragment>();
-		// ÆäÀÌÂ¡? È¾½ºÅ©·ÑÇÏ´Â ºäÀÎ°¡º¸´Ù.
+		// í˜ì´ì§•? íš¡ìŠ¤í¬ë¡¤í•˜ëŠ” ë·°ì¸ê°€ë³´ë‹¤.
 		private ViewPager mPager;
 
-		// ÄÁ½ºÆ®·°ÅÍ.
+		// ì»¨ìŠ¤íŠ¸ëŸ­í„°.
 		public BasePagerAdapter(FragmentManager fm, ViewPager vp) {
 			super(fm);
-			mPager = vp;				// ½ºÅ©·Ñºä´Â ÀÌ ¾î´ğÅÍ¸¦ »ı¼ºÇÒ¶§ ·¹ÆÛ·±½º¸¦ ¹Ş¾Æ¼­,
-			mPager.setAdapter(this);	// ÇÁ·¹±×¸ÕÆ®µéÀ» ÇÏ³ª¾¿ Çª½ÃÇÏ³ªº¸´Ù.
+			mPager = vp;				// ìŠ¤í¬ë¡¤ë·°ëŠ” ì´ ì–´ëŒ‘í„°ë¥¼ ìƒì„±í• ë•Œ ë ˆí¼ëŸ°ìŠ¤ë¥¼ ë°›ì•„ì„œ,
+			mPager.setAdapter(this);	// í”„ë ˆê·¸ë¨¼íŠ¸ë“¤ì„ í•˜ë‚˜ì”© í‘¸ì‹œí•˜ë‚˜ë³´ë‹¤.
 			for (int i = 0; i < 3; i++) {
-				addTab(new MenuListFragment());	// ¿ÀÀ×????
+				addTab(new MenuListFragment());	// ì˜¤ì‰????
 			}
 		}
 
 		public void addTab(Fragment frag) {
-			mFragments.add(frag);					// ¾ÆÀÌÅÛ Çª½¬ ÀÎÅõ ¾î·¹ÀÌ¸¦ ½±°Ô!!
+			mFragments.add(frag);					// ì•„ì´í…œ í‘¸ì‰¬ ì¸íˆ¬ ì–´ë ˆì´ë¥¼ ì‰½ê²Œ!!
 		}
 
 		@Override
 		public Fragment getItem(int position) {
-			return mFragments.get(position);		// ¾ÆÀÌÅÛ °ÔÅÍ in ¹è¿­
+			return mFragments.get(position);		// ì•„ì´í…œ ê²Œí„° in ë°°ì—´
 		}
 
 		@Override
 		public int getCount() {
-			return mFragments.size();				// Ä«¿îÆ®.
+			return mFragments.size();				// ì¹´ìš´íŠ¸.
 		}
 	}
 

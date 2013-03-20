@@ -44,19 +44,19 @@ public class Formatter {
 		
 		switch(dayDif) {
 		case 0 : // today
-			formatString = "HH'½Ã' mm'ºĞ'"; break;
+			formatString = "HH'ì‹œ' mm'ë¶„'"; break;
 		case 1 :
-			result = "¾îÁ¦"; break;
+			result = "ì–´ì œ"; break;
 		case 2 :
 		case 3 :
 		case 4 :
 		case 5 :
 		case 6 :
-			result = dayDif + "ÀÏ Àü"; break;
+			result = dayDif + "ì¼ ì „"; break;
 		case 7 :
-			result = "ÀÏÁÖÀÏ Àü"; break;
+			result = "ì¼ì£¼ì¼ ì „"; break;
 		default :
-			formatString = "MM'¿ù' dd'ÀÏ'\nHH'½Ã' mm'ºĞ'";
+			formatString = "MM'ì›”' dd'ì¼'\nHH'ì‹œ' mm'ë¶„'";
 			break;
 		}
 		
@@ -89,19 +89,19 @@ Romeo.Model.TimeStamp = Backbone.Model.extend({
 		
 		switch(dayDif) {
 			case 0 : // today
-				string = this.toString("hh½Ã mmºĞ", timestamp); break;
+				string = this.toString("hhì‹œ mmë¶„", timestamp); break;
 			case 1 :
-				string = "¾îÁ¦"; break;
+				string = "ì–´ì œ"; break;
 			case 2 :
 			case 3 :
 			case 4 :
 			case 5 :
 			case 6 :
-				string = dayDif + "ÀÏ Àü"; break;
+				string = dayDif + "ì¼ ì „"; break;
 			case 7 :
-				string = "ÀÏÁÖÀÏ Àü"; break;
+				string = "ì¼ì£¼ì¼ ì „"; break;
 			default :
-				string = this.toString("MM¿ù DDÀÏ\nhh½Ã mmºĞ", timestamp); break;
+				string = this.toString("MMì›” DDì¼\nhhì‹œ mmë¶„", timestamp); break;
 		}
 		
 		return string;
@@ -126,8 +126,8 @@ Romeo.Model.TimeStamp = Backbone.Model.extend({
 		if(!format) return "[Object Romeo.Model.TimeStamp] : "+this.get("timestamp");
 		var date = timestamp?timestamp:this.getTime();
 		if(!(date instanceof Date)) date = new Date(timestamp);
-		// UTC Hours : Ç¥ÁØ½Ã°£
-		// Hours : GMT+0900 Àû¿ëµÈ Local Time
+		// UTC Hours : í‘œì¤€ì‹œê°„
+		// Hours : GMT+0900 ì ìš©ëœ Local Time
 		// format : Y, M, D, h, m, s
 
 		var Y = date.getYear()+1900;

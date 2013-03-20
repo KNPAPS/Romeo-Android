@@ -98,11 +98,11 @@ public class MemberSearch extends Activity {
 		
 		LinearLayout tabBarLL = (LinearLayout)view.findViewById(R.id.tabBar);
 		Button tabMemberListBT = (Button)tabBarLL.findViewById(R.id.tabMemberList);
-		//Button tabConditionBT = (Button)tabBarLL.findViewById(R.id.tabCondition);// TODO ¡∂∞«∫Œ ∞Àªˆ
+		//Button tabConditionBT = (Button)tabBarLL.findViewById(R.id.tabCondition);// TODO Ï°∞Í±¥Î∂Ä Í≤ÄÏÉâ
 		Button tabFavoriteBT = (Button)tabBarLL.findViewById(R.id.tabFavorite);
 		
 		tabMemberListBT.setOnClickListener(tabListener);
-		//tabConditionBT.setOnClickListener(tabListener); // TODO ¡∂∞«∫Œ ∞Àªˆ
+		//tabConditionBT.setOnClickListener(tabListener); // TODO Ï°∞Í±¥Î∂Ä Í≤ÄÏÉâ
 		tabFavoriteBT.setOnClickListener(tabListener);
 		
 
@@ -111,7 +111,7 @@ public class MemberSearch extends Activity {
 		
 		memberListView = (MemberListView)container.findViewById(R.id.memberListView);
 		memberListView.initWithType(User.TYPE_MEMBERLIST_SEARCH);
-		//conditionalSearch = (ConditionalSearch)container.findViewById(R.id.conditionalSearchView); // TODO ¡∂∞«∫Œ ∞Àªˆ
+		//conditionalSearch = (ConditionalSearch)container.findViewById(R.id.conditionalSearchView); // TODO Ï°∞Í±¥Î∂Ä Í≤ÄÏÉâ
 		
 		
 		favoriteListView = (MemberFavoriteListView)container.findViewById(R.id.favoriteListView);
@@ -222,7 +222,7 @@ public class MemberSearch extends Activity {
 		View targetView = null;
 		switch(v.getId()) {
 			case R.id.tabMemberList	: targetView = viewInContainer(R.id.memberListView); 		break;
-			//case R.id.tabCondition 	: targetView = viewInContainer(R.id.conditionalSearchView);	break; // TODO ¡∂∞«∫Œ ∞Àªˆ
+			//case R.id.tabCondition 	: targetView = viewInContainer(R.id.conditionalSearchView);	break; // TODO Ï°∞Í±¥Î∂Ä Í≤ÄÏÉâ
 			case R.id.tabFavorite 	: targetView = viewInContainer(R.id.favoriteListView);		break;
 		}
 		
@@ -237,7 +237,7 @@ public class MemberSearch extends Activity {
 	}
 	
 	
-	// »£√‚ √¯ø°º≠
+	// Ìò∏Ï∂ú Ï∏°ÏóêÏÑú
 	/*
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

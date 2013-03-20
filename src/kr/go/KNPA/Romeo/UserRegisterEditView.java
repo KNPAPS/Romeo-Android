@@ -124,13 +124,13 @@ public class UserRegisterEditView extends LinearLayout {
 					
 				}
 				
-				// ¼±ÅÃµÈ ½ºÇÇ³ÊÀÇ ´ÙÀ½ ½ºÇÇ³Ê.
+				// ì„ íƒëœ ìŠ¤í”¼ë„ˆì˜ ë‹¤ìŒ ìŠ¤í”¼ë„ˆ.
 				String[] deps = getDepartment(selected);
 				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
 				Spinner dd = getDropdown((index+1));
 				dd.setAdapter(adapter);
 				
-/*				// ¼±ÅÃµÈ ½ºÇÇ³ÊÀÇ ´ÙÀ½ ½ºÇÇ³Ê ±× ÀÌ»ó.
+/*				// ì„ íƒëœ ìŠ¤í”¼ë„ˆì˜ ë‹¤ìŒ ìŠ¤í”¼ë„ˆ ê·¸ ì´ìƒ.
 				for(int i=(index+2); i<DROPDOWN_MAX_LENGTH; i++) {
 					ArrayAdapter<String> __adapter = new ArrayAdapter<String>(getContext(), DROPDOWN_ITEM_LAYOUT, emptySet);
 					Spinner __dd = getDropdown((index+1));
@@ -156,8 +156,8 @@ public class UserRegisterEditView extends LinearLayout {
 		
 		switch(key) {
 		case KEY_NAME:
-			setHeaderTitle("º»ÀÎ ÀÌ¸§À» ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
-			setFooterTitle("¶ç¾î¾²±â³ª ¿ÀÅ¸ ¾øÀÌ ÀÔ·ÂÇØÁÖ¼Å¾ß\nÁ¤»óÀûÀ¸·Î µî·ÏÀÌ ÀÌ·ç¾îÁú ¼ö ÀÖ½À´Ï´Ù.");
+			setHeaderTitle("ë³¸ì¸ ì´ë¦„ì„ ì…ë ¥í•´ ì£¼ì„¸ìš”.");
+			setFooterTitle("ë„ì–´ì“°ê¸°ë‚˜ ì˜¤íƒ€ ì—†ì´ ì…ë ¥í•´ì£¼ì…”ì•¼\nì •ìƒì ìœ¼ë¡œ ë“±ë¡ì´ ì´ë£¨ì–´ì§ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
 			break;
 			
 		case KEY_DEPARTMENT:
@@ -168,18 +168,18 @@ public class UserRegisterEditView extends LinearLayout {
 			// TODO _adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
 			_dd.setAdapter(_adapter);
 			_dd.setOnItemSelectedListener(listener);
-			_dd.setPrompt(context.getString(R.string.department)+" ¼±ÅÃ");
+			_dd.setPrompt(context.getString(R.string.department)+" ì„ íƒ");
 			for(int i=1; i<DROPDOWN_MAX_LENGTH; i++) {
 				Spinner dd = getDropdown(i);
 				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, emptySet);
 				// TODO adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
 				dd.setAdapter(adapter);
-				dd.setPrompt(context.getString(R.string.department)+" ¼±ÅÃ");
+				dd.setPrompt(context.getString(R.string.department)+" ì„ íƒ");
 				if(i != DROPDOWN_MAX_LENGTH-1 )
 					dd.setOnItemSelectedListener(listener);
 			}
 		}
-			setHeaderTitle("º»ÀÎ ¼Ò¼Ó ºÎ¼­¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä.");
+			setHeaderTitle("ë³¸ì¸ ì†Œì† ë¶€ì„œë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”.");
 			setFooterTitle("");
 			break;
 			
@@ -197,25 +197,25 @@ public class UserRegisterEditView extends LinearLayout {
 			DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, ranks);
 			// TODO adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
 			dd.setAdapter(adapter);
-			dd.setPrompt(context.getString(R.string.rank)+" ¼±ÅÃ");
+			dd.setPrompt(context.getString(R.string.rank)+" ì„ íƒ");
 		}	
-			setHeaderTitle("º»ÀÎ °è±ŞÀ» ¼±ÅÃÇØÁÖ¼¼¿ä.");
+			setHeaderTitle("ë³¸ì¸ ê³„ê¸‰ì„ ì„ íƒí•´ì£¼ì„¸ìš”.");
 			setFooterTitle("");
 			break;
 			
 		case KEY_ROLE:
 			// TODO
-			setHeaderTitle("º»ÀÎ Á÷Ã¥À» ¼±ÅÃÇØ ÁÖ¼¼¿ä.");
+			setHeaderTitle("ë³¸ì¸ ì§ì±…ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.");
 			setFooterTitle("");
 			EditText roleET= getEditView();
-			roleET.setHint("±¹Àå, °úÀå, °èÀå, ¹İÀå, ÁÖÀÓ ...");
+			roleET.setHint("êµ­ì¥, ê³¼ì¥, ê³„ì¥, ë°˜ì¥, ì£¼ì„ ...");
 			//Spinner dd = getDropdown();
-			//dd.setPrompt(context.getString(R.string.role)+" ¼±ÅÃ");
+			//dd.setPrompt(context.getString(R.string.role)+" ì„ íƒ");
 			break;
 			
 		case KEY_PIC:
-			setHeaderTitle("º»ÀÎ ÇÁ·ÎÇÊ »çÁøÀ» Ãß°¡ÇØ ÁÖ¼¼¿ä.");
-			setFooterTitle("Áö±İ µî·ÏÇÏÁö ¾Ê¾Æµµ\nÇÁ·ÎÇÊ »çÁø ÆíÁıÀÌ °¡´ÉÇÕ´Ï´Ù.");
+			setHeaderTitle("ë³¸ì¸ í”„ë¡œí•„ ì‚¬ì§„ì„ ì¶”ê°€í•´ ì£¼ì„¸ìš”.");
+			setFooterTitle("ì§€ê¸ˆ ë“±ë¡í•˜ì§€ ì•Šì•„ë„\ní”„ë¡œí•„ ì‚¬ì§„ í¸ì§‘ì´ ê°€ëŠ¥í•©ë‹ˆë‹¤.");
 			
 			Button imageBT = getImageButton();
 			imageBT.setOnClickListener(new OnClickListener() {
@@ -231,15 +231,15 @@ public class UserRegisterEditView extends LinearLayout {
 			break;
 			
 		case KEY_PASSWORD:
-			setHeaderTitle("¾îÇÃ·¹ÄÉÀÌ¼Ç Á¢¼Ó ½Ã »ç¿ëÇÒ ºñ¹Ğ¹øÈ£\n4ÀÚ¸®¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
-			setFooterTitle("¾îÇÃ¸®ÄÉÀÌ¼Ç ½ÇÇà ½Ã ºñ¹Ğ¹øÈ£°¡\nÇÊ¿äÇÏ´Ï ÀØÁö ¾Êµµ·Ï ÁÖÀÇÇØÁÖ¼¼¿ä.");
+			setHeaderTitle("ì–´í”Œë ˆì¼€ì´ì…˜ ì ‘ì† ì‹œ ì‚¬ìš©í•  ë¹„ë°€ë²ˆí˜¸\n4ìë¦¬ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”.");
+			setFooterTitle("ì–´í”Œë¦¬ì¼€ì´ì…˜ ì‹¤í–‰ ì‹œ ë¹„ë°€ë²ˆí˜¸ê°€\ní•„ìš”í•˜ë‹ˆ ìŠì§€ ì•Šë„ë¡ ì£¼ì˜í•´ì£¼ì„¸ìš”.");
 			break;
 			
 		case KEY_CONFIRM:
 			setHeaderTitle("");
 			
 
-			((TextView)view.findViewById(R.id.footer3)).setText("Á¤º¸°¡ ¿Ã¹Ù¸£°Ô ÀÔ·ÂµÇ¾ú´ÂÁö È®ÀÎ ÈÄ\n¿Ï·á ¹öÆ°À» ´­·¯ÁÖ½Ã¸é\nµî·ÏÀÌ Á¤»óÀûÀ¸·Î ÁøÇàµË´Ï´Ù.");
+			((TextView)view.findViewById(R.id.footer3)).setText("ì •ë³´ê°€ ì˜¬ë°”ë¥´ê²Œ ì…ë ¥ë˜ì—ˆëŠ”ì§€ í™•ì¸ í›„\nì™„ë£Œ ë²„íŠ¼ì„ ëˆŒëŸ¬ì£¼ì‹œë©´\në“±ë¡ì´ ì •ìƒì ìœ¼ë¡œ ì§„í–‰ë©ë‹ˆë‹¤.");
 			break;
 			
 		
@@ -425,7 +425,7 @@ public class UserRegisterEditView extends LinearLayout {
 		
 		switch(key) {
 		case KEY_NAME :
-			titleText = "ÀÌ¸§ ÀÔ·Â";
+			titleText = "ì´ë¦„ ì…ë ¥";
 			lbbVisible = false;
 			
 			rbbOnClickListener = new OnClickListener() {
@@ -434,7 +434,7 @@ public class UserRegisterEditView extends LinearLayout {
 				public void onClick(View v) {
 					String s = getEditTitle().trim();
 					if(s.length() < 1 || s.equals("")) {
-						Toast.makeText(context, "ÀÌ¸§À» ¼±ÅÃÇØ ÁÖ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "ì´ë¦„ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 					} else {
 						context.name = getEditTitle().trim();
 						context.setFrontViewWithKey(KEY_DEPARTMENT);
@@ -445,7 +445,7 @@ public class UserRegisterEditView extends LinearLayout {
 			break;
 			
 		case KEY_DEPARTMENT :
-			titleText = "¼Ò¼Ó ºÎ¼­ ¼±ÅÃ";
+			titleText = "ì†Œì† ë¶€ì„œ ì„ íƒ";
 			lbbOnClickListener = new OnClickListener() {
 				
 				@Override
@@ -465,7 +465,7 @@ public class UserRegisterEditView extends LinearLayout {
 								selected = false;
 					}
 					if(!selected) {
-						Toast.makeText(context, "¼Ò¼Ó ºÎ¼­¸¦ ¿Ã¹Ù¸£°Ô ¼±ÅÃÇØ ÁÖ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "ì†Œì† ë¶€ì„œë¥¼ ì˜¬ë°”ë¥´ê²Œ ì„ íƒí•´ ì£¼ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 					} else {
 										
 						String[] _deps = new String[DROPDOWN_MAX_LENGTH];
@@ -495,7 +495,7 @@ public class UserRegisterEditView extends LinearLayout {
 			break;
 			
 		case KEY_RANK :
-			titleText = "°è±Ş ¼±ÅÃ";
+			titleText = "ê³„ê¸‰ ì„ íƒ";
 			
 			lbbOnClickListener = new OnClickListener() {
 				
@@ -512,7 +512,7 @@ public class UserRegisterEditView extends LinearLayout {
 					boolean selected = true;
 					if(getDropdown().getSelectedItem().equals(context.getString(R.string.letSelect))) selected = false;
 					if(!selected) {
-						Toast.makeText(context, "°è±ŞÀ» ¼±ÅÃÇØ ÁÖ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "ê³„ê¸‰ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 					} else {
 						context.rank = (getDropdown().getSelectedItemPosition())-1;
 						context.setFrontViewWithKey(KEY_ROLE);
@@ -524,7 +524,7 @@ public class UserRegisterEditView extends LinearLayout {
 			
 			
 		case KEY_ROLE :
-			titleText = "Á÷Ã¥ ¼±ÅÃ";
+			titleText = "ì§ì±… ì„ íƒ";
 			
 			lbbOnClickListener = new OnClickListener() {
 				
@@ -541,7 +541,7 @@ public class UserRegisterEditView extends LinearLayout {
 					// TODO
 //					String s = getEditTitle().trim();
 //					if(s.length() < 1 || s.equals("")) {
-//						Toast.makeText(context, "Á÷Ã¥À» ÀÔ·ÂÇØ ÁÖ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(context, "ì§ì±…ì„ ì…ë ¥í•´ ì£¼ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 //					} else {
 						context.role = getEditTitle().trim();
 						context.setFrontViewWithKey(KEY_PIC);
@@ -552,7 +552,7 @@ public class UserRegisterEditView extends LinearLayout {
 			break;
 			
 		case KEY_PIC :
-			titleText = "»çÁø Ãß°¡";
+			titleText = "ì‚¬ì§„ ì¶”ê°€";
 			
 			lbbOnClickListener = new OnClickListener() {
 				
@@ -575,7 +575,7 @@ public class UserRegisterEditView extends LinearLayout {
 			
 			
 		case KEY_PASSWORD :
-			titleText = "ºñ¹Ğ¹øÈ£ ÀÔ·Â";
+			titleText = "ë¹„ë°€ë²ˆí˜¸ ì…ë ¥";
 			
 			lbbOnClickListener = new OnClickListener() {
 				
@@ -593,9 +593,9 @@ public class UserRegisterEditView extends LinearLayout {
 				public void onClick(View v) {
 					String s = getEditTitle().trim();
 					if(s.length() < 1 || s.equals("")) {
-						Toast.makeText(context, "ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "ë¹„ë°€ë²ˆí˜¸ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 					} else if(s.length() != 4) {
-						Toast.makeText(context, "ºñ¹Ğ¹øÈ£ Çü½ÄÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.\n¼ıÀÚ 4ÀÚ¸®¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.", Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, "ë¹„ë°€ë²ˆí˜¸ í˜•ì‹ì´ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.\nìˆ«ì 4ìë¦¬ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”.", Toast.LENGTH_SHORT).show();
 					} else {
 						context.password = s;		// TODO :  Encrypt??
 						context.setFrontViewWithKey(KEY_CONFIRM);
@@ -607,7 +607,7 @@ public class UserRegisterEditView extends LinearLayout {
 			
 			
 		case KEY_CONFIRM :
-			titleText = "Á¦Ãâ";
+			titleText = "ì œì¶œ";
 			rbbTitle = context.getString(R.string.submit);
 			
 			lbbOnClickListener = new OnClickListener() {

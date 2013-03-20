@@ -135,10 +135,10 @@ public class Encrypter {
 	public byte[] encrypte (byte[] input) {
 		byte[] output = new byte[input.length];
 		SEED seed = new SEED();
-		// SEED CBC ¾Ë°í¸®Áò Å×½ºÆ®¸¦ À§ÇÑ ÀÔ·Â¡¤Ãâ·Â ¹öÆÛ°¡ ÇÊ¿äÇÏ´Ù.
-		// ¾ÏÈ£È­ °úÁ¤¿¡¼­´Â Ãâ·ÂµÇ´Â ¹öÆÛÀÇ Å©±â´Â ÀÔ·ÂµÇ´Â ¹öÆÛ º¸´Ù Ç×»ó Å©´Ù.
-		// Ãâ·Â ¹öÆÛÀÇ Å©±â´Â ÃÖ¼Ò ¡°ÀÔ·ÂµÇ´Â ¹öÆÛ Å©±â + 1¡± bytes ÀÌ»óÀÌ°í, ¡°ÀÔ·ÂµÇ´Â ¹öÆÛ Å©±â + SEED ÇÑ ºí·° »çÀÌÁî(16 bytes)¡± ÀÌ´Ù.
-		// µû¶ó¼­, ¾ÏÈ£È­ ½Ã Ãâ·Â ¹öÆÛÀÇ Å©±â´Â ¡°ÀÔ·Â¹öÆÛ Å©±â +16¡±À¸·Î ¼³Á¤ÇÏ°Å³ª, seed.getOutputSize() ÇÔ¼ö¸¦ ÅëÇØ ¼³Á¤ÇØ¾ßÇÑ´Ù.
+		// SEED CBC ì•Œê³ ë¦¬ì¦˜ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•œ ìž…ë ¥Â·ì¶œë ¥ ë²„í¼ê°€ í•„ìš”í•˜ë‹¤.
+		// ì•”í˜¸í™” ê³¼ì •ì—ì„œëŠ” ì¶œë ¥ë˜ëŠ” ë²„í¼ì˜ í¬ê¸°ëŠ” ìž…ë ¥ë˜ëŠ” ë²„í¼ ë³´ë‹¤ í•­ìƒ í¬ë‹¤.
+		// ì¶œë ¥ ë²„í¼ì˜ í¬ê¸°ëŠ” ìµœì†Œ â€œìž…ë ¥ë˜ëŠ” ë²„í¼ í¬ê¸° + 1â€ bytes ì´ìƒì´ê³ , â€œìž…ë ¥ë˜ëŠ” ë²„í¼ í¬ê¸° + SEED í•œ ë¸”ëŸ­ ì‚¬ì´ì¦ˆ(16 bytes)â€ ì´ë‹¤.
+		// ë”°ë¼ì„œ, ì•”í˜¸í™” ì‹œ ì¶œë ¥ ë²„í¼ì˜ í¬ê¸°ëŠ” â€œìž…ë ¥ë²„í¼ í¬ê¸° +16â€ìœ¼ë¡œ ì„¤ì •í•˜ê±°ë‚˜, seed.getOutputSize() í•¨ìˆ˜ë¥¼ í†µí•´ ì„¤ì •í•´ì•¼í•œë‹¤.
 		byte[] plainText = new byte[128];
 		byte[] cipherText = new byte[144];
 		int outputTextLen = 0;

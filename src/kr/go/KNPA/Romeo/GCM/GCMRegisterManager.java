@@ -42,7 +42,7 @@ public class GCMRegisterManager {
 		GCMRegistrar.checkManifest(this);
 		final String regId = GCMRegistrar.getRegistrationId(this);
 		
-		if("".equals(regId) )   //±¸±Û °¡ÀÌµå¿¡´Â regId.equals("")·Î µÇ¾î ÀÖ´Âµ¥ ExceptionÀ» ÇÇÇÏ±â À§ÇØ ¼öÁ¤
+		if("".equals(regId) )   //êµ¬ê¸€ ê°€ì´ë“œì—ëŠ” regId.equals("")ë¡œ ë˜ì–´ ìˆëŠ”ë° Exceptionì„ í”¼í•˜ê¸° ìœ„í•´ ìˆ˜ì •
 		    GCMRegistrar.register(this, "44570658441");
 		else {
 		      Log.d("============== Already Registered ==============", regId);
@@ -52,22 +52,22 @@ public class GCMRegisterManager {
 		    */
 	}
 	
-	public void onError(Context context, String errorId) {			/**¿¡·¯ ¹ß»ı½Ã*/
+	public void onError(Context context, String errorId) {			/**ì—ëŸ¬ ë°œìƒì‹œ*/
         Log.d(tag, "on_error. errorId : "+errorId);
-    	// ´Ù½Ã½ÃÀÛÇÏµµ·Ï À¯µµ.
-    	// ¹®Á¦°¡ ÀÚ²Ù ¹ß»ıÇÒ ½Ã Àç¼³Ä¡¸¦ À¯µµ.
-    	//alert("¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ½Ã±â ¹Ù¶ø´Ï´Ù. ¹®Á¦°¡ ¹İº¹µÇ¾î ¹ß»ıÇÏ´Â °æ¿ì Àç¼³Ä¡ÇØÁÖ½Ã±â ¹Ù¶ø´Ï´Ù.");
+    	// ë‹¤ì‹œì‹œì‘í•˜ë„ë¡ ìœ ë„.
+    	// ë¬¸ì œê°€ ìê¾¸ ë°œìƒí•  ì‹œ ì¬ì„¤ì¹˜ë¥¼ ìœ ë„.
+    	//alert("ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì‹œë„í•´ì£¼ì‹œê¸° ë°”ëë‹ˆë‹¤. ë¬¸ì œê°€ ë°˜ë³µë˜ì–´ ë°œìƒí•˜ëŠ” ê²½ìš° ì¬ì„¤ì¹˜í•´ì£¼ì‹œê¸° ë°”ëë‹ˆë‹¤.");
     }
 
-	public void onRegistered(Context context, String regId) {		 /**´Ü¸»¿¡¼­ GCM ¼­ºñ½º µî·Ï ÇßÀ» ¶§ µî·Ï id¸¦ ¹Ş´Â´Ù*/
+	public void onRegistered(Context context, String regId) {		 /**ë‹¨ë§ì—ì„œ GCM ì„œë¹„ìŠ¤ ë“±ë¡ í–ˆì„ ë•Œ ë“±ë¡ idë¥¼ ë°›ëŠ”ë‹¤*/
 
 		Log.d(tag, "onRegistered. regId : "+regId);
         
-		// ´ÙÀ½ÀÇ °úÁ¤Àº Server´Ü(ACTION : INSERT)¿¡¼­ ¾Ë¾Æ¼­ ÀÌ·ç¾îÁö¹Ç·Î, UUID°ª°ú REGID°ª¸¸ Ã£¾Æ¼­ Àß ³Ñ°ÜÁØ´Ù.
-		// DB»ó¿¡ UUID °ª°ú regid °ª, id°ªÀ» Ã£´Â´Ù		
-			// µî·ÏµÈ regid°ª°ú DB»óÀÇ regid °ªÀÌ °°À¸¸é pass
-			// µî·ÏµÈ regid°ª°ú DB»óÀÇ regid °ªÀÌ ´Ù¸£¸é UPDATE
-		// DB»ó¿¡ ÇØ´ç ±â±âÀÇ UUID °ªÀÌ ¾øÀ¸¸é INSERT
+		// ë‹¤ìŒì˜ ê³¼ì •ì€ Serverë‹¨(ACTION : INSERT)ì—ì„œ ì•Œì•„ì„œ ì´ë£¨ì–´ì§€ë¯€ë¡œ, UUIDê°’ê³¼ REGIDê°’ë§Œ ì°¾ì•„ì„œ ì˜ ë„˜ê²¨ì¤€ë‹¤.
+		// DBìƒì— UUID ê°’ê³¼ regid ê°’, idê°’ì„ ì°¾ëŠ”ë‹¤		
+			// ë“±ë¡ëœ regidê°’ê³¼ DBìƒì˜ regid ê°’ì´ ê°™ìœ¼ë©´ pass
+			// ë“±ë¡ëœ regidê°’ê³¼ DBìƒì˜ regid ê°’ì´ ë‹¤ë¥´ë©´ UPDATE
+		// DBìƒì— í•´ë‹¹ ê¸°ê¸°ì˜ UUID ê°’ì´ ì—†ìœ¼ë©´ INSERT
         
         UserInfo.setRegid(context, regId);
         String uuid = UserInfo.getUUID(context);
@@ -100,14 +100,14 @@ public class GCMRegisterManager {
       
     }
 	
-	public void onUnregistered(Context context, String regId) {		/**´Ü¸»¿¡¼­ GCM ¼­ºñ½º µî·Ï ÇØÁö¸¦ ÇÏ¸é ÇØÁöµÈ µî·Ï id¸¦ ¹Ş´Â´Ù*/
+	public void onUnregistered(Context context, String regId) {		/**ë‹¨ë§ì—ì„œ GCM ì„œë¹„ìŠ¤ ë“±ë¡ í•´ì§€ë¥¼ í•˜ë©´ í•´ì§€ëœ ë“±ë¡ idë¥¼ ë°›ëŠ”ë‹¤*/
         Log.d(tag, "onUnregistered. regId : "+regId);
         
         
-    	// ´ÙÀ½ÀÇ °úÁ¤Àº Server´Ü(ACTION : DELETE)¿¡¼­ ¾Ë¾Æ¼­ ÀÌ·ç¾îÁö¹Ç·Î, REGID°ª¸¸ ARRAY TypeÀ¸·Î Ã£¾Æ¼­ Àß ³Ñ°ÜÁØ´Ù.
-		// DB»ó¿¡¼­ ÇØ´ç regid°ªÀ» Ã£´Â´Ù.
-		// Á¸ÀçÇÑ´Ù¸é DELETE
-		// ¾øÀ¸¸é.... PASS
+    	// ë‹¤ìŒì˜ ê³¼ì •ì€ Serverë‹¨(ACTION : DELETE)ì—ì„œ ì•Œì•„ì„œ ì´ë£¨ì–´ì§€ë¯€ë¡œ, REGIDê°’ë§Œ ARRAY Typeìœ¼ë¡œ ì°¾ì•„ì„œ ì˜ ë„˜ê²¨ì¤€ë‹¤.
+		// DBìƒì—ì„œ í•´ë‹¹ regidê°’ì„ ì°¾ëŠ”ë‹¤.
+		// ì¡´ì¬í•œë‹¤ë©´ DELETE
+		// ì—†ìœ¼ë©´.... PASS
         
         String uuid = UserInfo.getUUID(MainActivity.sharedActivity());
         HashMap<String, Object> data = new HashMap<String,Object>();

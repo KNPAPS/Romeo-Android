@@ -154,14 +154,14 @@ public class DocumentDetailFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				// Á¤º¸¸¦ ¾÷µ¥ÀÌÆ®ÇÏ°í DB ¿¡ µî·ÏÇÑ´Ù.
+				// ì •ë³´ë¥¼ ì—…ë°ì´íŠ¸í•˜ê³  DB ì— ë“±ë¡í•œë‹¤.
 				document.setFavorite(!document.favorite, context);
 				
-				// ¹öÆ° ¸ğ¾çÀ» ¹Ù²Û´Ù.
+				// ë²„íŠ¼ ëª¨ì–‘ì„ ë°”ê¾¼ë‹¤.
 				int _favoriteBackground = (document.favorite ? R.drawable.star_active : R.drawable.star_gray);
 				favorite.setBackgroundResource(_favoriteBackground);
 				
-				// ¸®½ºÆ® ¸®·Îµå??
+				// ë¦¬ìŠ¤íŠ¸ ë¦¬ë¡œë“œ??
 				DocumentFragment.documentFragment(type).getListView().refresh();
 			}
 		});

@@ -86,7 +86,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 	// Click Listener
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
-		// Ãß°¡ Á¤º¸
+		// ì¶”ê°€ ì •ë³´
 		ListAdapter adapter = listAdapter;
 		if(this.getAdapter() instanceof SimpleSectionAdapter)
 			adapter= ((SimpleSectionAdapter)this.getAdapter());

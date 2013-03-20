@@ -187,7 +187,7 @@ public class ChatFragment extends RomeoFragment {
 				ArrayList<User> newUsers = new ArrayList<User>();
 				for(int i=0; i< receiversIdx.length; i++ ){
 					User user = User.getUserWithIdx(receiversIdx[i]);
-					// TODO ÀÌ¹Ì ¼±ÅÃµÇ¾î ÀÕ´Â »ç¶÷Àº ..
+					// TODO ì´ë¯¸ ì„ íƒë˜ì–´ ìž‡ëŠ” ì‚¬ëžŒì€ ..
 					newUsers.add(user);
 				}
 

@@ -1,5 +1,5 @@
 package kr.go.KNPA.Romeo;
-//¼­ºñ½º´Â ¹İµå½Ã ÀÚ½ÅÀÇ ±âº» ÆĞÅ°Áö¿¡ ¼ÓÇØ¾ß ÇÏ¸ç ÀÌ¸§Àº GCMIntentService·Î ÇØ¾ß ÇÑ´Ù.
+//ì„œë¹„ìŠ¤ëŠ” ë°˜ë“œì‹œ ìì‹ ì˜ ê¸°ë³¸ íŒ¨í‚¤ì§€ì— ì†í•´ì•¼ í•˜ë©° ì´ë¦„ì€ GCMIntentServiceë¡œ í•´ì•¼ í•œë‹¤.
 
 import kr.go.KNPA.Romeo.GCM.GCMMessageManager;
 import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
@@ -9,13 +9,13 @@ import android.content.Intent;
 import com.google.android.gcm.GCMBaseIntentService;
 
 public class GCMIntentService extends GCMBaseIntentService {
-	//¼­ºñ½º´Â GCMBaseIntentService¸¦ »ó¼Ó¹Ş¾Æ ±¸ÇöÇØ¾ß ÇÑ´Ù.
+	//ì„œë¹„ìŠ¤ëŠ” GCMBaseIntentServiceë¥¼ ìƒì†ë°›ì•„ êµ¬í˜„í•´ì•¼ í•œë‹¤.
 	private static final String tag = "GCMIntentService";
     private static final String PROJECT_ID = "44570658441";
-    //±¸±Û api ÆäÀÌÁö ÁÖ¼Ò [https://code.google.com/apis/console/#project:±ä ¹øÈ£]
-    //#project: ÀÌÈÄÀÇ ¼ıÀÚ°¡ À§ÀÇ PROJECT_ID °ª¿¡ ÇØ´çÇÑ´Ù
+    //êµ¬ê¸€ api í˜ì´ì§€ ì£¼ì†Œ [https://code.google.com/apis/console/#project:ê¸´ ë²ˆí˜¸]
+    //#project: ì´í›„ì˜ ìˆ«ìê°€ ìœ„ì˜ PROJECT_ID ê°’ì— í•´ë‹¹í•œë‹¤
     
-  //public ±âº» »ı¼ºÀÚ¸¦ ¹«Á¶°Ç ¸¸µé¾î¾ß ÇÑ´Ù.
+  //public ê¸°ë³¸ ìƒì„±ìë¥¼ ë¬´ì¡°ê±´ ë§Œë“¤ì–´ì•¼ í•œë‹¤.
 	public GCMIntentService() {
 		 this(PROJECT_ID);
 	}
@@ -25,25 +25,25 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	@Override
-	protected void onError(Context context, String errorId) {			/**¿¡·¯ ¹ß»ı½Ã*/
+	protected void onError(Context context, String errorId) {			/**ì—ëŸ¬ ë°œìƒì‹œ*/
 		GCMRegisterManager rm = GCMRegisterManager.sharedManager();
         rm.onError(context, errorId);
     }
 
 	@Override
-	protected void onMessage(Context context, Intent intent) {			/** Çª½Ã·Î ¹ŞÀº ¸Ş½ÃÁö */
+	protected void onMessage(Context context, Intent intent) {			/** í‘¸ì‹œë¡œ ë°›ì€ ë©”ì‹œì§€ */
 		GCMMessageManager mm = GCMMessageManager.sharedManager();
         mm.onMessage(context, intent);
     }
 
 	@Override
-	protected void onRegistered(Context context, String regId) {		 /**´Ü¸»¿¡¼­ GCM ¼­ºñ½º µî·Ï ÇßÀ» ¶§ µî·Ï id¸¦ ¹Ş´Â´Ù*/
+	protected void onRegistered(Context context, String regId) {		 /**ë‹¨ë§ì—ì„œ GCM ì„œë¹„ìŠ¤ ë“±ë¡ í–ˆì„ ë•Œ ë“±ë¡ idë¥¼ ë°›ëŠ”ë‹¤*/
 		GCMRegisterManager rm = GCMRegisterManager.sharedManager();
         rm.onRegistered(context, regId);
     }
 
 	@Override
-	protected void onUnregistered(Context context, String regId) {		/**´Ü¸»¿¡¼­ GCM ¼­ºñ½º µî·Ï ÇØÁö¸¦ ÇÏ¸é ÇØÁöµÈ µî·Ï id¸¦ ¹Ş´Â´Ù*/
+	protected void onUnregistered(Context context, String regId) {		/**ë‹¨ë§ì—ì„œ GCM ì„œë¹„ìŠ¤ ë“±ë¡ í•´ì§€ë¥¼ í•˜ë©´ í•´ì§€ëœ ë“±ë¡ idë¥¼ ë°›ëŠ”ë‹¤*/
 		GCMRegisterManager rm = GCMRegisterManager.sharedManager();
         rm.onUnregistered(context, regId);
     }

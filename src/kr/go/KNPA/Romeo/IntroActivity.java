@@ -71,17 +71,17 @@ public class IntroActivity extends Activity{
 	
 	private void checkRegistered () {
 		
-		// »ç¿ë Á¶°Ç : 
-		// À¯Àú µî·ÏÀÌ µÇ¾î ÀÖ¾î¾ß ÇÏ°í, À¯Àú°¡ »ç¿ë °¡´ÉÇØ¾ß ÇÏ¸ç,
-		// ±â±â µî·ÏÀÌ µÇ¾î ÀÖ¾î¾ß ÇÏ°í, ±â±â°¡ »ç¿ë °¡´ÉÇØ¾ß ÇÑ´Ù. 
+		// ì‚¬ìš© ì¡°ê±´ : 
+		// ìœ ì € ë“±ë¡ì´ ë˜ì–´ ìˆì–´ì•¼ í•˜ê³ , ìœ ì €ê°€ ì‚¬ìš© ê°€ëŠ¥í•´ì•¼ í•˜ë©°,
+		// ê¸°ê¸° ë“±ë¡ì´ ë˜ì–´ ìˆì–´ì•¼ í•˜ê³ , ê¸°ê¸°ê°€ ì‚¬ìš© ê°€ëŠ¥í•´ì•¼ í•œë‹¤. 
 		
 		boolean isUserAlreadyRegistered = checkUserRegistered();
 		if(isUserAlreadyRegistered == true) {
-			// false ÀÎ °æ¿ì, ActivityResult ÂÊ Èå¸§À» ÅëÇØ DeviceRegister °úÁ¤À» °ÅÄ¡°Ô µÈ´Ù.
+			// false ì¸ ê²½ìš°, ActivityResult ìª½ íë¦„ì„ í†µí•´ DeviceRegister ê³¼ì •ì„ ê±°ì¹˜ê²Œ ëœë‹¤.
 			checkDeviceRegistered();
 			runApplication();
 		}
-		// µû¶ó¼­, falseÀÎ °æ¿ìÀÇ Èå¸§Àº ¹ö¸®µµ·Ï ÇÑ´Ù.
+		// ë”°ë¼ì„œ, falseì¸ ê²½ìš°ì˜ íë¦„ì€ ë²„ë¦¬ë„ë¡ í•œë‹¤.
 	}
 	
 	private boolean checkUserRegistered() {
@@ -91,13 +91,13 @@ public class IntroActivity extends Activity{
 		isUserEnabled = _bUserReg.getBoolean("isEnabled");
 		
 		if(isUserRegistered == false) {
-			// À¯Àú µî·Ï ÀıÂ÷.
+			// ìœ ì € ë“±ë¡ ì ˆì°¨.
 			intent = new Intent(IntroActivity.this, UserRegisterActivity.class);
 			startActivityForResult(intent, REQUEST_REGISTER_USER);
 			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 			return false;
 		} else {
-			// À¯Àú µî·ÏÀÌ µÇ¾î ÀÖÀ» °æ¿ì.
+			// ìœ ì € ë“±ë¡ì´ ë˜ì–´ ìˆì„ ê²½ìš°.
 			return true;
 		}
 	}
@@ -108,28 +108,28 @@ public class IntroActivity extends Activity{
 		isDeviceEnabled = _bDeviceReg.getBoolean("isEnabled");
 		
 		if(isDeviceRegistered == false) {
-			// ±â±â µî·Ï ÀıÂ÷.
+			// ê¸°ê¸° ë“±ë¡ ì ˆì°¨.
 			GCMRegisterManager.registerGCM(IntroActivity.this);
 			
-			// ´Ù¸¥ thread¿¡¼­ µî·Ï ÀıÂ÷°¡ ½ÇÇàµÇ¸ç, 
-			// GCMRegisterManager ÀÇ onRegister ¸Ş¼Òµå·Î Èå¸§ÀÌ ³Ñ¾î°¡´Âµ¥,
-			// ¾îÂ÷ÇÇ Çã°¡°¡ ³ª¾ß »ç¿ëÇÒ ¼ö ÀÖÀ¸¹Ç·Î, µî·Ï ÀıÂ÷ Á÷ÈÄ¿¡ ¾ÛÀ» »ç¿ë ÇÒ ¼ö ¾ø´Ù.
-			// µû¶ó¼­ µî·Ï ÀüÀÇ Enabled Á¤º¸ (disabled) Á¤º¸¸¦ »ç¿ëÇÏ¿© ¾Û ½ÇÇà ÆÇ´ÜÀ» ³»·Áµµ ¹«¹æÇÑ´Ù.
+			// ë‹¤ë¥¸ threadì—ì„œ ë“±ë¡ ì ˆì°¨ê°€ ì‹¤í–‰ë˜ë©°, 
+			// GCMRegisterManager ì˜ onRegister ë©”ì†Œë“œë¡œ íë¦„ì´ ë„˜ì–´ê°€ëŠ”ë°,
+			// ì–´ì°¨í”¼ í—ˆê°€ê°€ ë‚˜ì•¼ ì‚¬ìš©í•  ìˆ˜ ìˆìœ¼ë¯€ë¡œ, ë“±ë¡ ì ˆì°¨ ì§í›„ì— ì•±ì„ ì‚¬ìš© í•  ìˆ˜ ì—†ë‹¤.
+			// ë”°ë¼ì„œ ë“±ë¡ ì „ì˜ Enabled ì •ë³´ (disabled) ì •ë³´ë¥¼ ì‚¬ìš©í•˜ì—¬ ì•± ì‹¤í–‰ íŒë‹¨ì„ ë‚´ë ¤ë„ ë¬´ë°©í•œë‹¤.
 			
-			// ÀÚµ¿À¸·Î Çã°¡³ªµµ·Ï ÇÒ °ÍÀÌ ¾Æ´Ï¶ó¸é!!
+			// ìë™ìœ¼ë¡œ í—ˆê°€ë‚˜ë„ë¡ í•  ê²ƒì´ ì•„ë‹ˆë¼ë©´!!
 		}
 	}
 	
 	private void runApplication() {
 		Intent intent = null;
 		if(isUserEnabled && isDeviceEnabled ) {
-			// »ç¿ë °¡´É.
-			// MainActivity·Î ³Ñ±ä´Ù.
+			// ì‚¬ìš© ê°€ëŠ¥.
+			// MainActivityë¡œ ë„˜ê¸´ë‹¤.
 			intent = new Intent(IntroActivity.this, MainActivity.class);
 			
 		} else {
-			// »ç¿ë ºÒ°¡ »óÈ²
-			// ÀÏ´Ü µî·Ï ´ë±â Ã¢À¸·Î ÀüÈ¯.
+			// ì‚¬ìš© ë¶ˆê°€ ìƒí™©
+			// ì¼ë‹¨ ë“±ë¡ ëŒ€ê¸° ì°½ìœ¼ë¡œ ì „í™˜.
 			intent = new Intent(IntroActivity.this, NotRegisteredActivity.class);
 		}
 		

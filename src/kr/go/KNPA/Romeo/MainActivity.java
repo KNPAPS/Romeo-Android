@@ -28,12 +28,12 @@ public class MainActivity extends BaseActivity {
 	static MainActivity _sharedActivity = null;
 	public static final int MEMBER_SEARCH_ACTIVITY = 1;
 	
-	private Fragment mContent;		// ÇöÀç ÇÁ·¹±×¸ÕÆ® 
+	private Fragment mContent;		// í˜„ì¬ í”„ë ˆê·¸ë¨¼íŠ¸ 
 	private Fragment oldFragment;
 	
 	public boolean isRegistered = false;
 	
-	public MainActivity() {		// »ı¼ºÀÚ 
+	public MainActivity() {		// ìƒì„±ì 
 		super(R.string.changing_fragments);
 		_sharedActivity = this;
 	}
@@ -44,25 +44,25 @@ public class MainActivity extends BaseActivity {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		// ºÎ¸ğ Å¬·¡½ºÀÇ ¿ÂÅ©¸®¿¡ÀÕ
+		super.onCreate(savedInstanceState);		// ë¶€ëª¨ í´ë˜ìŠ¤ì˜ ì˜¨í¬ë¦¬ì—ì‡
 		
 		// set the Above View
 				if (savedInstanceState != null)
 					mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent"); // restore
 				if (mContent == null)
-					mContent = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);	// Ã¹È­¸é										// »ı¼º 		ÀüÇô Áß¿äÇÑ Å¬·¡½º°¡ ¾Æ´Ï´Ù.
+					mContent = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);	// ì²«í™”ë©´										// ìƒì„± 		ì „í˜€ ì¤‘ìš”í•œ í´ë˜ìŠ¤ê°€ ì•„ë‹ˆë‹¤.
 				
 				((MemberFragment)mContent).showIntroView = true;
 
 				// set the Above View
-				setContentView(R.layout.content_frame);					// ·¹ÀÌ¾Æ¿ô¸¸ ÀÖ´Â ºó ºä   
+				setContentView(R.layout.content_frame);					// ë ˆì´ì•„ì›ƒë§Œ ìˆëŠ” ë¹ˆ ë·°   
 				getSupportFragmentManager()
 				.beginTransaction()
 				.replace(R.id.content_frame, mContent)
-				.commit();												// ÄÁÅÙÆ® ÇÁ·¹ÀÓ°ú ÇöÀç(È¤Àº »ı¼ºµÈ) ÇÁ·¹±×¸ÕÆ®¸¦ ¹Ù²Û´Ù.
+				.commit();												// ì»¨í…íŠ¸ í”„ë ˆì„ê³¼ í˜„ì¬(í˜¹ì€ ìƒì„±ëœ) í”„ë ˆê·¸ë¨¼íŠ¸ë¥¼ ë°”ê¾¼ë‹¤.
 				
 				// set the Behind View
-				setBehindContentView(R.layout.menu_frame);				// ºñÇÏÀÎµå ÇÁ·¹ÀÓÀº, ¸Ş´º ºä´Ù. ÇÁ·¹±×¸ÕÆ®¸¦ ´ëÀÔÇÏ±â À§ÇØ ºó°ÍÀ¸·Î Á¸Àç(º£ÀÌ½º¿¡¼­´Â)
+				setBehindContentView(R.layout.menu_frame);				// ë¹„í•˜ì¸ë“œ í”„ë ˆì„ì€, ë©”ë‰´ ë·°ë‹¤. í”„ë ˆê·¸ë¨¼íŠ¸ë¥¼ ëŒ€ì…í•˜ê¸° ìœ„í•´ ë¹ˆê²ƒìœ¼ë¡œ ì¡´ì¬(ë² ì´ìŠ¤ì—ì„œëŠ”)
 				getSupportFragmentManager()
 				.beginTransaction()
 				.replace(R.id.menu_frame, new MenuListFragment())
@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity {
 				
 				// customize the SlidingMenu
 				getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-				// ½½¶óÀÌµù ¸Ş´º°¡ ¹¹Áö??????
+				// ìŠ¬ë¼ì´ë”© ë©”ë‰´ê°€ ë­ì§€??????
 				//?????	
 		
 	}
@@ -78,12 +78,12 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		getSupportFragmentManager().putFragment(outState, "mContent", mContent);	// Å° °ªÀ¸·Î Àú
+		getSupportFragmentManager().putFragment(outState, "mContent", mContent);	// í‚¤ ê°’ìœ¼ë¡œ ì €
 	}
 	
-	public void switchContent(Fragment fragment) {		// ÀÌ ¼Ò½º ³»¿¡¼­´Â ¾²ÀÌÁö ¾Ê¾Ò´Ù.
-		mContent = fragment;							// ¹Ù²Ü ÇÁ·¹±×¸ÕÆ®¸¦ fragment º¯¼ö·Î ¹Ş¾Æ, ÀÌ °´Ã¼ÀÇ Àü¿ª º¯¼ö·Î ÇÒ´çÇÑ´Ù.
-		getSupportFragmentManager()						// ÇÁ·¹±×¸àÆ® ¸Å´ÏÀú¸¦ È£ÃâÇÏ¿© ±³Ã¼ÇÑ´Ù.
+	public void switchContent(Fragment fragment) {		// ì´ ì†ŒìŠ¤ ë‚´ì—ì„œëŠ” ì“°ì´ì§€ ì•Šì•˜ë‹¤.
+		mContent = fragment;							// ë°”ê¿€ í”„ë ˆê·¸ë¨¼íŠ¸ë¥¼ fragment ë³€ìˆ˜ë¡œ ë°›ì•„, ì´ ê°ì²´ì˜ ì „ì—­ ë³€ìˆ˜ë¡œ í• ë‹¹í•œë‹¤.
+		getSupportFragmentManager()						// í”„ë ˆê·¸ë©˜íŠ¸ ë§¤ë‹ˆì €ë¥¼ í˜¸ì¶œí•˜ì—¬ êµì²´í•œë‹¤.
 		.beginTransaction()
 		.replace(R.id.content_frame, fragment)
 		.commit();
@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity {
 	
 	public void popContent(Fragment fragment) {
 		mContent = oldFragment;
-		// TODO : ¹é ¹öÆ°À¸·Î µÚµ¹¾Æ¿Ã¶§ mFragment¸¦ º¹±¸ÇÒ ¹æ¹ıÀÌ ¾ø´Ù. // savedInstace¸¸À» À§ÇÑ°ÍÀÎµí 
+		// TODO : ë°± ë²„íŠ¼ìœ¼ë¡œ ë’¤ëŒì•„ì˜¬ë•Œ mFragmentë¥¼ ë³µêµ¬í•  ë°©ë²•ì´ ì—†ë‹¤. // savedInstaceë§Œì„ ìœ„í•œê²ƒì¸ë“¯ 
 		getSupportFragmentManager()				
 		.beginTransaction()
 		.setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
@@ -275,7 +275,7 @@ public class MainActivity extends BaseActivity {
 		}
 	
 		
-		// ºĞ½Ç?
+		// ë¶„ì‹¤?
 		
 		//String permission = _permission; // TODO
 		

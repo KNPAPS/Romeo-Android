@@ -22,8 +22,8 @@ public class GCMMessageSender {
 	 * 		Payload
 	 * -------------
 	 * event		: String	: "event0 : subEvent : subSubEvnet.."
-	 * sender		: long		:  ¹ß½ÅÀÚÀÇ DB»óÀÇ idx°ª
-	 * receivers	: long[]	:  ¼ö½ÅÀÚµéÀÇ DB»óÀÇ idx°ªÀÇ ¸ğÀÓ
+	 * sender		: long		:  ë°œì‹ ìì˜ DBìƒì˜ idxê°’
+	 * receivers	: long[]	:  ìˆ˜ì‹ ìë“¤ì˜ DBìƒì˜ idxê°’ì˜ ëª¨ì„
 	 * X roomCode		: String	: "senderIdx : departedTS"
 	 * message		: Object
 	 */	

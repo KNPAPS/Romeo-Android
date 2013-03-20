@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo.Menu;
 
 public class MenuListItem {
-	// ´Ü¼ø ÅØ½ºÆ®°¡ ¾Æ´Ñ ´Ù¾çÇÑ Á¤º¸¸¦ ¼¿¿¡ ³Ö±â À§ÇÏ¿© MenuListAdapter¿¡ »ç¿ëµÉ Object¸¦ Á¤ÀÇÇÑ´Ù.
+	// ë‹¨ìˆœ í…ìŠ¤íŠ¸ê°€ ì•„ë‹Œ ë‹¤ì–‘í•œ ì •ë³´ë¥¼ ì…€ì— ë„£ê¸° ìœ„í•˜ì—¬ MenuListAdapterì— ì‚¬ìš©ë  Objectë¥¼ ì •ì˜í•œë‹¤.
 
 	private MenuListItem(Builder builder) {
 		section = builder.section;
@@ -15,11 +15,11 @@ public class MenuListItem {
 		return super.toString() + "\n"+"section : "+section+", title : "+title+", iconImage : "+iconImage+", code : "+code;
 	}
 	
-	public String section;													// ¼½¼Ç 
-	public String title;													// ÀÌ¸§
-	public int iconImage;													// ¾ÆÀÌÄÜ
+	public String section;													// ì„¹ì…˜ 
+	public String title;													// ì´ë¦„
+	public int iconImage;													// ì•„ì´ì½˜
 	public String code;
-	public MenuListItem(String _section, String _title, int _iconImg) {		// »ı¼ºÀÚ
+	public MenuListItem(String _section, String _title, int _iconImg) {		// ìƒì„±ì
 		this.section = _section;
 		this.title = _title; 
 		this.iconImage = _iconImg;

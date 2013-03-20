@@ -131,8 +131,8 @@ public class MemberFragment extends RomeoFragment {
 					try {
 						listView = (MemberListView)initListViewWithType(_t, R.id.memberListView, _v);
 					} catch (RuntimeException e) {
-						Toast.makeText(getActivity(), "Åë½Å ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.", Toast.LENGTH_SHORT);
-						// TODO : getMembers Åë½Å ¿À·ù µîÀÌ´Ù. ´Ù½Ã ·Îµå ÇÒ ¼ö ÀÖµµ·Ï Á¶Ä¡¸¦ ÃëÇØ¾ß ÇÏ´Âµ¥..
+						Toast.makeText(getActivity(), "í†µì‹  ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.", Toast.LENGTH_SHORT);
+						// TODO : getMembers í†µì‹  ì˜¤ë¥˜ ë“±ì´ë‹¤. ë‹¤ì‹œ ë¡œë“œ í•  ìˆ˜ ìˆë„ë¡ ì¡°ì¹˜ë¥¼ ì·¨í•´ì•¼ í•˜ëŠ”ë°..
 					}
 				}
 			};
@@ -177,7 +177,7 @@ public class MemberFragment extends RomeoFragment {
 				DBManager dbManager = new DBManager(getActivity());
 				SQLiteDatabase db = dbManager.getWritableDatabase();	
 				Cursor c = null;
-				// Á¤·ÄÀ» Çß´Ù¸é, ¹«°á¼º. TODO 
+				// ì •ë ¬ì„ í–ˆë‹¤ë©´, ë¬´ê²°ì„±. TODO 
 				String sql = "SELECT * FROM "+DBManager.TABLE_MEMBER_FAVORITE+" WHERE idxs=\""+users+"\";";
 				c = db.rawQuery(sql, null);
 				

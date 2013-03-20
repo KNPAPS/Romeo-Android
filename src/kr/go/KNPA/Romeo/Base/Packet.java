@@ -137,7 +137,7 @@ public class Packet {
 		
 		Message message = null;
 		if(_message != null) {
-			// ¸Ş½ÃÁöÀÇ Á¾·ù¿¡ µû¶ó ºĞÈ­?
+			// ë©”ì‹œì§€ì˜ ì¢…ë¥˜ì— ë”°ë¼ ë¶„í™”?
 			message = new Message();
 			message.appendix = appendix;
 			message.content = content;

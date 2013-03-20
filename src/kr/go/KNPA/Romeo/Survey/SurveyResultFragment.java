@@ -109,7 +109,7 @@ public class SurveyResultFragment extends Fragment {
 		} catch (JSONException e) {
 		}
 		if(s != null) {
-			// À§¿¡¼­ ÀÌ¹Ì Survey Message Object¸¦ ÅëÇØ Ã³¸®µÈ °Íµé 
+			// ìœ„ì—ì„œ ì´ë¯¸ Survey Message Objectë¥¼ í†µí•´ ì²˜ë¦¬ëœ ê²ƒë“¤ 
 			//s.getString("title");
 			//s.getString("content");
 			//s.getLong("openTS");
@@ -168,10 +168,10 @@ public class SurveyResultFragment extends Fragment {
 							// window.GraphPlugin. functionName(ARG); in webview html javascript
 					//graphWV.setWebChromeClient(new WebChromeClient(){});
 					
-					// JAVASCRIPT È£Ãâ :  loadURL("javascript::callJS("arg");
+					// JAVASCRIPT í˜¸ì¶œ :  loadURL("javascript::callJS("arg");
 					optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
 					/*
-					// Options Level·Î ÁøÀÔ
+					// Options Levelë¡œ ì§„ì…
 					for(int oi=0; oi<os.length(); oi++) {
 						try {
 							//o = os.getJSONObject(oi);
@@ -180,7 +180,7 @@ public class SurveyResultFragment extends Fragment {
 							e.printStackTrace();
 						}
 
-						// Option LevelÀÇ Manipulating
+						// Option Levelì˜ Manipulating
 						optionView = inflater.inflate(R.layout.survey_option_result, optionsLL, false);
 						Button optionControl = (Button)optionView.findViewById(R.id.control);
 						

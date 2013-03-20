@@ -218,7 +218,7 @@ public class Survey extends Message implements Parcelable{
 		DBManager dbManager = new DBManager(context);
 		SQLiteDatabase db = dbManager.getWritableDatabase();
 		
-		// DB¿¡ µî·Ï
+		// DBì— ë“±ë¡
 		long currentTS = System.currentTimeMillis();
 		ContentValues vals = new ContentValues();
 		vals.put("title", this.title);

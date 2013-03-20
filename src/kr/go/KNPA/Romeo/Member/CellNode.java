@@ -374,9 +374,9 @@ public class CellNode {//extends ArrayList<CellNode> {
 	    	@Override
 	    	public boolean shouldOverrideUrlLoading(WebView view, String url) {
 	    		// TODO Auto-generated method stub
-	    		// WebViewClient Å¬·¡½º¸¦ »ó¼Ó¹Ş¾Æ¼­ ¸¸µé¾ú´Âµ¥, 
-	    		//WebViewClient ´Â WebView ¿¡¼­ ·ÎµùÇÑ À¥ÆäÀÌÁöÀÇ ¸µÅ©¸¦ Å¬¸¯ÇßÀ» ¶§, 
-	    		//ÇØ´ç URLÀ» ·ÎµùÇÏ´Â µ¥ ÇÊ¿äÇÕ´Ï´Ù.
+	    		// WebViewClient í´ë˜ìŠ¤ë¥¼ ìƒì†ë°›ì•„ì„œ ë§Œë“¤ì—ˆëŠ”ë°, 
+	    		//WebViewClient ëŠ” WebView ì—ì„œ ë¡œë”©í•œ ì›¹í˜ì´ì§€ì˜ ë§í¬ë¥¼ í´ë¦­í–ˆì„ ë•Œ, 
+	    		//í•´ë‹¹ URLì„ ë¡œë”©í•˜ëŠ” ë° í•„ìš”í•©ë‹ˆë‹¤.
 	    		view.loadUrl(url);
 	    		return super.shouldOverrideUrlLoading(view, url);
 	    	}

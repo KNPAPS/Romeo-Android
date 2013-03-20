@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo.SimpleSectionAdapter;
 
 /**
- * ÀÎÅÍÆäÀÌ½º´Â ÀÎ½ºÅÏ½ºµéÀÌ ¼­·Î ºñ±³ÇÏ´Â ½ÄÀ¸·Î ±×µé¿¡°Ô Å¸ÀÌÆ²À» Á¦°øÇÑ´Ù.
+ * ì¸í„°íŽ˜ì´ìŠ¤ëŠ” ì¸ìŠ¤í„´ìŠ¤ë“¤ì´ ì„œë¡œ ë¹„êµí•˜ëŠ” ì‹ìœ¼ë¡œ ê·¸ë“¤ì—ê²Œ íƒ€ì´í‹€ì„ ì œê³µí•œë‹¤.
  */
 public interface Sectionizer<T> {
 

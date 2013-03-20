@@ -110,9 +110,9 @@ class DocumentListAdapter extends CursorAdapter {
 		case Document.TYPE_FAVORITE : v = inflater.inflate(R.layout.document_list_cell_favorite, parent,false);		break;
 		default :
 		case Document.NOT_SPECIFIED : break;
-			// ListView¿¡¼­ tableNameÀÌ Á¤ÇØÀú¾ß¸¸ Adapter¸¦ È£ÃâÇÒ ¼ö ÀÖ´Âµ¥,
-			//ÀÌ°¡ Á¤ÇØÁö±â À§ÇØ¼­´Â typeÀÌ Á¤ÇØÁø »óÅÂÀÌ¾î¾ß ÇÏ¹Ç·Î, 
-			//ÀÌ ÁöÁ¡¿¡ µµ´Ş ÇÒ ¼ö°¡ ¾ø´Ù. ºÒ°¡´É!!
+			// ListViewì—ì„œ tableNameì´ ì •í•´ì €ì•¼ë§Œ Adapterë¥¼ í˜¸ì¶œí•  ìˆ˜ ìˆëŠ”ë°,
+			//ì´ê°€ ì •í•´ì§€ê¸° ìœ„í•´ì„œëŠ” typeì´ ì •í•´ì§„ ìƒíƒœì´ì–´ì•¼ í•˜ë¯€ë¡œ, 
+			//ì´ ì§€ì ì— ë„ë‹¬ í•  ìˆ˜ê°€ ì—†ë‹¤. ë¶ˆê°€ëŠ¥!!
 		}
 		
 		return v;

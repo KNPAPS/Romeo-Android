@@ -27,7 +27,7 @@ public class DBManager extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// »ı¼ºÀÚ¿¡¼­ ¾ğ±ŞÇÑ DATABASE_NAMEÀÇ DB°¡ Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì¿¡¸¸ onCreate°¡ È£ÃâµÈ´Ù.
+		// ìƒì„±ìì—ì„œ ì–¸ê¸‰í•œ DATABASE_NAMEì˜ DBê°€ ì¡´ì¬í•˜ì§€ ì•Šì„ ê²½ìš°ì—ë§Œ onCreateê°€ í˜¸ì¶œëœë‹¤.
 		String sql = null;
 		
 		// Command Table

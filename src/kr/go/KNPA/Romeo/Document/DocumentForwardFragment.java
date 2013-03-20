@@ -90,7 +90,7 @@ public class DocumentForwardFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				//Toast.makeText(getActivity(), "¸®½Ã¹ö", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getActivity(), "ë¦¬ì‹œë²„", Toast.LENGTH_SHORT).show();
 				callMemberSearchActivity();
 				
 			}
@@ -106,7 +106,7 @@ public class DocumentForwardFragment extends Fragment {
 	
 	private void forwardDocument(View v) {
 		
-		// Appdix¿¡ att Ãß°¡
+		// Appdixì— att ì¶”ê°€
 		Document fwdDocument = document.clone();
 		
 		HashMap<String,String> forward = new HashMap<String,String>();
@@ -144,7 +144,7 @@ public class DocumentForwardFragment extends Fragment {
 				ArrayList<User> newUsers = new ArrayList<User>();
 				for(int i=0; i< receiversIdx.length; i++ ){
 					User user = User.getUserWithIdx(receiversIdx[i]);
-					// TODO ÀÌ¹Ì ¼±ÅÃµÇ¾î ÀÕ´Â »ç¶÷Àº ..
+					// TODO ì´ë¯¸ ì„ íƒë˜ì–´ ì‡ëŠ” ì‚¬ëŒì€ ..
 					if(receivers.contains(user)) continue;
 					newUsers.add(user);
 				}
@@ -155,9 +155,9 @@ public class DocumentForwardFragment extends Fragment {
 					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
 				} else if (receivers.size() > 1) {
 					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" µî "+receivers.size()+"¸í");
+					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" ë“± "+receivers.size()+"ëª…");
 				} else {
-					receiversET.setText("¼±ÅÃµÈ »ç¿ëÀÚ°¡ ¾ø½À´Ï´Ù.");
+					receiversET.setText("ì„ íƒëœ ì‚¬ìš©ìê°€ ì—†ìŠµë‹ˆë‹¤.");
 				}
 			}
 		} else {

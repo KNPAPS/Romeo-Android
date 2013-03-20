@@ -26,7 +26,7 @@ public class User implements Parcelable{
 	
 	public static final int MAX_LEVEL_DEPTH = 6;
 	
-	public final static String[] RANK = {"Ä¡¾ÈÃÑ°¨", "Ä¡¾ÈÁ¤°¨", "Ä¡¾È°¨", "°æ¹«°ü", "ÃÑ°æ", "°æÁ¤", "°æ°¨", "°æÀ§", "°æ»ç", "°æÀå", "¼ø°æ", "ÀÇ°æ"};
+	public final static String[] RANK = {"ì¹˜ì•ˆì´ê°", "ì¹˜ì•ˆì •ê°", "ì¹˜ì•ˆê°", "ê²½ë¬´ê´€", "ì´ê²½", "ê²½ì •", "ê²½ê°", "ê²½ìœ„", "ê²½ì‚¬", "ê²½ì¥", "ìˆœê²½", "ì˜ê²½"};
 	
 	private static ArrayList<User> _users = null;
 	
@@ -124,7 +124,7 @@ public class User implements Parcelable{
 	}
 
 	public static User getUserWithIdx(long idx) {
-		// TODO : Ä³½Ì ¼øÈ¯ÁÖ±â ¸ÂÃß±â.
+		// TODO : ìºì‹± ìˆœí™˜ì£¼ê¸° ë§ì¶”ê¸°.
 		ListIterator<User> itr = null;
 		if(_users.size() > 0)
 			itr = _users.listIterator();

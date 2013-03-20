@@ -56,7 +56,7 @@ public class RoomFragment extends RomeoFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// ¹æ¿¡ ÀÔÀåÇÏ´Â ¼ø°£ ¸®½ºÆ® ºä ³»ÀÇ ¸ğµç Ãªµé ´Ù checked·Î..
+		// ë°©ì— ì…ì¥í•˜ëŠ” ìˆœê°„ ë¦¬ìŠ¤íŠ¸ ë·° ë‚´ì˜ ëª¨ë“  ì±—ë“¤ ë‹¤ checkedë¡œ..
 	}
 
 	@Override
@@ -112,16 +112,16 @@ public class RoomFragment extends RomeoFragment {
 		
 		inputET.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) { // ´­¸° Å° ¹İ¿µÇÏ±â Àü
+			public void onTextChanged(CharSequence s, int start, int before, int count) { // ëˆŒë¦° í‚¤ ë°˜ì˜í•˜ê¸° ì „
 			}
 			
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {// ´­¸° Å° ¹İ¿µ ÈÄ
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {// ëˆŒë¦° í‚¤ ë°˜ì˜ í›„
 				
 			}
 			
 			@Override
-			public void afterTextChanged(Editable s) {	// °á°ú		
+			public void afterTextChanged(Editable s) {	// ê²°ê³¼		
 				if(s.length() > 0) submitBT.setEnabled(true);
 				else	submitBT.setEnabled(false);
 				Log.i("after", "e : "+submitBT.isEnabled());
@@ -144,7 +144,7 @@ public class RoomFragment extends RomeoFragment {
 				
 				Appendix adx = new Appendix();
 				String roomCode = room.roomCode;
-				if(roomCode ==null) roomCode = senderIdx+":"+System.currentTimeMillis(); // TODO °°Àº¹æ Ã¤ÆÃ, »õ ¹æ Ã¤ÆÃ.
+				if(roomCode ==null) roomCode = senderIdx+":"+System.currentTimeMillis(); // TODO ê°™ì€ë°© ì±„íŒ…, ìƒˆ ë°© ì±„íŒ….
 				Appendix.Attachment att = new Appendix.Attachment("roomCode", Appendix.makeType(Appendix.TYPE_1_PRIMITIVE, Appendix.TYPE_2_STRING), null, roomCode);
 				adx.add(att);
 				
@@ -162,13 +162,13 @@ public class RoomFragment extends RomeoFragment {
 									.toChatBuilder()
 									.build();
 				
-				// ¸¶¹«¸®
+				// ë§ˆë¬´ë¦¬
 				et.setText("");
 				
 				// sending
 				chat.send(getActivity(), room);
 				
-				// ºä¿¡ Ãß°¡ (refresh)?
+				// ë·°ì— ì¶”ê°€ (refresh)?
 				getListView().refresh();
 				getListView().scrollToBottom();
 				ChatFragment.chatFragment(room.type).listView.refresh();
@@ -213,7 +213,7 @@ public class RoomFragment extends RomeoFragment {
 				}
 				room.users.addAll(newUsers);
 				
-				// TODO ÃÊ´ëÇß´Ù´Â ¸Ş½ÃÁö¸¦ ¶ç¿î´Ù.
+				// TODO ì´ˆëŒ€í–ˆë‹¤ëŠ” ë©”ì‹œì§€ë¥¼ ë„ìš´ë‹¤.
 			}
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);

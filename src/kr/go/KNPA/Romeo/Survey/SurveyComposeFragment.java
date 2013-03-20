@@ -353,7 +353,7 @@ public class SurveyComposeFragment extends Fragment {
 								  //.idx(idx)
 								  .checkTS(Message.NOT_SPECIFIED)			//
 								  .checked(false)							//
-								  .appendix(appendix)
+								  .appendix(aåppendix)
 								  .toSurveyBuilder()
 								  .build();
 								  // TODO : php에서 튜닝 여기서는 그냥 보내고.

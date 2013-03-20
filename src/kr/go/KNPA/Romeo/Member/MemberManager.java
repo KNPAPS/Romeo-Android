@@ -86,7 +86,7 @@ public class MemberManager {
 		}
 		 
 		if( user == null || users.size() < 1) {
-			// Á¤º¸°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¹Ç·Î Full Download
+			// ì •ë³´ê°€ ì¡´ìž¬í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ Full Download
 			HashMap<String, Object> dic= new HashMap<String, Object>();
 			int[] idxs = {idx};
 			String[] fields = {"*"};
@@ -118,7 +118,7 @@ public class MemberManager {
 			
 			if((now - serverTS) > 3 * 60 * 60 * 1000 ) {
 				if(serverTS > user.TS ) {
-					// ¼­¹ö°¡ newer
+					// ì„œë²„ê°€ newer
 					// full download (async)
 					
 					HashMap<String, Object> _dic= new HashMap<String, Object>();
@@ -142,7 +142,7 @@ public class MemberManager {
 	public void getMembers(Context context) {
 		JSONObject jo = null;
 		if(users == null || users.size() < 1 ) {
-		// ¹öÀüÀ» ºñ±³ÇÏ´Â ÄÚµå¸¦ »ðÀÔÇÑ´Ù.
+		// ë²„ì „ì„ ë¹„êµí•˜ëŠ” ì½”ë“œë¥¼ ì‚½ìž…í•œë‹¤.
 			String url = Connection.HOST_URL + "/member/getList";
 			Connection conn = new Connection.Builder()
 									.url(url)
@@ -277,12 +277,12 @@ public class MemberManager {
 
 		
 		
-		// TODO »çÁø ¾÷·ÎµåÇÏ´Â ÄÚµå¸¦ »ðÀÔÇÑ´Ù.
+		// TODO ì‚¬ì§„ ì—…ë¡œë“œí•˜ëŠ” ì½”ë“œë¥¼ ì‚½ìž…í•œë‹¤.
 		if(picURI != null)
 			ImageManager.bitmapFromURI(context, picURI);
-		// »çÁø ¾÷·Îµå´Â ºñµ¿±â·Î ÀÌ·ç¾îÁö¸ç,
-		// sharedPreference¿¡ »çÁø ¾÷·Îµå ¿©ºÎ¸¦ Ã¼Å©ÇÏ´Â º¯¼ö¸¦ ÇÒ´çÇÑ´Ù. ( ÃßÈÄ »çÁø º¯°æ½Ã µîµî È°¿ë ÇÒ ¼ö ÀÖ±â ¶§¹®ÀÌ´Ù.)
-		// ¾ÛÀÌ ÄÑÁú¶§ È¤Àº Á¶Á÷µµ µî Æ¯Á¤ Á¶°Ç ÇÏ¿¡¼­ »çÁø Àü¼Û ¿©ºÎ¸¦ È®ÀÎÇÏ¿© µÇ¾îÀÖÁö ¾Ê¾Ò´Ù¸é ¼ö½Ã·Î ¾÷·Îµå ÇÒ ¼ö ÀÖ´Â ±âÈ¸¸¦ Á¦°øÇÏµµ·Ï ÇÑ´Ù.
+		// ì‚¬ì§„ ì—…ë¡œë“œëŠ” ë¹„ë™ê¸°ë¡œ ì´ë£¨ì–´ì§€ë©°,
+		// sharedPreferenceì— ì‚¬ì§„ ì—…ë¡œë“œ ì—¬ë¶€ë¥¼ ì²´í¬í•˜ëŠ” ë³€ìˆ˜ë¥¼ í• ë‹¹í•œë‹¤. ( ì¶”í›„ ì‚¬ì§„ ë³€ê²½ì‹œ ë“±ë“± í™œìš© í•  ìˆ˜ ìžˆê¸° ë•Œë¬¸ì´ë‹¤.)
+		// ì•±ì´ ì¼œì§ˆë•Œ í˜¹ì€ ì¡°ì§ë„ ë“± íŠ¹ì • ì¡°ê±´ í•˜ì—ì„œ ì‚¬ì§„ ì „ì†¡ ì—¬ë¶€ë¥¼ í™•ì¸í•˜ì—¬ ë˜ì–´ìžˆì§€ ì•Šì•˜ë‹¤ë©´ ìˆ˜ì‹œë¡œ ì—…ë¡œë“œ í•  ìˆ˜ ìžˆëŠ” ê¸°íšŒë¥¼ ì œê³µí•˜ë„ë¡ í•œë‹¤.
 		
 		
 		return result;

@@ -33,7 +33,7 @@ public class Room {
 		this.type = type;
 		Chat chat = new Chat(c, type);
 		users = (ArrayList<User>) chat.receivers.clone();
-		if(isUserInRoom(chat.sender.idx) == false) { // º¸³½ »ç¶÷°ú ¹Ş´Â »ç¶÷ÀÌ °°À¸¸é, µÎ¹ø µî·ÏµÈ´Ù. µû¶ó¼­ °Ë»çÇØ¼­ ÀÖÀ¸¸é ³ÖÁö ¾Êµµ·Ï ÇÑ´Ù.
+		if(isUserInRoom(chat.sender.idx) == false) { // ë³´ë‚¸ ì‚¬ëŒê³¼ ë°›ëŠ” ì‚¬ëŒì´ ê°™ìœ¼ë©´, ë‘ë²ˆ ë“±ë¡ëœë‹¤. ë”°ë¼ì„œ ê²€ì‚¬í•´ì„œ ìˆìœ¼ë©´ ë„£ì§€ ì•Šë„ë¡ í•œë‹¤.
 			users.add(chat.sender);
 		}
 		

@@ -65,7 +65,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	// Database management
 	@Override
 	protected Cursor query() {
-		String sql = "SELECT * FROM "+getTableName()+" ORDER BY checked desc;"; // sectionizer ¸¦ À§ÇØ Á¤·ÄÀ» ÇÑ´Ù.
+		String sql = "SELECT * FROM "+getTableName()+" ORDER BY checked desc;"; // sectionizer ë¥¼ ìœ„í•´ ì •ë ¬ì„ í•œë‹¤.
 		Cursor c = db.rawQuery(sql, null);
 		return c;
 	}
@@ -91,7 +91,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 		Cursor c = (Cursor)adapter.getItem(position);
 		Survey survey = new Survey(c);
 			
-		SurveyDetailFragment f = new SurveyDetailFragment(survey, type);	// Ãß°¡ Á¤º¸
+		SurveyDetailFragment f = new SurveyDetailFragment(survey, type);	// ì¶”ê°€ ì •ë³´
 		MainActivity.sharedActivity().pushContent(f);
 	}
 

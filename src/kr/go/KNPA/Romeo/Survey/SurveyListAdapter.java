@@ -125,7 +125,7 @@ class SurveyListAdapter extends CursorAdapter {
 			
 		default :
 		case Survey.NOT_SPECIFIED :	break;	
-			// ListView ¿¡¼­ tableNameÀÌ Á¤ÇØÁø °æ¿ì¿¡¸¸ ³Ñ¾î¿À¹Ç·Î, ÀÌ ÁöÁ¡¿¡ µµ´âÇÒ ¼ö ¾ø´Ù.
+			// ListView ì—ì„œ tableNameì´ ì •í•´ì§„ ê²½ìš°ì—ë§Œ ë„˜ì–´ì˜¤ë¯€ë¡œ, ì´ ì§€ì ì— ë„ë‹³í•  ìˆ˜ ì—†ë‹¤.
 		}
 		
 		return v;
@@ -142,7 +142,7 @@ class SurveyListAdapter extends CursorAdapter {
 		@Override
 		public void onClick(View v) {
 			Survey survey = (Survey)v.getTag();
-			SurveyResultFragment f = new SurveyResultFragment(survey, type);// Ãß°¡ Á¤º¸
+			SurveyResultFragment f = new SurveyResultFragment(survey, type);// ì¶”ê°€ ì •ë³´
 
 			MainActivity.sharedActivity().pushContent(f);
 		}

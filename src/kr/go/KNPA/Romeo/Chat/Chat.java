@@ -136,7 +136,7 @@ public class Chat extends Message {
 		DBManager dbManager = new DBManager(context);
 		SQLiteDatabase db = dbManager.getWritableDatabase();
 		
-		// DB¿¡ µî·Ï
+		// DBì— ë“±ë¡
 		String tableName = null;
 		switch(room.type) {
 			case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
@@ -150,11 +150,11 @@ public class Chat extends Message {
 		vals.put("appendix", this.appendix.toBlob());
 		vals.put("sender", this.sender.idx);
 		vals.put("receivers", User.usersToString(this.receivers));
-		vals.put("received", 0); // º¸³½ °ÍÀÌ´Ù.
+		vals.put("received", 0); // ë³´ë‚¸ ê²ƒì´ë‹¤.
 		vals.put("TS", currentTS);
 		vals.put("checked", 1);
 		vals.put("roomCode", this.getRoomCode());
-		vals.put("checkTS", currentTS);	// Áö±İ º¸³»°í Áö±İ È®ÀÎÇÑ °ÍÀÌ¹Ç·Î, ÇöÀç ½Ã°£À» ³Ö¾îÁØ´Ù.
+		vals.put("checkTS", currentTS);	// ì§€ê¸ˆ ë³´ë‚´ê³  ì§€ê¸ˆ í™•ì¸í•œ ê²ƒì´ë¯€ë¡œ, í˜„ì¬ ì‹œê°„ì„ ë„£ì–´ì¤€ë‹¤.
 		vals.put("idx", idx);
 		db.insert(tableName, null, vals);
 		

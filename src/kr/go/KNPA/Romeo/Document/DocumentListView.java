@@ -99,7 +99,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 		Cursor c = (Cursor)adapter.getItem(position);
 		Document document = new Document(c);
 		
-		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);// Ãß°¡ Á¤º¸
+		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);// ì¶”ê°€ ì •ë³´
 		MainActivity a = MainActivity.sharedActivity();
 		a.pushContent(fragment);
 	}

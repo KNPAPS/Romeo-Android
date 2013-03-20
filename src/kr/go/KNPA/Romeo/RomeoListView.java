@@ -62,10 +62,10 @@ public abstract class RomeoListView extends ListView {
 	
 	abstract public String getTableName();
 	
-	// DB¿¡ Äõ¸®¸¦ ³¯¸°´Ù. Ãß»ó¸Ş¼Òµå.
+	// DBì— ì¿¼ë¦¬ë¥¼ ë‚ ë¦°ë‹¤. ì¶”ìƒë©”ì†Œë“œ.
 	abstract protected Cursor query();
 	
-	// ¸®½ºÆ®¸¦ ´Ù½Ã ºÒ·¯¿Â´Ù.
+	// ë¦¬ìŠ¤íŠ¸ë¥¼ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¨ë‹¤.
 	public void refresh() {
 		if(listAdapter == null || getTableName() == null) return;
  
@@ -82,7 +82,7 @@ public abstract class RomeoListView extends ListView {
 	}
 	
 	
-	// Ä¿¼­·ÎºÎÅÍ ÇàÀÇ °¹¼ö¸¦ ¼¼¾î ºñ¾úÀ» °æ¿ì ºó ¹è°æÀ» Ãâ·ÂÇØÁØ´Ù.
+	// ì»¤ì„œë¡œë¶€í„° í–‰ì˜ ê°¯ìˆ˜ë¥¼ ì„¸ì–´ ë¹„ì—ˆì„ ê²½ìš° ë¹ˆ ë°°ê²½ì„ ì¶œë ¥í•´ì¤€ë‹¤.
 	public void setListBackground(Cursor c) {
 		if(c.getCount() == 0) {
 			BitmapFactory.Options options = new BitmapFactory.Options();

@@ -59,11 +59,11 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		for(int i=0; i<__idxs.length; i++) {
 			__idxs[i] = Long.parseLong(_idxs[i]);
 		}
-		// User Á¤º¸¸¦ ¾ò¾î¿Â´Ù.
+		// User ì •ë³´ë¥¼ ì–»ì–´ì˜¨ë‹¤.
 		ArrayList<User> users = User.getUsersWithIndexes(__idxs);
 		//}
 		
-        //¹è°æÅõ¸íÃ³¸®
+        //ë°°ê²½íˆ¬ëª…ì²˜ë¦¬
 		/*
 		 getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
 				WindowManager.LayoutParams.FLAG_BLUR_BEHIND);

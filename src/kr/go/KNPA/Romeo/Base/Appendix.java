@@ -157,7 +157,7 @@ public class Appendix implements Parcelable, Serializable{
 		while(itr.hasNext()) {
 			_att = itr.next();
 			if(_att.key.equalsIgnoreCase(key)) {
-				_att = att;		// TODO µÇ³ª?? Reference ´ëÀÔ??
+				_att = att;		// TODO ë˜ë‚˜?? Reference ëŒ€ì…??
 				isReplaced = true;
 			}
 			
@@ -263,7 +263,7 @@ public class Appendix implements Parcelable, Serializable{
 			Attachment att = itr.next();
 			
 			if(att != null && att.key.equals(key)) {
-				// TODO Å¸ÀÔº° ¸®ÅÏ
+				// TODO íƒ€ì…ë³„ ë¦¬í„´
 				result = att.getString();
 				break;
 			}
@@ -409,7 +409,7 @@ public class Appendix implements Parcelable, Serializable{
 			final String lab = "[";
 			final String rab = "]";
 			//{"key":"forwards","value":"[
-			//{\"content\":\"°í\",\"TS\":\"1362480368154\",\"forwarder\":\"1\"}
+			//{\"content\":\"ê³ \",\"TS\":\"1362480368154\",\"forwarder\":\"1\"}
 			//]","type":131072}
 			StringBuilder sb = new StringBuilder();
 			sb.append(lob);

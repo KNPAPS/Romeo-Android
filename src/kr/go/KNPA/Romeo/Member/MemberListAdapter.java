@@ -214,7 +214,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	public int nodeOrderInTypeWithIndexPath(int type, IndexPath path) {
 		int result = -1;
 		if(type == CellNode.CELLNODE_DEPARTMENT) {
-			// Department ÈÄ¿¡ Users°¡ ³ª¿À¹Ç·Î, Department´Â ±×´ë·Î returnÇØµµ ¹«¹æÇÏ´Ù.
+			// Department í›„ì— Usersê°€ ë‚˜ì˜¤ë¯€ë¡œ, DepartmentëŠ” ê·¸ëŒ€ë¡œ returní•´ë„ ë¬´ë°©í•˜ë‹¤.
 			IndexPath.Iterator itr = new IndexPath.Iterator(path);
 			result = itr.lastIndex();
 		} else if(type == CellNode.CELLNODE_USER) {
@@ -303,12 +303,12 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			if(_cnt >= (pos+1)) { // cnt = x, _cnt = x+y (x+1 ~ x+y) => group1 : 0~x-1, group2 : x ~ x+y-1
 				// target is in this element tree
 				if((cnt + 1) == (pos+1) ) { // cn.size() == 0;
-					// ±âÁ¸ cnt¿¡ ÇÏ³ª¸¸ ´õÇÑ °ÍÀÌ pos °ª°ú °°´Ù¸é, ÇöÀç element¸¦ ¼±ÅÃÇÑ °ÍÀÌ´Ù.
-					// child°¡ Á¸ÀçÇß´Ù¸é _cnt > pos ¿´À» °ÍÀÌ°í, child°¡ Á¸ÀçÇÏÁö ¾Ê¾Ò´Ù¸é _cnt == pos ¿´À» °ÍÀÌ´Ù.
+					// ê¸°ì¡´ cntì— í•˜ë‚˜ë§Œ ë”í•œ ê²ƒì´ pos ê°’ê³¼ ê°™ë‹¤ë©´, í˜„ì¬ elementë¥¼ ì„ íƒí•œ ê²ƒì´ë‹¤.
+					// childê°€ ì¡´ì¬í–ˆë‹¤ë©´ _cnt > pos ì˜€ì„ ê²ƒì´ê³ , childê°€ ì¡´ì¬í•˜ì§€ ì•Šì•˜ë‹¤ë©´ _cnt == pos ì˜€ì„ ê²ƒì´ë‹¤.
 					path = _cn.getIndexPath();
 					break;
 				} else {
-					// ±×°Ô ¾Æ´Ï¶ó¸é, ÇÏÀ§ ¿ÀºêÁ§Æ®¸¦ ¼±ÅÃÇÑ °ÍÀÌ¹Ç·Î,
+					// ê·¸ê²Œ ì•„ë‹ˆë¼ë©´, í•˜ìœ„ ì˜¤ë¸Œì íŠ¸ë¥¼ ì„ íƒí•œ ê²ƒì´ë¯€ë¡œ,
 					// go to children
 					cn = _cn;
 					_cn = null;
@@ -358,24 +358,24 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,	long l_position) {
-		// parent : AdapterViewÀÇ ¼Ó¼ºÀ» ¸ğµÎ »ç¿ëÇÒ ¼ö ÀÖ´Ù.
-		// view : Å¬¸¯ÇÑ rowÀÇ view
-		// position : Å¬¸¯ÇÑ rowÀÇ position
-		// l_position : Å¬¸¯ÇÑ rowÀÇ long TypeÀÇ positionÀ» ¹İÈ¯
+		// parent : AdapterViewì˜ ì†ì„±ì„ ëª¨ë‘ ì‚¬ìš©í•  ìˆ˜ ìˆë‹¤.
+		// view : í´ë¦­í•œ rowì˜ view
+		// position : í´ë¦­í•œ rowì˜ position
+		// l_position : í´ë¦­í•œ rowì˜ long Typeì˜ positionì„ ë°˜í™˜
 		
-		// Å¬¸¯µÈ ¼¿ÀÇ positionÀ» ÀÌ¿ëÇÏ¿© indexpath¸¦ ¾Ë¾Æ³½´Ù.
+		// í´ë¦­ëœ ì…€ì˜ positionì„ ì´ìš©í•˜ì—¬ indexpathë¥¼ ì•Œì•„ë‚¸ë‹¤.
 		IndexPath path = getIndexPathFromPosition(position);
 		IndexPath.Iterator itr = new IndexPath.Iterator(path);
 
 		CellNode cn = models;
-		// indexPathÀÇ indexµéÀ» ÇÏ³ªÇÏ³ª µû¶ó°£´Ù.
+		// indexPathì˜ indexë“¤ì„ í•˜ë‚˜í•˜ë‚˜ ë”°ë¼ê°„ë‹¤.
 		while(itr.hasNextIndex()) {
 			Department dp = rootDepartment;
 			int idx = itr.nextIndex();
 			cn = cn.get(idx);
 			
 			if(cn.type == CellNode.CELLNODE_USER) {
-			// nodeÀÇ typeÀÌ USERÀÌ¸é »ó¼¼¾È³»Ã¢ ¶ç¿ì±â
+			// nodeì˜ typeì´ USERì´ë©´ ìƒì„¸ì•ˆë‚´ì°½ ë„ìš°ê¸°
 				Intent intent = new Intent(this.context, MemberDetailActivity.class);
 				Bundle b = new Bundle();
 				User user = (User)getItem(position);
@@ -385,22 +385,22 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				this.context.startActivity(intent);
 
 			} else if(cn.type == CellNode.CELLNODE_DEPARTMENT) {
-			// nodeÀÇ typeÀÌ DEPARTMENTÀÌ¸é 
+			// nodeì˜ typeì´ DEPARTMENTì´ë©´ 
 			
 				if(cn.isUnfolded() == false) {
-				// unfolded == false ÀÌ¸é
-				// ¾È¿¡ ³»¿ë¹°ÀÌ ÀÖ´ÂÁö È®ÀÎÇÏ°í,
+				// unfolded == false ì´ë©´
+				// ì•ˆì— ë‚´ìš©ë¬¼ì´ ìˆëŠ”ì§€ í™•ì¸í•˜ê³ ,
 					if(cn.size() > 0) {
-					// ÀÖ´Ù¸é ±×³É unfold
+					// ìˆë‹¤ë©´ ê·¸ëƒ¥ unfold
 						cn.setUnfolded(true);
 					} else {
-					// ¾ø´Ù¸é Ãß°¡
-					// ´©¸¥ °ÍÀº departmentÀÌ¹Ç·Î, indexpath¸¦ ÀÌ¿ëÇÏ¿© ÇØ´ç ¾ÆÀÌÅÛÀ» µ¥ÀÌÅÍ·ÎºÎÅÍ °¡Á®¿Â´Ù.
+					// ì—†ë‹¤ë©´ ì¶”ê°€
+					// ëˆ„ë¥¸ ê²ƒì€ departmentì´ë¯€ë¡œ, indexpathë¥¼ ì´ìš©í•˜ì—¬ í•´ë‹¹ ì•„ì´í…œì„ ë°ì´í„°ë¡œë¶€í„° ê°€ì ¸ì˜¨ë‹¤.
 						int[] untilNow = itr.getIndexesUntilNow();
 						for(int i=0; i< untilNow.length; i++) {
 							dp = dp.departments.get(untilNow[i]);
 						}
-					// Á¤º¸¸¦ Âß ÀĞÀ¸¸ç node¿¡ ÀúÀå½ÃÅ°°í, departments¿Í users..Èå±ÔÈå±Ô
+					// ì •ë³´ë¥¼ ì­‰ ì½ìœ¼ë©° nodeì— ì €ì¥ì‹œí‚¤ê³ , departmentsì™€ users..íê·œíê·œ
 						ArrayList<Department> deps = dp.departments;
 						ArrayList<User> uss = dp.users;
 						
@@ -426,13 +426,13 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 						cn.setUnfolded(true);
 					}
 				} else if(cn.isUnfolded() == true && (!itr.hasNextIndex()) ){
-				// unfolded == trueÀÌ¸é,
-				// fold ½ÃÅ²´Ù.
+				// unfolded == trueì´ë©´,
+				// fold ì‹œí‚¨ë‹¤.
 					cn.setUnfolded(false);
-				// ÀÏ´Ü ÇÏÀ§ Æ®¸®´Â ±»ÀÌ Á¦°ÅÇÏÁö ¸»ÀÚ.
+				// ì¼ë‹¨ í•˜ìœ„ íŠ¸ë¦¬ëŠ” êµ³ì´ ì œê±°í•˜ì§€ ë§ì.
 				}
 			}
-			// ÇÑ´Ü°è ¾ÈÀÇ index¿¡ ´ëÇØ¼­µµ¹İº¹
+			// í•œë‹¨ê³„ ì•ˆì˜ indexì— ëŒ€í•´ì„œë„ë°˜ë³µ
 			
 		}
 		
