@@ -29,6 +29,7 @@ public abstract class RomeoFragment extends Fragment {
 	public RomeoFragment() {}
 
 	public RomeoFragment(int type) {
+		super();
 		this.type = type;
 	}
 	

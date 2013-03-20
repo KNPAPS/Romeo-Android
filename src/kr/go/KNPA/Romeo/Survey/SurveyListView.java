@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -91,7 +92,12 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 		Cursor c = (Cursor)adapter.getItem(position);
 		Survey survey = new Survey(c);
 			
-		SurveyDetailFragment f = new SurveyDetailFragment(survey, type);	// 추가 정보
+		SurveyDetailFragment f = new SurveyDetailFragment();//new SurveyDetailFragment(survey, type);	// 추가 정보
+		Bundle b = new Bundle();
+		b.putParcelable("survey", survey);
+		b.putInt("type", type);
+		f.setArguments(b);
+		f.init();
 		MainActivity.sharedActivity().pushContent(f);
 	}
 
