@@ -5,8 +5,7 @@ import java.util.HashMap;
 
 
 /**
- * Helps create Java Collection objects easily  
- * @author Chae Hosik
+ * 자바의 Collection Framework 객체들을 생성한다.
  */
 public class CollectionFactory {
 
@@ -14,11 +13,17 @@ public class CollectionFactory {
 	}
 	
 	/**
-	 * 여러 개의 (string,object) 페어를 입력하여 
-	 * HashMap <string,object> 객체를 생성한다.
-	 * @param ...objects string, object, string, objects 순으로 pair를 입력     
+	 * @name HashMap Factory
+	 * HashMap을 만드는 method
+	 * @{ */
+	
+	/**
+	 * 여러 개의 (string,object) 페어를 입력하여 HashMap <string,object> 객체를 생성한다.\n
+	 * @code{.java}
+	 *  HashMap hm = CollectionFactory.hasMapWithKeysAndValues(key1,obj1,key2,obj2,key3,obj3);
+	 * @endcode
+	 * @param objects string, object, string, objects 순으로 pair를 입력     
 	 * @return hashmap
-	 * 
 	 */
 	public static HashMap<String, Object> hashMapWithKeysAndValues(Object ...objects) {
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
@@ -37,6 +42,14 @@ public class CollectionFactory {
 		return hashMap;
 	}
 	
+	/**
+	 * HashMap<String, String> 을 만들어준다. key와 value 모두 string
+	 * @code{.java}
+	 *  HashMap hm = CollectionFactory.hasMapWithKeysAndValues(key1,str1,key2,str2,key3,strj3);
+	 * @endcode
+	 * @param strings key string1, value string1, key string2, value string2 ...
+	 * @return HashMap
+	 */
 	public static HashMap<String, String> hashMapWithKeysAndStrings(String ...strings) {
 		HashMap<String, String> hashMap = new HashMap<String, String>();
 		if(strings.length % 2 != 0) {
@@ -53,6 +66,22 @@ public class CollectionFactory {
 		return hashMap;
 	}
 	
+	/** @} */
+	
+	/**
+	 * @name ArrayList
+	 * ArrayList를 만드는 메소드들
+	 * @{
+	 */
+	
+	/**
+	 * object들을 가변 인자로 받아서 하나의 arrayList로 리턴한다
+	 * @code{.java}
+	 * ArrayList l = CollectionFactory.arrayListwithKeysAndValues(obj1,obj2,...);
+	 * @endcode
+	 * @param objects arrayList에 들어갈 object
+	 * @return arrayList
+	 */
 	public static ArrayList<Object> arrayListwithKeysAndValues(Object ...objects) {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 
@@ -65,4 +94,5 @@ public class CollectionFactory {
 		return arrayList;
 	}
 
+	/** @} */
 }
