@@ -1,4 +1,4 @@
-package kr.go.KNPA.Romeo.Payload;
+package kr.go.KNPA.Romeo.Config;
 
 
 /**

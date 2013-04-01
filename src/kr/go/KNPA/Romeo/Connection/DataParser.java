@@ -1,8 +1,11 @@
-package kr.go.KNPA.Romeo.Payload;
+package kr.go.KNPA.Romeo.Connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import kr.go.KNPA.Romeo.Config.EventEnum;
+import kr.go.KNPA.Romeo.Config.StatusCodeEnum;
 
 import org.json.JSONArray;
 import org.json.JSONException;

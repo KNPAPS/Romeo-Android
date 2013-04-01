@@ -1,4 +1,4 @@
-package kr.go.KNPA.Romeo.Payload;
+package kr.go.KNPA.Romeo.Connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;

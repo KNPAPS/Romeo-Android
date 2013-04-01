@@ -1,7 +1,9 @@
-package kr.go.KNPA.Romeo.Payload;
+package kr.go.KNPA.Romeo.Config;
 
 /**
- * status code enumeration 객체
+ * 서버의 응답 json 에 답긴 status_code에 대한 enumeration 객체
+ * @author 최영우
+ * @since 2013.4.1
  */
 public enum StatusCodeEnum {
 	SUCCESS(1), /*!< 정상적으로 성공 */

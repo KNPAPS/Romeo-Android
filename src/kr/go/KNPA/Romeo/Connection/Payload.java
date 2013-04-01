@@ -1,4 +1,7 @@
-package kr.go.KNPA.Romeo.Payload;
+package kr.go.KNPA.Romeo.Connection;
+
+import kr.go.KNPA.Romeo.Config.EventEnum;
+import kr.go.KNPA.Romeo.Config.StatusCodeEnum;
 
 import org.json.JSONException;
 import org.json.JSONObject;
