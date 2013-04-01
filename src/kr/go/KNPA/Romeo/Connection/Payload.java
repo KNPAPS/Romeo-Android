@@ -9,7 +9,27 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 
 /**
- * 서버/클라이언트 간의 주고받는 데이터의 container
+ * 서버/클라이언트 간의 주고받는 데이터의 container\n
+ * @b 사용법 \n
+ * 1.Request\n
+ * @code {.java}
+ * Data data = new Data(); // 요청 시에 보낼 변수들을 담을 ArrayList<HashMap<String,Object>>
+ * ... // data에 이벤트에 맞는 자료구조로 적절하게 변수 할당
+ * Payload pl = new Payload();
+ * pl.setEvent(EventEnum.EVENT);
+ * pl.setData(data);
+ * 
+ * String requestPayload = pl.toJson(); // json string으로 변환
+ * 
+ * ... // connection class를 만들어서 서버와 통신
+ * @endcode
+ * 2.Response\n
+ * @code {.java}
+ * String responseJson = connection.getResponsePayload();// connection class로부터 response json을 받음
+ * 
+ * Payload pl = new Payload(responseJson); //native java collection으로 변환된 payload. event별로 data의 구조는 다름
+ * 
+ * @endcode
  * @author 최영우
  * @since 2013.4.1
  */

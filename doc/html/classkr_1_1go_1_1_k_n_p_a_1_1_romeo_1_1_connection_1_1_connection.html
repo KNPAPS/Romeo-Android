@@ -136,19 +136,19 @@ String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <tr class="separator:a4a0e0cd0803e19cd374f22218d26a6a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45e02901c66eb977e438c216804e4c4a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45e02901c66eb977e438c216804e4c4a"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_connection_1_1_connection.html#a45e02901c66eb977e438c216804e4c4a">timeout</a></td></tr>
-<tr class="memdesc:a45e02901c66eb977e438c216804e4c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">connection 시간제한 <br/></td></tr>
+<tr class="memdesc:a45e02901c66eb977e438c216804e4c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">connection 시간제한 default 10000 <br/></td></tr>
 <tr class="separator:a45e02901c66eb977e438c216804e4c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accffe3d06c587a85960eca3652a195c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="accffe3d06c587a85960eca3652a195c1"></a>
 HTTPMethodEnum&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_connection_1_1_connection.html#accffe3d06c587a85960eca3652a195c1">requestMethod</a></td></tr>
-<tr class="memdesc:accffe3d06c587a85960eca3652a195c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">HTTP method. <br/></td></tr>
+<tr class="memdesc:accffe3d06c587a85960eca3652a195c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">HTTP method default POST. <br/></td></tr>
 <tr class="separator:accffe3d06c587a85960eca3652a195c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd2ac44b1ce0a27658e7cf3e747d79a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd2ac44b1ce0a27658e7cf3e747d79a3"></a>
 <a class="el" href="enumkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_config_1_1_mime_type_enum.html">MimeTypeEnum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_connection_1_1_connection.html#afd2ac44b1ce0a27658e7cf3e747d79a3">requestDataType</a></td></tr>
-<tr class="memdesc:afd2ac44b1ce0a27658e7cf3e747d79a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">요청 데이터 타입 <br/></td></tr>
+<tr class="memdesc:afd2ac44b1ce0a27658e7cf3e747d79a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">요청 데이터 타입 default json <br/></td></tr>
 <tr class="separator:afd2ac44b1ce0a27658e7cf3e747d79a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cd04c9b8b6a9a615085e9b507ff0946"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6cd04c9b8b6a9a615085e9b507ff0946"></a>
 <a class="el" href="enumkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_config_1_1_mime_type_enum.html">MimeTypeEnum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_connection_1_1_connection.html#a6cd04c9b8b6a9a615085e9b507ff0946">responseDataType</a></td></tr>
-<tr class="memdesc:a6cd04c9b8b6a9a615085e9b507ff0946"><td class="mdescLeft">&#160;</td><td class="mdescRight">응답 데이터 타입 <br/></td></tr>
+<tr class="memdesc:a6cd04c9b8b6a9a615085e9b507ff0946"><td class="mdescLeft">&#160;</td><td class="mdescRight">응답 데이터 타입 default json <br/></td></tr>
 <tr class="separator:a6cd04c9b8b6a9a615085e9b507ff0946"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af91c6b10d09e8346e72966989f766523"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af91c6b10d09e8346e72966989f766523"></a>
 URL&#160;</td><td class="memItemRight" valign="bottom"><b>url</b></td></tr>
@@ -182,8 +182,21 @@ static final String&#160;</td><td class="memItemRight" valign="bottom"><b>CHARSE
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>서버와의 통신 연결을 담당하는 객체. </p>
-<p>Builder pattern을 이용하여 생성. </p>
-<dl class="section author"><dt>Author</dt><dd>최영우 </dd></dl>
+<p>Builder pattern을 이용하여 생성.<br/>
+ <b>사용법</b> </p>
+<div class="fragment"><div class="line">String json = <span class="stringliteral">&quot;{ &quot;</span><span class="keyword">event</span><span class="stringliteral">&quot;: XX , &quot;</span>data<span class="stringliteral">&quot;: [ { ... }, { ... }, ... ]  }&quot;</span>; <span class="comment">// 요청할 때 보낼 json </span></div>
+<div class="line"></div>
+<div class="line"><span class="comment">//builder를 이용해 connection 객체 생성. 이때 builder로 json만 넘겨주면 나머지 설정들은</span></div>
+<div class="line"><span class="comment">//따로 지정해주지 않으면 기본 설정으로 생성됨.  (  [] 안은 optional )</span></div>
+<div class="line"><a class="code" href="classkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_connection_1_1_connection.html#ae22de77ad1eb781b9579a89deb8df933" title="Builder로만 생성 가능">Connection</a> conn = <span class="keyword">new</span> <a class="code" href="classkr_1_1go_1_1_k_n_p_a_1_1_romeo_1_1_connection_1_1_connection.html#ae22de77ad1eb781b9579a89deb8df933" title="Builder로만 생성 가능">Connection</a>.Builder(json)[.method( HTTPMethodEnum.POST )].build();</div>
+<div class="line"></div>
+<div class="line">String responsePayload = null;</div>
+<div class="line"><span class="keywordflow">if</span> ( conn.request() == HttpURLConnection.HTTP_OK ) {</div>
+<div class="line">    responsePayload = conn.getResponsePayload();</div>
+<div class="line">}</div>
+<div class="line"></div>
+<div class="line">... <span class="comment">// Payload 객체의 생성자로 responsePayload 스트링을 넘겨서 적절히 처리</span></div>
+</div><!-- fragment --> <dl class="section author"><dt>Author</dt><dd>최영우 </dd></dl>
 <dl class="section since"><dt>Since</dt><dd>2013.4.1 </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ae22de77ad1eb781b9579a89deb8df933"></a>
@@ -267,7 +280,7 @@ static final String&#160;</td><td class="memItemRight" valign="bottom"><b>CHARSE
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Apr 1 2013 18:38:33 for Romeo-Android by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Apr 1 2013 19:01:41 for Romeo-Android by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

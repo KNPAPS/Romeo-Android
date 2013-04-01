@@ -16,8 +16,22 @@ import kr.go.KNPA.Romeo.Config.ConnectionManager;
 import kr.go.KNPA.Romeo.Config.MimeTypeEnum;
 
 /**
- * 서버와의 통신 연결을 담당하는 객체. Builder pattern을 이용하여 생성.
-
+ * 서버와의 통신 연결을 담당하는 객체. Builder pattern을 이용하여 생성.\n
+ * @b 사용법
+ * @code
+ * String json = "{ "event": XX , "data": [ { ... }, { ... }, ... ]  }"; // 요청할 때 보낼 json 
+ * 
+ * //builder를 이용해 connection 객체 생성. 이때 builder로 json만 넘겨주면 나머지 설정들은
+ * //따로 지정해주지 않으면 기본 설정으로 생성됨.  (  [] 안은 optional )
+ * Connection conn = new Connection.Builder(json)[.method( HTTPMethodEnum.POST )].build();
+ * 
+ * String responsePayload = null;
+ * if ( conn.request() == HttpURLConnection.HTTP_OK ) {
+ * 	responsePayload = conn.getResponsePayload();
+ * }
+ * 
+ * ... // Payload 객체의 생성자로 responsePayload 스트링을 넘겨서 적절히 처리
+ * @endcode
  * @author 최영우
  * @since 2013.4.1
  */
@@ -25,13 +39,13 @@ public class Connection extends ConnectionManager {
 	
 	//! request할 payload json
 	private String requestPayload;
-	//! connection 시간제한
+	//! connection 시간제한 default 10000
 	private int timeout;
-	//! HTTP method 
+	//! HTTP method default POST
 	private HTTPMethodEnum requestMethod;
-	//! 요청 데이터 타입
+	//! 요청 데이터 타입 default json
 	private MimeTypeEnum requestDataType;
-	//! 응답 데이터 타입
+	//! 응답 데이터 타입 default json
 	private MimeTypeEnum responseDataType;
 	
 	private URL url;
