@@ -8,10 +8,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
+import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Chat extends Message {
 	
@@ -44,14 +44,14 @@ public class Chat extends Message {
 	}
 	
 	public Chat(Payload payload) {
-		this.idx = payload.message.idx;
-		this.type = payload.message.type;
-		this.title = payload.message.title;
-		this.content = payload.message.content;
-		this.appendix = payload.message.appendix;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.TS = System.currentTimeMillis();
+//		this.idx = payload.message.idx;
+//		this.type = payload.message.type;
+//		this.title = payload.message.title;
+//		this.content = payload.message.content;
+//		this.appendix = payload.message.appendix;
+//		this.sender = payload.sender;
+//		this.receivers = payload.receivers;
+//		this.TS = System.currentTimeMillis();
 		//this.received = true;
 		//this.checkTS = NOT_SPECIFIED;
 		//this.checked = false;

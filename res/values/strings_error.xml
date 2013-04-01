@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 사용자에게 표시될 에러 메세지 문자열 -->
+<resources>
+	<string name="error_invalid_server_response">서버의 응답이 정상적이지 않습니다.</string>
+    
+</resources>

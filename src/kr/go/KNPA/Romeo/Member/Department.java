@@ -122,7 +122,7 @@ public class Department {
 	}
 	
 	public Department parseJSONObjectToDepartment(Context context, JSONObject json) {
-		long myIdx = UserInfo.getUserIdx(context);
+		//TODO long myIdx = UserInfo.getUserIdx(context);
 		
 		ArrayList<Department> _departments = new ArrayList<Department>();
 		
@@ -203,7 +203,7 @@ public class Department {
 				}
 				
 				User user = parseJSONObjectToUser(jUser);
-				if(user.idx != myIdx)	_users.add( user );
+			//	if(user.idx != myIdx)	_users.add( user );
 				_allUsers.add(user);
 
 			}

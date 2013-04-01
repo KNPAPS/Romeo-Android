@@ -9,12 +9,12 @@ import android.os.Parcelable;
 
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.Room;
+import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Document extends Message implements Parcelable{
 	
@@ -49,18 +49,18 @@ public class Document extends Message implements Parcelable{
 	}
 	
 	public Document(Payload payload) {
-		this.idx = payload.message.idx;
-		this.title = payload.message.title;
-		this.type = payload.message.type;
-		this.content = payload.message.content;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.TS = System.currentTimeMillis();
-		//this.received = true;
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		this.appendix = payload.message.appendix;
-		//this.favorite = false;
+//		this.idx = payload.message.idx;
+//		this.title = payload.message.title;
+//		this.type = payload.message.type;
+//		this.content = payload.message.content;
+//		this.sender = payload.sender;
+//		this.receivers = payload.receivers;
+//		this.TS = System.currentTimeMillis();
+//		//this.received = true;
+//		//this.checkTS = NOT_SPECIFIED;
+//		//this.checked = false;
+//		this.appendix = payload.message.appendix;
+//		//this.favorite = false;
 	}
 	
 	public Document(Payload payload, boolean received, long checkTS, boolean favorite) {

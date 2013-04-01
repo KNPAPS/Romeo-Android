@@ -1,8 +1,14 @@
 package kr.go.KNPA.Romeo.Connection;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -25,7 +31,8 @@ public class Connection extends ConnectionManager {
 	private URL url;
 	private String responsePayload = null;
 	private HttpURLConnection conn = null;
-
+	private int responseCode;
+	
 	private Connection( Builder builder ) {	
 		this.requestPayload = builder.requestPayload;
 		this.timeout = builder.timeout;
@@ -33,7 +40,13 @@ public class Connection extends ConnectionManager {
 	}
 	
 	public int request() throws RuntimeException {
-		url = new URL(REQUEST_URL);
+		try {
+			url = new URL(REQUEST_URL);
+		} catch (MalformedURLException e1) {
+			RuntimeException re = new RuntimeException(e1);
+			throw re;
+		}
+		
 		try {
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setUseCaches(false);
@@ -55,21 +68,46 @@ public class Connection extends ConnectionManager {
 			conn.setRequestProperty("Accept", mimeType.toString());
 			
 			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-			
-			writer.write(URLEncoder.encode(requestPayload,CHARSET_URL_ENCODING));
-		
-			writer.flush();
 
+			PrintWriter pw = new PrintWriter(writer);
+			pw.write( URLEncoder.encode(requestPayload,CHARSET_REQUEST_ENCODING) );
+			pw.flush();
+			pw.close();
+
+			responseCode = conn.getResponseCode();
+
+			StringBuffer resp = new StringBuffer();
 			
+			if ( responseCode == HttpURLConnection.HTTP_OK ) {
+				
+				
+				String line;
+				
+				InputStream _is;
+				_is = conn.getInputStream();
+				InputStreamReader _isr;
+				
+				_isr = new InputStreamReader(_is, CHARSET_RESPONSE_ENCODING);
+	
+				BufferedReader br = new BufferedReader(_isr);
 			
+				while ((line = br.readLine() ) != null) {
+					//System.out.println(line);
+					resp.append(line);
+				}
+
+				br.close();
+			}
+			
+			responsePayload = resp.toString();
+			conn.disconnect();
+
+			return responseCode;
+				
 		} catch ( IOException e ){
 			RuntimeException re = new RuntimeException(e);
 			throw re;
 		}
-	}
-	
-	private int readResponse(){
-		
 	}
 	
 	public String getResponsePayload() {

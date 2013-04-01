@@ -7,8 +7,8 @@ import java.util.HashMap;
 import com.google.android.gcm.GCMRegistrar;
 
 import kr.go.KNPA.Romeo.MainActivity;
+import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.Connection;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.util.Log;
@@ -75,12 +75,12 @@ public class GCMRegisterManager {
         	UserInfo.setUUID(context);
         	uuid = UserInfo.getUUID(context);
         }
-        long userIdx = UserInfo.getUserIdx(context);
+        //long userIdx = UserInfo.getUserIdx(context);
         
         HashMap<String, String> data = new HashMap<String,String>();
         data.put("regid", regId);
         data.put("uuid", uuid);
-        data.put("user", ""+userIdx);
+        //TODO data.put("user", ""+userIdx);
         data.put("type", "a");
         
         Connection con = new Connection.Builder()

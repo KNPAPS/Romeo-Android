@@ -9,12 +9,12 @@ import android.os.Parcelable;
 
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.Room;
+import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 
 public class Survey extends Message implements Parcelable{
@@ -47,20 +47,21 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	public Survey(Payload payload) {
-		this.type = payload.message.type;
-		this.idx = payload.message.idx;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.title = payload.message.title;
-		this.content = payload.message.content;
-		//this.received = true;
-		this.TS = System.currentTimeMillis();
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		this.appendix = payload.message.appendix;
-		this.openTS = payload.message.appendix.getOpenTS();
-		this.closeTS = payload.message.appendix.getCloseTS();
-		this.answered = payload.message.appendix.getAnswered();
+		//TODO 
+//		this.type = payload.message.type;
+//		this.idx = payload.message.idx;
+//		this.sender = payload.sender;
+//		this.receivers = payload.receivers;
+//		this.title = payload.message.title;
+//		this.content = payload.message.content;
+//		//this.received = true;
+//		this.TS = System.currentTimeMillis();
+//		//this.checkTS = NOT_SPECIFIED;
+//		//this.checked = false;
+//		this.appendix = payload.message.appendix;
+//		this.openTS = payload.message.appendix.getOpenTS();
+//		this.closeTS = payload.message.appendix.getCloseTS();
+//		this.answered = payload.message.appendix.getAnswered();
 	}
 	
 	public Survey(Payload payload, boolean received, long checkTS) {

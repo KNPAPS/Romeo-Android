@@ -2,6 +2,7 @@ package kr.go.KNPA.Romeo.Base;
 
 import java.util.ArrayList;
 
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONArray;
@@ -149,13 +150,13 @@ public class Packet {
 		
 		
 		Payload payload = null;
-		if(_payload != null) {
-			payload = new Payload.Builder().message(message)
-										   .event(event)
-										   .sender(sender)
-										   .receivers(receivers)
-										   .build();
-		}
+//		if(_payload != null) {
+//			payload = new Payload.Builder().message(message)
+//										   .event(event)
+//										   .sender(sender)
+//										   .receivers(receivers)
+//										   .build();
+//		}
 		
 		this.departingTS = departingTS;
 		this.deviceStatus = deviceStatus;
@@ -283,11 +284,11 @@ public class Packet {
 		
 		Payload payload = null;
 		if(_payload != null) {
-			payload = new Payload.Builder().message(message)
-										   .event(event)
-										   .sender(sender)
-										   .receivers(receivers)
-										   .build();
+//			payload = new Payload.Builder().message(message)
+//										   .event(event)
+//										   .sender(sender)
+//										   .receivers(receivers)
+//										   .build();
 		}
 		
 		this.departingTS = departingTS;

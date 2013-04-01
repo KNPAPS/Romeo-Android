@@ -8,9 +8,8 @@ public class ConnectionManager {
 	//private final static String HOST_URL = "http://116.67.94.11:9876/index.php/handler/call";
 	protected static final String SERVER_HOST = "localhost";
 	protected static final String REQUEST_URL = SERVER_HOST+"/juliet/index.php/handler/call";
-	protected static final String CHARSET_URL_ENCODING = "UTF-8"; 
-	
-	public static final int HTTP_OK = 200;
+	protected static final String CHARSET_REQUEST_ENCODING = "UTF-8"; 
+	protected static final String CHARSET_RESPONSE_ENCODING = "UTF-8";
 	
 	public static enum HTTPMethodEnum {
 		GET("GET"),
