@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -17,29 +16,52 @@ import kr.go.KNPA.Romeo.Config.ConnectionManager;
 import kr.go.KNPA.Romeo.Config.MimeTypeEnum;
 
 /**
- * 서버와의 통신 연결을 담당하는 객체.
- * @author user
- *
+ * 서버와의 통신 연결을 담당하는 객체. Builder pattern을 이용하여 생성.
+
+ * @author 최영우
+ * @since 2013.4.1
  */
 public class Connection extends ConnectionManager {
 	
+	//! request할 payload json
 	private String requestPayload;
+	//! connection 시간제한
 	private int timeout;
-	private HTTPMethodEnum requestMethod; 
-	private MimeTypeEnum mimeType;
+	//! HTTP method 
+	private HTTPMethodEnum requestMethod;
+	//! 요청 데이터 타입
+	private MimeTypeEnum requestDataType;
+	//! 응답 데이터 타입
+	private MimeTypeEnum responseDataType;
 	
 	private URL url;
 	private String responsePayload = null;
 	private HttpURLConnection conn = null;
+	//! HTTP 응답 코드. 200 이 OK
 	private int responseCode;
 	
+	/**
+	 * Builder로만 생성 가능
+	 * @param builder connection builder instance
+	 */
 	private Connection( Builder builder ) {	
 		this.requestPayload = builder.requestPayload;
 		this.timeout = builder.timeout;
+		this.requestDataType = builder.requestDataType;
+		this.responseDataType = builder.responseDataType;
 		this.requestMethod = builder.requestMethod; 
 	}
 	
+	/**
+	 * 서버로 요청 보내기. 
+	 * @return int response code
+	 * @throws RuntimeException
+	 */
 	public int request() throws RuntimeException {
+		
+		//TODO: 설정된 변수들이 제대로 되었는지 검증해야함
+		
+		//url connection
 		try {
 			url = new URL(REQUEST_URL);
 		} catch (MalformedURLException e1) {
@@ -64,22 +86,25 @@ public class Connection extends ConnectionManager {
 			conn.setReadTimeout(timeout);
 			conn.setAllowUserInteraction(true);
 			conn.setRequestProperty("Cache-Control", "no-cache");
-			conn.setRequestProperty("Content-type", mimeType.toString());
-			conn.setRequestProperty("Accept", mimeType.toString());
+			conn.setRequestProperty("Content-type", requestDataType.toString());
+			conn.setRequestProperty("Accept", requestDataType.toString());
 			
 			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
 
+			//request!
 			PrintWriter pw = new PrintWriter(writer);
 			pw.write( URLEncoder.encode(requestPayload,CHARSET_REQUEST_ENCODING) );
 			pw.flush();
 			pw.close();
 
+			
+			//get response start 
 			responseCode = conn.getResponseCode();
 
 			StringBuffer resp = new StringBuffer();
 			
+			//HTTP 통신이 올바르게 되었으면 response 읽어들인다.
 			if ( responseCode == HttpURLConnection.HTTP_OK ) {
-				
 				
 				String line;
 				
@@ -110,25 +135,49 @@ public class Connection extends ConnectionManager {
 		}
 	}
 	
+	/**
+	 * 서버가 응답한 json string을 리턴
+	 * @return json string response from server
+	 */
 	public String getResponsePayload() {
 		return responsePayload;
 	}
 	
+	/**
+	 * Connection Builder
+	 * @author 최영우
+	 * @since 2013.04.01
+	 */
 	public static class Builder {
 		private String requestPayload;
 		private int timeout = 10000;
 		private HTTPMethodEnum requestMethod = HTTPMethodEnum.POST;
-		private MimeTypeEnum mimeType = MimeTypeEnum.json;
+		private MimeTypeEnum requestDataType = MimeTypeEnum.json;
+		private MimeTypeEnum responseDataType = MimeTypeEnum.json;
 		
+		/**
+		 * request json은 필수적인 parameter이므로 생성자에서 받는다
+		 * @param request json
+		 */
 		public Builder( String json ) {
 			this.requestPayload = json;
 		}
 		
+		/**
+		 * @name setters
+		 * @{
+		 */
 		public Builder requestPayload(String json) { this.requestPayload = json; return this; }
 		public Builder timeout(int timeout) { this.timeout = timeout; return this; }
 		public Builder method(HTTPMethodEnum method) { this.requestMethod= method; return this; }
-		public Builder method(MimeTypeEnum mime) { this.mimeType= mime; return this; }
+		public Builder requestDataType(MimeTypeEnum mime) { this.requestDataType= mime; return this; }
+		public Builder responseDataType(MimeTypeEnum mime) { this.responseDataType= mime; return this; }
+		/**@}*/
 		
+		/**
+		 * 변수들을 설정한 뒤에 호출하여 connection 객체를 build
+		 * @return Connection 
+		 */
 		public Connection build() {
 			return new Connection(this);
 		}

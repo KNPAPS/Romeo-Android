@@ -35,20 +35,13 @@ public class DataParser {
 	 */
 	public static Data parse( EventEnum event, StatusCodeEnum status, JSONArray dataJSONArray ) throws JSONException {
 		Data dataNative = null;
+		//TODO: 아래 세 method에 대해 서버와 주고받는 자료구조 변경해야 할듯
 		switch(event) {
 		case MESSAGE_SEND:
-			break;
-		case MESSAGE_GET_UNCHECKERS:
 			break;
 		case MESSAGE_SURVEY_ANSWER_SURVEY:
 			break;
 		case MESSAGE_SURVEY_GET_RESULT:
-			break;
-		case DEVICE_REGISTER:
-			break;
-		case DEVICE_IS_REGISTERED:
-			break;
-		case DEVICE_UNREGISTER:
 			break;
 		default:
 			dataNative = basicParse(dataJSONArray);
