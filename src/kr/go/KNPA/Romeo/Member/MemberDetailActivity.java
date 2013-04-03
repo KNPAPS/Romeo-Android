@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Config.DBManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -60,7 +60,7 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 			__idxs[i] = Long.parseLong(_idxs[i]);
 		}
 		// User 정보를 얻어온다.
-		ArrayList<User> users = User.getUsersWithIndexes(__idxs);
+		ArrayList<MemberManager> users = MemberManager.getUsersWithIndexes(__idxs);
 		//}
 		
         //배경투명처리
@@ -155,9 +155,9 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		if(isGroup) {
 			nameTV.setText(title);
 		} else {
-			User user = users.get(0); 
+			MemberManager user = users.get(0); 
 			departmentTV.setText(user.getDepartmentFull());
-			rankTV.setText(User.RANK[user.rank]);
+			rankTV.setText(MemberManager.RANK[user.rank]);
 			nameTV.setText(user.name);
 			// TODO : userPic Setting
 		}

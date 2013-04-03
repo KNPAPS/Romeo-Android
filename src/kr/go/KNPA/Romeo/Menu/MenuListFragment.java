@@ -217,9 +217,9 @@ public class MenuListFragment extends ListFragment {
 				}
 			} else if (codes[0].toUpperCase().equals("MEMBER") ) {
 				if(codes[1].toUpperCase().equals("MEMBERLIST")) {
-					fragment = new MemberFragment(User.TYPE_MEMBERLIST);
+					fragment = new MemberFragment(MemberManager.TYPE_MEMBERLIST);
 				} else if(codes[1].toUpperCase().equals("FAVORITE")) {
-					fragment = new MemberFragment(User.TYPE_FAVORITE);
+					fragment = new MemberFragment(MemberManager.TYPE_FAVORITE);
 				}
 				
 			} else if (codes[0].toUpperCase().equals("SETTINGS")) {

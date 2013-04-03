@@ -1,34 +1,32 @@
 package kr.go.KNPA.Romeo;
 
-import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.provider.BaseColumns;
 import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * ListView Wrapper Class
+ * @author 채호식
+ */
 public abstract class RomeoListView extends ListView {
 
 	// Database
 	protected SQLiteDatabase db;
-	//protected Context context = getContext();
 	
 	// Adapter
 	public CursorAdapter listAdapter;
 	
 	// Variables
-	public int type = Message.NOT_SPECIFIED;
+	public int type = Constants.NOT_SPECIFIED;
 	
 	// Constructor
 	public RomeoListView(Context context) {
@@ -43,14 +41,13 @@ public abstract class RomeoListView extends ListView {
 		super(context, attrs, defStyle);
 	}
 
-	// Initializer
+	/**
+	 * initializer. 각 View별로 따로 구현해야 함
+	 * @param type ListView에 들어갈 콘텐츠를 구별하는 타입 변수.
+	 * @return 
+	 */
 	abstract public RomeoListView initWithType(int type);
 	
-	/*// Context 
-	protected Context getContext() {
-		return this.context;
-	}
-	*/
 	// Database Managemant
 	public void setDatabase(SQLiteDatabase db) {
 		this.db = db;
@@ -65,9 +62,13 @@ public abstract class RomeoListView extends ListView {
 	// DB에 쿼리를 날린다. 추상메소드.
 	abstract protected Cursor query();
 	
-	// 리스트를 다시 불러온다.
+	/**
+	 * 리스트를 다시 불러온다. 
+	 */
 	public void refresh() {
-		if(listAdapter == null || getTableName() == null) return;
+		if(listAdapter == null || getTableName() == null) {
+			return;
+		}
  
 		if(listAdapter instanceof CursorAdapter) {
 			Cursor c = query();
@@ -82,7 +83,10 @@ public abstract class RomeoListView extends ListView {
 	}
 	
 	
-	// 커서로부터 행의 갯수를 세어 비었을 경우 빈 배경을 출력해준다.
+	/**
+	 * 커서로부터 행의 갯수를 세어 비었을 경우 빈 배경을 출력해준다.
+	 * @param c 리스트뷰에 들어갈 콘텐츠들에 대한 커서
+	 */
 	public void setListBackground(Cursor c) {
 		if(c.getCount() == 0) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
@@ -98,12 +102,5 @@ public abstract class RomeoListView extends ListView {
 			this.setBackgroundResource(R.color.light);
 		}
 	}
-
-/*	/// abstract
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
-		// NOTHING HERE
-	}
-	*/
 	
 }

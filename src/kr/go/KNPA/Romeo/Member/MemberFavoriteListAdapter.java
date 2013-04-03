@@ -25,7 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemClickListener, OnClickListener {
 	
 	private Context context;
-	public int type = User.NOT_SPECIFIED;
+	public int type = MemberManager.NOT_SPECIFIED;
 	
 	private ArrayList<String> _collect;
 	
@@ -35,7 +35,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		super(ctx, c, autoRequery);
 		this.type = type;
 		context = ctx;
-		if(type == User.TYPE_FAVORITE_SEARCH)
+		if(type == MemberManager.TYPE_FAVORITE_SEARCH)
 			search = new ArrayList<HashMap<String,String>>();
 		_collect = new ArrayList<String>();
 	}
@@ -48,7 +48,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		
 		LayoutInflater inflater = LayoutInflater.from(ctx);
 		View v = null;
-		if(this.type == User.TYPE_FAVORITE) {
+		if(this.type == MemberManager.TYPE_FAVORITE) {
 			if(isGroup) { 
 				v = inflater.inflate(R.layout.member_favorite_group_cell, parent,false);
 				v.setTag("GROUP");
@@ -56,7 +56,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 				v = inflater.inflate(R.layout.member_favorite_user_cell, parent,false);
 				v.setTag("USER");
 			}
-		} else if(this.type == User.TYPE_FAVORITE_SEARCH) {
+		} else if(this.type == MemberManager.TYPE_FAVORITE_SEARCH) {
 			if(isGroup) { 
 				v = inflater.inflate(R.layout.member_favorite_group_cell_search, parent,false);
 				v.setTag("GROUP");
@@ -99,8 +99,8 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			// 그룹
 		} else {
 			// 개인
-			User user = User.userWithIdx(indexes[0]);
-			rank = User.RANK[user.rank];
+			MemberManager user = MemberManager.userWithIdx(indexes[0]);
+			rank = MemberManager.RANK[user.rank];
 			name = user.name;
 			department = user.getDepartmentFull();
 		}
@@ -111,7 +111,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		nameTV.setText(name);
 		roleTV.setText(role);
 		
-		if(isGroup && type==User.TYPE_FAVORITE) {
+		if(isGroup && type==MemberManager.TYPE_FAVORITE) {
 			goDetail = (Button)v.findViewById(R.id.goDetail);
 
 			goDetail.setOnClickListener(new OnClickListener() {
@@ -123,7 +123,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			});
 		}
 		
-		if(type == User.TYPE_FAVORITE_SEARCH) {
+		if(type == MemberManager.TYPE_FAVORITE_SEARCH) {
 			
 			Bundle b = new Bundle();
 			b.putBoolean("isGroup", isGroup);

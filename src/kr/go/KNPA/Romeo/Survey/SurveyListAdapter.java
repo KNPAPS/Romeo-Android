@@ -6,7 +6,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
 import android.content.res.Resources;
@@ -54,8 +54,8 @@ class SurveyListAdapter extends CursorAdapter {
 			title = c.getString(c.getColumnIndex("title"));
 			
 			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.getDepartmentFull() +" "+User.RANK[user.rank]+" " +user.name;
+			MemberManager user = MemberManager.getUserWithIdx(senderIdx);
+			String sender = user.getDepartmentFull() +" "+MemberManager.RANK[user.rank]+" " +user.name;
 			
 			long openTS = c.getLong(c.getColumnIndex("openTS"));
 			long closeTS = c.getLong(c.getColumnIndex("closeTS"));
@@ -79,8 +79,8 @@ class SurveyListAdapter extends CursorAdapter {
 			title = c.getString(c.getColumnIndex("title"));
 			
 			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.getDepartmentFull() +" "+User.RANK[user.rank]+" " +user.name;
+			MemberManager user = MemberManager.getUserWithIdx(senderIdx);
+			String sender = user.getDepartmentFull() +" "+MemberManager.RANK[user.rank]+" " +user.name;
 			
 			long openTS = c.getLong(c.getColumnIndex("openTS"));
 			long closeTS = c.getLong(c.getColumnIndex("closeTS"));

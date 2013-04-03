@@ -5,28 +5,20 @@ import java.util.GregorianCalendar;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.RomeoFragment;
-import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Document.DocumentListView;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -54,7 +46,7 @@ public class SurveyComposeFragment extends Fragment {
 	LinearLayout questionsLL;
 	Button addQuestionBT;
 	
-	private ArrayList<User> receivers;
+	private ArrayList<MemberManager> receivers;
 
 	public SurveyComposeFragment() {
 	}
@@ -65,7 +57,7 @@ public class SurveyComposeFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = init(inflater, container, savedInstanceState);
-		receivers = new ArrayList<User>();
+		receivers = new ArrayList<MemberManager>();
 
 		return view;
 	}
@@ -311,18 +303,18 @@ public class SurveyComposeFragment extends Fragment {
 //TODO
 		String title = titleET.getText().toString();
 		String content = contentET.getText().toString();
-		User sender = User.getUserWithIdx(UserInfo.getUserIdx(getActivity()));
+		//User sender = User.getUserWithIdx(UserInfo.getUserIdx(getActivity()));
 		
-		receivers.add(User.userWithIdx(1));
-		receivers.add(User.userWithIdx(2));
-		receivers.add(User.userWithIdx(3));
+		receivers.add(MemberManager.userWithIdx(1));
+		receivers.add(MemberManager.userWithIdx(2));
+		receivers.add(MemberManager.userWithIdx(3));
 		//receivers.add(User.userWithIdx(4));
 		
 		sb.append(q).append("title").append(q).append(c).append(q).append(title).append(q).append(",");
 		sb.append(q).append("content").append(q).append(c).append(q).append(content).append(q).append(",");
 		sb.append(q).append("openTS").append(q).append(c).append(openTS).append(",");
 		sb.append(q).append("closeTS").append(q).append(c).append(closeTS).append(",");
-		sb.append(q).append("receivers").append(q).append(c).append(q).append(User.usersToString(receivers)).append(q).append(",");
+		sb.append(q).append("receivers").append(q).append(c).append(q).append(MemberManager.usersToString(receivers)).append(q).append(",");
 		
 		//		EditText receiversET;
 		sb.append(q).append("questions").append(q).append(c);
@@ -342,22 +334,22 @@ public class SurveyComposeFragment extends Fragment {
 		long currentTS = System.currentTimeMillis();
 		
 		//받은 사람 입장에서.
-		Survey survey = new Survey.Builder()
-								  .type(Message.makeType(Message.MESSAGE_TYPE_SURVEY, Survey.TYPE_DEPARTED))
-								  .TS(currentTS)
-								  .title(title)
-								  .content(content)
-								  .sender(sender)
-								  .receivers(receivers)
-								  .received(true)							//
-								  //.idx(idx)
-								  .checkTS(Message.NOT_SPECIFIED)			//
-								  .checked(false)							//
-								  .appendix(appendix)
-								  .toSurveyBuilder()
-								  .build();
+//		Survey survey = new Survey.Builder()
+//								  .type(Message.makeType(Message.MESSAGE_TYPE_SURVEY, Survey.TYPE_DEPARTED))
+//								  .TS(currentTS)
+//								  .title(title)
+//								  .content(content)
+//								  .sender(sender)
+//								  .receivers(receivers)
+//								  .received(true)							//
+//								  //.idx(idx)
+//								  .checkTS(Message.NOT_SPECIFIED)			//
+//								  .checked(false)							//
+//								  .appendix(appendix)
+//								  .toSurveyBuilder()
+//								  .build();
 								  // TODO : php에서 튜닝 여기서는 그냥 보내고.
-		survey.send(getActivity());	  
+		//survey.send(getActivity());	  
 		
 		MainActivity.sharedActivity().popContent(this);
 	}
@@ -440,9 +432,9 @@ public class SurveyComposeFragment extends Fragment {
 				
 				long[] receiversIdx = data.getExtras().getLongArray("receivers");
 				
-				ArrayList<User> newUsers = new ArrayList<User>();
+				ArrayList<MemberManager> newUsers = new ArrayList<MemberManager>();
 				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
+					MemberManager user = MemberManager.getUserWithIdx(receiversIdx[i]);
 					// TODO 이미 선택되어 잇는 사람은 ..
 					if(receivers.contains(user)) continue;
 					newUsers.add(user);
@@ -450,11 +442,11 @@ public class SurveyComposeFragment extends Fragment {
 				receivers.addAll(newUsers);
 				
 				if (receivers.size() > 1) {
-					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
+					MemberManager fReceiver = receivers.get(0);
+					receiversET.setText(MemberManager.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
 				} else if(receivers.size() > 0) {
-					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
+					MemberManager fReceiver = receivers.get(0);
+					receiversET.setText(MemberManager.RANK[fReceiver.rank]+" "+fReceiver.name);
 				} else {
 					receiversET.setText("선택된 사용자가 없습니다.");
 				}

@@ -58,7 +58,6 @@
     <string name="documentFavoriteTitle">중요 업무연락</string>
     <string name="memberFavoriteTitle">즐겨찾는 그룹</string>
     <string name="meetingTitle">회의</string>
-    <string name="commandTitle">지시와 보고</string>
     <string name="documentForwardTitle">전달 문서</string>
     <string name="conditionalSearchTitle">조건부검색</string>
     <string name="condition_location">지역</string>

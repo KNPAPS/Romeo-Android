@@ -2,118 +2,108 @@ package kr.go.KNPA.Romeo.Util;
 
 import java.util.UUID;
 
-import kr.go.KNPA.Romeo.Member.User;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 
+/**
+ * Android SharedPreferences에 유저 정보를 저장할 때 Encrypter 클래스를 이용해 정보를 암호화한다.
+ */
 public class UserInfo {
+	
+	//! 유저 해쉬 preference key
+	public static final String PREF_KEY_USER_HASH = "userHash";//"8f324f72719de0b8215867bbdfa5553e";
+	//! 유저 이름 preference key
+	public static final String PREF_KEY_USER_NAME = "userName";
+	//! 부서 hash preference key
+	public static final String PREF_KEY_DEPT_HASH = "deptHash";
+	//! 부서 이름 preference key
+	public static final String PREF_KEY_DEPT_NAME = "deptName";
+	//! 유저 계급 이름 preference key
+	public static final String PREF_KEY_RANK_NAME = "userRankName";
+	//! 유저 계급 index preference key
+	public static final String PREF_KEY_RANK_IDX = "userRankIdx";
+	//! 유저 플필사진 경로 preference key
+	public static final String PREF_KEY_PIC_PATH = "userPicPath";
+	//! 유저 비번 preference key
+	public static final String PREF_KEY_PASSWORD = "upw";
+	//! 디바이스 uuid preference key
+	public static final String PREF_KEY_UUID = "uuid";
+	//! GCM Registration id preference key
+	public static final String PREF_KEY_REG_ID = "regId";
+	//! 유저 직책 preference key
+	public static final String PREF_KEY_USER_ROLE = "userRole";
+	
+	//! preference name
 	public static String PREFERENCE_NAME = "userInfo";
-	public static void setName(Context context, String name) {
+	
+	/**
+	 * @name setters
+	 * @{
+	 */
+	
+	/**
+	 * preferences에 해당 key로 값을 저장.\n
+	 * @param context preferences를 저장할 context
+	 * @param key preferences 항목이름.
+	 * @param value 값
+	 */
+	public static void setPref(Context context, String key, String value) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
-		e.putString("name", Encrypter.sharedEncrypter().encrypteString(name));
+		e.putString(key, Encrypter.sharedEncrypter().encryptString(value));
 		e.commit();
 	}
-	public static String getName(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("name", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
-	
-	public static void setDepartment(Context context, String department) {
+
+	/**
+	 * preferences에 해당 key로 값을 저장.\n
+	 * @param context preferences를 저장할 context
+	 * @param key preferences 항목이름.
+	 * @param value 값
+	 */
+	public static void setPref(Context context, String key, Integer value) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
-		e.putString("department", Encrypter.sharedEncrypter().encrypteString(department));
-		e.commit();
-		
-	}
-	public static String getDepartment(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("department", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
-	
-	public static void setDepartmentIdx(Context context, long idx) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("departmentIdx", Encrypter.sharedEncrypter().encrypteString(""+idx));
+		e.putString(key, Encrypter.sharedEncrypter().encryptString(value.toString()));
 		e.commit();
 	}
-	public static long getDepartmentIdx(Context context) {
+	
+	/** @} */
+	
+	/**
+	 * @name getters
+	 * @{
+	 */
+	
+	/**
+	 * key에 해당하는 pref를 가져온다.\n
+	 * SharedPreferences에 저장되는 정보는 기본적으로 모두 Encrypter를 통해서 암호화되므로\n
+	 * 모두 자료형이 String으로 다뤄진다. 따라서 getter는 모두 String을 리턴하며\n
+	 * 사용할 때 형변환을 해서 사용해야 한다 
+	 * @param context preferences를 저장할 context
+	 * @param key prefereces 항목 이름
+	 * @return
+	 */
+	public static String getPref(Context context, String key) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("departmentIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
-		return Long.parseLong(_var);
+		String enc = prefs.getString(key, null);
+		if(enc == null) {
+			return null;
+		} else {
+			return Encrypter.sharedEncrypter().decryptString(enc);
+		}
 	}
 	
-	public static void setUserIdx(Context context, long idx) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("userIdx", Encrypter.sharedEncrypter().encrypteString(""+idx));
-		e.commit();
-	}
-	public static long getUserIdx(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("userIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
-		return Long.parseLong(_var); 
-	}
+	/** @} */
 	
-	public static void setRankIdx(Context context, int rank) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("rankIdx", Encrypter.sharedEncrypter().encrypteString(""+rank));
-		e.commit();
-	}
-	public static int getRankIdx(Context context, int rank) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String _var = Encrypter.sharedEncrypter().decrypteString(prefs.getString("rankIdx", Encrypter.sharedEncrypter().encrypteString(""+User.NOT_SPECIFIED)));
-		return Integer.parseInt(_var);
-	}
-	
-	public static void setRank(Context context, String rank) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("rank", Encrypter.sharedEncrypter().encrypteString(rank));
-		e.commit();
-	}
-	public static String getRank(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("rank", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
-	
-	public static void setPicPath(Context context, String path) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("picPath", Encrypter.sharedEncrypter().encrypteString(path));
-		e.commit();
-	}
-	public static String getPicPath(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("picPath", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
-	
-	public static void setPassword(Context context, String password) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("password", Encrypter.sharedEncrypter().encrypteString(password));
-		e.commit();
-	}
-	public static String getPassword(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("password", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
-	
-	public static void setUUID(Context context) {
-		// http://blog.daum.net/han24_2/3041614
-		// http://theeye.pe.kr/entry/how-to-get-unique-device-id-on-android
+	/**
+	 * 기기 식별용 uuid를 설정함. deviceid+serial number+androidid를 조합하여 만듬
+	 * @param context
+	 * @see http://theeye.pe.kr/entry/how-to-get-unique-device-id-on-android
+	 * @see http://blog.daum.net/han24_2/3041614 
+	 * @return uuid
+	 */
+	public static String makeUUID(Context context) {
 		final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
 		final String tmDevice, tmSerial, androidId;
@@ -122,32 +112,7 @@ public class UserInfo {
 		androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 
 		UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
-		String deviceId = deviceUuid.toString();
-		
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("uuid", Encrypter.sharedEncrypter().encrypteString(deviceId));
-		e.commit();
-
+		return deviceUuid.toString();
 	}
 	
-	public static String getUUID(Context context) {			
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("uuid", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
-	
-	public static void setRegid(Context context, String regid) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("regid", Encrypter.sharedEncrypter().encrypteString(regid));
-		e.commit();
-	}
-	public static String getRegid(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String enc = prefs.getString("regid", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decrypteString(enc);
-	}
 }

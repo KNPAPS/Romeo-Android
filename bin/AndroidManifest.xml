@@ -24,7 +24,9 @@
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<!--  파일 저장을 위한 Perm -->
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+	<!-- 네트워크에 연결되어 있을 때만 사용해야하므로 네트워크 상태 체크를 할 수 있어야함 -->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
@@ -46,13 +48,13 @@
 				</activity>
         
         <activity 
-						android:name="kr.go.KNPA.Romeo.UserRegisterActivity"
+						android:name="kr.go.KNPA.Romeo.Register.UserRegisterActivity"
             android:theme="@android:style/Theme.NoTitleBar"
 						android:windowSoftInputMode="stateHidden" >
 				</activity>
         
         <activity 
-						android:name="kr.go.KNPA.Romeo.NotRegisteredActivity"
+						android:name="kr.go.KNPA.Romeo.Register.NotRegisteredActivity"
             android:theme="@android:style/Theme.NoTitleBar"
 						android:windowSoftInputMode="stateHidden" >
 				</activity>

@@ -476,6 +476,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int dummy=0x7f0a005e;
         public static final int duration=0x7f0a001a;
         public static final int edit=0x7f0a0011;
+        public static final int error_invalid_server_response=0x7f0a008e;
+        public static final int error_network_disconnected=0x7f0a008f;
+        public static final int error_network_disconnected_title=0x7f0a0090;
         public static final int formatString_FullDate=0x7f0a0070;
         public static final int formatString_closeDT=0x7f0a006e;
         public static final int formatString_openDT=0x7f0a006d;

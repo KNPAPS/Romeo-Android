@@ -6,15 +6,15 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Base.Packet;
-import kr.go.KNPA.Romeo.Base.Payload;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
-import kr.go.KNPA.Romeo.Util.DBManager;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -29,11 +29,9 @@ import android.os.Bundle;
 
 public class GCMMessageManager {
 	
-	//
 	public static final int NOT_SPECIFIED = Message.NOT_SPECIFIED;
 	private static final String TAG = "GCMMessageManager";
 	
-	// preDefined Variables
 	private static final String EVENT_TYPE_MESSAGE = "MESSAGE";
 	private static final String EVENT_ACTION_RECEIVED = "RECEIVED";
 	
@@ -77,15 +75,15 @@ public class GCMMessageManager {
         
         // Specify Payload and Event
         payload = packet.payload;
-        String event = payload.event;
-        events = event.split(":");
+        //TODO String event = payload.event;
+        //TODO events =  event.split(":");
         
         
         if(events[0].equalsIgnoreCase(EVENT_TYPE_MESSAGE)) {
         	if(events[1].equalsIgnoreCase(EVENT_ACTION_RECEIVED)) {
         		
-		    	messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
-		    	messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
+		    	//TODO messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
+		    	//TODO messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
 		
 		        // 파싱된 event에 따라 작업을 분류한다. TODO
 		    	
@@ -132,7 +130,7 @@ public class GCMMessageManager {
 			vals.put("content", chat.content);
 			vals.put("appendix", chat.appendix.toBlob());
 			vals.put("sender", chat.sender.idx);
-			vals.put("receivers", User.usersToString(chat.receivers));
+			vals.put("receivers", MemberManager.usersToString(chat.receivers));
 			vals.put("received", 1);
 			vals.put("TS", chat.TS);
 			vals.put("checked", 0);
@@ -192,7 +190,7 @@ public class GCMMessageManager {
 			vals.put("content", document.content);
 			vals.put("appendix", document.appendix.toBlob());
 			vals.put("sender", document.sender.idx);
-			vals.put("receivers", User.usersToString(document.receivers));
+			vals.put("receivers", MemberManager.usersToString(document.receivers));
 			vals.put("received", 1);
 			vals.put("TS", document.TS);
 			vals.put("checked", 0);
@@ -248,11 +246,11 @@ public class GCMMessageManager {
 			vals.put("content", survey.content);
 			vals.put("appendix", survey.appendix.toBlob());
 			vals.put("sender", survey.sender.idx);
-			vals.put("receivers", User.usersToString(survey.receivers));
+			vals.put("receivers", MemberManager.usersToString(survey.receivers));
 			vals.put("received", 1);
 			vals.put("TS", survey.TS);
 			vals.put("checked", 0);
-			vals.put("openTS", survey.openTS);
+			vals.put("openTS", survey.getOpenTS());
 			vals.put("closeTS", survey.closeTS);
 			vals.put("checkTS", survey.checkTS);
 			vals.put("idx", survey.idx);

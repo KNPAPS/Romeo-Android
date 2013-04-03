@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo.Document;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
@@ -42,8 +42,8 @@ class DocumentListAdapter extends CursorAdapter {
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
 			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx((int)senderIdx);
-			String sender = user.getDepartmentFull() + " "+User.RANK[user.rank] +" "+ user.name;
+			MemberManager user = MemberManager.getUserWithIdx((int)senderIdx);
+			String sender = user.getDepartmentFull() + " "+MemberManager.RANK[user.rank] +" "+ user.name;
 			
 			String arrivalDT = "";
 			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
@@ -63,8 +63,8 @@ class DocumentListAdapter extends CursorAdapter {
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
 			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx((int)senderIdx);
-			String sender = user.getDepartmentFull() + " "+User.RANK[user.rank] +" "+ user.name;
+			MemberManager user = MemberManager.getUserWithIdx((int)senderIdx);
+			String sender = user.getDepartmentFull() + " "+MemberManager.RANK[user.rank] +" "+ user.name;
 			
 			String arrivalDT = "";
 			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
@@ -84,8 +84,8 @@ class DocumentListAdapter extends CursorAdapter {
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
 			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx((int)senderIdx);
-			String sender = user.getDepartmentFull() + " "+User.RANK[user.rank] +" "+ user.name;
+			MemberManager user = MemberManager.getUserWithIdx((int)senderIdx);
+			String sender = user.getDepartmentFull() + " "+MemberManager.RANK[user.rank] +" "+ user.name;
 			
 			String arrivalDT = "";
 			long arrivalTS = c.getLong(c.getColumnIndex("TS"));

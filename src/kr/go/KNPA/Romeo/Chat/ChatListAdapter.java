@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
 import android.database.Cursor;
@@ -35,12 +35,12 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		//TODO userPic
 		long senderIdx = c.getLong(c.getColumnIndex("sender"));
-		User sender = User.userWithIdx((int)senderIdx);
+		MemberManager sender = MemberManager.userWithIdx((int)senderIdx);
 		
 		String department = sender.getDepartmentFull();
 		departmentTV.setText(department);
 		
-		String rank = User.RANK[sender.rank];
+		String rank = MemberManager.RANK[sender.rank];
 		String name = sender.name;
 		rankNameTV.setText(rank+" "+name);
 		

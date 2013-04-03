@@ -1,282 +1,75 @@
 package kr.go.KNPA.Romeo.Survey;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.util.ArrayList;
 
-import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
-import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.Room;
-import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
-import kr.go.KNPA.Romeo.Util.Encrypter;
+import kr.go.KNPA.Romeo.Config.Constants;
 
-public class Survey extends Message implements Parcelable{
-	
-	// Message Sub Type Constants
-	public static final int TYPE_RECEIVED = 0;
-	public static final int TYPE_DEPARTED = 1;
+public class Survey extends Message{
 
-	public long openTS = NOT_SPECIFIED;
-	public long closeTS = NOT_SPECIFIED;
-	public boolean answered = false;
+	protected static final int msgType = MESSAGE_TYPE_SURVEY;
+	//! 설문조사 시작 시간
+	private long openTS = Constants.NOT_SPECIFIED;
+	//! 설문조사 종료 시간
+	protected long closeTS = Constants.NOT_SPECIFIED;
+	//! 응답여부
+	protected boolean isAnswered = false;
+	//! 응답한 시간
+	protected long answeredTS = Constants.NOT_SPECIFIED;
+	//! 설문조사 복수 선택 가능 여부
+	protected boolean isMultipleChoicePossible = false;
+	//! 설문조사 선택지
+	protected ArrayList< SurveyOption > options = null;
 	
-	// Constructor
-	public Survey() {
-	}
+	/**
+	 * @name getters
+	 * @{
+	 */
+	public long getOpenTS() { return openTS; }
+	public long getCloseTS() { return closeTS; }
+	public boolean isAnswered() { return isAnswered; }
+	public boolean isMultipleChoicePossible() { return isMultipleChoicePossible; }
+	public long getAnsweredTS() { return answeredTS; }
+	/** @} */
 	
-	public Survey(Cursor c) {
-		super(c);
-		
-		this.type = getType();
-
-		long _openTS = c.getLong(c.getColumnIndex("openTS"));
-		long _closeTS = c.getLong(c.getColumnIndex("closeTS"));
-		this.openTS = _openTS;		//???
-		this.closeTS = _closeTS;	//???
-	}
-
-	public Survey(Parcel source) {
-		readRomParcel(source);
-	}
+	/**
+	 * @name setters
+	 * @{
+	 */
+	public Survey setOpenTS(long ts) { this.openTS = ts ; return this; }
+	public Survey setCloseTS(long ts) { this.closeTS = ts; return this; }
+	public Survey setAnswered(boolean v) { this.isAnswered = v; return this; }
+	public Survey setMultipleChoicePossible(boolean v) { this.isMultipleChoicePossible = v; return this; }
+	public Survey setAnsweredTS(long ts) { this.answeredTS = ts; return this; }
+	/** @} */
 	
-	public Survey(Payload payload) {
-		this.type = payload.message.type;
-		this.idx = payload.message.idx;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.title = payload.message.title;
-		this.content = payload.message.content;
-		//this.received = true;
-		this.TS = System.currentTimeMillis();
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		this.appendix = payload.message.appendix;
-		this.openTS = payload.message.appendix.getOpenTS();
-		this.closeTS = payload.message.appendix.getCloseTS();
-		this.answered = payload.message.appendix.getAnswered();
-	}
-	
-	public Survey(Payload payload, boolean received, long checkTS) {
-		this(payload);
-		this.received = received;
-		this.checkTS = checkTS;
-		if(this.checkTS == Message.NOT_SPECIFIED) {
-			this.checked = false;
-		} else {
-			this.checked = true;
+	/**
+	 * 설문조사 선택지 객체
+	 * @author 최영우
+	 * @since 2014.4.2
+	 */
+	public class SurveyOption {
+		//! 선택지 내용
+		private String description;
+		//! 득표수
+		private int poll;
+		public SurveyOption(String description) {
+			this.setDescription(description) ;
+			this.setPoll(0);
 		}
-		// answered TODO
-	}
-	
-	public Survey clone() {
-		Survey survey = new Survey();
-		
-		survey.idx = this.idx;
-		survey.title = this.title;
-		survey.type = this.type;
-		survey.content = this.content;
-		survey.appendix = this.appendix;
-		survey.sender = this.sender;
-		survey.receivers = this.receivers;
-		survey.TS = this.TS;
-		survey.received = this.received;
-		survey.checkTS = this.checkTS;
-		survey.checked = this.checked;			
-		survey.answered = this.answered;
-		survey.openTS = this.openTS;
-		survey.closeTS = this.closeTS;
-		return survey;
-	}
-	protected int getType() {
-		return Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + (received ? Survey.TYPE_RECEIVED : Survey.TYPE_DEPARTED);
-	}
-	
-	public long openTS() {
-		return appendix.getOpenTS();
-	}
-	public long closeTS() {
-		return appendix.getCloseTS();
-	}
-	
-	public boolean answered() {
-		return false; // TODO
-	}
-	
-	
-	public void insertIntoDatabase(String tableName) {
-		
-	}
-	
-	public static class Builder extends Message.Builder{
-
-		protected long _openTS = NOT_SPECIFIED;
-		protected long _closeTS = NOT_SPECIFIED;
-		protected boolean _answered = false;
-		public Builder appendixAndTS(Appendix appendix) {
-			_appendix = appendix;
-			_openTS = appendix.getOpenTS();
-			_closeTS = appendix.getCloseTS();
-			return this;
+		public String getDescription() {
+			return description;
 		}
-		public Builder appendix(Appendix appendix) {
-			_appendix = appendix;
-			return this;
+		public SurveyOption setDescription(String description) {
+			this.description = description; return this;
 		}
-		public Builder openTS(long openTS) {
-			_openTS = openTS;
-			return this;
+		public int getPoll() {
+			return poll;
 		}
-		public Builder closeTS(long closeTS) {
-			_closeTS = closeTS;
-			return this;
-		}
-		public Builder answered(boolean answered) {
-			_answered = answered;
-			return this;
-		}
-		public Builder toSurveyBuilder() {
-			return this;
-		}
-		public Survey build() {
-			/*
-			Survey survey = (Survey)new Survey.Builder()
-											  .idx(_idx)
-											  .title(_title)
-											  .type(_type)
-											  .content(_content)
-											  .appendix(_appendix)
-											  .sender(_sender)
-											  .receivers(_receivers)
-											  .TS(_TS)
-											  .received(_received)
-											  .checkTS(_checkTS)
-											  .checked(_checked)
-											  .buildMessage();
-											  */
-			
-			Survey survey = new Survey();
-			
-			survey.idx = this._idx;
-			survey.title = this._title;
-			survey.type = this._type;
-			survey.content = this._content;
-			survey.appendix = this._appendix;
-			survey.sender = this._sender;
-			survey.receivers = this._receivers;
-			survey.TS = this._TS;
-			survey.received = this._received;
-			survey.checkTS = this._checkTS;
-			survey.checked = this._checked;			
-			survey.answered = this._answered;
-			survey.openTS = this._openTS;
-			survey.closeTS = this._closeTS;
-			return survey;
-		}
-	}
-
-	public boolean sendAnswerSheet(String json, Context context) {
-		boolean result = GCMMessageSender.sendSurveyAnswerSheet(json);
-		
-		// TODO : make Async
-		if(result == true) {
-			setAnswered(json, context);
+		public SurveyOption setPoll(int poll) {
+			this.poll = poll; return this;
 		}
 		
-		return result;
 	}
-	
-	public void setAnswered(String json, Context context) {
-		if(this.checked != false) {
-
-			DBManager dbManager = new DBManager(context);
-			SQLiteDatabase db = dbManager.getWritableDatabase();
-			
-			String tableName =  Message.getTableNameWithMessageType(this.type);
-			
-			ContentValues vals = new ContentValues();
-			vals.put("answered", 1);
-			vals.put("answersheet", Encrypter.objectToBytes(json));
-			db.update(tableName, vals, "idx=?", new String[] {this.idx+""});
-			
-			this.checked = true;
-			this.answered = true;
-		}
-	}
-	
-
-	public void send(Context context) {
-		long idx = super.send();
-		
-		
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getWritableDatabase();
-		
-		// DB에 등록
-		long currentTS = System.currentTimeMillis();
-		ContentValues vals = new ContentValues();
-		vals.put("title", this.title);
-		vals.put("content", this.content);
-		vals.put("appendix", this.appendix.toBlob());
-		vals.put("sender", this.sender.idx);
-		vals.put("receivers", User.usersToString(this.receivers));
-		vals.put("received", 0);
-		vals.put("TS", currentTS);
-		vals.put("checked", 1);
-		vals.put("openTS", this.openTS());
-		vals.put("closeTS", this.closeTS());
-		vals.put("checkTS", this.checkTS);
-		vals.put("answered", 0);
-		vals.put("idx", idx);
-		db.insert(DBManager.TABLE_SURVEY, null, vals);
-		
-		db.close();
-		dbManager.close();
-	}
-	
-	
-	
-	
-	
-
-	// Implements Parcelable
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		
-		dest.writeLong(openTS);
-		dest.writeLong(closeTS);
-		boolean[] ba = {answered}; 
-		dest.writeBooleanArray(ba);
-	}
-	
-	private void readRomParcel(Parcel source) {
-		super.readFromParcel(source);
-		
-		openTS = source.readLong();
-		closeTS = source.readLong();
-		boolean[] ba = source.createBooleanArray();
-		answered = ba[0];
-	}
-	
-	public static final Parcelable.Creator<Survey> CREATOR = new Parcelable.Creator<Survey>() {
-
-		@Override
-		public Survey createFromParcel(Parcel source) {
-			return new Survey(source);
-		}
-
-		@Override
-		public Survey[] newArray(int size) {
-			return new Survey[size];
-		}
-		
-	};
 	
 }

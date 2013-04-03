@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Config.DBManager;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -34,6 +34,7 @@ public class MemberSearch extends Activity {
 	public MemberFavoriteListView favoriteListView;
 	ConditionalSearch conditionalSearch; 
 	
+	public static final String KEY_RECEIVERS = "receivers";
 	public static final String TYPE_DEPARTMENT = "TYPE_DEPARTMENT";
 	public static final String TYPE_USER = "TYPE_USER";
 	public static final int REQUEST_CODE = 100;
@@ -110,7 +111,7 @@ public class MemberSearch extends Activity {
 		container = tabContentFL;
 		
 		memberListView = (MemberListView)container.findViewById(R.id.memberListView);
-		memberListView.initWithType(User.TYPE_MEMBERLIST_SEARCH);
+		memberListView.initWithType(MemberManager.TYPE_MEMBERLIST_SEARCH);
 		//conditionalSearch = (ConditionalSearch)container.findViewById(R.id.conditionalSearchView); // TODO 조건부 검색
 		
 		
@@ -118,7 +119,7 @@ public class MemberSearch extends Activity {
 		LayoutParams flp = favoriteListView.getLayoutParams();
 		flp.height = LayoutParams.MATCH_PARENT;
 		favoriteListView.setLayoutParams(flp);
-		favoriteListView.initWithType(User.TYPE_FAVORITE_SEARCH);
+		favoriteListView.initWithType(MemberManager.TYPE_FAVORITE_SEARCH);
 		setContentView(view);
 		
 	}
@@ -174,19 +175,7 @@ public class MemberSearch extends Activity {
 		long[] fromMemberList = memberListView.listAdapter.nodeManager.collectInLongArray();
 		long[] fromFavoriteList = ((MemberFavoriteListAdapter)favoriteListView.listAdapter).collect();
 		
-		//intent.putExtra(, value)...
-		/*
-		Bundle b = new Bundle();
-		if(searchResult == null) searchResult = "";
-		String[] sr = searchResult.split(":");
-		long[] result = new long[sr.length];
-		for(int i=0; i<sr.length; i++) {
-			result[i] = Long.parseLong(sr[i]);
-		}
-		b.putLongArray("receivers", result);
-		*/
-		
-		ArrayList<Long> _result = new ArrayList<Long>();
+		ArrayList<String> _result = new ArrayList<String>();
 		
 		if(fromMemberList != null) {
 			for(int i=0; i<fromMemberList.length; i++) {
@@ -203,17 +192,13 @@ public class MemberSearch extends Activity {
 			}
 		}
 		
-		long[] result = new long[_result.size()];
-		
-		for(int i=0; i<result.length; i++) {
-			result[i] = _result.get(i).longValue();
-		}
+		String[] result = (String[]) _result.toArray();
 		
 		Bundle b = new Bundle();
-		b.putLongArray("receivers", result);
+		b.putStringArray("receivers", result);
+		
 		Intent intent = new Intent();
 		intent.putExtras(b);
-		
 		setResult(RESULT_OK, intent);
 		finish();
 	}

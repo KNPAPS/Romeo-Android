@@ -19,7 +19,7 @@ import android.widget.TextView;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 
 public class DocumentDetailFragment extends Fragment {
@@ -110,8 +110,8 @@ public class DocumentDetailFragment extends Fragment {
 					
 					forward = forwards.get(i);
 					fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
-					User u = User.getUserWithIdx(Integer.parseInt(forward.get("forwarder")));
-					fForwarder = u.getDepartmentFull() + " " + User.RANK[u.rank] + " " + u.name;
+					MemberManager u = MemberManager.getUserWithIdx(Integer.parseInt(forward.get("forwarder")));
+					fForwarder = u.getDepartmentFull() + " " + MemberManager.RANK[u.rank] + " " + u.name;
 					fForwarderTV.setText(fForwarder);
 					
 					fArrivalDTTV = (TextView)forwardView.findViewById(R.id.arrivalDT);
@@ -135,8 +135,8 @@ public class DocumentDetailFragment extends Fragment {
 		receivedDTTV.setText(receivedDT);
 		
 		TextView senderTV = (TextView)metaData.findViewById(R.id.sender);
-		User user = this.document.sender;
-		String sender = user.getDepartmentFull() + " " + User.RANK[user.rank] +" "  + user.name;
+		MemberManager user = this.document.sender;
+		String sender = user.getDepartmentFull() + " " + MemberManager.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		
 		ExpandableListView filesELV = (ExpandableListView)metaData.findViewById(R.id.fileList);

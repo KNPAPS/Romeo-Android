@@ -1,39 +1,24 @@
 package kr.go.KNPA.Romeo;
-import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Register.NotRegisteredActivity;
+import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
-
+/**
+ * 애플리케이션의 진입점.\n
+ * 유저와 디바이스에 대한 등록 검증을 수행하여 각 케이스별로 다음 activity를 작동시킨다\n
+ */
 public class IntroActivity extends Activity{
 	private static IntroActivity _sharedActivity; 
 	
 	private final int REQUEST_REGISTER_USER = 0;
-	
-	private boolean isUserRegistered;
-	private boolean isUserEnabled;
-	private boolean isDeviceRegistered;
-	private boolean isDeviceEnabled;
-	
-	Handler h;
-	@Override
-	
-	protected void onCreate(Bundle savedInstanceState) {
-		_sharedActivity = this;
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.intro);
-		//h = new Handler();
-		//h.post(irun);
-		
-		checkRegistered();
-		//runOnUiThread(irun);
-		
-	}
 	
 	public static IntroActivity sharedActivity() {
 		return _sharedActivity;
@@ -48,114 +33,101 @@ public class IntroActivity extends Activity{
 		
 	}
 	
-	Runnable logo = new Runnable() {
-		@Override
-		public void run() {
-			
-			
-			
-			
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		_sharedActivity = this;
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.intro);
 		
+		/**
+		 * 애플리케이션을 구동하기 위해 요구되는 상태를 체크하는 객체
+		 */
+		StatusChecker checker = new StatusChecker(this);
+		
+		if ( !checker.isConnectedToNetwork() ) {
+			//TODO 인터넷이 안될 때 띄울 화면 처리.
+			//만약 처음에 킬 땐 안 됐다가 나중에 연결하는 걸 대비해서
+			//다음 사이트에 있는 내용을 참고하여 구현해야함
+			//http://shstarkr.tistory.com/158
+			return;
 		}
-	};
-	
-	Runnable check = new Runnable() {
 
-		@Override
-		public void run() {
-			
-			
-		}
-		
-	};
-	
-	private void checkRegistered () {
-		
-		// 사용 조건 : 
-		// 유저 등록이 되어 있어야 하고, 유저가 사용 가능해야 하며,
-		// 기기 등록이 되어 있어야 하고, 기기가 사용 가능해야 한다. 
-		
-		boolean isUserAlreadyRegistered = checkUserRegistered();
-		if(isUserAlreadyRegistered == true) {
-			// false 인 경우, ActivityResult 쪽 흐름을 통해 DeviceRegister 과정을 거치게 된다.
-			checkDeviceRegistered();
-			runApplication();
-		}
-		// 따라서, false인 경우의 흐름은 버리도록 한다.
-	}
-	
-	private boolean checkUserRegistered() {
 		Intent intent = null;
-		Bundle _bUserReg = MainActivity.isUserRegistered(IntroActivity.this);
-		isUserRegistered = _bUserReg.getBoolean("isRegistered");
-		isUserEnabled = _bUserReg.getBoolean("isEnabled");
 		
-		if(isUserRegistered == false) {
-			// 유저 등록 절차.
+		/**
+		 * 유저 상태 체크
+		 * USER_REGISTERED_ENABLED 상태가 아니라면 해당 상태마다
+		 * 필요한 Activity를 호출.
+		 * USER_REGISTERED_ENABLED일 경우 기기 인증 진행
+		 */
+		switch( checker.getUserStatus() ) {
+		//등록이 되어있지 않을 때
+		case StatusChecker.USER_NOT_REGISTERED:
 			intent = new Intent(IntroActivity.this, UserRegisterActivity.class);
 			startActivityForResult(intent, REQUEST_REGISTER_USER);
 			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-			return false;
-		} else {
-			// 유저 등록이 되어 있을 경우.
-			return true;
+			break;
+		//아직 유저 활성화가 안됨
+		case StatusChecker.USER_REGISTERED_NOT_ENABLED:
+			startNotRegisteredActivity();
+			break;
+		default:
+			break;	
 		}
-	}
-	
-	private void checkDeviceRegistered() {
-		Bundle _bDeviceReg = MainActivity.isDeviceRegistered(IntroActivity.this);
-		isDeviceRegistered = _bDeviceReg.getBoolean("isRegistered");
-		isDeviceEnabled = _bDeviceReg.getBoolean("isEnabled");
 		
-		if(isDeviceRegistered == false) {
-			// 기기 등록 절차.
+		/**
+		 * 기기 상태 체크
+		 * DEVICE_REGISTERED_ENABLED 상태가 아니라면 해당 상태마다
+		 * 필요한 Activity를 호출.
+		 * DEVICE_REGISTERED_ENABLED일 경우 기기 인증 진행
+		 */
+		switch( checker.getDeviceStatus() ) {
+		case StatusChecker.DEVICE_NOT_REGISTERED:
 			GCMRegisterManager.registerGCM(IntroActivity.this);
-			
-			// 다른 thread에서 등록 절차가 실행되며, 
-			// GCMRegisterManager 의 onRegister 메소드로 흐름이 넘어가는데,
-			// 어차피 허가가 나야 사용할 수 있으므로, 등록 절차 직후에 앱을 사용 할 수 없다.
-			// 따라서 등록 전의 Enabled 정보 (disabled) 정보를 사용하여 앱 실행 판단을 내려도 무방한다.
-			
-			// 자동으로 허가나도록 할 것이 아니라면!!
-		}
-	}
-	
-	private void runApplication() {
-		Intent intent = null;
-		if(isUserEnabled && isDeviceEnabled ) {
-			// 사용 가능.
-			// MainActivity로 넘긴다.
-			intent = new Intent(IntroActivity.this, MainActivity.class);
-			
-		} else {
-			// 사용 불가 상황
-			// 일단 등록 대기 창으로 전환.
-			intent = new Intent(IntroActivity.this, NotRegisteredActivity.class);
+			startNotRegisteredActivity();
+		case StatusChecker.DEVICE_REGISTERED_NOT_ENABLED:
+			startNotRegisteredActivity();
+			break;
+		default: break;
 		}
 		
+		/**
+		 * 모든 검증을 정상적으로 통과.
+		 * 메인 액티비티 시작 
+		 */
+		intent = new Intent(IntroActivity.this, MainActivity.class);
 		startActivity(intent);
-		finish();
 		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		finish();
 	}
-	
-	
-	
-	
+	/**
+	 * 
+	 */
+	private void startNotRegisteredActivity() {
+		Intent intent = new Intent(IntroActivity.this, NotRegisteredActivity.class);
+		startActivity(intent);
+		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		finish();
+	}
+
+	/**
+	 * TODO
+	 * 유저 등록이 안되었을때 UserRegisterActivity를 거친 후 등록이 완료되면 이 함수 호출
+	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode == RESULT_OK) {
-			if(requestCode == REQUEST_REGISTER_USER) {
-				checkDeviceRegistered();
-				runApplication();
-			}
+	public void onActivityResult(int requestCode, int resultCode, Intent intent){
+		
+		//정상적으로 등록 되었으면
+		if ( requestCode == REQUEST_REGISTER_USER && resultCode == RESULT_OK ) {
+			
+		} else {
+			//정상적으로 등록이 안되었으면..
 		}
-		//super.onActivityResult(requestCode, resultCode, data);
+		
 	}
 	
 	@Override
 	public void onBackPressed() {
-		//super.onBackPressed();
-		//h.removeCallbacks(logo);
 		return;
 	}
 	

@@ -2,20 +2,17 @@ package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+
+import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Util.IndexPath;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-
-import kr.go.KNPA.Romeo.Util.IndexPath;
 
 public class CellNode {//extends ArrayList<CellNode> {
 
@@ -42,7 +39,7 @@ public class CellNode {//extends ArrayList<CellNode> {
 			e.printStackTrace();
 		}
 		if( jo== null) return;
-		int type = User.NOT_SPECIFIED;
+		int type = Constants.NOT_SPECIFIED;
 		try {
 			type = jo.getInt("type");
 		} catch (JSONException e) {
@@ -54,7 +51,7 @@ public class CellNode {//extends ArrayList<CellNode> {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		int index = User.NOT_SPECIFIED;
+		int index = Constants.NOT_SPECIFIED;
 		try {
 			index = jo.getInt("index");
 		} catch (JSONException e) {
@@ -262,13 +259,13 @@ public class CellNode {//extends ArrayList<CellNode> {
 		return indexes;
 	}
 	
-	public ArrayList<User> collectInUserArrayList() {
+	public ArrayList<MemberManager> collectInUserArrayList() {
 		String json = MemberListAdapter.nodeManager.command("collect()");
 		Log.d("CellNode", "COLLECT");
 		String[] _indexes = json.split("[^0-9]");
-		ArrayList<User> users = new ArrayList<User>();
+		ArrayList<MemberManager> users = new ArrayList<MemberManager>();
 		for(int i=0; i<_indexes.length; i++) {
-			users.add(User.userWithIdx(Long.parseLong(_indexes[i])));
+			users.add(MemberManager.userWithIdx(Long.parseLong(_indexes[i])));
 		}
 		return users;
 	}
@@ -314,20 +311,20 @@ public class CellNode {//extends ArrayList<CellNode> {
 			long[] indexes = new long[_indexes.length];
 			for(int i=0; i<_indexes.length; i++) {
 				IndexPath ip = IndexPath.indexPathWithString(_indexes[i]);
-				User user = (User)adapter.objectForRowAtIndexPath(ip);
+				MemberManager user = (MemberManager)adapter.objectForRowAtIndexPath(ip);
 				indexes[i] = user.idx;
 			}
 					
 			return indexes;
 		}
 		
-		public ArrayList<User> collectInUserArrayList() {
+		public ArrayList<MemberManager> collectInUserArrayList() {
 			String json = command("collect()");
 			Log.d("CellNode", "COLLECT");
 			String[] _indexes = json.split("[^0-9]");
-			ArrayList<User> users = new ArrayList<User>();
+			ArrayList<MemberManager> users = new ArrayList<MemberManager>();
 			for(int i=0; i<_indexes.length; i++) {
-				users.add(User.userWithIdx(Long.parseLong(_indexes[i])));
+				users.add(MemberManager.userWithIdx(Long.parseLong(_indexes[i])));
 			}
 			return users;
 		}

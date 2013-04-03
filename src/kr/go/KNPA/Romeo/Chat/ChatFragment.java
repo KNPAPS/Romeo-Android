@@ -9,24 +9,20 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
-import kr.go.KNPA.Romeo.Survey.SurveyComposeFragment;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ListAdapter;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
-
+/**
+ * 채팅리스트 화면.
+ * @author user
+ *
+ */
 public class ChatFragment extends RomeoFragment {
 
 	private static ChatFragment _commandFragment = null;
@@ -57,7 +53,6 @@ public class ChatFragment extends RomeoFragment {
 		return f;
 	}
 	
-	
 	// Manager Current Room
 	public static RoomFragment getCurrentRoom() {
 		return _currentRoom;
@@ -65,10 +60,6 @@ public class ChatFragment extends RomeoFragment {
 	
 	public static void setCurrentRoom(RoomFragment ra) {
 		_currentRoom = ra;
-	}
-	
-	public static void unsetCurrentRoom() {
-		_currentRoom = null;
 	}
 	
 	// Manage List View
@@ -97,18 +88,21 @@ public class ChatFragment extends RomeoFragment {
 	@Override
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = null;
-
-
+		
+		/**
+		 * 메인화면으로..
+		 */
 		OnClickListener lbbOnClickListener = new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				MainActivity.sharedActivity().toggle();
 			}
 		};
 		
+		/**
+		 * 새 메세지 추가. 대화상대 찾는 검색 화면으로.
+		 */
 		OnClickListener rbbOnClickListener = new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), MemberSearch.class);
@@ -147,21 +141,28 @@ public class ChatFragment extends RomeoFragment {
 		return view;
 	}
 	
-	
-	// Message Receiving
+
+	/**
+	 * 새 메세지를 수신했을 때 동작\n
+	 * 기존에 있는 채팅방에 추가된 메세지면 RoomFragment.receive()로 넘기고\n
+	 * 기존 roomlist에 없는 채팅이라면 새 roomlistview를 만들고 refresh
+	 * @param chat
+	 */
 	public static void receive(Chat chat) {
 		RoomFragment rf = getCurrentRoom();
-		if(rf !=null && rf.room != null && rf.room.roomCode !=null && rf.room.roomCode.equals(chat.getRoomCode())){//ra.room!=null && ra.room.roomCode == chat.roomCode) {
+		if(rf !=null && rf.room != null && rf.room.roomCode !=null && rf.room.roomCode.equals(chat.getRoomHash())){
 			rf.receive(chat);
 		}
 		
 		ChatFragment f = null;
-		if(chat.type % 100 == Chat.TYPE_COMMAND) 
+		if( chat.getChatType() == Chat.TYPE_COMMAND ) {
 			f = _commandFragment;
-		else if(chat.type % 100 == Chat.TYPE_MEETING)
+		} else if ( chat.getChatType() == Chat.TYPE_MEETING ){
 			f = _meetingFragment;
+		} else {
+			return;
+		}
 	
-		if(f == null) return;
 		final RoomListView lv = f.getListView();
 		
 		if(lv == null) return;
@@ -180,13 +181,12 @@ public class ChatFragment extends RomeoFragment {
 			if(resultCode != MemberSearch.RESULT_OK) {
 				// onError
 			} else {
-				//data.getExtras().get;
 				
-				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				String[] receivers = data.getExtras().getStringArray(MemberSearch.KEY_RECEIVERS);
 				
-				ArrayList<User> newUsers = new ArrayList<User>();
-				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
+				ArrayList<MemberManager> newUsers = new ArrayList<MemberManager>();
+				for(int i=0; i< receivers.length; i++ ){
+					MemberManager user = MemberManager.getUserWithHash(receivers[i]);
 					// TODO 이미 선택되어 잇는 사람은 ..
 					newUsers.add(user);
 				}
@@ -194,7 +194,7 @@ public class ChatFragment extends RomeoFragment {
 				
 				Room room = new Room();
 				room.type = this.type;
-				room.roomCode = UserInfo.getUserIdx(getActivity())+":"+System.currentTimeMillis();
+				room.roomCode = UserInfo.getPref(getActivity(),UserInfo.PREF_KEY_DEPT_HASH)+":"+System.currentTimeMillis();
 				room.users = newUsers;
 				RoomFragment fragment = new RoomFragment(room);
 				MainActivity.sharedActivity().pushContent(fragment);

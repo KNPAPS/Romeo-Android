@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Member;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +27,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	public Department rootDepartment;
 	private Context context;
 	private CellNode models = new CellNode();
-	public int type = User.NOT_SPECIFIED;
+	public int type = Constants.NOT_SPECIFIED;
 	public static CellNode.NodeManager nodeManager;
 	public boolean nodeManagerReady = false;
 	
@@ -98,15 +99,15 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		Object model = objectForRowAtIndexPath(path);
 		
 		Department department = null;
-		User user = null;
+		MemberManager user = null;
 		
 		CellNode node = CellNode.nodeAtIndexPath(models, path);
 		
 		// TODO : cell Reusing source
 		if(node.type == CellNode.CELLNODE_DEPARTMENT) {
-			if(this.type == User.TYPE_MEMBERLIST) {
+			if(this.type == MemberManager.TYPE_MEMBERLIST) {
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_department_cell, parent, false);
-			} else if(this.type == User.TYPE_MEMBERLIST_SEARCH) {
+			} else if(this.type == MemberManager.TYPE_MEMBERLIST_SEARCH) {
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_department_cell_search, parent, false);
 				Button control = (Button)convertView.findViewById(R.id.control);
 				control.setTag(path);
@@ -125,7 +126,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			titleTV.setText(department.title);
 			
 		} else if (node.type == CellNode.CELLNODE_USER) {
-			user = (User)model;
+			user = (MemberManager)model;
 			int uDepartment = user.department;
 			long uIdx = user.idx;
 			String[] uLevels = user.levels;
@@ -133,9 +134,9 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			int uPicIdx = user.pic;
 			int uRank = user.rank;
 			long uTS = user.TS;
-			if(this.type == User.TYPE_MEMBERLIST) {
+			if(this.type == MemberManager.TYPE_MEMBERLIST) {
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_user_cell, parent, false);	
-			} else if (this.type == User.TYPE_MEMBERLIST_SEARCH){
+			} else if (this.type == MemberManager.TYPE_MEMBERLIST_SEARCH){
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_user_cell_search, parent, false);
 				Button control = (Button)convertView.findViewById(R.id.control);
 				control.setTag(path);
@@ -148,7 +149,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				}
 			}
 			TextView rankTV = (TextView)convertView.findViewById(R.id.rank);
-			rankTV.setText(User.RANK[uRank]);
+			rankTV.setText(MemberManager.RANK[uRank]);
 			TextView nameTV = (TextView)convertView.findViewById(R.id.name);
 			nameTV.setText(uName);
 			TextView roleTV = (TextView)convertView.findViewById(R.id.role);
@@ -378,7 +379,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			// node의 type이 USER이면 상세안내창 띄우기
 				Intent intent = new Intent(this.context, MemberDetailActivity.class);
 				Bundle b = new Bundle();
-				User user = (User)getItem(position);
+				MemberManager user = (MemberManager)getItem(position);
 				b.putString("idxs", ""+user.idx);
 				//b.putBoolean("fromFavorite", false);
 				intent.putExtras(b);
@@ -402,7 +403,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 						}
 					// 정보를 쭉 읽으며 node에 저장시키고, departments와 users..흐규흐규
 						ArrayList<Department> deps = dp.departments;
-						ArrayList<User> uss = dp.users;
+						ArrayList<MemberManager> uss = dp.users;
 						
 						int indexForChildren = 0;
 						for(int i=0; i<deps.size(); i++) {

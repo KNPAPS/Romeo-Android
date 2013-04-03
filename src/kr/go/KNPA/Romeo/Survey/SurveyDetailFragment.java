@@ -10,7 +10,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
@@ -87,12 +87,12 @@ public class SurveyDetailFragment extends Fragment  {
 		arrivalDTTV.setText(arrivalDT);
 
 		TextView senderTV = (TextView)view.findViewById(R.id.sender);
-		User user = this.survey.sender;
-		String sender = user.getDepartmentFull() + " " + User.RANK[user.rank] +" "  + user.name;
+		MemberManager user = this.survey.sender;
+		String sender = user.getDepartmentFull() + " " + MemberManager.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS, getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat(this.survey.getOpenTS(), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
@@ -252,7 +252,7 @@ public class SurveyDetailFragment extends Fragment  {
 
 	private void submit() {
 		String qJson = qm.toJSON();
-		String json = "{\"idx\":"+survey.idx+",\"answersheet\":"+qJson+",\"userIdx\":"+UserInfo.getUserIdx(context)+"}";
+		String json = "{\"idx\":"+survey.idx+",\"answersheet\":"+qJson+",\"user_hash\":"+UserInfo.getPref(context,UserInfo.PREF_KEY_USER_HASH)+"}";
 		boolean result = survey.sendAnswerSheet(json, getActivity());
 
 		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).listView.refresh();

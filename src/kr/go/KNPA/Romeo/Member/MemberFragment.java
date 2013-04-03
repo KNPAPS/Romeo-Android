@@ -9,7 +9,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Config.DBManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -26,8 +26,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
 /**
- * @author pong0923
- *
+ * 
+ * @author 채호식
  */
 public class MemberFragment extends RomeoFragment {
 	

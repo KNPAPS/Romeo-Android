@@ -9,7 +9,7 @@ import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -33,7 +33,7 @@ public class DocumentForwardFragment extends Fragment {
 	private EditText receiversET;
 	private Button receiversSearchBT;
 	private EditText contentET;
-	private ArrayList<User> receivers;
+	private ArrayList<MemberManager> receivers;
 	public DocumentForwardFragment() {
 		fragment = this;
 	}
@@ -49,7 +49,7 @@ public class DocumentForwardFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		receivers = new ArrayList<User>();
+		receivers = new ArrayList<MemberManager>();
 
 		View view = inflater.inflate(R.layout.document_forward_compose, null, false);
 
@@ -110,7 +110,7 @@ public class DocumentForwardFragment extends Fragment {
 		Document fwdDocument = document.clone();
 		
 		HashMap<String,String> forward = new HashMap<String,String>();
-		forward.put("forwarder", ""+UserInfo.getUserIdx(getActivity()));
+		forward.put("forwarder", UserInfo.getPref(getActivity(),UserInfo.PREF_KEY_USER_HASH));
 		forward.put("TS", ""+System.currentTimeMillis());
 		forward.put("content", contentET.getText().toString());
 		fwdDocument.appendix.addForward(forward);
@@ -141,9 +141,9 @@ public class DocumentForwardFragment extends Fragment {
 				
 				long[] receiversIdx = data.getExtras().getLongArray("receivers");
 				
-				ArrayList<User> newUsers = new ArrayList<User>();
+				ArrayList<MemberManager> newUsers = new ArrayList<MemberManager>();
 				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
+					MemberManager user = MemberManager.getUserWithIdx(receiversIdx[i]);
 					// TODO 이미 선택되어 잇는 사람은 ..
 					if(receivers.contains(user)) continue;
 					newUsers.add(user);
@@ -151,11 +151,11 @@ public class DocumentForwardFragment extends Fragment {
 				receivers.addAll(newUsers);
 				
 				if(receivers.size() > 0) {
-					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
+					MemberManager fReceiver = receivers.get(0);
+					receiversET.setText(MemberManager.RANK[fReceiver.rank]+" "+fReceiver.name);
 				} else if (receivers.size() > 1) {
-					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
+					MemberManager fReceiver = receivers.get(0);
+					receiversET.setText(MemberManager.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
 				} else {
 					receiversET.setText("선택된 사용자가 없습니다.");
 				}

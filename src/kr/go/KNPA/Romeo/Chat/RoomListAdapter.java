@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
 import android.database.Cursor;
@@ -44,10 +44,10 @@ class RoomListAdapter extends CursorAdapter {
 
 		// About User Info
 		long userIdx = c.getLong(c.getColumnIndex("sender"));
-		User user = User.getUserWithIdx((int) userIdx);
+		MemberManager user = MemberManager.getUserWithIdx((int) userIdx);
 		
 		// rank and name
-		String rank = User.RANK[user.rank];
+		String rank = MemberManager.RANK[user.rank];
 		String name = user.name;
 		String rankName = rank+" "+name;
 		rankNameTV.setText(rankName);
