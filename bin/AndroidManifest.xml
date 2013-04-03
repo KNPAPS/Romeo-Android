@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="kr.go.KNPA.Romeo"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="8" />
+
+    
+    <!-- GCM 관련 퍼미션 -->
+    <permission android:name="kr.go.KNPA.Romeo.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="kr.go.KNPA.Romeo.permission.C2D_MESSAGE" /> 
+	<!-- GCM 받기 -->
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<!-- GCM을 받으려면 구글 계정 필요 -->
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<!-- 메시지 받을 때 wake up 하기 위해 -->
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<!-- 네트워크 접속 권한 -->
+	<uses-permission android:name="android.permission.INTERNET" /> 
+	<!--  Telephony Manager 으로부터 UUID 관련 정보를 얻어 생성하기 위 -->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<!--  파일 저장을 위한 Perm -->
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"  >
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|keyboardHidden"
+            android:name="kr.go.KNPA.Romeo.MainActivity" 
+            android:label="@string/app_name" >
+
+        </activity>
+
+        <activity 
+						android:name="kr.go.KNPA.Romeo.Chat.RoomFragment$RoomSettingActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+						android:windowSoftInputMode="stateHidden" >
+				</activity>
+        
+        <activity 
+						android:name="kr.go.KNPA.Romeo.UserRegisterActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+						android:windowSoftInputMode="stateHidden" >
+				</activity>
+        
+        <activity 
+						android:name="kr.go.KNPA.Romeo.NotRegisteredActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+						android:windowSoftInputMode="stateHidden" >
+				</activity>
+        
+        
+				<activity 
+						android:name="kr.go.KNPA.Romeo.Member.MemberDetailActivity"
+            android:theme="@android:style/Theme.Dialog"
+						android:windowSoftInputMode="stateHidden" 
+						android:configChanges="keyboardHidden">
+				</activity>
+				
+				<activity 
+						android:name="kr.go.KNPA.Romeo.Survey.SurveyComposeFragment"
+            android:theme="@android:style/Theme.NoTitleBar"
+						android:windowSoftInputMode="stateHidden" >
+				</activity>
+				
+				<activity 
+						android:name="kr.go.KNPA.Romeo.Member.MemberSearch"
+            android:theme="@android:style/Theme.NoTitleBar"
+						android:windowSoftInputMode="stateHidden" >
+				</activity>
+				
+				<activity 
+						android:name="kr.go.KNPA.Romeo.IntroActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            
+		        <intent-filter>
+		            <action android:name="android.intent.action.MAIN" />
+		
+		            <category android:name="android.intent.category.LAUNCHER" />
+		        </intent-filter>
+            
+				</activity>
+				
+				<!-- GCM 리시버 -->
+				<receiver
+				   android:name="com.google.android.gcm.GCMBroadcastReceiver"
+				   android:permission="com.google.android.c2dm.permission.SEND" >
+				   <intent-filter>
+				      <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				      <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				      <category android:name="kr.go.KNPA.Romeo" /> <!-- 젤리빈 부터는 category 빼도 된다 -->
+				   </intent-filter>
+				</receiver>
+				
+				<!-- GCM 리시버에서 돌리는 서비스 -->
+				<service android:name="kr.go.KNPA.Romeo.GCMIntentService" /><!-- 서비스명 변경하면 안됨 -->
+				
+    </application>
+
+</manifest>

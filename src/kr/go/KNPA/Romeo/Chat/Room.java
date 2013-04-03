@@ -5,8 +5,8 @@ import java.util.Iterator;
 
 import android.database.Cursor;
 
-import kr.go.KNPA.Romeo.Config.DBManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Room {
 	//ArrayList<Chat> chats;

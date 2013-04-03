@@ -206,16 +206,16 @@ public class UserRegisterActivity extends Activity {
 				deps += departments[i];
 				deps += " ";
 			}
-//			//Shared Preference
-//					Context context = UserRegisterActivity.this;
-//					UserInfo.setUserIdx(context, userIdx);
-//					UserInfo.setName(context, name);
-//					UserInfo.setDepartment(context, deps);
-//					UserInfo.setDepartmentIdx(context, depIdx);
-//					UserInfo.setRankIdx(context, rank);
-//					UserInfo.setRank(context, User.RANK[rank]);
-//					UserInfo.setPassword(context, password);
-//			//		UserInfo.setPi                                                              cPath(context, path);
+			//Shared Preference
+					Context context = UserRegisterActivity.this;
+					UserInfo.setUserIdx(context, userIdx);
+					UserInfo.setName(context, name);
+					UserInfo.setDepartment(context, deps);
+					UserInfo.setDepartmentIdx(context, depIdx);
+					UserInfo.setRankIdx(context, rank);
+					UserInfo.setRank(context, User.RANK[rank]);
+					UserInfo.setPassword(context, password);
+			//		UserInfo.setPi                                                              cPath(context, path);
 			
 			
 //			Intent intent = new Intent(UserRegisterActivity.this, NotRegisteredActivity.class);

@@ -7,9 +7,9 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Config.DBManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -135,38 +135,38 @@ public class RoomFragment extends RomeoFragment {
 				
 
 				
-				//long senderIdx = UserInfo.getUserIdx(getActivity());
-//				User sender = User.getUserWithIdx(senderIdx);
-//				
-//				ArrayList<User> roomUsers = room.users;
-//				ArrayList<User> receivers = User.usersRemoveUserHavingIndex(roomUsers, senderIdx);
-//				
-//				
-//				Appendix adx = new Appendix();
-//				String roomCode = room.roomCode;
-//				if(roomCode ==null) roomCode = senderIdx+":"+System.currentTimeMillis(); // TODO 같은방 채팅, 새 방 채팅.
-//				Appendix.Attachment att = new Appendix.Attachment("roomCode", Appendix.makeType(Appendix.TYPE_1_PRIMITIVE, Appendix.TYPE_2_STRING), null, roomCode);
-//				adx.add(att);
-//				
-//				
-//				Chat chat = new Chat.Builder()
-//									//.idx()
-//									.type(room.type)
-//									.content(et.getText().toString())
-//									.appendix(adx)
-//									.sender(sender)
-//									.receivers(receivers)
-//									.TS(System.currentTimeMillis())
-//									.checked(true)
-//									//.checkTS()
-//									.toChatBuilder()
-//									.build();
+				long senderIdx = UserInfo.getUserIdx(getActivity());
+				User sender = User.getUserWithIdx(senderIdx);
+				
+				ArrayList<User> roomUsers = room.users;
+				ArrayList<User> receivers = User.usersRemoveUserHavingIndex(roomUsers, senderIdx);
+				
+				
+				Appendix adx = new Appendix();
+				String roomCode = room.roomCode;
+				if(roomCode ==null) roomCode = senderIdx+":"+System.currentTimeMillis(); // TODO 같은방 채팅, 새 방 채팅.
+				Appendix.Attachment att = new Appendix.Attachment("roomCode", Appendix.makeType(Appendix.TYPE_1_PRIMITIVE, Appendix.TYPE_2_STRING), null, roomCode);
+				adx.add(att);
+				
+				
+				Chat chat = new Chat.Builder()
+									//.idx()
+									.type(room.type)
+									.content(et.getText().toString())
+									.appendix(adx)
+									.sender(sender)
+									.receivers(receivers)
+									.TS(System.currentTimeMillis())
+									.checked(true)
+									//.checkTS()
+									.toChatBuilder()
+									.build();
 				
 				// 마무리
 				et.setText("");
 				
 				// sending
-//				chat.send(getActivity(), room);
+				chat.send(getActivity(), room);
 				
 				// 뷰에 추가 (refresh)?
 				getListView().refresh();

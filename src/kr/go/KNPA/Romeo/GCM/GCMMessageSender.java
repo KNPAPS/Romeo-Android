@@ -11,8 +11,6 @@ import android.content.Context;
 import android.util.Log;
 
 import kr.go.KNPA.Romeo.Base.*;
-import kr.go.KNPA.Romeo.Connection.Connection;
-import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.MemberManager;
@@ -135,14 +133,13 @@ public class GCMMessageSender {
 	}
 	
 	public static long sendMessage(Message message) {
-//TODO		Payload payload = new Payload.Builder()
-//									.message(message)
-//									.sender(message.sender)
-//									.receivers(message.receivers)
-//									.event(MESSAGE_DEPARTED)
-//									.build();
-//		return sendJSON(payload.toJSON());
-		return 3;
+		Payload payload = new Payload.Builder()
+									.message(message)
+									.sender(message.sender)
+									.receivers(message.receivers)
+									.event(MESSAGE_DEPARTED)
+									.build();
+		return sendJSON(payload.toJSON());
 	}
 	
 	public static long sendJSON(String json) {

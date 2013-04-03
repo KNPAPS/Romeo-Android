@@ -1,26 +1,22 @@
 package kr.go.KNPA.Romeo.Util;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import kr.go.KNPA.Romeo.R;
 import android.content.Context;
+import android.text.GetChars;
 
-/**
- * string, timestamp formatting
- */
+import kr.go.KNPA.Romeo.R;
+
+
+
 public class Formatter {
 
 	public Formatter() {
 	}
 
-	/**
-	 * timestamp를 지정된 포맷으로 바꿈
-	 * @param timestamp timestamp
-	 * @param formatString 포맷으로 사용할 예시 문자열 (ex. 2011.3.12)
-	 * @return formatted date string
-	 */
 	public static String timeStampToStringWithFormat(long timestamp, String formatString) {
 		String result= null;
 		Date date = new Date(timestamp);
@@ -33,22 +29,10 @@ public class Formatter {
 		return result;
 	}
 	
-	/**
-	 * string name="formatString_regular" 에 정의된 포맷으로 타임스탬프를 변환\n
-	 * 현재는 yyyy.MM.dd HH:mm:ss 형식임
-	 * @param timestamp
-	 * @param context 애플리케이션 context. R을 참조할 수 있어야 함
-	 * @return formatted date string
-	 */
 	public static String timeStampToStringInRegularFormat(long timestamp, Context context) {
 		return timeStampToStringWithFormat(timestamp, context.getString(R.string.formatString_regular));
 	}
 	
-	/**
-	 * timestamp를 직관적인 형식의 문자열로 변환.
-	 * @param timestamp
-	 * @return 오늘이면 HH시 mm분, 어제면 '어제', x일 전, 일주일 전, mm월 dd일\n hh시 mm분 
-	 */
 	public static String timeStampToRecentString(long timestamp) {
 		//StringBuilder sb = new StringBuilder();
 		String result= null;

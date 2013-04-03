@@ -6,15 +6,15 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Base.Packet;
+import kr.go.KNPA.Romeo.Base.Payload;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
-import kr.go.KNPA.Romeo.Config.DBManager;
-import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Util.DBManager;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -77,15 +77,15 @@ public class GCMMessageManager {
         
         // Specify Payload and Event
         payload = packet.payload;
-        //TODO String event = payload.event;
-        //TODO events =  event.split(":");
+        String event = payload.event;
+        events = event.split(":");
         
         
         if(events[0].equalsIgnoreCase(EVENT_TYPE_MESSAGE)) {
         	if(events[1].equalsIgnoreCase(EVENT_ACTION_RECEIVED)) {
         		
-		    	//TODO messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
-		    	//TODO messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
+		    	messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
+		    	messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
 		
 		        // 파싱된 event에 따라 작업을 분류한다. TODO
 		    	

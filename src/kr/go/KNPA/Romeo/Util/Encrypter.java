@@ -9,14 +9,13 @@ import java.io.Serializable;
 
 import org.kisa.SEED;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
 
-/**
- * KISA(한국인터넷진흥원)에서 개발한 SEED 암호화 알고리즘 클래스를 이용하여\n
- * 암호화하는 메소드들을 모아 놓음
- */
 public class Encrypter {
 	private static Encrypter _sharedEncrypter = null;
 	
@@ -37,7 +36,6 @@ public class Encrypter {
 		// JNI Library Load
 		System.loadLibrary("KISACrypto");
 	}
-	
 	public Encrypter() {
 		for(int i=0; i<_keyHex.length ; i++) {
 			key[i] = (byte)_keyHex[i];
@@ -53,12 +51,7 @@ public class Encrypter {
 		return _sharedEncrypter;
 	}
 	
-	/**
-	 * String 을 암호화
-	 * @param text 평 문자열
-	 * @return 암호화된 text
-	 */
-	public String encryptString (String text) {
+	public String encrypteString (String text) {
 		String output = null;
 		if(text == null || text.equals("") || text=="") {
 		} else {
@@ -74,12 +67,7 @@ public class Encrypter {
 		return output;
 	}
 	
-	/**
-	 * 암호화된 문자열 복호화
-	 * @param cipher 암호화된 문자열
-	 * @return 복호화된 문자열
-	 */
-	public String decryptString (String cipher) {
+	public String decrypteString (String cipher) {
 		String output = null;
 		if(cipher == null ||  cipher.equals("") || cipher=="") {
 		} else {
@@ -92,21 +80,10 @@ public class Encrypter {
 		return output;
 	}
 	
-	/**
-	 * byte array를 암호화
-	 * @param input byte array
-	 * @return 암호화된 byte array
-	 */
-	public byte[] encryptBytes (byte[] input) {
+	public byte[] encrypteBytes (byte[] input) {
 		return enc(input);
 	}
-	
-	/**
-	 * encryptBytes를 통해 암호화된 byte array를 복호화
-	 * @param input encryptBytes를 통해 암호화된 byte array
-	 * @return 복호화된 byte array
-	 */
-	public byte[] decryptBytes (byte[] input) {
+	public byte[] decrypteBytes (byte[] input) {
 		return dec(input);
 	}
 	/*
@@ -132,11 +109,6 @@ public class Encrypter {
 	}
 */
 	
-	/**
-	 * org.kisa.SEED에 포함된 SEED 클래스를 이용하여 복호화 실행
-	 * @param cipherText
-	 * @return plainText
-	 */
 	private byte[] dec (byte[] cipherText) {
 		SEED seed = new SEED();
 		seed.init(SEED.DEC, key, iv);
@@ -148,11 +120,6 @@ public class Encrypter {
 		return plainText;
 	}
 	
-	/**
-	 * org.kisa.SEED에 포함된 SEED 클래스를 이용하여 암호화 실행
-	 * @param plainText
-	 * @return cipherText
-	 */
 	private byte[] enc (byte[] plainText) {
 		SEED seed = new SEED();
 		seed.init(SEED.ENC, key, iv);
@@ -165,13 +132,7 @@ public class Encrypter {
 		return cipherText;
 	}
 	
-	/**
-	 * 암호화 테스트
-	 * @deprecated 테스트용
-	 * @param input
-	 * @return
-	 */
-	public byte[] encrypt (byte[] input) {
+	public byte[] encrypte (byte[] input) {
 		byte[] output = new byte[input.length];
 		SEED seed = new SEED();
 		// SEED CBC 알고리즘 테스트를 위한 입력·출력 버퍼가 필요하다.
@@ -189,13 +150,7 @@ public class Encrypter {
 		return output;
 	}
 	
-	/**
-	 * 복호화 테스트
-	 * @deprecated 테스트용
-	 * @param input
-	 * @return
-	 */
-	public byte[] decrypt(byte[] input) {
+	public byte[] decrypte(byte[] input) {
 		byte[] output = new byte[input.length];
 		
 		SEED seed = new SEED();
@@ -214,12 +169,7 @@ public class Encrypter {
 		return output;
 	}
 	
-	
-	/**
-	 * convert hex string to byte array
-	 * @param hex string
-	 * @return byte array
-	 */
+	// hex to byte[]
 	public static byte[] hexToByteArray(String hex) {
 	    if (hex == null || hex.length() == 0) {
 	        return null;
@@ -232,11 +182,7 @@ public class Encrypter {
 	    return ba;
 	}
 	 
-	/**
-	 * convert byte array to hex string
-	 * @param byte array
-	 * @return hex string
-	 */
+	// byte[] to hex
 	public static String byteArrayToHex(byte[] ba) {
 	    if (ba == null || ba.length == 0) {
 	        return null;
@@ -252,11 +198,6 @@ public class Encrypter {
 	    return sb.toString();
 	} 
 	
-	/**
-	 * convert object to byte array
-	 * @param object
-	 * @return bytes array
-	 */
 	public static byte[] objectToBytes(Serializable obj) {
 		try{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -269,12 +210,6 @@ public class Encrypter {
 		}
 		return null;
 	}
-	
-	/**
-	 * convert object to string
-	 * @param obj
-	 * @return string
-	 */
 	public static String objectToString(Serializable obj) {
 		try{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -288,11 +223,6 @@ public class Encrypter {
 		return null;
 	}
 	
-	/**
-	 * convert string to object
-	 * @param str
-	 * @return obj
-	 */
 	public static Object stringToObject(String str) {
 		try {
 			return new ObjectInputStream(
@@ -304,11 +234,6 @@ public class Encrypter {
 		return null;
 	}
 	
-	/**
-	 * convert bytes to objects 
-	 * @param bytes
-	 * @return obj
-	 */
 	public static Object bytesToObject(byte[] bytes) {
 		try {
 			return new ObjectInputStream(

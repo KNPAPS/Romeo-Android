@@ -1,19 +1,26 @@
 package kr.go.KNPA.Romeo.Base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Config.DBManager;
-import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Survey.Survey;
+import com.google.gson.Gson;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.Chat.Builder;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Util.Connection;
+import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Message implements Parcelable{
 

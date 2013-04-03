@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.app.Activity;
 import android.content.ContentValues;

@@ -1,8 +1,8 @@
 package kr.go.KNPA.Romeo;
 
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Config.DBManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;

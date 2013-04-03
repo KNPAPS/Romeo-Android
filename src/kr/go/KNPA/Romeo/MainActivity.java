@@ -15,11 +15,11 @@ import android.widget.Toast;
 
 import kr.go.KNPA.Romeo.BaseActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
+import kr.go.KNPA.Romeo.Util.Connection;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import com.slidingmenu.lib.SlidingMenu;
@@ -231,7 +231,7 @@ public class MainActivity extends BaseActivity {
 	public static Bundle isDeviceRegistered(Context context) {
 		Bundle b = new Bundle();
 		
-//		long userIdx = UserInfo.getUserIdx(context);
+		long userIdx = UserInfo.getUserIdx(context);
 		String regid = UserInfo.getRegid(context);
 		//if(regid == null) regid = GCMRegistrar.getRegistrationId(this);
 		String uuid = UserInfo.getUUID(context);
@@ -243,7 +243,7 @@ public class MainActivity extends BaseActivity {
 			return b;
 		}
 		
-		String json = "";//"{\"idx\":"+userIdx+", \"regid\":\""+regid+"\", \"uuid\":\""+uuid+"\"}";
+		String json = "{\"idx\":"+userIdx+", \"regid\":\""+regid+"\", \"uuid\":\""+uuid+"\"}";
 		
 		//String _permission = null;
 		

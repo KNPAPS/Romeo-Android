@@ -9,7 +9,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;

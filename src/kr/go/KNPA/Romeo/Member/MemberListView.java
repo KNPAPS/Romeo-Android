@@ -2,7 +2,7 @@ package kr.go.KNPA.Romeo.Member;
 
 import kr.go.KNPA.Romeo.IntroActivity;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
