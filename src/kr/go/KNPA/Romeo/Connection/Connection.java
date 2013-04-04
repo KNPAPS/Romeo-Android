@@ -63,6 +63,7 @@ import android.util.Pair;
  * @author 최영우
  * @since 2013.4.1
  */
+
 public class Connection {
 	private static final String TAG = Connection.class.getName();
 	private static final String BUNDLE_KEY_STATUS_CODE = "HTTPStatusCode";
