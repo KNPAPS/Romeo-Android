@@ -1,7 +1,6 @@
 package kr.go.KNPA.Romeo.Connection;
 
-import kr.go.KNPA.Romeo.Config.EventEnum;
-import kr.go.KNPA.Romeo.Config.StatusCodeEnum;
+import kr.go.KNPA.Romeo.Config.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +17,7 @@ import com.google.gson.Gson;
  * Data data = new Data(); // 요청 시에 보낼 변수들을 담을 ArrayList<HashMap<String,Object>>
  * ... // data에 이벤트에 맞는 자료구조로 적절하게 변수 할당
  * Payload pl = new Payload();
- * pl.setEvent(EventEnum.EVENT);
+ * pl.setEvent(String.EVENT);
  * pl.setData(data);
  * 
  * String requestPayload = pl.toJson(); // json string으로 변환
@@ -40,16 +39,15 @@ public class Payload {
 	private static final String KEY_EVENT = "event";
 	private static final String KEY_STATUS_CODE = "status_code";
 	private static final String KEY_DATA = "data";
-	private EventEnum event;
-	private StatusCodeEnum statusCode;
+	private String event;
+	private int statusCode;
 	private Data data;
 	
 	/**
 	 * Request Payload 생성자
 	 * @param event 해당 payload가 활용되는 event
 	 */
-	public Payload( EventEnum event ) {
-		setEvent(event);
+	public Payload() {
 	}
 	
 	/**
@@ -58,18 +56,15 @@ public class Payload {
 	 */
 	public Payload( String json )  {
 		try {
-			JSONObject jo;
-			EventEnum responseEvent;
-			StatusCodeEnum responseStatus;
-			jo = new JSONObject( json );
-			
-			responseEvent = EventEnum.findEvent( jo.get(KEY_EVENT).toString() );
-			
-			responseStatus = StatusCodeEnum.findStatus( jo.getInt(KEY_STATUS_CODE) ); 
-			
+			JSONObject jo = new JSONObject( json );
+			String responseEvent = jo.get(KEY_EVENT).toString();
+			int responseStatus = Constants.NOT_SPECIFIED;
+			if ( jo.has(KEY_STATUS_CODE) == true ) {
+				responseStatus = jo.getInt(KEY_STATUS_CODE);
+			}
 			setEvent(responseEvent);
 			setStatusCode(responseStatus);
-			setData( DataParser.parse(event, statusCode, jo.getJSONArray(KEY_DATA)) );
+			setData( DataParser.parse(getEvent(), getStatusCode(), jo.getJSONArray(KEY_DATA) ) );
 		} catch( JSONException e) {
 			Log.d(TAG, e.getMessage());
 		}
@@ -79,8 +74,8 @@ public class Payload {
 	 * @name setters
 	 * @{
 	 */
-	public Payload setEvent(EventEnum event) { this.event = event; return this; }
-	public Payload setStatusCode(StatusCodeEnum status) { this.statusCode = status; return this;}
+	public Payload setEvent(String event) { this.event = event; return this; }
+	public Payload setStatusCode(int status) { this.statusCode = status; return this;}
 	public Payload setData(Data data) { this.data = data; return this; }
 	/** @} */
 	
@@ -88,11 +83,11 @@ public class Payload {
 	 * @name getters
 	 * @{
 	 */
-	public EventEnum getEvent() {
+	public String getEvent() {
 		return this.event;
 	}
 	
-	public StatusCodeEnum getStatusCode(){
+	public int getStatusCode(){
 		return this.statusCode;
 	}
 	

@@ -279,6 +279,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int dropdown3=0x7f060030;
         public static final int dropdown4=0x7f060031;
         public static final int dropdown5=0x7f060032;
+        public static final int dynamic_container=0x7f06007a;
         public static final int edit=0x7f060012;
         public static final int editPic=0x7f060034;
         public static final int favorite=0x7f06001b;
@@ -320,7 +321,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int member_department_cell=0x7f060046;
         public static final int member_user_cell=0x7f06005d;
         public static final int menu_frame=0x7f06005f;
-        public static final int menu_settings=0x7f06007b;
+        public static final int menu_settings=0x7f06007c;
         public static final int metadata=0x7f060018;
         public static final int name=0x7f06004c;
         public static final int navigationBar=0x7f060062;
@@ -359,7 +360,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int title=0x7f060019;
         public static final int uesr_pic=0x7f06004a;
         public static final int userPic=0x7f06000a;
-        public static final int user_group=0x7f06007a;
+        public static final int user_group=0x7f06007b;
         public static final int user_pic=0x7f06005e;
     }
     public static final class layout {
@@ -426,7 +427,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int survey_question_detail=0x7f03003c;
         public static final int survey_question_result=0x7f03003d;
         public static final int survey_result=0x7f03003e;
-        public static final int user_group=0x7f03003f;
+        public static final int test_layout=0x7f03003f;
+        public static final int user_group=0x7f030040;
     }
     public static final class menu {
         public static final int activity_main=0x7f0c0000;
@@ -476,6 +478,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int dummy=0x7f0a005e;
         public static final int duration=0x7f0a001a;
         public static final int edit=0x7f0a0011;
+        public static final int error_connection=0x7f0a008e;
         public static final int formatString_FullDate=0x7f0a0070;
         public static final int formatString_closeDT=0x7f0a006e;
         public static final int formatString_openDT=0x7f0a006d;

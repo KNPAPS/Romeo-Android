@@ -159,6 +159,7 @@ int id dropdown2 0x7f06002f
 int id dropdown3 0x7f060030
 int id dropdown4 0x7f060031
 int id dropdown5 0x7f060032
+int id dynamic_container 0x7f06007a
 int id edit 0x7f060012
 int id editPic 0x7f060034
 int id favorite 0x7f06001b
@@ -200,7 +201,7 @@ int id memberListView 0x7f060053
 int id member_department_cell 0x7f060046
 int id member_user_cell 0x7f06005d
 int id menu_frame 0x7f06005f
-int id menu_settings 0x7f06007b
+int id menu_settings 0x7f06007c
 int id metadata 0x7f060018
 int id name 0x7f06004c
 int id navigationBar 0x7f060062
@@ -239,7 +240,7 @@ int id textView1 0x7f060035
 int id title 0x7f060019
 int id uesr_pic 0x7f06004a
 int id userPic 0x7f06000a
-int id user_group 0x7f06007a
+int id user_group 0x7f06007b
 int id user_pic 0x7f06005e
 int layout _cell 0x7f030000
 int layout chat_bubble_departed 0x7f030001
@@ -304,7 +305,8 @@ int layout survey_question_compose 0x7f03003b
 int layout survey_question_detail 0x7f03003c
 int layout survey_question_result 0x7f03003d
 int layout survey_result 0x7f03003e
-int layout user_group 0x7f03003f
+int layout test_layout 0x7f03003f
+int layout user_group 0x7f030040
 int menu activity_main 0x7f0c0000
 int string about 0x7f0a0087
 int string about_msg 0x7f0a008a
@@ -350,6 +352,7 @@ int string done 0x7f0a000a
 int string dummy 0x7f0a005e
 int string duration 0x7f0a001a
 int string edit 0x7f0a0011
+int string error_connection 0x7f0a008e
 int string formatString_FullDate 0x7f0a0070
 int string formatString_closeDT 0x7f0a006e
 int string formatString_openDT 0x7f0a006d

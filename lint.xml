@@ -7,4 +7,5 @@
         <ignore path="src/kr/go/KNPA/Romeo/MainActivity.java" />
         <ignore path="src/kr/go/KNPA/Romeo/Member/ConditionalSearch.java" />
     </issue>
+    <issue id="ValidFragment" severity="ignore" />
 </lint>

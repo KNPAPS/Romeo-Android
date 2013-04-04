@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_connection">서버와 통신하는 중 오류가 발생했습니다.</string>
+</resources>

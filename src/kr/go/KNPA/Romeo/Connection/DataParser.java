@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import kr.go.KNPA.Romeo.Config.EventEnum;
-import kr.go.KNPA.Romeo.Config.StatusCodeEnum;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,20 +30,12 @@ public class DataParser {
 	 * @return data
 	 * @throws JSONException
 	 */
-	public static Data parse( EventEnum event, StatusCodeEnum status, JSONArray dataJSONArray ) throws JSONException {
+	public static Data parse( String event, int status, JSONArray dataJSONArray ) throws JSONException {
 		Data dataNative = null;
-		//TODO: 아래 세 method에 대해 서버와 주고받는 자료구조 변경해야 할듯
-		switch(event) {
-		case MESSAGE_SEND:
-			break;
-		case MESSAGE_SURVEY_ANSWER_SURVEY:
-			break;
-		case MESSAGE_SURVEY_GET_RESULT:
-			break;
-		default:
-			dataNative = basicParse(dataJSONArray);
-			break;
-		}
+		//TODO: 특정 method에 대해 서버와 주고받는 자료구조 변경해야 할듯
+				
+		dataNative = basicParse(dataJSONArray);
+		
 		
 		return dataNative;
 	}
