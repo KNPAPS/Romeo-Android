@@ -65,6 +65,7 @@ import android.util.Pair;
  */
 
 public class Connection {
+	private static final int test=11;
 	private static final String TAG = Connection.class.getName();
 	private static final String BUNDLE_KEY_STATUS_CODE = "HTTPStatusCode";
 	private static final String BUNDLE_KEY_RESPONSE_JSON = "responsePayloadJSON";
