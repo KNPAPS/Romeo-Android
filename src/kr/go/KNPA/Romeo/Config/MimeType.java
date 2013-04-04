@@ -29,4 +29,5 @@ public class MimeType {
 	public static final String word = "application/msword";
 	public static final String json = "application/json";
 	public static final String url = "application/x-www-form-urlencoded";
+	public static final String multipart = "multipart/form-data;boundary="+Constants.MIME_BOUNDARY;
 }

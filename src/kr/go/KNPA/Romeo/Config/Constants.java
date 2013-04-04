@@ -11,4 +11,7 @@ public class Constants {
 	//! 경찰 계급 순서
 	public static final String[] POLICE_RANK = 
 			{"치안총감", "치안정감", "치안감", "경무관", "총경", "경정", "경감", "경위", "경사", "경장", "순경", "의경"};
+	public static final String MIME_BOUNDARY = "32wif*9vk4*kdlsfv4*";
+	public static final String TAG = "daonCustomLog";
+	public static final int MAX_BUFFER_SIZE = 1024;
 }

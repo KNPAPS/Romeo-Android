@@ -1,6 +1,10 @@
 package kr.go.KNPA.Romeo.Connection;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,10 +14,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Config.MimeType;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,33 +31,34 @@ import android.util.Pair;
  * 통신을 담당하는 ajax-like 객체.\n
  * @b 사용법
  * @code {.java}
- * 		//콜백함수 설정
-		ConnectionCallback callBack = new ConnectionCallback(){
-			@Override
-			public void beforeSend(Payload request) {
-				logBeforeSend(request);
-			}
-			
-			@Override
-			public void error(Payload request, String errorMsg, Exception e){
-				logOnError(request, errorMsg, e);
-			}
-			
-			@Override
-			public void success(Payload response) {
-				logOnSuccess(response);	
-			}
-		};
-		
-		new Connection(this) // context를 넘겨줌
-						.requestPayloadJSON(requestJson) // (필수) request json 
-						.accepts(MimeType.json) // (선택) 응답받을 content type / default:json
-						.async(true) // (선택) 비동기로 처리할지 말지 / default:true
-						.callBack(callBack) // (선택) 콜백함수 / default: 아무것도안함
-						.contentType(MimeType.json)  // (선택) 보낼 content type / default: json
-						.type(ConnectionConfig.HTTP_TYPE_POST) // (선택) httpmethod / default : post
-						.timeout(10000)  // (선택) 연결 타임아웃 / default 10초
-						.request();  // 연결 시작
+ *	//콜백함수 설정
+ *	ConnectionCallback callBack = new ConnectionCallback(){
+ *		@Override
+ *		public void beforeSend(Payload request) {
+ *				logBeforeSend(request);
+ *			}
+ *			
+ *		@Override
+ *		public void error(Payload request, String errorMsg, Exception e){
+ *			logOnError(request, errorMsg, e);
+ *		}
+ *			
+ *		@Override
+ *		public void success(Payload response) {
+ *			logOnSuccess(response);	
+ *		}
+ *	};
+ *	
+ *	new Connection(this)
+ *					.requestPayloadJSON(requestJson) // 필수/request json
+ *					.accepts(acceptContentType) // 선택/응답받을 콘텐츠타입/default json
+ *					.async(true) // 선택/비동기로 처리할 지 여부/ default true
+ *					.callBack(callBack) // 선택/ 콜백함수/ default 아무것도안함
+ *					.contentType(contentType) // 선택/ 요청 데이터타입/ default json
+ *					.timeout(timeout) // 선택/ 응답 타임아웃/ default 10초 
+ *					.type(requestMethod) // 선택/ 요청 http method / default post
+ *					.attachFile(filePath) // 선택 / 첨부할 파일 / default 없음
+ *					.request();
  * @endcode
  * @author 최영우
  * @since 2013.4.1
@@ -88,6 +95,7 @@ public class Connection {
 	private Payload responsePayload = null;
 	private Handler mHandler;
 	private Thread mThread;
+	private ArrayList<String> attachedFiles = null;
 	/** @} */
 	
 	
@@ -118,6 +126,13 @@ public class Connection {
 	/** @} */
 	
 	/**
+	 * @name 파일 전송 관련
+	 * @{
+	 */
+	public Connection attachFile(String fileName) { this.attachedFiles.add(fileName); return this; }
+	/** @} */
+	
+	/**
 	 * @name getters
 	 * @{
 	 */
@@ -126,14 +141,14 @@ public class Connection {
 	/** @} */
 	
 	/**
-	 * 일반적인 payload를 보낼 때의 요청
+	 * 일반적인 payload만 보내는 요청
 	 * @return
 	 */
 	public Connection request(){
 		callBack.beforeSend(requestPayload);
 		if ( async == false ) {
 			try {
-				Pair<Integer,String> result = doRequest(requestPayloadJSON);
+				Pair<Integer,String> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);
 				HTTPStatusCode = result.first;
 				responsePayloadJSON = result.second;
 			} catch ( RuntimeException e ) {
@@ -163,7 +178,7 @@ public class Connection {
 					Message msg = new Message();
 					Bundle bundle = new Bundle();
 					try {
-						Pair<Integer,String> result = doRequest(requestPayloadJSON);//HTTPStatusCode
+						Pair<Integer,String> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);//HTTPStatusCode
 						
 						bundle.putInt(BUNDLE_KEY_STATUS_CODE, result.first);
 						bundle.putString(BUNDLE_KEY_RESPONSE_JSON, result.second);
@@ -181,25 +196,11 @@ public class Connection {
 	}
 	
 	/**
-	 * 파일을 업로드할 때 사용하는 요청
-	 */
-	public Connection requestUpload() {
-		return this;
-	}
-	
-	/**
-	 * 파일을 다운로드할 때 
-	 */
-	public Connection requestDownload() {
-		return this;
-	}
-	
-	/**
 	 * 서버에 연결하여 payload를 json형태로 주고받는다.\n
 	 * HTTP status code와 responsePayloadJSON을 반환하며, HTTP에러가 아닌 에러가 났을 경우 error throw
 	 * @return statusCode
 	 */
-	private Pair<Integer,String> doRequest(String requestPayloadJSON) throws RuntimeException {
+	private Pair<Integer,String> doRequest(String accepts, String contentType, String requestPayloadJSON, int timeout, String type) throws RuntimeException {
 		HttpURLConnection conn = null;
 		Integer statusCode = Constants.NOT_SPECIFIED;
 		String responsePayloadJSON = null;
@@ -226,9 +227,7 @@ public class Connection {
 			Log.e(TAG, e.getMessage() );
 			throw new RuntimeException(e);
 		}
-		
-		//keep alive 설정을 끈다. 
-		System.setProperty("http.keepAlive","false");
+
 		
 		//캐시 사용여부
 		conn.setUseCaches(false);
@@ -241,22 +240,90 @@ public class Connection {
 		conn.setReadTimeout(timeout);
 		
 		conn.setRequestProperty("Cache-Control", "no-cache, no-store");
-		conn.setRequestProperty("Content-type", contentType);
 		conn.setRequestProperty("Accept", accepts);
-		
+
 		try {
 
-			OutputStream os = conn.getOutputStream();
-			os.write(requestPayloadJSON.getBytes(ConnectionConfig.CHARSET_REQUEST_ENCODING));
-			os.flush();
-			os.close();
+			/**
+			 * 파일 첨부 여부에 따라 outputstream을 multipart로 보낼지 그냥 설정된 content type으로 보낼 지 구분하여 보내고
+			 * response는 어차피 같은 식으로 string만 받으니까 같은 루틴을 사용한다 
+			 */
+			int nAttachedFiles = attachedFiles.size();
+			if ( nAttachedFiles > 0 ) { 
+				//첨부파일이 있을 때에는 무조건 multipart/form-data로 전송하고 keepalive를 사용한다
+				//request byte를 쓸 때 설정된 contentType을 따른다
+				System.setProperty("http.keepAlive","true");
+				conn.setRequestProperty("Content-type", MimeType.multipart);
+				conn.setRequestProperty("Connection", "Keep-Alive");
+					DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+					//payload json 부분
+					dos.writeBytes("--"+Constants.MIME_BOUNDARY+"\r\n");
+					dos.writeBytes("Content-Disposition: form-data; name=\"payload\";\r\n");
+					dos.writeBytes("Content-Type: "+contentType+";\r\n\r\n");
+					
+					dos.writeBytes(requestPayloadJSON);
+	
+					//파일첨부
+					for ( int i=0; i<nAttachedFiles; i++ ) {
+						
+						//개별 파일인풋스트림 열기
+						File f = new File(attachedFiles.get(i));
+						
+						//파일이 없을 시 에러 던지기
+						if ( f.exists() == false ) {
+							FileNotFoundException e = new FileNotFoundException(f.getPath());
+							throw new RuntimeException(e);
+						}
+						
+						FileInputStream fis = new FileInputStream(f);
+						
+						//write data
+						dos.writeBytes("--"+Constants.MIME_BOUNDARY+"\r\n");
+						dos.writeBytes("Content-Disposition: form-data; name=\"file_"+i+"\"; filename=\""+f.getName()+"\"\r\n");
+						dos.writeBytes("Content-Type: "+contentType+";\r\n\r\n");
+						
+						int bytesAvailable = fis.available();
+						int maxBufferSize = Constants.MAX_BUFFER_SIZE;
+						int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+						byte[] buffer = new byte[bufferSize];
+						int bytesRead = fis.read(buffer,0,bufferSize);
+						
+						//read image
+						while(bytesRead > 0) {
+							dos.write(buffer,0,bufferSize);
+							bytesAvailable = fis.available();
+							maxBufferSize = Constants.MAX_BUFFER_SIZE;
+							bufferSize = Math.min(bytesAvailable, maxBufferSize);
+							bytesRead = fis.read(buffer,0,bufferSize);
+						}
+						
+						dos.writeBytes("\r\n");
+						fis.close();
+					}
+					
+					//close streams
+					dos.flush();
+					dos.close();
+			} else {
+				//첨부 파일이 없을 때는 설정된 contentType을 따른다
+				//keep alive 설정을 끈다. 
+				System.setProperty("http.keepAlive","false");
+				conn.setRequestProperty("Content-type", contentType);
+	
+				OutputStream os = conn.getOutputStream();
+				os.write(requestPayloadJSON.getBytes(ConnectionConfig.CHARSET_REQUEST_ENCODING));
+				os.flush();
+				os.close();
+			}
 			
-			//get response start 
+			/**
+			 * HTTP_OK가 떨어지면 응답을 inputstream으로 읽기 시작.
+			 */ 
 			statusCode = conn.getResponseCode();
-
+	
 			//HTTP 통신이 올바르게 되었으면 response 읽어들인다.
 			if ( statusCode == HttpURLConnection.HTTP_OK ) {
-
+	
 				StringBuffer resp = new StringBuffer();
 				
 				String line;
@@ -272,12 +339,11 @@ public class Connection {
 				while ((line = br.readLine() ) != null) {
 					resp.append(line);
 				}
-
+	
 				br.close();
 				responsePayloadJSON = resp.toString();
 			} else {
 				Log.e(TAG, "HTTP response code : "+statusCode );
-				return new Pair<Integer,String>(statusCode,responsePayloadJSON);
 			}
 			
 			conn.disconnect();
