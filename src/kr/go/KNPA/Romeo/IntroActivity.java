@@ -52,9 +52,6 @@ public class IntroActivity extends Activity{
 		@Override
 		public void run() {
 			
-			
-			
-			
 		
 		}
 	};
