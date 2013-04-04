@@ -65,11 +65,6 @@ import android.util.Pair;
  */
 
 public class Connection {
-<<<<<<< HEAD
-	private static final int test=11;
-=======
-	private static final int testtttttttt=2;
->>>>>>> conflict testtttt
 	private static final String TAG = Connection.class.getName();
 	private static final String BUNDLE_KEY_STATUS_CODE = "HTTPStatusCode";
 	private static final String BUNDLE_KEY_RESPONSE_JSON = "responsePayloadJSON";
