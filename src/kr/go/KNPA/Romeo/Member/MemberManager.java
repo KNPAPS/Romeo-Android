@@ -11,6 +11,11 @@ import org.json.JSONObject;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.UserRegisterActivity;
 import kr.go.KNPA.Romeo.UserRegisterEditView;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.EventEnum;
+import kr.go.KNPA.Romeo.Config.StatusCodeEnum;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
 import kr.go.KNPA.Romeo.Util.Connection;
 import kr.go.KNPA.Romeo.Util.DBManager;
@@ -38,7 +43,9 @@ public class MemberManager {
 	public static int USER_ALL = 6;
 	
 	private static MemberManager _instance = null;
-	private HashMap<Integer, User> users = new HashMap<Integer, User>();
+	
+	
+	private static HashMap<String, User> cachedUsers = null;	//! 캐시된 사람들 목록
 	
 	// Apply Singleton Type
 	public static MemberManager sharedManager() {
@@ -46,6 +53,49 @@ public class MemberManager {
 			_instance = new MemberManager();
 		}
 		return _instance;
+	}
+	
+	
+	/**
+	 * 다른 멤버의 정보 저장
+	 * @param member Member 객체
+	 */
+	public static void cacheUser(User user) {
+		cachedUsers.put(user.idx, user);
+	}
+	
+	
+	public userWithIdx(String idx) {
+		User user = cachedUsers.get(idx);
+		if ( user != null ) {
+			return user;
+		} else {
+			Payload request = new Payload(Event.User.getUserInfo())
+									.setData( new Data().add(0, Data.KEY_USER_HASH, idx) );
+			
+			Connection conn = new Connection.Builder(request.toJson()).build();
+			conn.request();
+			Payload respl = new Payload(conn.getResponsePayload());
+			
+			//성공적으로 가져왔으면 DATA에서 정보를 꺼내 새 member 객체 생성 후 리턴
+			if ( respl.getStatusCode() == StatusCodeEnum.SUCCESS ) {
+				HashMap<String,Object> hm = respl.getData().get(0);
+				
+				Member member = new Member(hm.get(Data.KEY_USER_HASH).toString());
+				member.setDeptFullName(hm.get(Data.KEY_DEPT_FULL_NAME).toString());
+				member.setDeptName(hm.get(Data.KEY_DEPT_NAME).toString());
+				member.setMemberName(hm.get(Data.KEY_USER_NAME).toString());
+				member.setRankIdx( (Integer) hm.get(Data.KEY_USER_RANK));
+				member.setMemberRole(hm.get(Data.KEY_USER_ROLE).toString());
+				
+				return member;
+			} else {
+				return null;
+			}
+	}
+	
+	public userWithIdxs(String[] idxs) {
+		
 	}
 	
 	private Connection download(String data) {
