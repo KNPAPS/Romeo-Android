@@ -10,8 +10,8 @@ public class Department implements Parcelable{
 
 	public String idx;
 	public long sequence;
-	public String title;
-	public String titleFull;
+	public String name;
+	public String nameFull;
 
 	public Department() {
 		super();
@@ -24,8 +24,8 @@ public class Department implements Parcelable{
 	public static class Builder {
 		private String idx;
 		private long sequence;
-		private String title;
-		private String titleFull;
+		private String name;
+		private String nameFull;
 
 		public Builder idx(String idx) {
 			this.idx = idx;
@@ -37,21 +37,21 @@ public class Department implements Parcelable{
 			return this;
 		}
 		
-		public Builder title(String title) {
-			this.title = title;
+		public Builder name(String name) {
+			this.name = name;
 			return this;
 		}
 		
-		public Builder titleFull(String titleFull) {
-			this.titleFull = titleFull;
+		public Builder nameFull(String nameFull) {
+			this.nameFull = nameFull;
 			return this;
 		}
 		public Department build() {
 			Department department = new Department();
 			department.sequence = this.sequence;
-			department.title = this.title;
+			department.name = this.name;
 			department.idx = this.idx;
-			department.titleFull = this.titleFull;
+			department.nameFull = this.nameFull;
 			
 			return department;
 		}
@@ -67,15 +67,15 @@ public class Department implements Parcelable{
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(idx);
 		dest.writeLong(sequence);
-		dest.writeString(title);
-		dest.writeString(titleFull);
+		dest.writeString(name);
+		dest.writeString(nameFull);
 	}
 	
 	private void readFromPalcel(Parcel in) {
 		idx = in.readString();
 		sequence = in.readLong();
-		title = in.readString();
-		titleFull = in.readString();
+		name = in.readString();
+		nameFull = in.readString();
 	}
 	
 	public static final Parcelable.Creator<Department> CREATOR = new Parcelable.Creator<Department>() {

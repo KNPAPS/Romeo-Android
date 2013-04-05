@@ -61,6 +61,8 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	public static final String KEY_PROFILE_PIC_FILENAME = "pic_filename";
 	//!  
 	public static final String KEY_DEPT_HASH = "dept_hash";
+	//!
+	public static final String KEY_DEPT_SEQUENCE = "dept_code";
 	//!  
 	public static final String KEY_DEPT_NAME = "dept_name";
 	//!  
