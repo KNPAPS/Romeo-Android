@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Survey.Survey;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +77,7 @@ public class DataParser {
 	 */
 	private static Data parse_on_msg_send(JSONArray dataJSONArray) {
 		Data dataNative = new Data();
-		dataNative.add(0, Data.KEY_MESSAGE,  Message.parseMessage(dataJSONArray.toString()) );
+
 		return dataNative;
 	}
 	
@@ -86,9 +89,34 @@ public class DataParser {
 	 */
 	private static Data parse_on_msg_receive(JSONArray dataJSONArray) throws JSONException {
 		Data dataNative = new Data();
-		HashMap<String,Object> hm = JSONObjectToHashMap(dataJSONArray.getJSONObject(0));
 		
-		//JSONObject hm.get(Data.KEY_MESSAGE);
+		JSONObject jo = dataJSONArray.getJSONObject(0);
+		
+		switch( jo.getInt(Data.KEY_MESSAGE_TYPE)/Message.MESSAGE_TYPE_DIVIDER ) {
+		case Message.MESSAGE_TYPE_CHAT:
+			//jsonobject를 다시 json으로 바꿔서 MessageParser를 통해 생성
+			Chat chat = (Chat) Message.parseMessage(jo.get(Data.KEY_MESSAGE).toString());
+			dataNative.add(0,Data.KEY_MESSAGE,chat);
+			break;
+		case Message.MESSAGE_TYPE_DOCUMENT:
+			Document document = (Document) Message.parseMessage(jo.get(Data.KEY_MESSAGE).toString());
+			dataNative.add(0,Data.KEY_MESSAGE,document);
+			
+			HashMap<String,String> af = new HashMap<String, String>();
+			
+			af.put(Data.KEY_FILE_HASH, jo.getString(Data.KEY_FILE_HASH) );
+			af.put(Data.KEY_FILE_TYPE, jo.getString(Data.KEY_FILE_TYPE) );
+			af.put(Data.KEY_FILE_SIZE, jo.getString(Data.KEY_FILE_SIZE) );
+			
+			dataNative.add(0,Data.KEY_ATTACHED_FILES,af);
+			break;
+		case Message.MESSAGE_TYPE_SURVEY:
+			Survey svy = (Survey) Message.parseMessage(jo.get(Data.KEY_MESSAGE).toString());
+			dataNative.add(0,Data.KEY_MESSAGE,svy);
+			break;
+		default:
+			break;
+		}
 		
 		return dataNative;
 	}

@@ -128,5 +128,11 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	//! 하위 부서를 전부 가져오는지
 	public static final String KEY_GET_MEMBER_FETCH_ALL = "fetch_all";
 	
-	public static final String KEY_FILE = "fetched_file";
+	public static final String KEY_ATTACHED_FILES = "attached_files";
+	
+	public static final String KEY_FILE_HASH = "file_hash";
+	
+	public static final String KEY_FILE_TYPE = "file_type";
+	
+	public static final String KEY_FILE_SIZE = "file_size";
 }
