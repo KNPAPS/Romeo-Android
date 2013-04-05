@@ -136,20 +136,20 @@ public class Connection {
 	 */
 	public Connection request(){
 		
-		callBack.beforeSend(requestPayload);
+		callBack.onPreExecute(requestPayload);
 		if ( async == false ) {
 			try {
 				Pair<Integer,Payload> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);
 				HTTPStatusCode = result.first;
 				responsePayload = result.second;
 			} catch ( RuntimeException e ) {
-				callBack.error("서버와 통신 중 오류가 발생했습니다", e);
+				callBack.onError("서버와 통신 중 오류가 발생했습니다", e);
 			}
 			
 			if ( HTTPStatusCode == HttpURLConnection.HTTP_OK ) { //성공
-				callBack.success(responsePayload);	
+				callBack.onPostExecute(responsePayload);	
 			} else { //HTTP 에러
-				callBack.error("서버와 통신 중 오류가 발생했습니다", 
+				callBack.onError("서버와 통신 중 오류가 발생했습니다", 
 						new Exception("HTTP response Code : "+HTTPStatusCode));
 			}
 			
@@ -359,7 +359,7 @@ public class Connection {
 					//doRequest() 도중 예외가 발생한거임. 그러니 콜백으로 error를 호출
 					//msg.obj = RuntimeException 객체임
 					
-					connection.callBack.error("서버와 통신 중 오류가 발생했습니다", 
+					connection.callBack.onError("서버와 통신 중 오류가 발생했습니다", 
 												(RuntimeException)msg.obj);
 										
 				} else {
@@ -368,7 +368,7 @@ public class Connection {
 					connection.HTTPStatusCode = pair.first;
 					connection.responsePayload = pair.second;
 					
-					connection.callBack.success(connection.responsePayload);
+					connection.callBack.onPostExecute(connection.responsePayload);
 				}
 			} else {
 				Log.e(TAG, "weak reference to Connection object failed" );
