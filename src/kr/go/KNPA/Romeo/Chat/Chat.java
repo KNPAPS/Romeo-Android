@@ -2,16 +2,19 @@ package kr.go.KNPA.Romeo.Chat;
 
 import java.util.ArrayList;
 
+import kr.go.KNPA.Romeo.Base.Appendix;
+import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.DBManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
-import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Chat extends Message {
 	
@@ -19,15 +22,21 @@ public class Chat extends Message {
 	public static final int TYPE_MEETING = 0;
 	public static final int TYPE_COMMAND = 1;
 	
+	private String roomCode;
+	
+	private static final String KEY_ROOMCODE = "room_hash";
+	
 	// Constructor
 	public Chat() {}
 
-	public Chat(String json) {
-		
+	public Chat(String json) throws JSONException {
+		JSONObject jo = new JSONObject(json);
+		this.roomCode = jo.getString(KEY_ROOMCODE);
 	}
+	/*
 	public Chat(Cursor c, int type) {
-		idx = c.getInt(c.getColumnIndex("idx"));;
-		type = type;
+		idx = c.getString(c.getColumnIndex("idx"));;
+		this.type = type;
 	//	title = ;
 		content = c.getString(c.getColumnIndex("content"));
 		appendix = Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
@@ -44,6 +53,7 @@ public class Chat extends Message {
 		checkTS = c.getLong(c.getColumnIndex("checkTS"));
 		received = (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);	
 	}
+	*/
 	
 	public Chat(Payload payload) {
 		this.idx = payload.message.idx;

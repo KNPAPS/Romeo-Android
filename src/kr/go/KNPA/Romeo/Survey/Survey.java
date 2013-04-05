@@ -1,5 +1,19 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import kr.go.KNPA.Romeo.Base.Appendix;
+import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.Encrypter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,31 +21,30 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
-import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.Room;
-import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
-import kr.go.KNPA.Romeo.Util.Encrypter;
-
 public class Survey extends Message implements Parcelable{
 	
 	// Message Sub Type Constants
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
 
-	public long openTS = NOT_SPECIFIED;
-	public long closeTS = NOT_SPECIFIED;
+	private long openTS = NOT_SPECIFIED;
+	private long closeTS = NOT_SPECIFIED;
 	public boolean answered = false;
+	
+	private static final String KEY_OPEN_TS 		= "openTS"; 
+	private static final String KEY_CLOSE_TS 		= "closeTS";
+	private static final String KEY_QUESTION_SHEET 	= "survey_form";
+	private static final String KEY_ANSWER_SHEET	= "answersheet";
+	
+	private Form survey_form;
 	
 	// Constructor
 	public Survey() {}
 	
-	public Survey(String json) {
-		
+	public Survey(String json) throws JSONException {
+		JSONObject jo = new JSONObject(json);
+		this.openTS = jo.getLong(KEY_OPEN_TS);
+		this.closeTS = jo.getLong(KEY_CLOSE_TS);
 	}
 	
 	public Survey(Cursor c) {
@@ -244,7 +257,52 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	
-	
+	public static class Form extends HashMap<String, Object>{
+		public static final String TITLE = "title";
+		public static final String CONTENT = "content";
+		public static final String OPEN_TS = "openTS";
+		public static final String CLOSE_TS = "closeTS";
+		
+		public static final String QUESTIONS = "questions";
+		public static final String OPTIONS = "options";
+		
+		public static final String IS_MULTIPLE = "isMultiple";
+		
+		private ArrayList<Question> _questions;
+		
+		public Sheet() {}
+		
+		public ArrayList<Question> questions() { return _questions;}
+		
+		public Sheet addQuestion(Question q) {
+			if(_questions == null)
+				_questions = new ArrayList<Question>();
+			_questions.add(q);
+			
+			return this;
+		}
+		
+		public static class Question extends HashMap<String, Object> {
+			private ArrayList<String> _options;
+			private boolean _isMultiple = false;
+			
+			public ArrayList<String> options() { return _options;}
+			
+			public boolean isMultiple() {	return _isMultiple;	}
+			
+			public Question isMultiple(boolean isMultiple) { 
+				this._isMultiple = isMultiple; 
+				return this;
+			}
+			public Question addOption(String o) {
+				if(_options == null)
+					_options = new ArrayList<String>();
+				_options.add(o);
+				return this;
+			}
+		}
+		
+	}
 	
 	
 

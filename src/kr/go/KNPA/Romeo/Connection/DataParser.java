@@ -37,7 +37,7 @@ public class DataParser {
 		
 		if ( event == Event.MESSAGE_SEND ) {
 			dataNative = parse_on_msg_send(dataJSONArray);					
-		} else if ( event == Event.MESSAGE_RECEIVE ) {
+		} else if ( event == Event.MESSAGE_RECEIVED ) {
 			dataNative = parse_on_msg_receive(dataJSONArray);	
 			
 		} else {

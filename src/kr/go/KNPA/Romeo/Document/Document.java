@@ -1,20 +1,24 @@
 package kr.go.KNPA.Romeo.Document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import kr.go.KNPA.Romeo.Base.Appendix;
+import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.DBManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Payload;
-import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.Room;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Document extends Message implements Parcelable{
 	
@@ -23,15 +27,33 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
 	
+	private	static final String FWD_FORWARDS 		= "forwards";
+	public	static final String FWD_FORWARDER_IDX 	= "forwarder";
+	public	static final String FWD_ARRIVAL_DT 		= "TS";
+	public	static final String FWD_CONTENT 		= "content";
+	
+	
 	// Specific Variables not to be sent
 	public boolean favorite = false;
 	
-
+	private ArrayList<HashMap<String, String>> forwards;
+	private	ArrayList<HashMap<String, String>> files; 
+	
 	// Constructor
 	public Document() {}
 	
-	public Document(String json) {
+	public Document(String json) throws JSONException {
+		JSONObject jo = new JSONObject(json);
 		
+		JSONArray ja = jo.getJSONArray(FWD_FORWARDS);
+		for(int i=0; i<ja.length(); i++) {
+			HashMap<String, String> hmap = new HashMap<String, String>();
+			
+			JSONObject fwd = ja.getJSONObject(i);
+			hmap.put(FWD_FORWARDER_IDX,fwd.getString(FWD_FORWARDER_IDX));
+			hmap.put(FWD_ARRIVAL_DT, fwd.getString(FWD_ARRIVAL_DT));
+			hmap.put(FWD_CONTENT, fwd.getString(FWD_CONTENT));
+		}
 	}
 	
 	public Document(Cursor c) {
@@ -165,6 +187,16 @@ public class Document extends Message implements Parcelable{
 		}
 	}
 
+	public ArrayList<HashMap<String, String>> getForwards() {
+		if(forwards == null)
+			forwards = new ArrayList<HashMap<String, String>>();
+		return forwards;
+	}
+	
+	public ArrayList<HashMap<String, String>> getFilesInfo() {
+		return files;
+	}
+	
 	protected int getType() {
 		int subType = Document.NOT_SPECIFIED;
 		if( received == true ) {

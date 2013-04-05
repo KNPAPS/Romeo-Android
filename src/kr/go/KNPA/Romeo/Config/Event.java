@@ -14,8 +14,12 @@ public class Event {
 	public static final String USER_GET_PROFILE_IMG="USER:GET_PROFILE_IMG"; /*!<프로필 사진 가져오기 */
 	public static final String USER_UPLOAD_PROFILE_IMG="USER:UPLOAD_PROFILE_IMG";/*!< 프로필 사진 업로드 */
 	public static final String MESSAGE_SEND="MESSAGE:SEND";/*!<메세지 보내기*/
+<<<<<<< HEAD
 	//! GCM으로부터 메세지를 받음
 	public static final String MESSAGE_RECEIVE="MESSAGE:RECEIVE";
+=======
+	public static final String MESSAGE_RECEIVED = "MESSAGE:RECEIVED";
+>>>>>>> 495efd84f6c033570199863f50fcda8d961e63bb
 	public static final String MESSAGE_SET_CHECKED="MESSAGE:SET_CHECKCED";/*!<메세지를 확인했을 때 호출*/
 	public static final String MESSAGE_GET_UNCHECKERS="MESSAGE:GET_UNCHECKERS";/*!<메세지 확인 안 한 사람 목록 */
 	public static final String MESSAGE_SURVEY_ANSWER_SURVEY="MESSAGE:SURVEY:ANSWER_SURVEY";/*!<설문조사 응답*/
@@ -25,7 +29,11 @@ public class Event {
 	public static final String DEVICE_UNREGISTER="DEVICE:UNREGISTER";/*!<기기 등록 해제*/
 	;
 	
+	public static String User()						{	return "USER";							}
+	public static String Message()					{	return "MESSAGE";						}
+	public static String Device()					{	return "DEVICE";						}
 	public static class User {
+		
 		public static String register() 			{	return USER_REGISTER;					}
 		public static String getUserInfo() 			{	return USER_GET_USER_INFO;				}
 		public static String getDepartmentInfo()	{	return USER_GET_DEPT_INFO;				}
@@ -36,11 +44,17 @@ public class Event {
 	}
 	
 	public static class Message {
+<<<<<<< HEAD
 		public static String receive()				{	return MESSAGE_RECEIVE;					}
+=======
+						
+>>>>>>> 495efd84f6c033570199863f50fcda8d961e63bb
 		public static String send()					{	return MESSAGE_SEND;					}
 		public static String setChecked()			{	return MESSAGE_SET_CHECKED;				}
 		public static String getUncheckers()		{	return MESSAGE_GET_UNCHECKERS;			}
+		public static String received()				{	return MESSAGE_RECEIVED;				}
 		
+		public static String Survey()				{	return "SURVEY";						}
 		public static class Survey {
 			public static String answerSurvey()		{	return MESSAGE_SURVEY_ANSWER_SURVEY;	}
 			public static String getResult()		{	return MESSAGE_SURVEY_GET_RESULT;		}
