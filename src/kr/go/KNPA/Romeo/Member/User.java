@@ -19,8 +19,10 @@ import android.telephony.TelephonyManager;
 public class User implements Parcelable{
 	// preDefined Constants
 	public static final int NOT_SPECIFIED = -777;
+	
 	public static final int TYPE_MEMBERLIST = 0;
 	public static final int TYPE_FAVORITE = 1;
+	
 	public static final int TYPE_MEMBERLIST_SEARCH = 10;
 	public static final int TYPE_FAVORITE_SEARCH = 11;
 	
@@ -30,18 +32,18 @@ public class User implements Parcelable{
 	
 	private static ArrayList<User> _users = null;
 	
-	public int idx;
-	public int department;
-	public String[] levels;
+	public String idx;
 	public String name;
-	public int pic;
 	public int rank;
-	public long TS;
+	public String role;
+	public String pic;
 	
-	public int selected = 0;
+	public Department department;
+	
+	/*
 	public User(int idx) {
 	}
-	
+	*/
 	public User() {
 		
 	}
@@ -51,80 +53,68 @@ public class User implements Parcelable{
 	}
 
 	public static class Builder {
-		private int _idx = NOT_SPECIFIED;
-		private int _department = NOT_SPECIFIED;
-		private String[] _levels = new String[6];
-		private String _name = null;
-		private int _pic = NOT_SPECIFIED;
-		private int _rank = NOT_SPECIFIED;
-		private long _TS = NOT_SPECIFIED;
+		public	String		_idx 		= 	null;
+		public	String		_name 		= 	null;
+		public	int			_rank 		= 	NOT_SPECIFIED;
+		public	String		_role 		= 	null;
+		public	String		_pic 		= 	null;
+		public	Department 	_department	= 	null;
 		
-		public Builder idx (int idx) {
+		public Builder idx (String idx) {
 			this._idx = idx;
 			return this;
 		}
-		public Builder department (int department) {
-			this._department = department;
-			return this;
-		}
-		
-		public Builder levels(String level1, String level2, String level3, String level4, String level5, String level6) {
-			this._levels[0] = level1;
-			this._levels[1] = level2;
-			this._levels[2] = level3;
-			this._levels[3] = level4;
-			this._levels[4] = level5;
-			this._levels[5] = level6;
-			return this;
-		}
-		
+
 		public Builder name (String name) {
 			this._name = name;
 			return this;
 		}
-		
-		public Builder pic (int pic) {
-			this._pic = pic;
-			return this;
-		}
-		
+
 		public Builder rank(int rank) {
 			this._rank = rank;
 			return this;
 		}
+
+		public Builder role (String role) {
+			this._role = role;
+			return this;
+		}
+
+		public Builder pic (String pic) {
+			this._pic = pic;
+			return this;
+		}
 		
-		public Builder TS (long TS) {
-			this._TS = TS;
+		public Builder department (Department department) {
+			this._department = department;
 			return this;
 		}
 		
 		public User build() {
 			User user = new User();
 			user.idx = this._idx;
-			user.department = this._department;
-			user.levels = this._levels;
 			user.name = this._name;
-			user.pic = this._pic;
 			user.rank = this._rank;
-			user.TS = this._TS;
+			user.role = this._role;
+			user.department = this._department;
+			user.pic = this._pic;
 			return user;
 		}
 	}
 	
-	public ArrayList<User> users() {
-		if(_users == null || _users.size() < 1) {
-			//FETCH USERS FROM DEPARTMENTS
-		}
-		
-		return _users;
+	public User clone() {
+		return new User.Builder()
+		.idx(this.idx)
+		.name(this.name)
+		.rank(this.rank)
+		.role(this.role)
+		.department(department)
+		.pic(this.pic)
+		.build();
 	}
 	
-	public static void setUsers(ArrayList<User> users) {
-		_users = users;
-	}
+	public static User userWithIdx(String idx) {
 
-	public static User getUserWithIdx(long idx) {
-		// TODO : 캐싱 순환주기 맞추기.
 		ListIterator<User> itr = null;
 		if(_users.size() > 0)
 			itr = _users.listIterator();
@@ -141,13 +131,7 @@ public class User implements Parcelable{
 		return user;
 	}
 	
-	public static User userWithIdx(long idx) {
-		User _user = getUserWithIdx(idx);
-		
-		return _user.clone();
-	}
-	
-	public static ArrayList<User> getUsersWithIndexes(long[] idxs) {
+	public static ArrayList<User> getUsersWithIndexes(String[] idxs) {
 		ArrayList<User> result = new ArrayList<User>(idxs.length);
 		for(int i=0; i<idxs.length; i++) {
 			result.add(getUserWithIdx(idxs[i]));
@@ -156,25 +140,8 @@ public class User implements Parcelable{
 		return result;
 	}
 	
-	public static ArrayList<User> usersWithIndexes(long[] idxs) {
-		ArrayList<User> result = new ArrayList<User>(idxs.length);
-		for(int i=0; i<idxs.length; i++) {
-			result.add(userWithIdx(idxs[i]));
-		}
-		return result;
-	}
-	
-	public User clone() {
-		return new User.Builder()
-		.department(department)
-		.idx(this.idx)
-		.levels(this.levels[0], this.levels[1], this.levels[2], this.levels[3], this.levels[4], this.levels[5])
-		.name(this.name)
-		.pic(this.pic)
-		.rank(this.rank)
-		.TS(this.TS)
-		.build();
-	}
+
+
 	
 	public static String idexesToString (int[] _receivers) {
 		StringBuffer sb = new StringBuffer();
@@ -187,21 +154,7 @@ public class User implements Parcelable{
 		
 		return sb.toString();
 	}
-	public static String usersToString(ArrayList<User> receivers) {
-		StringBuffer sb = new StringBuffer();
-		
-		Iterator<User> itr = (Iterator<User>) receivers.iterator();
-		while(itr.hasNext()) {
-			User u = itr.next();
-			sb.append(u.idx);
-			if(itr.hasNext()) {
-				sb.append(':');
-			}
- 		}
-		
-		return sb.toString();
-	}
-	
+
 	public static int[] indexesInStringToIntArray(String _receivers) {
 		String[] parsed = _receivers.split(":");
 		int[] result = new int[parsed.length];
@@ -212,28 +165,6 @@ public class User implements Parcelable{
 		return result;
 	}
 	
-	public static ArrayList<Integer> indexesInStringToArrayListOfInteger(String _receivers) {
-		int[] _rs = User.indexesInStringToIntArray(_receivers);
-		
-		ArrayList<Integer> result = new ArrayList<Integer>(_rs.length);
-		for(int i=0; i<_rs.length; i++) {
-			result.add(Integer.valueOf(_rs[i]));
-		}
-		
-		return result;
-	}
-	
-	public static ArrayList<User> indexesInStringToArrayListOfUser(String _receivers) {
-		int[] _rs = User.indexesInStringToIntArray(_receivers);
-		
-		ArrayList<User> result = new ArrayList<User>(_rs.length);
-		for(int i=0; i<_rs.length; i++) {
-			result.add(User.getUserWithIdx(_rs[i]));
-		}
-	
-		return result;
-	}
-
 	public static ArrayList<User> removeUserHavingIndex(ArrayList<User>users, long idx) {
 		Iterator<User> itr = users.iterator();
 		int i=0;
@@ -249,21 +180,6 @@ public class User implements Parcelable{
 		return users;
 	}
 	
-	public static ArrayList<User> usersRemoveUserHavingIndex(ArrayList<User>users, long idx) {
-		ArrayList<User> _users = (ArrayList<User>)users.clone();
-		Iterator<User> itr = _users.iterator();
-		int i=0;
-		User u = null;
-		while(itr.hasNext()) {
-			u = itr.next();
-			if(u.idx == idx) {
-				_users.remove(u);
-				break;
-			}
-			i++;
-		}
-		return _users;
-	}
 	public String getDepartmentFull() {
 		StringBuffer sb = new StringBuffer();
 		for(int i=0; i<levels.length ; i++) {
@@ -281,7 +197,7 @@ public class User implements Parcelable{
 		return sb.toString();
 	}
 
-	public long toJSON() {
+	public String toJSON() {
 		return idx;
 	}
 	
@@ -299,51 +215,21 @@ public class User implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeInt(idx);
-		dest.writeInt(department);
+		dest.writeString(idx);
 		dest.writeString(name);
-		dest.writeInt(pic);
 		dest.writeInt(rank);
-		dest.writeLong(TS);
-		String s = null;
-		for(int i=0; i<MAX_LEVEL_DEPTH; i++) {
-			s = levels[i];
-			if(s == null) s = "";
-			dest.writeString(s);	
-		}
-		
-
+		dest.writeString(role);
+		dest.writeString(pic);
+		dest.writeParcelable(department, 0);
 	}
 	
 	private void readFromPalcel(Parcel in) {
-		idx = in.readInt();
-		department = in.readInt();
-		
-/*		String[] _levels = new String[6];
-		in.readStringArray(_levels);
-		in.readStringArray(_levels);
-		
-		int _length = 0;
-		String _temp = null;
-		for(int i=0; i<_levels.length; i++) {
-			_temp = _levels[i].trim();
-			if(_temp.length() == 0 || _temp.equals("")) continue;
-			_length++;
-		}
-		levels = new String[_length];
-		for(int i=0; i<_length; i++) {
-			levels[i] = _levels[i];
-		}
-*/		
+		idx = in.readString();
 		name = in.readString();
-		pic = in.readInt();
 		rank = in.readInt();
-		TS = in.readLong();
-		levels = new String[MAX_LEVEL_DEPTH];
-		for(int i=0; i<MAX_LEVEL_DEPTH; i++) {
-			levels[i] = in.readString();
-		}
-		//levels = in.createStringArray();
+		role = in.readString();
+		pic = in.readString();
+		department = in.readParcelable(Department.class.getClassLoader());
 	}
 	
 	public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
