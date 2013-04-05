@@ -31,8 +31,6 @@ import com.google.gson.Gson;
  * Payload pl = new Payload(responseJson); //native java collection으로 변환된 payload. event별로 data의 구조는 다름
  * 
  * @endcode
- * @author 최영우
- * @since 2013.4.1
  */
 public class Payload {
 	private static final String TAG = "Payload";
@@ -101,7 +99,7 @@ public class Payload {
 	 * Payload 객체를 json으로 변환
 	 * @return json string
 	 */
-	public String toJson() {
+	public String toJSON() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}

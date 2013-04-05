@@ -16,7 +16,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.MimeType;
@@ -98,12 +97,6 @@ public class Connection {
 	
 	
 	/**
-	 * 연결을 수행하는 context를 생성자에 줘야함
-	 * @param context
-	 */
-	public Connection( Context context ) { context(context); }
-	
-	/**
 	 * @name setters
 	 * @{
 	 */
@@ -150,13 +143,13 @@ public class Connection {
 				HTTPStatusCode = result.first;
 				responsePayload = result.second;
 			} catch ( RuntimeException e ) {
-				callBack.error(context.getString( R.string.error_connection), e);
+				callBack.error("서버와 통신 중 오류가 발생했습니다", e);
 			}
 			
 			if ( HTTPStatusCode == HttpURLConnection.HTTP_OK ) { //성공
 				callBack.success(responsePayload);	
 			} else { //HTTP 에러
-				callBack.error(context.getString(R.string.error_connection), 
+				callBack.error("서버와 통신 중 오류가 발생했습니다", 
 						new Exception("HTTP response Code : "+HTTPStatusCode));
 			}
 			
@@ -366,7 +359,7 @@ public class Connection {
 					//doRequest() 도중 예외가 발생한거임. 그러니 콜백으로 error를 호출
 					//msg.obj = RuntimeException 객체임
 					
-					connection.callBack.error(connection.context.getString(R.string.error_connection), 
+					connection.callBack.error("서버와 통신 중 오류가 발생했습니다", 
 												(RuntimeException)msg.obj);
 										
 				} else {
