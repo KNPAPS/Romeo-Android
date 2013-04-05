@@ -3,12 +3,17 @@ package kr.go.KNPA.Romeo.Base;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -56,8 +61,25 @@ public class Message implements Parcelable{
 	public boolean received;
 	
 	
-	public Message() {
+	public Message() {}
+	
+	public static Message parseMessage(String json) {
+		Message message = null;
 		
+		JSONObject jo = new JSONObject(json);
+		int type = NOT_SPECIFIED;
+		try {
+			type = jo.getInt(Data.KEY_MESSAGE_TYPE);
+		} catch (JSONException e) {
+		}
+		
+		switch(type/MESSAGE_TYPE_DIVIDER) {
+			case Message.MESSAGE_TYPE_CHAT		:		message = new Chat(json);		break;
+			case Message.MESSAGE_TYPE_DOCUMENT	:		message = new Document(json);	break;
+			case Message.MESSAGE_TYPE_SURVEY	:		message = new Survey(json);		break;
+		}
+		
+		return message;
 	}
 
 	public Message(Cursor c) {

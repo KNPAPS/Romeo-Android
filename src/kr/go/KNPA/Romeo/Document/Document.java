@@ -28,7 +28,9 @@ public class Document extends Message implements Parcelable{
 	
 
 	// Constructor
-	public Document() {
+	public Document() {}
+	
+	public Document(String json) {
 		
 	}
 	

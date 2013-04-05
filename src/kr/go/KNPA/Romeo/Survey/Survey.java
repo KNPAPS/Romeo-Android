@@ -28,7 +28,10 @@ public class Survey extends Message implements Parcelable{
 	public boolean answered = false;
 	
 	// Constructor
-	public Survey() {
+	public Survey() {}
+	
+	public Survey(String json) {
+		
 	}
 	
 	public Survey(Cursor c) {

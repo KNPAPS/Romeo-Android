@@ -20,9 +20,11 @@ public class Chat extends Message {
 	public static final int TYPE_COMMAND = 1;
 	
 	// Constructor
-	public Chat() {
-	}
+	public Chat() {}
 
+	public Chat(String json) {
+		
+	}
 	public Chat(Cursor c, int type) {
 		idx = c.getInt(c.getColumnIndex("idx"));;
 		type = type;
