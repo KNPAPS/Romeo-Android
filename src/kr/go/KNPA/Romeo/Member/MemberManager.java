@@ -1,36 +1,28 @@
 package kr.go.KNPA.Romeo.Member;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.json.JSONArray;
+import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.UserRegisterEditView;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.ImageManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.UserRegisterActivity;
-import kr.go.KNPA.Romeo.UserRegisterEditView;
-import kr.go.KNPA.Romeo.Config.Event;
-import kr.go.KNPA.Romeo.Config.EventEnum;
-import kr.go.KNPA.Romeo.Config.StatusCodeEnum;
-import kr.go.KNPA.Romeo.Connection.Data;
-import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.Util.CollectionFactory;
-import kr.go.KNPA.Romeo.Util.Connection;
-import kr.go.KNPA.Romeo.Util.DBManager;
-import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.DropBoxManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 
 public class MemberManager {
@@ -65,7 +57,7 @@ public class MemberManager {
 	}
 	
 	
-	public userWithIdx(String idx) {
+	public User getUser(String idx) {
 		User user = cachedUsers.get(idx);
 		if ( user != null ) {
 			return user;
@@ -73,182 +65,91 @@ public class MemberManager {
 			Payload request = new Payload(Event.User.getUserInfo())
 									.setData( new Data().add(0, Data.KEY_USER_HASH, idx) );
 			
-			Connection conn = new Connection.Builder(request.toJson()).build();
-			conn.request();
-			Payload respl = new Payload(conn.getResponsePayload());
+			//Connection conn = new Connection(this).callBack(callBackEvent).requestPayloadJSON(request.toJson()).request();
+			Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+			Payload response = conn.getResponsePayload();
 			
-			//성공적으로 가져왔으면 DATA에서 정보를 꺼내 새 member 객체 생성 후 리턴
-			if ( respl.getStatusCode() == StatusCodeEnum.SUCCESS ) {
-				HashMap<String,Object> hm = respl.getData().get(0);
+			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
+				HashMap<String,Object> hm = response.getData().get(0);
 				
-				Member member = new Member(hm.get(Data.KEY_USER_HASH).toString());
-				member.setDeptFullName(hm.get(Data.KEY_DEPT_FULL_NAME).toString());
-				member.setDeptName(hm.get(Data.KEY_DEPT_NAME).toString());
-				member.setMemberName(hm.get(Data.KEY_USER_NAME).toString());
-				member.setRankIdx( (Integer) hm.get(Data.KEY_USER_RANK));
-				member.setMemberRole(hm.get(Data.KEY_USER_ROLE).toString());
+				Department dep = new Department.Builder()
+												.idx((String)hm.get(Data.KEY_DEPT_HASH))
+												.name((String)hm.get(Data.KEY_DEPT_NAME))
+												.nameFull((String)hm.get(Data.KEY_DEPT_FULL_NAME))
+												.sequence(Long.parseLong((String)hm.get(Data.KEY_DEPT_SEQUENCE)))
+												.build();
 				
-				return member;
+				user = new User.Builder()
+									.idx((String)hm.get(Data.KEY_USER_HASH))
+									.name((String)hm.get(Data.KEY_USER_NAME))
+									.rank(Integer.parseInt((String)hm.get(Data.KEY_USER_RANK)))
+									.role((String)hm.get(Data.KEY_USER_ROLE))
+									.department(dep)
+									.build();
+
+				cacheUser(user);
+				return user;
 			} else {
 				return null;
 			}
-	}
-	
-	public userWithIdxs(String[] idxs) {
-		
-	}
-	
-	private Connection download(String data) {
-		String url = Connection.HOST_URL + "/member/getUserInfo";
-		
-		Connection conn = new Connection.Builder()
-								.url(url)
-								.async(false)
-								.type(Connection.TYPE_GET)
-								.data(data)
-								.dataType(Connection.DATATYPE_JSON)
-								.build();
-		if(conn.request() == Connection.HTTP_OK) {
-			return conn;
 		}
-		return conn;
 	}
 	
-	private JSONObject JSONInfo(String data) {
-		Connection conn = download(data);
-		if(conn != null) return conn.getJSON();
-		return null;
-	}
-	
-	private String stringInfo(String data) {
-		Connection conn = download(data);
-		if(conn != null) return conn.getResponse();
-		return null;
-	}
-	
-	
-	public User getUserWithIndex(int idx) {
-		User user = null;
-		try {
-			user= users.get(idx);
-		} catch(Exception e) {
-			user = null;
-		}
-		 
-		if( user == null || users.size() < 1) {
-			// 정보가 존재하지 않으므로 Full Download
-			HashMap<String, Object> dic= new HashMap<String, Object>();
-			int[] idxs = {idx};
-			String[] fields = {"*"};
-			dic.put("idx", idxs);
-			dic.put("fields", fields);
+	public ArrayList<User> getUsers(ArrayList<String> idxs) {
 
-			Gson gson = new Gson();
-			String data = gson.toJson(dic);
-			String jsonString = stringInfo(data);
-			user = gson.fromJson(jsonString, User.class);
+		Data data = new Data();
+		for(int i=0; i< idxs.size(); i++) {
+			data.add(i, Data.KEY_USER_HASH, idxs.get(i));
+		}
+		
+		Payload request = new Payload(Event.User.getUserInfo())
+								.setData( data );
+		
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Payload response = conn.getResponsePayload();
+		
+		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
+			ArrayList<User> users = new ArrayList<User>();
+			Data responseData = response.getData();
 			
-			users.put(idx, user);
-			//users.add(idx,  user);
-			
-			return user;
-		} else {
-			HashMap<String, Object> dic= new HashMap<String, Object>();
-			int[] idxs = {idx};
-			String[] fields = {"TS"};
-			dic.put("idx", idxs);
-			dic.put("fields", fields);
-			
-			Gson gson = new Gson();
-			String jsonString = stringInfo(gson.toJson(dic));
-			User _obj = gson.fromJson(jsonString, User[].class)[0];
-			
-			long serverTS = _obj.TS;
-			long now = System.currentTimeMillis();
-			
-			if((now - serverTS) > 3 * 60 * 60 * 1000 ) {
-				if(serverTS > user.TS ) {
-					// 서버가 newer
-					// full download (async)
-					
-					HashMap<String, Object> _dic= new HashMap<String, Object>();
-					int[] _idxs = {idx};
-					String[] _fields = {"*"};
-					dic.put("idx", _idxs);
-					dic.put("fields", _fields);
+			for(int i=0; i<responseData.size(); i++) {
+				HashMap<String,Object> hm = response.getData().get(i);
 				
-				} else {
-					// Do Nothing.
-					
-				}
-			}
-		}
-		
-		
-		return user;
-
-	}
-	
-	public void getMembers(Context context) {
-		JSONObject jo = null;
-		if(users == null || users.size() < 1 ) {
-		// 버전을 비교하는 코드를 삽입한다.
-			String url = Connection.HOST_URL + "/member/getList";
-			Connection conn = new Connection.Builder()
-									.url(url)
-									.async(false)
-									.type(Connection.TYPE_GET)
-									.dataType(Connection.DATATYPE_JSON)
+				Department dep = new Department.Builder()
+												.idx((String)hm.get(Data.KEY_DEPT_HASH))
+												.name((String)hm.get(Data.KEY_DEPT_NAME))
+												.nameFull((String)hm.get(Data.KEY_DEPT_FULL_NAME))
+												.sequence(Long.parseLong((String)hm.get(Data.KEY_DEPT_SEQUENCE)))
+												.build();
+				
+				User user = new User.Builder()
+									.idx((String)hm.get(Data.KEY_USER_HASH))
+									.name((String)hm.get(Data.KEY_USER_NAME))
+									.rank(Integer.parseInt((String)hm.get(Data.KEY_USER_RANK)))
+									.role((String)hm.get(Data.KEY_USER_ROLE))
+									.department(dep)
 									.build();
-			int requestCode;
-			try {
-				requestCode = conn.request();
-			} catch (RuntimeException e) {
-				throw e;
+
+				cacheUser(user);
+				users.add(user);
 			}
-			
-			if( requestCode == Connection.HTTP_OK) {
-				//Gson gson = new Gson();
-				//String json = conn.getResponse();
-				//result = gson.fromJson(json, HashMap.class);
-				jo = conn.getJSON();
-			}
+				
+			return users;
 		} else {
-			//result = users;
+			return null;
 		}
-		
-		Department.root().fetch(context, jo);
 	}
 	
-	public String dbToJSON(Context context) {
-		StringBuilder json = new StringBuilder();
-		
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getReadableDatabase();
-		
-		String sql = "SELECT * FROM "+DBManager.TABLE_DEPARTMENT+ 
-					" WHERE enabled=1 AND shown=1 ORDERBY sequence ASC";
-		Cursor c = db.rawQuery(sql, null);
-		
-		;
-		for(int i=0; i<c.getCount(); i++) {
-			String level1 = (c.getString(c.getColumnIndex("level1"))).trim();
-			String level2 = (c.getString(c.getColumnIndex("level2"))).trim();
-			String level3 = (c.getString(c.getColumnIndex("level3"))).trim();
-			String level4 = (c.getString(c.getColumnIndex("level4"))).trim();
-			String level5 = (c.getString(c.getColumnIndex("level5"))).trim();
-			String level6 = (c.getString(c.getColumnIndex("level6"))).trim();
-			
-			
-			
-			if(!c.isLast()) c.moveToNext();
-		}
-		
-		
-		db.close();
-		dbManager.close();
-		return json.toString();
+	
+	/**
+	 * 해당 hash를 가진 사람에 대한 자료 cache에서 삭제
+	 * @param hash
+	 * @return
+	 */
+	public static void removeCachedMember(String hash) {
+		cachedUsers.remove(hash);
 	}
+	
 	
 	public Bundle registerUser(Context context, Bundle b) {
 		String name = b.getString("name");

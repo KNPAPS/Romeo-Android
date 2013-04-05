@@ -2,19 +2,9 @@ package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ListIterator;
 
-import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Util.Encrypter;
-
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.UUID;
-import android.telephony.TelephonyManager;
 
 public class User implements Parcelable{
 	// preDefined Constants
@@ -113,100 +103,37 @@ public class User implements Parcelable{
 		.build();
 	}
 	
-	public static User userWithIdx(String idx) {
-
-		ListIterator<User> itr = null;
-		if(_users.size() > 0)
-			itr = _users.listIterator();
-		User user = null;
-		
-		User _user = null;
-		while(itr!= null && itr.hasNext()) {
-			_user = itr.next();
-			if(_user.idx == idx) {
-				user = _user;
-			}
-		}
-		
-		return user;
+	public static User userWithIndex(String idx) {
+		return MemberManager.sharedManager().getUser(idx);
 	}
 	
-	public static ArrayList<User> getUsersWithIndexes(String[] idxs) {
-		ArrayList<User> result = new ArrayList<User>(idxs.length);
-		for(int i=0; i<idxs.length; i++) {
-			result.add(getUserWithIdx(idxs[i]));
-		}
-		
-		return result;
+	public static ArrayList<User> getUsersWithIndexes(ArrayList<String> idxs) {
+		return MemberManager.sharedManager().getUsers(idxs);
 	}
 	
-
-
-	
-	public static String idexesToString (int[] _receivers) {
-		StringBuffer sb = new StringBuffer();
-		for(int i=0; i<_receivers.length; i++) {
-			sb.append(_receivers[i]);
-			if(i!=(_receivers.length-1)) {
-				sb.append(':');
-			}
+	public static ArrayList<User> getUsersWithIndexes(String[] _idxs) {
+		ArrayList<String> idxs = new ArrayList<String>(_idxs.length);
+		for(int i=0; i<_idxs.length; i++) {
+			idxs.add(_idxs[i]);
 		}
-		
-		return sb.toString();
+		return getUsersWithIndexes(idxs);
 	}
-
-	public static int[] indexesInStringToIntArray(String _receivers) {
-		String[] parsed = _receivers.split(":");
-		int[] result = new int[parsed.length];
-		for(int i=0; i<result.length; i++) {
-			result[i] = Integer.parseInt(parsed[i]);
-		}
 		
-		return result;
-	}
-	
-	public static ArrayList<User> removeUserHavingIndex(ArrayList<User>users, long idx) {
-		Iterator<User> itr = users.iterator();
-		int i=0;
+	public static ArrayList<User> removeUserHavingIndex(ArrayList<User>users, String idx) {
+		Iterator<User> itr = ((ArrayList<User>)users.clone()).iterator();
 		User u = null;
+		
 		while(itr.hasNext()) {
 			u = itr.next();
-			if(u.idx == idx) {
+			if(u.idx.equals(idx)) {
 				users.remove(u);
-				break;
 			}
-			i++;
 		}
 		return users;
 	}
-	
-	public String getDepartmentFull() {
-		StringBuffer sb = new StringBuffer();
-		for(int i=0; i<levels.length ; i++) {
-			String p = levels[i].trim();
-			boolean isEmpty = false;
-			if(p.length() <1 || p == "")
-				isEmpty = true;
-			
-			if(isEmpty != true) {
-				sb.append(p);
-				if(i!= levels.length-1)
-					sb.append(" ");
-			}
-		}
-		return sb.toString();
-	}
-
 	public String toJSON() {
 		return idx;
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	@Override
 	public int describeContents() {
