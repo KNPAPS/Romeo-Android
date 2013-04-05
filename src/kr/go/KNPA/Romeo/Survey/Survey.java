@@ -1,5 +1,8 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -28,8 +31,12 @@ public class Survey extends Message implements Parcelable{
 	private long closeTS = NOT_SPECIFIED;
 	public boolean answered = false;
 	
-	private static final String KEY_OPEN_TS = "openTS"; 
-	private static final String KEY_CLOSE_TS = "closeTS";
+	private static final String KEY_OPEN_TS 		= "openTS"; 
+	private static final String KEY_CLOSE_TS 		= "closeTS";
+	private static final String KEY_QUESTION_SHEET 	= "survey_form";
+	private static final String KEY_ANSWER_SHEET	= "answersheet";
+	
+	private Form survey_form;
 	
 	// Constructor
 	public Survey() {}
@@ -250,7 +257,50 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	
-	public static class AnswerSheet {
+	public static class Form extends HashMap<String, Object>{
+		public static final String TITLE = "title";
+		public static final String CONTENT = "content";
+		public static final String OPEN_TS = "openTS";
+		public static final String CLOSE_TS = "closeTS";
+		
+		public static final String QUESTIONS = "questions";
+		public static final String OPTIONS = "options";
+		
+		public static final String IS_MULTIPLE = "isMultiple";
+		
+		private ArrayList<Question> _questions;
+		
+		public Sheet() {}
+		
+		public ArrayList<Question> questions() { return _questions;}
+		
+		public Sheet addQuestion(Question q) {
+			if(_questions == null)
+				_questions = new ArrayList<Question>();
+			_questions.add(q);
+			
+			return this;
+		}
+		
+		public static class Question extends HashMap<String, Object> {
+			private ArrayList<String> _options;
+			private boolean _isMultiple = false;
+			
+			public ArrayList<String> options() { return _options;}
+			
+			public boolean isMultiple() {	return _isMultiple;	}
+			
+			public Question isMultiple(boolean isMultiple) { 
+				this._isMultiple = isMultiple; 
+				return this;
+			}
+			public Question addOption(String o) {
+				if(_options == null)
+					_options = new ArrayList<String>();
+				_options.add(o);
+				return this;
+			}
+		}
 		
 	}
 	

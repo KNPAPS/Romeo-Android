@@ -22,7 +22,7 @@ public class Chat extends Message {
 	public static final int TYPE_MEETING = 0;
 	public static final int TYPE_COMMAND = 1;
 	
-	public String roomCode;
+	private String roomCode;
 	
 	private static final String KEY_ROOMCODE = "room_hash";
 	
@@ -33,9 +33,10 @@ public class Chat extends Message {
 		JSONObject jo = new JSONObject(json);
 		this.roomCode = jo.getString(KEY_ROOMCODE);
 	}
+	/*
 	public Chat(Cursor c, int type) {
-		idx = c.getInt(c.getColumnIndex("idx"));;
-		type = type;
+		idx = c.getString(c.getColumnIndex("idx"));;
+		this.type = type;
 	//	title = ;
 		content = c.getString(c.getColumnIndex("content"));
 		appendix = Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
@@ -52,6 +53,7 @@ public class Chat extends Message {
 		checkTS = c.getLong(c.getColumnIndex("checkTS"));
 		received = (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);	
 	}
+	*/
 	
 	public Chat(Payload payload) {
 		this.idx = payload.message.idx;

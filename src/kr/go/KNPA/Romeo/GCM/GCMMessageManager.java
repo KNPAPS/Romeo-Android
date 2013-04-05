@@ -5,22 +5,22 @@ import java.util.List;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Base.Packet;
-import kr.go.KNPA.Romeo.Base.Payload;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.DBManager;
-
 import android.app.ActivityManager;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -34,8 +34,7 @@ public class GCMMessageManager {
 	private static final String TAG = "GCMMessageManager";
 	
 	// preDefined Variables
-	private static final String EVENT_TYPE_MESSAGE = "MESSAGE";
-	private static final String EVENT_ACTION_RECEIVED = "RECEIVED";
+
 	
 	// GCMMessageManager Single-Tone
 	private static GCMMessageManager _sharedManager = null;
@@ -55,7 +54,6 @@ public class GCMMessageManager {
 	private String 			tableName 		= null;
 	//
 	private Context			context			= null;
-	private Packet 			packet 			= null;
 	private Payload 		payload 		= null;
 	private String[] 		events 			= null;
 	private int 			messageType 	= NOT_SPECIFIED;
@@ -71,28 +69,27 @@ public class GCMMessageManager {
 		dbManager = new DBManager(context);
 		db = dbManager.getWritableDatabase();
         
-        // Platform-Based(Bundle) Packet to Packet
 		Bundle b = intent.getExtras();        
-        packet = new Packet(b);
-        
+		String _payload = b.getString("payload");
+		
         // Specify Payload and Event
-        payload = packet.payload;
-        String event = payload.event;
+        payload = new Payload(_payload);
+        String event = payload.getEvent();
         events = event.split(":");
         
         
-        if(events[0].equalsIgnoreCase(EVENT_TYPE_MESSAGE)) {
-        	if(events[1].equalsIgnoreCase(EVENT_ACTION_RECEIVED)) {
+        
+        if(events[0].equalsIgnoreCase(Event.Message())) {
+        	if(events[1].equalsIgnoreCase("RECEIVED")) {
+        		Message message = (Message)payload.getData().get(0, Data.KEY_MESSAGE);
         		
-		    	messageType = ((int)(payload.message.type/Message.MESSAGE_TYPE_DIVIDER))%Message.MESSAGE_TYPE_DIVIDER;
-		    	messageSubType = payload.message.type % Message.MESSAGE_TYPE_DIVIDER;
+		    	messageType = message.mainType();
+		    	messageSubType = message.subType();
 		
-		        // 파싱된 event에 따라 작업을 분류한다. TODO
-		    	
-		    	switch(messageType) {
-			    	case Message.MESSAGE_TYPE_CHAT 		:	onChat();		break;
-			    	case Message.MESSAGE_TYPE_DOCUMENT 	:	onDocument();	break;
-			    	case Message.MESSAGE_TYPE_SURVEY 	:	onSurvey();		break;
+		        switch(messageType) {
+			    	case Message.MESSAGE_TYPE_CHAT 		:	onChat((Chat)message);			break;
+			    	case Message.MESSAGE_TYPE_DOCUMENT 	:	onDocument((Document)message);	break;
+			    	case Message.MESSAGE_TYPE_SURVEY 	:	onSurvey((Survey)message);		break;
 		    	}
 
         	}	// MESSAGE : RECEIVED  - END
@@ -106,7 +103,6 @@ public class GCMMessageManager {
         db = null;
         dbManager = null;
         
-        packet = null;
         payload = null;
         events = null;
         
@@ -117,8 +113,7 @@ public class GCMMessageManager {
     }
 	
 	// on Message in cases
-	private void onChat () {
-		Chat chat = new Chat(payload, true, NOT_SPECIFIED);
+	private void onChat (Chat chat) {
 
 		switch(messageSubType) {
 			case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
@@ -175,8 +170,7 @@ public class GCMMessageManager {
 		nm.notify(chat.type, nt);
 	}
 	
-	private void onDocument() {
-		Document document = new Document(payload, true, NOT_SPECIFIED, false);
+	private void onDocument(Document document) {
 		
 		switch(messageSubType) {
 			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
@@ -232,8 +226,7 @@ public class GCMMessageManager {
 		nm.notify(document.type, nt);
 	}
 	
-	private void onSurvey() {
-		Survey survey = new Survey(payload, true, NOT_SPECIFIED);
+	private void onSurvey(Survey survey) {
 		
 		if(messageSubType == Survey.TYPE_DEPARTED){
 			tableName = DBManager.TABLE_SURVEY;
@@ -286,7 +279,7 @@ public class GCMMessageManager {
 		
 		nm.notify(survey.type, nt);
 	}
-	
+
 	//// Helper Procedures	//// 
 	
 	private List<ActivityManager.RunningAppProcessInfo> processList(Context context) {

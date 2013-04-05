@@ -27,16 +27,18 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
 	
-	private static final String FWD_FORWARDS = "forwards";
-	public static final String FWD_FORWARDER_IDX = "forwarder";
-	public static final String FWD_ARRIVAL_DT = "TS";
-	public static final String FWD_CONTENT = "content";
+	private	static final String FWD_FORWARDS 		= "forwards";
+	public	static final String FWD_FORWARDER_IDX 	= "forwarder";
+	public	static final String FWD_ARRIVAL_DT 		= "TS";
+	public	static final String FWD_CONTENT 		= "content";
+	
 	
 	// Specific Variables not to be sent
 	public boolean favorite = false;
 	
-	private ArrayList<HashMap<String, String>> _forwards;
-
+	private ArrayList<HashMap<String, String>> forwards;
+	private	ArrayList<HashMap<String, String>> files; 
+	
 	// Constructor
 	public Document() {}
 	
@@ -186,9 +188,13 @@ public class Document extends Message implements Parcelable{
 	}
 
 	public ArrayList<HashMap<String, String>> getForwards() {
-		if(_forwards == null)
-			_forwards = new ArrayList<HashMap<String, String>>();
-		return _forwards;
+		if(forwards == null)
+			forwards = new ArrayList<HashMap<String, String>>();
+		return forwards;
+	}
+	
+	public ArrayList<HashMap<String, String>> getFilesInfo() {
+		return files;
 	}
 	
 	protected int getType() {

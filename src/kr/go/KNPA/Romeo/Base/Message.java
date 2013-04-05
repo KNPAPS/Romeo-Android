@@ -48,14 +48,15 @@ public class Message implements Parcelable{
 	
 	// Variables to be sent
 	public String 			idx 		= null;
-	private int 				type		= NOT_SPECIFIED;
+	protected int 			type		= NOT_SPECIFIED;
 	
 	public String 			title		= null;
 	public String 			content		= null;
-	public Appendix 		appendix	= null;
+	//public Appendix 		appendix	= null;
 	
 	public User 			sender		= null;
 	public ArrayList<User> 	receivers 	= null;
+	
 	public long 			TS			= NOT_SPECIFIED;
 	public ArrayList<User>	uncheckers 	= null;
 	
