@@ -33,17 +33,17 @@ import android.util.Pair;
  *	//콜백함수 설정
  *	ConnectionCallback callBack = new ConnectionCallback(){
  *		@Override
- *		public void beforeSend(Payload request) {
+ *		public void onPreExecute(Payload request) {
  *				logBeforeSend(request);
  *			}
  *			
  *		@Override
- *		public void error(Payload request, String errorMsg, Exception e){
+ *		public void onError(Payload request, String errorMsg, Exception e){
  *			logOnError(request, errorMsg, e);
  *		}
  *			
  *		@Override
- *		public void success(Payload response) {
+ *		public void onPostExecute(Payload response) {
  *			logOnSuccess(response);	
  *		}
  *	};

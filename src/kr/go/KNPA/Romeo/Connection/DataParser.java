@@ -36,8 +36,10 @@ public class DataParser {
 		Data dataNative = null;
 		
 		if ( event == Event.MESSAGE_SEND ) {
-			dataNative = new Data();
-			dataNative.add(0, Data.KEY_MESSAGE,  Message.parseMessage(dataJSONArray.toString()) );
+			dataNative = parse_on_msg_send(dataJSONArray);					
+		} else if ( event == Event.MESSAGE_RECEIVE ) {
+			dataNative = parse_on_msg_receive(dataJSONArray);	
+			
 		} else {
 			dataNative = basicParse(dataJSONArray);
 		}
@@ -61,6 +63,32 @@ public class DataParser {
 		for ( i=0; i<n; i++ ) {
 	        dataNative.add( JSONObjectToHashMap( dataJSONArray.getJSONObject(i) ) );
 		}
+		
+		return dataNative;
+	}
+	
+	/**
+	 * MESSAGE:SEND 이벤트에 대한 파싱
+	 * @param dataJSONArray
+	 * @return
+	 */
+	private static Data parse_on_msg_send(JSONArray dataJSONArray) {
+		Data dataNative = new Data();
+		dataNative.add(0, Data.KEY_MESSAGE,  Message.parseMessage(dataJSONArray.toString()) );
+		return dataNative;
+	}
+	
+	/**
+	 * MESSAGE:RECEIVE 이벤트에 대한 파싱
+	 * @param dataJSONArray
+	 * @return
+	 * @throws JSONException 
+	 */
+	private static Data parse_on_msg_receive(JSONArray dataJSONArray) throws JSONException {
+		Data dataNative = new Data();
+		HashMap<String,Object> hm = JSONObjectToHashMap(dataJSONArray.getJSONObject(0));
+		
+		//JSONObject hm.get(Data.KEY_MESSAGE);
 		
 		return dataNative;
 	}
