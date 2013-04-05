@@ -135,4 +135,5 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	public static final String KEY_FILE_TYPE = "file_type";
 	
 	public static final String KEY_FILE_SIZE = "file_size";
+	
 }

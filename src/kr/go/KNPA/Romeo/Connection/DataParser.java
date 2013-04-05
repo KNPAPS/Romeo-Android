@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.GCM.GCMSendResult;
 import kr.go.KNPA.Romeo.Survey.Survey;
 
 import org.json.JSONArray;
@@ -64,7 +65,7 @@ public class DataParser {
 		int i,n;
 		n = dataJSONArray.length();
 		for ( i=0; i<n; i++ ) {
-	        dataNative.add( JSONObjectToHashMap( dataJSONArray.getJSONObject(i) ) );
+	        dataNative.add( DataParser.<Object>JSONObjectToHashMap( dataJSONArray.getJSONObject(i) ) );
 		}
 		
 		return dataNative;
@@ -74,10 +75,36 @@ public class DataParser {
 	 * MESSAGE:SEND 이벤트에 대한 파싱
 	 * @param dataJSONArray
 	 * @return
+	 * @throws JSONException 
 	 */
-	private static Data parse_on_msg_send(JSONArray dataJSONArray) {
+	private static Data parse_on_msg_send(JSONArray dataJSONArray) throws JSONException {
 		Data dataNative = new Data();
-
+		
+		HashMap<String,Object> hm = new HashMap<String, Object>();
+		JSONObject jo = dataJSONArray.getJSONObject(0);
+		hm.put(Data.KEY_MESSAGE_HASH, jo.get(Data.KEY_MESSAGE_HASH));
+		hm.put(Data.KEY_REG_IDS, jo.get(Data.KEY_REG_IDS));
+		hm.put(Data.KEY_RECEIVER_HASH, jo.get(Data.KEY_RECEIVER_HASH));
+		
+		GCMSendResult result = new GCMSendResult();
+		JSONObject gjo = jo.getJSONObject(Data.KEY_GCM_SEND_RESULT);
+		result.canonicalIds = gjo.getInt(Data.KEY_GCM_CANONICAL_IDS);
+		result.nSuccess = gjo.getInt(Data.KEY_GCM_SUCCESS);
+		result.nFailure = gjo.getInt(Data.KEY_GCM_FAILURE);
+		result.multicastId = gjo.getInt(Data.KEY_GCM_MULTICAST_ID);
+		
+		ArrayList<HashMap<String,String>> eachResultAr = new ArrayList<HashMap<String,String>>();
+		
+		JSONArray jar = gjo.getJSONArray(Data.KEY_GCM_RESULTS);
+		for ( int i=0; i<jar.length(); i++ ) {
+			JSONObject j = jar.getJSONObject(i);
+			eachResultAr.add( DataParser.<String>JSONObjectToHashMap(j) );
+		}
+		result.eachResult = eachResultAr;
+		
+		hm.put(Data.KEY_GCM_SEND_RESULT,result);
+		
+		dataNative.add(hm);
 		return dataNative;
 	}
 	
@@ -134,15 +161,15 @@ public class DataParser {
 		return arrayList;
 	}
 	
-	private static HashMap<String,Object> JSONObjectToHashMap(JSONObject jsonObject) throws JSONException {
+	private static <T> HashMap<String,T> JSONObjectToHashMap(JSONObject jsonObject) throws JSONException {
 		
-		HashMap<String,Object> hm = new HashMap<String,Object>();
+		HashMap<String,T> hm = new HashMap<String,T>();
 		
         Iterator<?> keys = jsonObject.keys();
 
         while( keys.hasNext() ){
             String key = (String)keys.next();
-            hm.put( key, jsonObject.get(key) );
+            hm.put( key, (T)jsonObject.get(key) );
         }
         
 		return hm;
