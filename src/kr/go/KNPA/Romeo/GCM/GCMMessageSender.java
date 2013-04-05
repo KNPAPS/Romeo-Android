@@ -1,7 +1,15 @@
 package kr.go.KNPA.Romeo.GCM;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Member.Department;
+import kr.go.KNPA.Romeo.Util.CollectionFactory;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,12 +17,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-
-import kr.go.KNPA.Romeo.Base.*;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Member.Department;
-import kr.go.KNPA.Romeo.Member.MemberManager;
-import kr.go.KNPA.Romeo.Util.*;
 
 public class GCMMessageSender {
 
@@ -56,83 +58,54 @@ public class GCMMessageSender {
 		return result;
 	}
 	
-	public static boolean setMessageChecked(Context context, int type, long idx) {
-		String json = "{\"type\":"+type+",\"idx\":"+idx+",\"user\":"+UserInfo.getUserIdx(context)+"}";
-		Connection conn = new Connection.Builder()
-										.dataType(Connection.DATATYPE_JSON)
-										.type(Connection.TYPE_POST)
-										.url(Connection.HOST_URL + "/message/setMessageChecked")
-										.data(json)
-										.build();
-		String result = null;
-		int requestCode = conn.request();
-		if(requestCode == Connection.HTTP_OK) {
-			result = conn.getResponse();
+	public static boolean setMessageChecked(int type, String messageIdx, String userIdx) {
+		Payload request = new Payload().setData(
+				new Data()
+					.add(0, Data.KEY_MESSAGE_TYPE, type)
+					.add(0, Data.KEY_MESSAGE_HASH, messageIdx)
+					.add(0, Data.KEY_USER_HASH, userIdx)
+				);
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Payload response = conn.getResponsePayload();
+		
+		if ( response.getStatusCode() == StatusCode.SUCCESS ){
+			String result = (String)response.getData().get(0, Data.KEY_MESSAGE);
+			return true;
 		} else {
 			return false;
 		}
-		
-		if(result == null) return false;
-		
-		JSONObject jo=null;
-		try {
-			 jo = new JSONObject(result);
-		} catch (JSONException e) {
-			return false;
-		}
-		
-		if(jo == null) return false;
-		
-		boolean status = false;
-		try {
-			status = (jo.getInt("status") == 1?true:false);
-		} catch (JSONException e) {
-			return false;
-		}
-		
-		return status;
 	}
 
-	public static String requestUncheckers(int type, long idx) {
-		String json = "{type:"+type+",idx:"+idx+"}";
-		Connection conn = new Connection.Builder()
-										.url(Connection.HOST_URL + "/message/getUncheckers")
-										.type(Connection.TYPE_GET)
-										.dataType(Connection.DATATYPE_JSON)
-										.data(json)
-										.build();
-		int responseCode = conn.request();
-		String response = null;
-		if(responseCode == Connection.HTTP_OK) {
-			response = conn.getResponse();
+	public static ArrayList<String> getUncheckers(int type, String idx) {
+		Payload request = new Payload().setData(new Data().add(0, Data.KEY_MESSAGE_TYPE, type).add(0, Data.KEY_MESSAGE_HASH, idx));
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Payload response = conn.getResponsePayload();
+		
+		ArrayList<String> uncheckers = new ArrayList<String>();
+		if ( response.getStatusCode() == StatusCode.SUCCESS ){
+			Data respData = response.getData();
+			int nUncheckers = respData.size();
+			for(int i=0; i<nUncheckers; i++) {
+				uncheckers.add( (String)respData.get(i, Data.KEY_USER_HASH) );
+			}
+			
 		}
 		
-		if(response == null) return null;
-		
-		JSONArray _uncheckers= null;
-		try {
-			JSONObject jo = new JSONObject(response);
-			_uncheckers = jo.getJSONArray("uncheckers");
-		} catch (JSONException e) {
-			return null;
-		}
-		
-		
-		// TODO : if TSs need?
-		/*
-		JSONArray _TSs= null;
-		try {
-			JSONObject jo = new JSONObject(response);
-			_TSs = jo.getJSONArray("TSs");
-		} catch (JSONException e) {
-			return null;
-		}
-		*/
-		if(_uncheckers == null) return null;
-		return _uncheckers.toString();
+		return uncheckers;
 	}
 	
 	public static long sendMessage(Message message) {
+		Data data = new Data();
+		data.add(0, Data.KEY_SENDER_HASH, message.sender.idx);
+		data.add(0, Data.KEY_RECEIVER_HASH, message.receivers);
+		if(message.mainType() == Message.MESSAGE_TYPE_CHAT) {
+			data.add(0, Data.KEY_ROOM_HASH, message.appendix.getRoomCode());
+		}
+		
+		data.add(0, Data.Key_, value)
+		Payload request = new Payload().setData(data);
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		
 		Payload payload = new Payload.Builder()
 									.message(message)
 									.sender(message.sender)

@@ -7,76 +7,58 @@ import kr.go.KNPA.Romeo.Util.IndexPath;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 //Inner Class Member List Adapter //
 public class MemberListAdapter extends BaseAdapter implements OnItemClickListener {
-	public Department rootDepartment;
+	
 	private Context context;
-	private CellNode models = new CellNode();
+	private CellNode _rootNode;
+	
 	public int type = User.NOT_SPECIFIED;
-	public static CellNode.NodeManager nodeManager;
-	public boolean nodeManagerReady = false;
 	
 	// related with SEARCH
 	public static int[] search;
 	
-	public MemberListAdapter() {
-		
-	}
+	public MemberListAdapter() {}
 	
-	public MemberListAdapter(Context context, int type, Department root) {
+	public MemberListAdapter(Context context, int type) {
 		this.context = context;
-		rootDepartment = root;
 		this.type = type;
 		
+		this._rootNode = new CellNode().isRoot(true).isUnfolded(true).parent((CellNode)null);
 		
-
-		nodeManager = new CellNode.NodeManager(context, this);
+		ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(null);
+		
+		for(int i=0; i< deps.size(); i++) {
+			CellNode node = new CellNode().index(i).isRoot(false).isUnfolded(false).parent(this.rootNode()).type(CellNode.CN_DEPARTMENT).idx(deps.get(i).idx);
+			this.rootNode().append(node);
+		}
 		
 	}
 	
+	public CellNode rootNode() {
+		return _rootNode;
+	}
 	
 	public void refresh() {
-		String json = nodeManager.command("test("+System.currentTimeMillis()+"+\"\")");
-		if(json == null) json = "null";
-		Log.d("REFRESH", json);
-		
-		ArrayList<Department> deps = rootDepartment.departments;
-		models.isRoot = true;
-		models.setUnfolded(true);
-		for(int i=0; i<deps.size(); i++) {
-			CellNode node = new CellNode.Builder()
-												  .type(CellNode.CELLNODE_DEPARTMENT)
-												  .parentIndexPath(null)
-												  .index(i)
-												  .unfolded(false)
-												  .build();
-			models.add(node);
-		}
 
-		this.notifyDataSetChanged();
+		//this.notifyDataSetChanged();
 	}
 	
 	@Override
 	public int getCount() {
-		if(nodeManagerReady == true) {
-			return models.count();
-		} else {
-			return 0;
-		}
+		return this.rootNode().count();
 	}
 
 	@Override
@@ -100,10 +82,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		Department department = null;
 		User user = null;
 		
-		CellNode node = CellNode.nodeAtIndexPath(models, path);
+		CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
 		
 		// TODO : cell Reusing source
-		if(node.type == CellNode.CELLNODE_DEPARTMENT) {
+		if(node.type() == CellNode.CN_DEPARTMENT) {
 			if(this.type == User.TYPE_MEMBERLIST) {
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_department_cell, parent, false);
 			} else if(this.type == User.TYPE_MEMBERLIST_SEARCH) {
@@ -112,27 +94,26 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				control.setTag(path);
 				control.setOnClickListener(searchCheck);
 				
-				switch(node.status) {
-					case 0 : control.setBackgroundResource(R.drawable.circle); break;
-					case 2 : control.setBackgroundResource(R.drawable.circle_check_gray); break;
-					case 1 : control.setBackgroundResource(R.drawable.circle_check_active); break;
+				switch(node.status()) {
+					case CellNode.NCHECK : control.setBackgroundResource(R.drawable.circle); break;
+					case CellNode.HCHECK : control.setBackgroundResource(R.drawable.circle_check_gray); break;
+					case CellNode.FCHECK : control.setBackgroundResource(R.drawable.circle_check_active); break;
 				}
 
 			}
-			// TODO : EVENTLISTENER
+			// TODO : EVENT LISTENER
 			department = (Department)model;
 			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
-			titleTV.setText(department.title);
+			titleTV.setText(department.name);
 			
-		} else if (node.type == CellNode.CELLNODE_USER) {
+		} else if (node.type() == CellNode.CN_USER) {
 			user = (User)model;
-			int uDepartment = user.department;
-			long uIdx = user.idx;
-			String[] uLevels = user.levels;
-			String uName = user.name;
-			int uPicIdx = user.pic;
+			Department uDepartment = user.department;
+			String uIdx = user.idx;
+			String uName = user.name; 
+			String uRole = user.role;
 			int uRank = user.rank;
-			long uTS = user.TS;
+
 			if(this.type == User.TYPE_MEMBERLIST) {
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_user_cell, parent, false);	
 			} else if (this.type == User.TYPE_MEMBERLIST_SEARCH){
@@ -141,10 +122,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				control.setTag(path);
 				control.setOnClickListener(searchCheck);
 				
-				switch(node.status) {
-					case 0 : control.setBackgroundResource(R.drawable.circle); break;
-					case 2 : control.setBackgroundResource(R.drawable.circle_check_gray); break;
-					case 1 : control.setBackgroundResource(R.drawable.circle_check_active); break;
+				switch(node.status()) {
+					case CellNode.NCHECK : control.setBackgroundResource(R.drawable.circle); break;
+					case CellNode.HCHECK : control.setBackgroundResource(R.drawable.circle_check_gray); break;
+					case CellNode.FCHECK : control.setBackgroundResource(R.drawable.circle_check_active); break;
 				}
 			}
 			TextView rankTV = (TextView)convertView.findViewById(R.id.rank);
@@ -154,10 +135,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			TextView roleTV = (TextView)convertView.findViewById(R.id.role);
 			roleTV.setText("ROLE");
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
-			departmentTV.setText(""+uDepartment);
+			departmentTV.setText(uDepartment.nameFull);
 		}
 		
-		if(node.type == CellNode.CELLNODE_DEPARTMENT || node.type == CellNode.CELLNODE_USER) {
+		if(node.type() == CellNode.CN_DEPARTMENT || node.type() == CellNode.CN_USER) {
 			final int IdtMargin = 16;
 			ImageView siIV = (ImageView)convertView.findViewById(R.id.sub_indicator);
 			LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) siIV.getLayoutParams();
@@ -179,15 +160,15 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	}
 	
 	public int numberOfFoldingRowsInSection(IndexPath path) {
-		return numberOfRowsOfTypeInSection(CellNode.CELLNODE_DEPARTMENT, path);
+		return numberOfRowsOfTypeInSection(CellNode.CN_DEPARTMENT, path);
 	}
 	
 	public int numberOfPlainRowsInSection(IndexPath path) {
-		return numberOfRowsOfTypeInSection(CellNode.CELLNODE_USER, path);
+		return numberOfRowsOfTypeInSection(CellNode.CN_USER, path);
 	}
 	
 	public CellNode nodeForRowAtIndexPath(IndexPath path) {
-		return CellNode.nodeAtIndexPath(models, path);
+		return CellNode.nodeAtIndexPath(this.rootNode(), path);
 	}
 	
 	public int numberOfRowsOfTypeInSection(int type, IndexPath path) {
@@ -196,36 +177,36 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		CellNode node = nodeForRowAtIndexPath(path);
 		int firstUserCellIndex = -1;
 		
-		for(int i=0; i< node.size(); i++) {
-			if(node.get(i).type == CellNode.CELLNODE_USER) {
+		for(int i=0; i< node.children().size(); i++) {
+			if(node.children().get(i).type() == CellNode.CN_USER) {
 				firstUserCellIndex = i;
 				break;
 			}
 		}
 		
-		if(type == CellNode.CELLNODE_DEPARTMENT) {
+		if(type == CellNode.CN_DEPARTMENT) {
 			result = firstUserCellIndex;
-		} else if(type == CellNode.CELLNODE_USER) {
-			result = node.size() - firstUserCellIndex;
+		} else if(type == CellNode.CN_USER) {
+			result = node.children().size() - firstUserCellIndex;
 		}
 		return result;
 	}
 	
 	public int nodeOrderInTypeWithIndexPath(int type, IndexPath path) {
 		int result = -1;
-		if(type == CellNode.CELLNODE_DEPARTMENT) {
+		if(type == CellNode.CN_DEPARTMENT) {
 			// Department 후에 Users가 나오므로, Department는 그대로 return해도 무방하다.
 			IndexPath.Iterator itr = new IndexPath.Iterator(path);
 			result = itr.lastIndex();
-		} else if(type == CellNode.CELLNODE_USER) {
+		} else if(type == CellNode.CN_USER) {
 			IndexPath.Iterator itr = new IndexPath.Iterator(path);
 			int lastIndex = itr.lastIndex();
 			
 			IndexPath parentPath = path.indexPathByRemovingLastIndex();
 			CellNode parentNode = nodeForRowAtIndexPath(parentPath);
 			int firstUserCellIndex = -1;
-			for(int i=0; i< parentNode.size(); i++) {
-				if(parentNode.get(i).type == CellNode.CELLNODE_USER) {
+			for(int i=0; i< parentNode.children().size(); i++) {
+				if(parentNode.children().get(i).type() == CellNode.CN_USER) {
 					firstUserCellIndex = i;
 					break;
 				}
@@ -236,34 +217,22 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		return result;
 	}
 	private int getNodeTypeAtIndexPath(IndexPath path) {
-		CellNode node = CellNode.nodeAtIndexPath(models, path);
-		return node.type;
+		CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
+		return node.type();
 	}
 	public Object objectForRowAtIndexPath(IndexPath path) {
 		Object obj = null;
 		
-		int objectType = getNodeTypeAtIndexPath(path);
+		CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
+		String idx = node.idx();
+		int objectType = node.type();	//getNodeTypeAtIndexPath(path);
 		
-		int[] paths = path.getIndexes(null);
-		int lastIndex = paths[(paths.length-1)];
-		
-		Department dep = rootDepartment;
-		ArrayList<Department> deps = null;
-		for(int i =0; i<(paths.length-1); i++) {
-			int index = paths[i];
-			deps = dep.departments;
-			dep = deps.get(index);
+		if(objectType == CellNode.CN_DEPARTMENT) {
+			obj = (Object)MemberManager.sharedManager().getDeptartment(idx);
+		} else if (objectType == CellNode.CN_USER){
+			obj = (Object)MemberManager.sharedManager().getUser(idx);
 		}
-
-		int order = -1;
-		if(objectType == CellNode.CELLNODE_DEPARTMENT) {
-			order = nodeOrderInTypeWithIndexPath(CellNode.CELLNODE_DEPARTMENT, path);
-			obj = (Object)dep.departments.get(order);
-		} else if (objectType == CellNode.CELLNODE_USER) {
-			order = nodeOrderInTypeWithIndexPath(CellNode.CELLNODE_USER, path);
-			obj = (Object)dep.users.get(order);
-		}
-		
+				
 		return obj;
 	}
 	
@@ -284,19 +253,17 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	public IndexPath getIndexPathFromPosition(int pos) {
 		IndexPath path = null;
 		
-		
 		int[] l = new int[IndexPath.MAX_LENGTH];
 		for(int i=0; i<l.length; i++) {
 			l[i] = -1;
 		}
 		
-		CellNode cn = models;
+		CellNode cn = this.rootNode();
 		
 		int cnt = 0;
 		int li = 0;
 		while( true ){
-			//CellNode _cn = cn.get(li).copy(); // TODO
-			CellNode _cn = cn.get(li); 
+			CellNode _cn = cn.children().get(li); 
 			
 			int _cnt = cnt + _cn.count(); 
 			
@@ -305,7 +272,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				if((cnt + 1) == (pos+1) ) { // cn.size() == 0;
 					// 기존 cnt에 하나만 더한 것이 pos 값과 같다면, 현재 element를 선택한 것이다.
 					// child가 존재했다면 _cnt > pos 였을 것이고, child가 존재하지 않았다면 _cnt == pos 였을 것이다.
-					path = _cn.getIndexPath();
+					path = _cn.indexPath();
 					break;
 				} else {
 					// 그게 아니라면, 하위 오브젝트를 선택한 것이므로,
@@ -334,17 +301,17 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		int cnt = 0;
 		
 		for(int li=0; li<paths.length; li++) {
-			CellNode cn = models;
+			CellNode cn = this.rootNode();
 			int l = paths[li];
 			
 			
 			for(int i=0; i< li; i++) {
 				int _l = paths[li];
-				cn = cn.get(_l);
+				cn = cn.children().get(_l);
 			}
 			
 			for(int i=0; i < paths[l]; i++) {
-				cnt += cn.get(i).count();
+				cnt += cn.children().get(i).count();
 			}
 		}
 		
@@ -367,78 +334,62 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		IndexPath path = getIndexPathFromPosition(position);
 		IndexPath.Iterator itr = new IndexPath.Iterator(path);
 
-		CellNode cn = models;
-		// indexPath의 index들을 하나하나 따라간다.
-		while(itr.hasNextIndex()) {
-			Department dp = rootDepartment;
-			int idx = itr.nextIndex();
-			cn = cn.get(idx);
+		
+		
+		CellNode nodeClicked = CellNode.nodeAtIndexPath(this.rootNode(), path);
+		if(nodeClicked.type() == CellNode.CN_USER) {	
+		// node의 type이 USER이면 상세안내창 띄우기
+			Intent intent = new Intent(this.context, MemberDetailActivity.class);
 			
-			if(cn.type == CellNode.CELLNODE_USER) {
-			// node의 type이 USER이면 상세안내창 띄우기
-				Intent intent = new Intent(this.context, MemberDetailActivity.class);
-				Bundle b = new Bundle();
-				User user = (User)getItem(position);
-				b.putString("idxs", ""+user.idx);
-				//b.putBoolean("fromFavorite", false);
-				intent.putExtras(b);
-				this.context.startActivity(intent);
-
-			} else if(cn.type == CellNode.CELLNODE_DEPARTMENT) {
-			// node의 type이 DEPARTMENT이면 
+			Bundle b = new Bundle();
+			User user = (User)getItem(position);
+			b.putString("idxs", ""+user.idx);
 			
-				if(cn.isUnfolded() == false) {
-				// unfolded == false 이면
-				// 안에 내용물이 있는지 확인하고,
-					if(cn.size() > 0) {
-					// 있다면 그냥 unfold
-						cn.setUnfolded(true);
-					} else {
-					// 없다면 추가
-					// 누른 것은 department이므로, indexpath를 이용하여 해당 아이템을 데이터로부터 가져온다.
-						int[] untilNow = itr.getIndexesUntilNow();
-						for(int i=0; i< untilNow.length; i++) {
-							dp = dp.departments.get(untilNow[i]);
-						}
-					// 정보를 쭉 읽으며 node에 저장시키고, departments와 users..흐규흐규
-						ArrayList<Department> deps = dp.departments;
-						ArrayList<User> uss = dp.users;
-						
-						int indexForChildren = 0;
-						for(int i=0; i<deps.size(); i++) {
-							CellNode child = new CellNode.Builder().type(CellNode.CELLNODE_DEPARTMENT)
-																   .parentIndexPath(IndexPath.indexPathWithIndexesAndLength(untilNow, untilNow.length))
-																   .index(indexForChildren++)
-																   .unfolded(false)
-																   .build();
-							cn.add(child);
-						}
-						
-						for(int i=0; i<uss.size();i++) {
-							CellNode child = new CellNode.Builder().type(CellNode.CELLNODE_USER)
-																   .parentIndexPath(IndexPath.indexPathWithIndexesAndLength(untilNow, untilNow.length))
-																   .index(indexForChildren++)
-																   .unfolded(false)
-																   .build();
-							cn.add(child);
-						}
-						
-						cn.setUnfolded(true);
+			intent.putExtras(b);
+			this.context.startActivity(intent);
+			
+		} else if(nodeClicked.type() == CellNode.CN_DEPARTMENT) {
+		// node의 type이 DEPARTMENT이면
+			if(nodeClicked.isUnfolded() == false) {
+			// unfolded == false 이면
+				if(nodeClicked.children() != null && nodeClicked.children().size() >0) {
+				// 숨겨진 children이 있으면.
+					nodeClicked.isUnfolded(true);
+				} else {
+				// 숨겨진 children이 없으면.
+					
+					String deptIdx = nodeClicked.idx();
+					ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(deptIdx);
+					
+					int status;
+					switch(nodeClicked.status()) {
+						case CellNode.HCHECK : status = CellNode.NCHECK; break;	// NEVER REACH
+						case CellNode.FCHECK : status = CellNode.FCHECK; break;
+						default :
+						case CellNode.NCHECK : status = CellNode.NCHECK; break;
 					}
-				} else if(cn.isUnfolded() == true && (!itr.hasNextIndex()) ){
-				// unfolded == true이면,
-				// fold 시킨다.
-					cn.setUnfolded(false);
-				// 일단 하위 트리는 굳이 제거하지 말자.
+					for(int i=0; i<deps.size(); i++) {
+						CellNode node = new CellNode().type(CellNode.CN_DEPARTMENT).idx( deps.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
+						nodeClicked.append(node);
+					}
+					
+					ArrayList<User> users = MemberManager.sharedManager().getDeptMembers(deptIdx, false);
+					for(int i=0; i<users.size(); i++) {
+						CellNode node = new CellNode().type(CellNode.CN_USER).idx( users.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
+						nodeClicked.append(node);
+					}
+										
+					nodeClicked.isUnfolded(true);
 				}
+				
+			} else {
+			// unfolded == true이면,
+				nodeClicked.isUnfolded(false);
 			}
-			// 한단계 안의 index에 대해서도반복
-			
 		}
 		
 		// view referesh
 		this.notifyDataSetChanged();
-		// TODO : register dataset??
 	}
 	
 	
@@ -448,7 +399,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		@Override
 		public void onClick(View v) {
 			IndexPath path = (IndexPath)v.getTag();
-			CellNode node = CellNode.nodeAtIndexPath(models, path);
+			CellNode node = CellNode.nodeAtIndexPath(rootNode(), path);
 			node.check();
 			notifyDataSetChanged();
 		}

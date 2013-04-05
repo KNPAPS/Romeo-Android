@@ -3,8 +3,6 @@
  */
 package kr.go.KNPA.Romeo.Member;
 
-import java.util.ArrayList;
-
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
@@ -15,7 +13,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -64,6 +61,7 @@ public class MemberFragment extends RomeoFragment {
 	@Override
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
+		// BarButton Click Listners
 		OnClickListener lbbOnClickListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -74,9 +72,10 @@ public class MemberFragment extends RomeoFragment {
 		OnClickListener rbbOnClickListener = new OnClickListener() {		
 			@Override
 			public void onClick(View v) {
-				callMemberSearchActivity();
+				startMemberSearchActivity();
 			}
 		};
+		
 		
 		View view = null;
 		switch(this.type) {
@@ -120,24 +119,9 @@ public class MemberFragment extends RomeoFragment {
 					R.string.menu, 
 					R.string.dummy, 
 					lbbOnClickListener, rbbOnClickListener);
-			
-			Handler h = new Handler();
-			final int _t = this.type;
-			final View _v = view;
-			Runnable r = new Runnable() {
 				
-				@Override
-				public void run() {
-					try {
-						listView = (MemberListView)initListViewWithType(_t, R.id.memberListView, _v);
-					} catch (RuntimeException e) {
-						Toast.makeText(getActivity(), "통신 오류가 발생했습니다.", Toast.LENGTH_SHORT);
-						// TODO : getMembers 통신 오류 등이다. 다시 로드 할 수 있도록 조치를 취해야 하는데..
-					}
-				}
-			};
+			listView = (MemberListView)initListViewWithType(this.type, R.id.memberListView, view);
 			
-			h.postDelayed(r,100);
 			break;
 		}
 		
@@ -147,7 +131,7 @@ public class MemberFragment extends RomeoFragment {
 	}
 
 
-	private void callMemberSearchActivity() {
+	private void startMemberSearchActivity() {
 		
 		Intent intent = new Intent(getActivity(), MemberSearch.class);
 		

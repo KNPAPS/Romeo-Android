@@ -1,4 +1,4 @@
-package kr.go.KNPA.Romeo;
+package kr.go.KNPA.Romeo.Register;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,8 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.R.id;
+import kr.go.KNPA.Romeo.R.layout;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
@@ -238,6 +245,96 @@ public class UserRegisterActivity extends Activity {
 			finish();
 		} 
 	}
+	
+
+	public Bundle registerUser(Context context, Bundle b) {
+		String name = b.getString("name");
+		String[] departments = b.getStringArray("departments");
+		int rank = b.getInt("rank");
+		String role = b.getString("role");
+		String _picURI = b.getString("picURI");
+		Uri picURI = null;
+		if(_picURI != null) Uri.parse(_picURI);
+		
+		
+		StringBuilder sb = new StringBuilder();
+		
+		String q = "\"";
+		String c = ":";
+		
+		sb.append("{");
+		sb.append(q).append("name").append(q).append(c).append(q).append(name).append(q).append(",");
+		sb.append(q).append("levels").append(q).append(c).append("[");
+		for(int i=0; i<UserRegisterEditView.DROPDOWN_MAX_LENGTH; i++) {
+			if(departments[i]==null || departments[i].equals(context.getString(R.string.none))) break;
+			if(i!= 0) sb.append(",");
+			sb.append(q).append(departments[i]).append(q);
+		}
+		sb.append("]").append(",");
+		if(role != null && role.length()>0) 
+			sb.append(q).append("role").append(q).append(c).append(q).append(role).append(q).append(",");
+		sb.append(q).append("rank").append(q).append(c).append(rank);
+	
+		sb.append("}");
+		
+		String json = null;
+		
+		String url = Connection.HOST_URL + "/member/register";
+		Connection conn = new Connection.Builder()
+								.url(url)
+								.async(false)
+								.data(sb.toString())
+								.type(Connection.TYPE_POST)
+								.dataType(Connection.DATATYPE_JSON)
+								.build();
+		int requestCode = conn.request();
+		
+		if( requestCode == Connection.HTTP_OK) {
+			json = conn.getResponse();
+		}
+	
+		
+		Bundle result = new Bundle();
+		if(json == null ){
+			result.putBoolean("status",false);
+			return result;
+		}
+		
+		JSONObject jo = null;
+		try {
+			jo = new JSONObject(json);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(jo == null ){
+			result.putBoolean("status",false);
+			return result;
+		} 
+		
+		try {
+			result.putInt("status", jo.getInt("status"));
+			result.putLong("userIdx", jo.getLong("userIdx"));
+			result.putLong("departmentIdx", jo.getLong("departmentIdx"));			
+		} catch (JSONException e) {
+			result.putBoolean("status",false);
+			return result;
+		}
+
+		
+		
+		// TODO 사진 업로드하는 코드를 삽입한다.
+		if(picURI != null)
+			ImageManager.bitmapFromURI(context, picURI);
+		// 사진 업로드는 비동기로 이루어지며,
+		// sharedPreference에 사진 업로드 여부를 체크하는 변수를 할당한다. ( 추후 사진 변경시 등등 활용 할 수 있기 때문이다.)
+		// 앱이 켜질때 혹은 조직도 등 특정 조건 하에서 사진 전송 여부를 확인하여 되어있지 않았다면 수시로 업로드 할 수 있는 기회를 제공하도록 한다.
+		
+		
+		return result;
+	}
+	
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

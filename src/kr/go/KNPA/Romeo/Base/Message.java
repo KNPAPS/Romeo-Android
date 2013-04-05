@@ -1,26 +1,20 @@
 package kr.go.KNPA.Romeo.Base;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
-import com.google.gson.Gson;
-
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.Chat.Builder;
-import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Util.Connection;
-import kr.go.KNPA.Romeo.Util.DBManager;
 
 public class Message implements Parcelable{
 
@@ -42,8 +36,8 @@ public class Message implements Parcelable{
 	
 	
 	// Variables to be sent
-	public long 			idx 		= NOT_SPECIFIED;
-	public int 				type		= NOT_SPECIFIED;
+	public String 			idx 		= null;
+	private int 				type		= NOT_SPECIFIED;
 	
 	public String 			title		= null;
 	public String 			content		= null;
@@ -67,18 +61,18 @@ public class Message implements Parcelable{
 	}
 
 	public Message(Cursor c) {
-		long 			_idx 		= c.getLong(c.getColumnIndex("idx"));
+		String 			_idx 		= c.getString(c.getColumnIndex("idx"));
 		//type
 		String 			_title 		= c.getString(c.getColumnIndex("title"));
 		String 			_content 	= c.getString(c.getColumnIndex("content"));
 		Appendix		_appendix	= Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
-		User 			_sender		= User.getUserWithIdx(c.getLong(c.getColumnIndex("sender")));
-		ArrayList<User> _receivers 	= User.indexesInStringToArrayListOfUser(c.getString(c.getColumnIndex("receivers")));
+		User 			_sender		= User.getUserWithIndex(c.getString(c.getColumnIndex("sender")));
+		ArrayList<User> _receivers 	= User.getUsersWithIndexes(c.getString(c.getColumnIndex("receivers")));
 		long 			_TS			= c.getLong(c.getColumnIndex("TS"));
 		boolean 		_checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
 		long 			_checkTS	= c.getLong(c.getColumnIndex("checkTS"));
 		boolean 		_received 	= (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);
-		ArrayList<User> _uncheckers = User.indexesInStringToArrayListOfUser(c.getString(c.getColumnIndex("uncheckers")));
+		ArrayList<User> _uncheckers = User.getUsersWithIndexes(c.getString(c.getColumnIndex("uncheckers")));
 		
 		this.idx 		= _idx;
 		this.title 		= _title;
@@ -93,12 +87,20 @@ public class Message implements Parcelable{
 		this.uncheckers = _uncheckers;
 	}
 	
-	protected int getType() {
-		return NOT_SPECIFIED;
-	}
-	
 	public static int makeType(int type, int subType) {
 		return type * Message.MESSAGE_TYPE_DIVIDER + subType;
+	}
+	
+	public int type() {
+		return type;
+	}
+	
+	public int mainType() {
+		return type / Message.MESSAGE_TYPE_DIVIDER;
+	}
+	
+	public int subType() {
+		return type % Message.MESSAGE_TYPE_DIVIDER;
 	}
 	
 	public String toJSON() {
@@ -126,7 +128,7 @@ public class Message implements Parcelable{
 	}
 	
 	public static class Builder {
-		protected long 			_idx 		= NOT_SPECIFIED;
+		protected String 		_idx 		= null;
 		protected int 			_type		= NOT_SPECIFIED;
 		protected String 			_title		= null;
 		protected String 			_content	= null;
@@ -139,7 +141,7 @@ public class Message implements Parcelable{
 		
 		protected boolean 		_checked 	= false;
 		protected long 			_checkTS	= NOT_SPECIFIED;
-		public Builder idx(long idx) {
+		public Builder idx(String idx) {
 			_idx = idx;
 			return this;
 		}
@@ -238,7 +240,7 @@ public class Message implements Parcelable{
 	
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(idx);
+		dest.writeString(idx);
 		dest.writeString(title);
 		dest.writeInt(type);
 		dest.writeString(content);
@@ -252,7 +254,7 @@ public class Message implements Parcelable{
 	}
 	
 	public void readFromParcel(Parcel source) {
-		idx = source.readLong();
+		idx = source.readString();
 		title = source.readString();
 		type = source.readInt();
 		content = source.readString();
@@ -267,46 +269,29 @@ public class Message implements Parcelable{
 	}
 	
 	//	getting Message Uncheckers
-	public static long[] getUncheckersInIntArrayWithMessageTypeAndIndex(int type, long index) {
-		String __uncheckers = GCMMessageSender.requestUncheckers(type, index);
-		String[] _uncheckers = __uncheckers.split("/[^0-9]+");
-		long[] uncheckers = new long[(_uncheckers.length-2)];
-		for(int i=0; i< uncheckers.length; i++) {
-			uncheckers[i] = Long.getLong(_uncheckers[i+1]);
-		}
-		
-		return uncheckers;
+	public static ArrayList<String> getUncheckersIdxsWithMessageTypeAndIndex(int type, String index) {
+		return GCMMessageSender.getUncheckers(type, index);
 	}
 	
-	public static long[] getUncheckersInIntArrayWithMessage(Message message) {
-		return getUncheckersInIntArrayWithMessageTypeAndIndex(message.type, message.idx);
+	public static ArrayList<String> getUncheckersIdxsWithMessage(Message message) {
+		return getUncheckersIdxsWithMessageTypeAndIndex(message.type, message.idx);
 	}
 	
-	public static ArrayList<User> getUncheckersInUsersWithMessageTypeAndIndex(int type, long index) {
-		long[] uncheckers = getUncheckersInIntArrayWithMessageTypeAndIndex(type, index);
+	public static ArrayList<User> getUncheckersWithMessageTypeAndIndex(int type, String index) {
+		ArrayList<String> uncheckers = getUncheckersIdxsWithMessageTypeAndIndex(type, index);
 		return User.getUsersWithIndexes(uncheckers);
-	}
-	
-	public static ArrayList<User> uncheckersInUsersWithMessageTypeAndIndex(int type, long index) {
-		long[] uncheckers = getUncheckersInIntArrayWithMessageTypeAndIndex(type, index);
-		return User.usersWithIndexes(uncheckers);
 	}
 	
 	public static ArrayList<User> getUncheckersInUsersWithMessage(Message message) {
-		long[] uncheckers = getUncheckersInIntArrayWithMessage(message);
+		ArrayList<String> uncheckers = getUncheckersIdxsWithMessage(message);
 		return User.getUsersWithIndexes(uncheckers);
 	}
-	
-	public static ArrayList<User> uncheckersInUsersWithMessage(Message message) {
-		long[] uncheckers = getUncheckersInIntArrayWithMessage(message);
-		return User.usersWithIndexes(uncheckers);
-	}
-	
+
 	public void setChecked(Context context) {
 		if(this.checked == false) {
 			
 			// TODO : make Async
-			boolean result = GCMMessageSender.setMessageChecked(context, this.type, this.idx);
+			boolean result = GCMMessageSender.setMessageChecked(this.type, this.idx, UserInfo.getUserIdx(context));
 			
 			if(result == true) {
 				

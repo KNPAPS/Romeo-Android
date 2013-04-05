@@ -76,12 +76,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		boolean isGroup = c.getInt(c.getColumnIndex("isGroup")) == 1 ? true : false;
 		
 		String[] _idxs = idxs.split(":");
-		long[] indexes = new long[_idxs.length];
-		
-		for(int i=0; i<_idxs.length; i++) {
-			indexes[i] = Long.parseLong(_idxs[i]);
-		}
-		
+
 		
 		ImageView userPicIV= (ImageView)v.findViewById(R.id.userPic);
 		TextView departmentTV= (TextView)v.findViewById(R.id.department);
@@ -95,14 +90,14 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		String name = "";
 		String role = "";
 		
-		if(indexes.length > 1) {
+		if(_idxs.length > 1) {
 			// 그룹
 		} else {
 			// 개인
-			User user = User.userWithIdx(indexes[0]);
+			User user = User.getUserWithIndex(_idxs[0]);
 			rank = User.RANK[user.rank];
 			name = user.name;
-			department = user.getDepartmentFull();
+			department = user.department.nameFull;
 		}
 		
 		
@@ -188,29 +183,24 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		}
 	}
 	
-	public long[] collect() {
+	public ArrayList<String> collect() {
 		String s = null;
 		String[] ss = null;
 		
-		ArrayList<Long> _indexes = new ArrayList<Long>();
+		ArrayList<String> indexes = new ArrayList<String>();
 		
 		for(int i=0; i< _collect.size();i++) {
 			s = _collect.get(i);
 			ss = s.split(":");
 			for(int j=0; j< ss.length; j++ ) {
-				Long l = new Long(Long.parseLong(ss[j]));
-				if(!_indexes.contains(l)) {
-					_indexes.add(l);
+				String idx = ss[j];
+				if(!indexes.contains(idx)) {
+					indexes.add(idx);
 				}
 			}
 		}
 		
-		long[] result = new long[_indexes.size()];
-		for(int i=0; i< _indexes.size(); i++) {
-			result[i] = _indexes.get(i);
-		}
-		
-		return result;
+		return indexes;
 	}
 	
 	

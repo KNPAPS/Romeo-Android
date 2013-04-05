@@ -1,13 +1,15 @@
 package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import kr.go.KNPA.Romeo.Util.IndexPath;
 
 public class CellNode {
 	private static final int CN_NULL = -777;
-	private static final int CN_USER = 1;
-	private static final int CN_DEPARTMENT = 2;
+	public static final int CN_USER = 1;
+	public static final int CN_DEPARTMENT = 2;
 	
 	public static final int NCHECK = 0;
 	public static final int FCHECK = 1;
@@ -25,10 +27,27 @@ public class CellNode {
 	private	CellNode 			_parent 			= 	null;
 	private	ArrayList<CellNode>	_children 			= 	null;
 
-	static CellNode				_rootNode			= 	null;
+	private static CellNode				_rootNode			= 	null;
 	
 	public CellNode() {
 		
+	}
+	
+	public static void init(CellNode rootNode) {
+		for(int i=0; i<rootNode.children().size(); i++) {
+			rootNode.children().get(i).init();
+		}
+	}
+	
+	private void init() {
+		this._status = CellNode.NCHECK;
+		this._isUnfolded = true;
+		
+		if(this.children() != null) {
+			for(int i=0; i<this.children().size(); i++) {
+				this.children().get(i).init();
+			}
+		}
 	}
 	
 	public static CellNode rootNode() {
@@ -456,15 +475,39 @@ public class CellNode {
 		}
 	}
 	
-	public ArrayList<String> collect() {
-		Condition c = new Condition().status(FCHECK).type(CN_USER);
-		ArrayList<CellNode> _result = CellNode.rootNode().find(c);
-	
-		ArrayList<String> result = new ArrayList<String>();
-		for(int i=0; i<_result.size(); i++) {
-			result.add(_result.get(i).idx());
+	public static ArrayList<String> collect(CellNode rootNode) { 
+		HashSet<String> _result = new HashSet<String>();
+		
+		Condition uc = new Condition().status(FCHECK).type(CN_USER);
+		ArrayList<CellNode> selectedUsers = rootNode.find(uc);
+		
+		for(int i=0; i<selectedUsers.size(); i++) {
+			_result.add(selectedUsers.get(i).idx());
 		}
 		
+		Condition dc = new Condition().status(FCHECK).type(CN_DEPARTMENT);
+		ArrayList<CellNode> _selectedDeps = rootNode.find(dc);
+		ArrayList<CellNode> selectedDeps = new ArrayList<CellNode>();
+		
+		for(int i=0; i<_selectedDeps.size(); i++) {
+			if(_selectedDeps.get(i).children() != null && _selectedDeps.get(i).children().size() >0)
+				selectedDeps.add(_selectedDeps.get(i));
+		}
+	
+		
+		for( int i=0; i<selectedDeps.size(); i++) {
+			ArrayList<User> _us = MemberManager.sharedManager().getDeptMembers(selectedDeps.get(i).idx(), true);
+			for(int j=0; j<_us.size(); j++) {
+				_result.add(_us.get(j).idx);
+			}
+		}
+		
+		ArrayList<String> result = new ArrayList<String>();
+		Iterator<String> itr = _result.iterator();
+		while(itr.hasNext()) {
+			result.add(itr.next());
+		}
+			
 		return result;
 	}
 	

@@ -30,13 +30,10 @@ public class User implements Parcelable{
 	
 	public Department department;
 	
-	/*
-	public User(int idx) {
-	}
-	*/
-	public User() {
-		
-	}
+	
+	
+	public User() {}
+	public User(String idx) { this.idx = idx;}
 	
 	public User(Parcel in) {
 		readFromPalcel(in);
@@ -103,7 +100,7 @@ public class User implements Parcelable{
 		.build();
 	}
 	
-	public static User userWithIndex(String idx) {
+	public static User getUserWithIndex(String idx) {
 		return MemberManager.sharedManager().getUser(idx);
 	}
 	
@@ -119,6 +116,12 @@ public class User implements Parcelable{
 		return getUsersWithIndexes(idxs);
 	}
 		
+	public static ArrayList<User> getUsersWithIndexes(String __idxs) {
+		String[] _idxs = __idxs.split(":");
+		
+		return getUsersWithIndexes(_idxs);
+	}
+	
 	public static ArrayList<User> removeUserHavingIndex(ArrayList<User>users, String idx) {
 		Iterator<User> itr = ((ArrayList<User>)users.clone()).iterator();
 		User u = null;
@@ -131,6 +134,7 @@ public class User implements Parcelable{
 		}
 		return users;
 	}
+	
 	public String toJSON() {
 		return idx;
 	}

@@ -51,17 +51,18 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		String title = null;
 		if(idxs == null|| idxs.trim().length() < 1) {
 			finish();
-		} //else {
+		}
 		
 
 		String[] _idxs = idxs.split(":");
-		long[] __idxs = new long[_idxs.length];
-		for(int i=0; i<__idxs.length; i++) {
-			__idxs[i] = Long.parseLong(_idxs[i]);
+		ArrayList<String> __idxs = new ArrayList<String>(_idxs.length);
+		
+		for(int i=0; i<_idxs.length; i++) {
+			__idxs.add( _idxs[i] );
 		}
+		
 		// User 정보를 얻어온다.
 		ArrayList<User> users = User.getUsersWithIndexes(__idxs);
-		//}
 		
         //배경투명처리
 		/*
@@ -156,7 +157,7 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 			nameTV.setText(title);
 		} else {
 			User user = users.get(0); 
-			departmentTV.setText(user.getDepartmentFull());
+			departmentTV.setText(user.department.nameFull);
 			rankTV.setText(User.RANK[user.rank]);
 			nameTV.setText(user.name);
 			// TODO : userPic Setting

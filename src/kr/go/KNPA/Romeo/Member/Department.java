@@ -12,6 +12,7 @@ public class Department implements Parcelable{
 	public long sequence;
 	public String name;
 	public String nameFull;
+	public String parentIdx;
 
 	public Department() {
 		super();
@@ -26,9 +27,16 @@ public class Department implements Parcelable{
 		private long sequence;
 		private String name;
 		private String nameFull;
-
+		private String parentIdx;
+		
 		public Builder idx(String idx) {
 			this.idx = idx;
+			return this;
+		}
+		
+		public Builder sequence(String _sequence) {
+			if(_sequence != null)
+				this.sequence = Long.parseLong(_sequence);
 			return this;
 		}
 		
@@ -46,12 +54,19 @@ public class Department implements Parcelable{
 			this.nameFull = nameFull;
 			return this;
 		}
+		
+		public Builder parentIdx(String parentIdx) {
+			this.parentIdx = parentIdx;
+			return this;
+		}
+		
 		public Department build() {
 			Department department = new Department();
 			department.sequence = this.sequence;
 			department.name = this.name;
 			department.idx = this.idx;
 			department.nameFull = this.nameFull;
+			department.parentIdx = this.parentIdx;
 			
 			return department;
 		}
@@ -69,6 +84,7 @@ public class Department implements Parcelable{
 		dest.writeLong(sequence);
 		dest.writeString(name);
 		dest.writeString(nameFull);
+		dest.writeString(parentIdx);
 	}
 	
 	private void readFromPalcel(Parcel in) {
@@ -76,6 +92,7 @@ public class Department implements Parcelable{
 		sequence = in.readLong();
 		name = in.readString();
 		nameFull = in.readString();
+		parentIdx = in.readString();
 	}
 	
 	public static final Parcelable.Creator<Department> CREATOR = new Parcelable.Creator<Department>() {

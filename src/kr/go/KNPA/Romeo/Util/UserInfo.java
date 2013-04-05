@@ -36,28 +36,30 @@ public class UserInfo {
 		return Encrypter.sharedEncrypter().decryptString(enc);
 	}
 	
-	public static void setDepartmentIdx(Context context, long idx) {
+	public static void setDepartmentIdx(Context context, String idx) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
-		e.putString("departmentIdx", Encrypter.sharedEncrypter().encryptString(""+idx));
+		e.putString("departmentIdx", Encrypter.sharedEncrypter().encryptString(idx));
 		e.commit();
 	}
-	public static long getDepartmentIdx(Context context) {
+	public static String getDepartmentIdx(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String _var = Encrypter.sharedEncrypter().decryptString(prefs.getString("departmentIdx", Encrypter.sharedEncrypter().encryptString(""+User.NOT_SPECIFIED)));
-		return Long.parseLong(_var);
+		String enc = prefs.getString("departmentIdx", null);
+		if(enc == null) return null;
+		return Encrypter.sharedEncrypter().decryptString(enc);
 	}
 	
-	public static void setUserIdx(Context context, long idx) {
+	public static void setUserIdx(Context context, String idx) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
-		e.putString("userIdx", Encrypter.sharedEncrypter().encryptString(""+idx));
+		e.putString("userIdx", Encrypter.sharedEncrypter().encryptString(idx));
 		e.commit();
 	}
-	public static long getUserIdx(Context context) {
+	public static String getUserIdx(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String _var = Encrypter.sharedEncrypter().decryptString(prefs.getString("userIdx", Encrypter.sharedEncrypter().encryptString(""+User.NOT_SPECIFIED)));
-		return Long.parseLong(_var); 
+		String enc = prefs.getString("userIdx", null);
+		if(enc == null) return null;
+		return Encrypter.sharedEncrypter().decryptString(enc); 
 	}
 	
 	public static void setRankIdx(Context context, int rank) {

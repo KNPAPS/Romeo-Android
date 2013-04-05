@@ -3,26 +3,11 @@ package kr.go.KNPA.Romeo.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.UserRegisterEditView;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.Util.DBManager;
-import kr.go.KNPA.Romeo.Util.ImageManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.Bundle;
-
-import com.google.gson.Gson;
 
 
 public class MemberManager {
@@ -38,6 +23,7 @@ public class MemberManager {
 	
 	
 	private static HashMap<String, User> cachedUsers = null;	//! 캐시된 사람들 목록
+	private static HashMap<String, Department> cachedDepartment = null;
 	
 	// Apply Singleton Type
 	public static MemberManager sharedManager() {
@@ -52,8 +38,16 @@ public class MemberManager {
 	 * 다른 멤버의 정보 저장
 	 * @param member Member 객체
 	 */
-	public static void cacheUser(User user) {
+	public void cacheUser(User user) {
+		if(cachedUsers == null)
+			cachedUsers = new HashMap<String, User>();
 		cachedUsers.put(user.idx, user);
+	}
+	
+	public void cacheDepartment(Department department) {
+		if(cachedDepartment == null)
+			cachedDepartment = new HashMap<String, Department>();
+		cachedDepartment.put(department.idx, department);
 	}
 	
 	
@@ -140,104 +134,163 @@ public class MemberManager {
 		}
 	}
 	
-	
 	/**
 	 * 해당 hash를 가진 사람에 대한 자료 cache에서 삭제
 	 * @param hash
 	 * @return
 	 */
-	public static void removeCachedMember(String hash) {
+	public void removeCachedMember(String hash) {
 		cachedUsers.remove(hash);
 	}
 	
 	
-	public Bundle registerUser(Context context, Bundle b) {
-		String name = b.getString("name");
-		String[] departments = b.getStringArray("departments");
-		int rank = b.getInt("rank");
-		String role = b.getString("role");
-		String _picURI = b.getString("picURI");
-		Uri picURI = null;
-		if(_picURI != null) Uri.parse(_picURI);
-		
-		
-		StringBuilder sb = new StringBuilder();
-		
-		String q = "\"";
-		String c = ":";
-		
-		sb.append("{");
-		sb.append(q).append("name").append(q).append(c).append(q).append(name).append(q).append(",");
-		sb.append(q).append("levels").append(q).append(c).append("[");
-		for(int i=0; i<UserRegisterEditView.DROPDOWN_MAX_LENGTH; i++) {
-			if(departments[i]==null || departments[i].equals(context.getString(R.string.none))) break;
-			if(i!= 0) sb.append(",");
-			sb.append(q).append(departments[i]).append(q);
-		}
-		sb.append("]").append(",");
-		if(role != null && role.length()>0) 
-			sb.append(q).append("role").append(q).append(c).append(q).append(role).append(q).append(",");
-		sb.append(q).append("rank").append(q).append(c).append(rank);
 	
-		sb.append("}");
+	/**
+	 * 부서 정보 가져와서 Department 객체에 담아 반환\n
+	 * parentHash까지는 가져온 데이터로부터 할당을 할 수 있지만\n
+	 * Department 객체의 parentDept 멤버는 클라이언트쪽에서 따로 지정해줘야 함\n
+	 * @param deptHash
+	 * @return
+	 */
+	public Department getDeptartment(String deptIdx) {
+		Department department = cachedDepartment.get(deptIdx);
+		if ( department != null )
+			return department;
 		
-		String json = null;
+			
+		//setting request payload
+		Payload request = new Payload(Event.User.getDepartmentInfo());
+		Data reqData = new Data();
+		reqData.add(0,Data.KEY_DEPT_HASH,deptIdx);
 		
-		String url = Connection.HOST_URL + "/member/register";
-		Connection conn = new Connection.Builder()
-								.url(url)
-								.async(false)
-								.data(sb.toString())
-								.type(Connection.TYPE_POST)
-								.dataType(Connection.DATATYPE_JSON)
-								.build();
-		int requestCode = conn.request();
+		request.setData(reqData);
 		
-		if( requestCode == Connection.HTTP_OK) {
-			json = conn.getResponse();
-		}
-	
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
 		
-		Bundle result = new Bundle();
-		if(json == null ){
-			result.putBoolean("status",false);
-			return result;
-		}
-		
-		JSONObject jo = null;
-		try {
-			jo = new JSONObject(json);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(jo == null ){
-			result.putBoolean("status",false);
-			return result;
-		} 
-		
-		try {
-			result.putInt("status", jo.getInt("status"));
-			result.putLong("userIdx", jo.getLong("userIdx"));
-			result.putLong("departmentIdx", jo.getLong("departmentIdx"));			
-		} catch (JSONException e) {
-			result.putBoolean("status",false);
-			return result;
-		}
+		Payload response = conn.getResponsePayload();
+		if ( response.getStatusCode() == StatusCode.SUCCESS ){
+			
+			Data respData = response.getData();
+			
+			department = new Department.Builder()
+											.idx((String)reqData.get(0, Data.KEY_DEPT_HASH))
+											.name((String)reqData.get(0, Data.KEY_DEPT_NAME))
+											.nameFull((String)reqData.get(0, Data.KEY_DEPT_FULL_NAME))
+											.parentIdx((String)reqData.get(0, Data.KEY_DEPT_PARENT_HASH))
+											.sequence( (String)respData.get(0, Data.KEY_DEPT_SEQUENCE) )
+											.build();
+											
 
+		} else {
+			//TODO status 코드에 따라서 상황 처리	
+		}
 		
+		return department;
 		
-		// TODO 사진 업로드하는 코드를 삽입한다.
-		if(picURI != null)
-			ImageManager.bitmapFromURI(context, picURI);
-		// 사진 업로드는 비동기로 이루어지며,
-		// sharedPreference에 사진 업로드 여부를 체크하는 변수를 할당한다. ( 추후 사진 변경시 등등 활용 할 수 있기 때문이다.)
-		// 앱이 켜질때 혹은 조직도 등 특정 조건 하에서 사진 전송 여부를 확인하여 되어있지 않았다면 수시로 업로드 할 수 있는 기회를 제공하도록 한다.
-		
-		
-		return result;
 	}
 	
+	/**
+	 * 해당 부서의 하위 부서 목록을 가져온다
+	 * @param parentHash
+	 * @return
+	 */
+	public ArrayList<Department> getChildDepts(String deptIdx) {
+		//setting request payload
+		Payload request = new Payload(Event.User.getChildDepartments());
+		Data reqData = new Data();
+		
+		if(deptIdx == null || deptIdx.trim().length() < 1 || deptIdx.trim().equals(""))
+			deptIdx = "";
+		reqData.add(0,Data.KEY_DEPT_HASH, deptIdx);
+		request.setData(reqData);
+		
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		
+		Payload response = conn.getResponsePayload();
+		if ( response.getStatusCode() == StatusCode.SUCCESS ){
+			Data respData = response.getData();
+			int nDeps = respData.size();
+			
+			//결과로 리턴할 객체
+			ArrayList<Department> children = new ArrayList<Department>(nDeps);
+			
+			
+			for ( int i=0; i<nDeps; i++ ) {
+				Department dep = new Department.Builder()
+												.idx((String)respData.get(i, Data.KEY_DEPT_HASH))
+												.name((String)respData.get(i, Data.KEY_DEPT_NAME))
+												.nameFull((String)respData.get(i, Data.KEY_DEPT_FULL_NAME))
+												.parentIdx((String)respData.get(i, Data.KEY_DEPT_PARENT_HASH))
+												.sequence( (String)respData.get(i, Data.KEY_DEPT_SEQUENCE) )
+												.build();
+
+				cacheDepartment(dep);
+				
+				children.add(dep);
+			}
+			
+			return children;
+		}else {
+			//TODO status 코드에 따라서 상황 처리
+			return null;
+		}
+	}
 	
+	public ArrayList<User> getDeptMembers(String depIdx, boolean doRecursive) {
+		//setting request payload
+		Payload request = new Payload(Event.User.getMembers());
+		
+		Data reqData = new Data();
+		
+		if( depIdx != null) {
+			reqData.add(0, Data.KEY_DEPT_HASH, depIdx);
+			reqData.add(0, Data.KEY_GET_MEMBER_FETCH_ALL, doRecursive==true?1:0 );
+		} else {
+			// Root Department
+			reqData.add(0, Data.KEY_DEPT_HASH, "");
+			reqData.add(0, Data.KEY_GET_MEMBER_FETCH_ALL, doRecursive==true?1:0 );
+		}
+		
+		request.setData(reqData);
+		
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		
+		Payload response = conn.getResponsePayload();
+		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
+			Data respData = response.getData();
+			
+			int nUsers = respData.size();
+			ArrayList<User> members = new ArrayList<User>(nUsers);
+			
+			for (int i=0; i < nUsers; i++ ) {
+				User user = null;
+				if(doRecursive == false) {
+					user = new User.Builder()
+										.idx( (String)respData.get(i,Data.KEY_USER_HASH) )
+										.name( (String)respData.get(i,Data.KEY_USER_NAME) )
+										.rank( Integer.parseInt( (String)respData.get(i,Data.KEY_USER_RANK)) )
+										.role( (String)respData.get(i,Data.KEY_USER_ROLE))
+										.department(getDeptartment(depIdx))
+										.build();
+				} else {
+					// recursive
+					user = new User.Builder()
+						.idx( (String)respData.get(i,Data.KEY_USER_HASH) )
+						.name( (String)respData.get(i,Data.KEY_USER_NAME) )
+						.rank( Integer.parseInt( (String)respData.get(i,Data.KEY_USER_RANK)) )
+						.role( (String)respData.get(i,Data.KEY_USER_ROLE))
+						//.department(dept) TODO
+						.build();
+				}
+				if(user != null)
+					members.add(user);
+			}
+			
+			return members;
+			
+		} else {
+			
+			return null;
+		}
+	}
 }

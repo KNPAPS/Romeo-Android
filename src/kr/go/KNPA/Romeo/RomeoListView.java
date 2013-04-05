@@ -22,7 +22,6 @@ public abstract class RomeoListView extends ListView {
 
 	// Database
 	protected SQLiteDatabase db;
-	//protected Context context = getContext();
 	
 	// Adapter
 	public CursorAdapter listAdapter;

@@ -12,13 +12,14 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
 
+/**
+ * 조직도를 나타내는 리스트 뷰이다. 
+ * RomeoListView를 상속받는다.
+ */
 public class MemberListView extends RomeoListView {
 
 	// Adapter Override
 	public MemberListAdapter listAdapter;
-	
-	// Variables
-	public static Department rootDepartment = null;
 	
 	// Constructor
 	public MemberListView(Context context) {
@@ -33,9 +34,7 @@ public class MemberListView extends RomeoListView {
 		super(context, attrs, defStyle);
 	}
 
-	
 	// Database management
-
 	protected Cursor query() {
 		String sql = "SELECT * FROM "+getTableName()+";"; // sectionizer 를 위해 정렬을 한다.
 		
@@ -58,26 +57,13 @@ public class MemberListView extends RomeoListView {
 		switch(this.type) {
 			case User.TYPE_MEMBERLIST_SEARCH :
 			case User.TYPE_MEMBERLIST :
-				// TODO
-				if(rootDepartment == null) {
-					try {
-						MemberManager.sharedManager().getMembers(getContext());
-					} catch(RuntimeException e) {
-						throw e;
-					}
-					rootDepartment = Department.root();
-			}
-			
-			listAdapter = new MemberListAdapter(getContext(), type, rootDepartment);
-			this.setOnItemClickListener(listAdapter);
-			this.setAdapter(listAdapter);
+
+				listAdapter = new MemberListAdapter(getContext(), type);
+				this.setOnItemClickListener(listAdapter);
+				this.setAdapter(listAdapter);
 			
 			break;		
 		}
-		
-		// introView
-		IntroActivity.sharedActivity().removeIntroView((ViewGroup) getParent());
-		
 		return this;
 	}
 

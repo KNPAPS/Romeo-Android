@@ -1,4 +1,4 @@
-package kr.go.KNPA.Romeo;
+package kr.go.KNPA.Romeo.Register;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.R.color;
+import kr.go.KNPA.Romeo.R.id;
+import kr.go.KNPA.Romeo.R.layout;
+import kr.go.KNPA.Romeo.R.string;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.IndexPath.Iterator;

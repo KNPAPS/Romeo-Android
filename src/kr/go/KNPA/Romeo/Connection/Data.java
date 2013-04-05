@@ -36,7 +36,11 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	 * @return obj object or null
 	 */
 	public Object get( int index, String key ) {
-		return this.get(index) != null ? this.get(index).get(key) : null;
+		if(this.get(index) != null && this.get(index).containsKey(key)) {
+			this.get(index).get(key);
+		}
+				
+		return null;
 	}
 	
 	//! 객체 구분용 ID
@@ -108,7 +112,7 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	//! Array of Strings gcm registration ids 
 	public static final String KEY_REG_IDS = "regIds";
 	//! 메세지(챗,DOC,SVY) 해쉬 
-	public static final String KEY_MSG_HASH = "msg_hash";
+	public static final String KEY_MESSAGE_HASH = "msg_hash";
 	//! String 에러 메세지 또는 상태 메세지
 	public static final String KEY_RESULT_MSG = "msg";
 	//! String unique id 

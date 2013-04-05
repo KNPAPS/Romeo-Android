@@ -170,47 +170,16 @@ public class MemberSearch extends Activity {
 	}
 	
 	private void result() {
+		ArrayList<String> fromMemberList = CellNode.collect(memberListView.listAdapter.rootNode());
+		ArrayList<String> fromFavoriteList = ((MemberFavoriteListAdapter)favoriteListView.listAdapter).collect();
 		
-		long[] fromMemberList = memberListView.listAdapter.nodeManager.collectInLongArray();
-		long[] fromFavoriteList = ((MemberFavoriteListAdapter)favoriteListView.listAdapter).collect();
-		
-		//intent.putExtra(, value)...
-		/*
-		Bundle b = new Bundle();
-		if(searchResult == null) searchResult = "";
-		String[] sr = searchResult.split(":");
-		long[] result = new long[sr.length];
-		for(int i=0; i<sr.length; i++) {
-			result[i] = Long.parseLong(sr[i]);
-		}
-		b.putLongArray("receivers", result);
-		*/
-		
-		ArrayList<Long> _result = new ArrayList<Long>();
-		
-		if(fromMemberList != null) {
-			for(int i=0; i<fromMemberList.length; i++) {
-				_result.add(new Long(fromMemberList[i]));
-			}
-		}
-		
-		if( fromFavoriteList != null ) {
-			for(int i=0; i<fromFavoriteList.length; i++) {
-				Long l = new Long(fromFavoriteList[i]);
-				if(!_result.contains(l)) {
-					_result.add(l);
-				}
-			}
-		}
-		
-		long[] result = new long[_result.size()];
-		
-		for(int i=0; i<result.length; i++) {
-			result[i] = _result.get(i).longValue();
-		}
+		ArrayList<String> result = new ArrayList<String>(fromMemberList.size()+fromFavoriteList.size());
+		result.addAll(fromMemberList);
+		result.addAll(fromFavoriteList);
 		
 		Bundle b = new Bundle();
-		b.putLongArray("receivers", result);
+		b.putStringArrayList("receivers", result);
+		
 		Intent intent = new Intent();
 		intent.putExtras(b);
 		

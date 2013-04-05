@@ -1,5 +1,9 @@
-package kr.go.KNPA.Romeo;
+package kr.go.KNPA.Romeo.Register;
 
+import kr.go.KNPA.Romeo.IntroActivity;
+import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.R.id;
+import kr.go.KNPA.Romeo.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
