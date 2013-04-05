@@ -43,8 +43,8 @@ class RoomListAdapter extends CursorAdapter {
 		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
 
 		// About User Info
-		long userIdx = c.getLong(c.getColumnIndex("sender"));
-		User user = User.getUserWithIdx((int) userIdx);
+		String userIdx = c.getString(c.getColumnIndex("sender"));
+		User user = User.getUserWithIdx(userIdx);
 		
 		// rank and name
 		String rank = User.RANK[user.rank];
@@ -53,7 +53,7 @@ class RoomListAdapter extends CursorAdapter {
 		rankNameTV.setText(rankName);
 		
 		// department
-		String department = user.levels[0] +" "+ user.levels[1] +" "+ user.levels[2] +" "+ user.levels[3] +" "+ user.levels[4] +" "+ user.levels[5];
+		String department = user.department.nameFull;
 		departmentTV.setText(department);
 		
 		

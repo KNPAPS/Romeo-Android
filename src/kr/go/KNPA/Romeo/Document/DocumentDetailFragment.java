@@ -92,40 +92,39 @@ public class DocumentDetailFragment extends Fragment {
 		// TODO
 		LinearLayout forwardsLL = (LinearLayout)view.findViewById(R.id.forwards);
 		
-		Appendix adx = this.document.appendix;
-		if(adx!=null) {
-			ArrayList<HashMap<String,String>> forwards = adx.getForwards();
-			if(forwards != null) {
-				HashMap<String, String> forward = null;
+		ArrayList<HashMap<String, String>> forwards = this.document.getForwards();
+		
+		if(forwards != null) {
+			HashMap<String, String> forward = null;
+			
+			TextView fForwarderTV = null;
+			TextView fArrivalDTTV = null;
+			TextView fContentTV = null;
+			String fForwarder = null;
+			String fArrivalDT = null;
+			String fContent = null;
+			
+			for(int i=forwards.size()-1 ; i>=0 ; i--) {
+				View forwardView = inflater.inflate(R.layout.document_forward, forwardsLL, false);
 				
-				TextView fForwarderTV = null;
-				TextView fArrivalDTTV = null;
-				TextView fContentTV = null;
-				String fForwarder = null;
-				String fArrivalDT = null;
-				String fContent = null;
+				forward = forwards.get(i);
+				fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
+				User u = User.getUserWithIdx( forward.get("forwarder") );
+				fForwarder = u.department.nameFull + " " + User.RANK[u.rank] + " " + u.name;
+				fForwarderTV.setText(fForwarder);
 				
-				for(int i=forwards.size()-1 ; i>=0 ; i--) {
-					View forwardView = inflater.inflate(R.layout.document_forward, forwardsLL, false);
-					
-					forward = forwards.get(i);
-					fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
-					User u = User.getUserWithIdx(Integer.parseInt(forward.get("forwarder")));
-					fForwarder = u.getDepartmentFull() + " " + User.RANK[u.rank] + " " + u.name;
-					fForwarderTV.setText(fForwarder);
-					
-					fArrivalDTTV = (TextView)forwardView.findViewById(R.id.arrivalDT);
-					fArrivalDT = Formatter.timeStampToStringInRegularFormat(Long.parseLong(forward.get("TS")), context);
-					fArrivalDTTV.setText(fArrivalDT);
-					
-					fContentTV = (TextView)forwardView.findViewById(R.id.content);
-					fContent = forward.get("content");
-					fContentTV.setText(fContent);
-					
-					forwardsLL.addView(forwardView);
-				}
+				fArrivalDTTV = (TextView)forwardView.findViewById(R.id.arrivalDT);
+				fArrivalDT = Formatter.timeStampToStringInRegularFormat(Long.parseLong(forward.get("TS")), context);
+				fArrivalDTTV.setText(fArrivalDT);
+				
+				fContentTV = (TextView)forwardView.findViewById(R.id.content);
+				fContent = forward.get("content");
+				fContentTV.setText(fContent);
+				
+				forwardsLL.addView(forwardView);
 			}
 		}
+		
 		LinearLayout metaData = (LinearLayout)view.findViewById(R.id.metadata);
 		TextView titleTV = (TextView)metaData.findViewById(R.id.title);
 		titleTV.setText(this.document.title);
@@ -136,7 +135,7 @@ public class DocumentDetailFragment extends Fragment {
 		
 		TextView senderTV = (TextView)metaData.findViewById(R.id.sender);
 		User user = this.document.sender;
-		String sender = user.getDepartmentFull() + " " + User.RANK[user.rank] +" "  + user.name;
+		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		
 		ExpandableListView filesELV = (ExpandableListView)metaData.findViewById(R.id.fileList);

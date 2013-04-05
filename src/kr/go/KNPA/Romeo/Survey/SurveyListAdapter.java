@@ -53,9 +53,9 @@ class SurveyListAdapter extends CursorAdapter {
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
 			
-			long senderIdx = c.getLong(c.getColumnIndex("sender"));
+			String senderIdx = c.getString(c.getColumnIndex("sender"));
 			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.getDepartmentFull() +" "+User.RANK[user.rank]+" " +user.name;
+			String sender = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
 			
 			long openTS = c.getLong(c.getColumnIndex("openTS"));
 			long closeTS = c.getLong(c.getColumnIndex("closeTS"));
@@ -78,9 +78,9 @@ class SurveyListAdapter extends CursorAdapter {
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
 			
-			long senderIdx = c.getLong(c.getColumnIndex("sender"));
+			String senderIdx = c.getString(c.getColumnIndex("sender"));
 			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.getDepartmentFull() +" "+User.RANK[user.rank]+" " +user.name;
+			String sender = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
 			
 			long openTS = c.getLong(c.getColumnIndex("openTS"));
 			long closeTS = c.getLong(c.getColumnIndex("closeTS"));

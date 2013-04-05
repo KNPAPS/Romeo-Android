@@ -336,8 +336,8 @@ public class UserRegisterEditView extends LinearLayout {
 	}
 	
 	public void setImage(Uri uri) {
-		Bitmap b = ImageManager.bitmapFromURI(context, uri);
-		if(b!= null) setImage(b);
+		//Bitmap b = ImageManager.bitmapFromURI(context, uri);
+		//if(b!= null) setImage(b);
 		//getImageView().setImageURI(uri);
 	}
 	
@@ -380,7 +380,7 @@ public class UserRegisterEditView extends LinearLayout {
 		java.util.Iterator<Department> itr = ((ArrayList<Department>)departments.clone()).iterator();
 		while(itr.hasNext()) {
 			Department d = itr.next();
-			if(d.title.trim().equals(""))
+			if(d.name.trim().equals(""))
 				departments.remove(d);
 		}
 		
@@ -411,7 +411,7 @@ public class UserRegisterEditView extends LinearLayout {
 				if(i == 0 ) {
 					result[i] = context.getString(R.string.letSelect);
 				} else {
-					result[i] = departments.get(i-1).title;
+					result[i] = departments.get(i-1).name;
 				}
 			}
 		}

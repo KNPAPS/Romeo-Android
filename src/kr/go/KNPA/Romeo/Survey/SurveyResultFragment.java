@@ -83,15 +83,15 @@ public class SurveyResultFragment extends Fragment {
 		
 		TextView senderTV = (TextView)view.findViewById(R.id.sender);
 		User user = this.survey.sender;
-		String sender = user.getDepartmentFull() + " " + User.RANK[user.rank] +" "  + user.name;
+		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS, getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS(), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 		
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat(this.survey.closeTS, getString(R.string.formatString_closeDT));
+		String closeDT = Formatter.timeStampToStringWithFormat(this.survey.closeTS(), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 		
 		TextView contentTV = (TextView)view.findViewById(R.id.content);
@@ -99,8 +99,8 @@ public class SurveyResultFragment extends Fragment {
 		contentTV.setText(content);
 		
 		
-		// parsing Start
-		Appendix adx = survey.appendix;
+		// parsing Start TODO
+		/*
 		String json = adx.getAttachmentWithKey(Message.MESSAGE_KEY_SURVEY).getJSON();
 		
 		JSONObject s = null;
@@ -170,27 +170,27 @@ public class SurveyResultFragment extends Fragment {
 					
 					// JAVASCRIPT 호출 :  loadURL("javascript::callJS("arg");
 					optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
-					/*
-					// Options Level로 진입
-					for(int oi=0; oi<os.length(); oi++) {
-						try {
-							//o = os.getJSONObject(oi);
-							oTitle = os.getString(oi);
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-
-						// Option Level의 Manipulating
-						optionView = inflater.inflate(R.layout.survey_option_result, optionsLL, false);
-						Button optionControl = (Button)optionView.findViewById(R.id.control);
-						
-						optionControl.setTag(qi+":"+oi);
-						
-						TextView oTV = (TextView) optionView.findViewById(R.id.title);
-						oTV.setText(oTitle);
-						optionsLL.addView(optionView);
-					} // for oi END
-					*/
+//					
+//					// Options Level로 진입
+//					for(int oi=0; oi<os.length(); oi++) {
+//						try {
+//							//o = os.getJSONObject(oi);
+//							oTitle = os.getString(oi);
+//						} catch (JSONException e) {
+//							e.printStackTrace();
+//						}
+//
+//						// Option Level의 Manipulating
+//						optionView = inflater.inflate(R.layout.survey_option_result, optionsLL, false);
+//						Button optionControl = (Button)optionView.findViewById(R.id.control);
+//						
+//						optionControl.setTag(qi+":"+oi);
+//						
+//						TextView oTV = (TextView) optionView.findViewById(R.id.title);
+//						oTV.setText(oTitle);
+//						optionsLL.addView(optionView);
+//					} // for oi END
+//					
 					questionsLL.addView(questionView);
 				} // for qi END
 				
@@ -198,6 +198,7 @@ public class SurveyResultFragment extends Fragment {
 			}// qs != null END
 			
 		}// s != null END
+		*/
 		return view;
 		
 	}

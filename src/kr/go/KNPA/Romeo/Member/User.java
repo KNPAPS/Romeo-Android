@@ -100,26 +100,26 @@ public class User implements Parcelable{
 		.build();
 	}
 	
-	public static User getUserWithIndex(String idx) {
+	public static User getUserWithIdx(String idx) {
 		return MemberManager.sharedManager().getUser(idx);
 	}
 	
-	public static ArrayList<User> getUsersWithIndexes(ArrayList<String> idxs) {
+	public static ArrayList<User> getUsersWithIdxs(ArrayList<String> idxs) {
 		return MemberManager.sharedManager().getUsers(idxs);
 	}
 	
-	public static ArrayList<User> getUsersWithIndexes(String[] _idxs) {
+	public static ArrayList<User> getUsersWithIdxs(String[] _idxs) {
 		ArrayList<String> idxs = new ArrayList<String>(_idxs.length);
 		for(int i=0; i<_idxs.length; i++) {
 			idxs.add(_idxs[i]);
 		}
-		return getUsersWithIndexes(idxs);
+		return getUsersWithIdxs(idxs);
 	}
 		
-	public static ArrayList<User> getUsersWithIndexes(String __idxs) {
+	public static ArrayList<User> getUsersWithIdxs(String __idxs) {
 		String[] _idxs = __idxs.split(":");
 		
-		return getUsersWithIndexes(_idxs);
+		return getUsersWithIdxs(_idxs);
 	}
 	
 	public static ArrayList<User> removeUserHavingIndex(ArrayList<User>users, String idx) {

@@ -34,10 +34,10 @@ public class ChatListAdapter extends CursorAdapter {
 		Button 		goUncheckedBT	= (Button) 		v.findViewById(R.id.goUnchecked);
 		
 		//TODO userPic
-		long senderIdx = c.getLong(c.getColumnIndex("sender"));
-		User sender = User.userWithIdx((int)senderIdx);
+		String senderIdx = c.getString(c.getColumnIndex("sender"));
+		User sender = User.getUserWithIdx(senderIdx);
 		
-		String department = sender.getDepartmentFull();
+		String department = sender.department.nameFull;
 		departmentTV.setText(department);
 		
 		String rank = User.RANK[sender.rank];

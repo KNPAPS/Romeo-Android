@@ -46,13 +46,11 @@ public class Message implements Parcelable{
 	protected static final String KEY_SENDER	=	"sender";
 	protected static final String KEY_RECEIVERS	=	"receivers";
 	
-	// Variables to be sent
 	public String 			idx 		= null;
 	protected int 			type		= NOT_SPECIFIED;
 	
 	public String 			title		= null;
 	public String 			content		= null;
-	//public Appendix 		appendix	= null;
 	
 	public User 			sender		= null;
 	public ArrayList<User> 	receivers 	= null;
@@ -60,16 +58,23 @@ public class Message implements Parcelable{
 	public long 			TS			= NOT_SPECIFIED;
 	public ArrayList<User>	uncheckers 	= null;
 	
-	// Variables to be sent only in asynchronous way
 	public boolean 			checked 	= false;
 	public long 			checkTS		= NOT_SPECIFIED;
 	
-	// Variables NOT to be sent
+	
 	public boolean received;
 	
 	
+	/**
+	 * 
+	 */
 	public Message() {}
 	
+	/**
+	 * 
+	 * @param json
+	 * @return
+	 */
 	public static Message parseMessage(String json) {
 		Message message = null;
 		
@@ -92,14 +97,14 @@ public class Message implements Parcelable{
 			message.type = jo.getInt(KEY_TYPE);
 			message.title = jo.getString(KEY_TITLE);
 			message.content = jo.getString(KEY_CONTENT);
-			message.sender = User.getUserWithIndex(jo.getString(KEY_SENDER));
+			message.sender = User.getUserWithIdx(jo.getString(KEY_SENDER));
 			
 			JSONArray __receivers = jo.getJSONArray(KEY_RECEIVERS);
 			ArrayList<String> _receivers = new ArrayList<String>(__receivers.length()); 
 			for(int i=0; i<__receivers.length(); i++) {
 				_receivers.add(__receivers.getString(i));
 			}
-			message.receivers = User.getUsersWithIndexes(_receivers);
+			message.receivers = User.getUsersWithIdxs(_receivers);
 		} catch (JSONException e) {
 			message = null;
 		}
@@ -107,23 +112,35 @@ public class Message implements Parcelable{
 		return message;
 	}
 
+	/**
+	 * @name type getters
+	 * 타입과 관련된 연산을 하는 메서드들
+	 * @{
+	 */
+	public int type() 				{		return type;									}
+	public int mainType()			{		return type / Message.MESSAGE_TYPE_DIVIDER;		}
+	public int subType()			{		return type % Message.MESSAGE_TYPE_DIVIDER;		}
+	public static int makeType(int type, int subType)	{	return type * Message.MESSAGE_TYPE_DIVIDER + subType;	}
+	public static int mainType(int type) 				{		return type / Message.MESSAGE_TYPE_DIVIDER;		}
+	public static int subType(int type)					{		return type % Message.MESSAGE_TYPE_DIVIDER;		}
+	/** @} */
+	
 	public Message(Cursor c) {
 		String 			_idx 		= c.getString(c.getColumnIndex("idx"));
 		//type
 		String 			_title 		= c.getString(c.getColumnIndex("title"));
 		String 			_content 	= c.getString(c.getColumnIndex("content"));
 		Appendix		_appendix	= Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
-		User 			_sender		= User.getUserWithIndex(c.getString(c.getColumnIndex("sender")));
-		ArrayList<User> _receivers 	= User.getUsersWithIndexes(c.getString(c.getColumnIndex("receivers")));
+		User 			_sender		= User.getUserWithIdx(c.getString(c.getColumnIndex("sender")));
+		ArrayList<User> _receivers 	= User.getUsersWithIdxs(c.getString(c.getColumnIndex("receivers")));
 		long 			_TS			= c.getLong(c.getColumnIndex("TS"));
 		boolean 		_checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
 		long 			_checkTS	= c.getLong(c.getColumnIndex("checkTS"));
 		boolean 		_received 	= (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);
-		ArrayList<User> _uncheckers = User.getUsersWithIndexes(c.getString(c.getColumnIndex("uncheckers")));
+		ArrayList<User> _uncheckers = User.getUsersWithIdxs(c.getString(c.getColumnIndex("uncheckers")));
 		
 		this.idx 		= _idx;
 		this.title 		= _title;
-		this.appendix 	= _appendix;
 		this.content 	= _content;
 		this.sender		= _sender;
 		this.receivers 	= _receivers;
@@ -134,20 +151,46 @@ public class Message implements Parcelable{
 		this.uncheckers = _uncheckers;
 	}
 	
-	public static int makeType(int type, int subType) {
-		return type * Message.MESSAGE_TYPE_DIVIDER + subType;
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static String getTableNameWithMessageType(int type) {
+		int messageType = mainType(type);
+		int messageSubType = subType(type);
+		
+		String tableName = null;
+		if(messageType == Message.MESSAGE_TYPE_CHAT) {
+			switch(messageSubType) {
+				case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
+				case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
+			}
+		} else if(messageType == Message.MESSAGE_TYPE_DOCUMENT) {
+			switch(messageSubType) {
+				case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
+				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
+				case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
+			}
+			
+		} else if(messageType == Message.MESSAGE_TYPE_SURVEY) {
+			switch(messageSubType) {
+				case Survey.TYPE_DEPARTED : tableName = DBManager.TABLE_SURVEY; break;
+				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_SURVEY; break;
+			}
+		}
+		
+		return tableName;
+		
 	}
 	
-	public int type() {
-		return type;
-	}
-	
-	public int mainType() {
-		return type / Message.MESSAGE_TYPE_DIVIDER;
-	}
-	
-	public int subType() {
-		return type % Message.MESSAGE_TYPE_DIVIDER;
+	/**
+	 * 
+	 * @param message
+	 * @return
+	 */
+	public static String getTableNameWithMassage(Message message) {
+		return getTableNameWithMessageType(message.type);
 	}
 	
 	public String toJSON() {
@@ -161,8 +204,7 @@ public class Message implements Parcelable{
 		sb.append(q).append("type").append(q).append(c).append(type).append(",");
 		sb.append(q).append("idx").append(q).append(c).append(idx).append(",");
 		sb.append(q).append("title").append(q).append(c).append(q).append(title).append(q).append(",");
-		sb.append(q).append("content").append(q).append(c).append(q).append(content).append(q).append(",");
-		sb.append(q).append("appendix").append(q).append(c).append(appendix.toJSON());
+		sb.append(q).append("content").append(q).append(c).append(q).append(content).append(q);
 		sb.append("}");
 		
 		return sb.toString();
@@ -263,7 +305,6 @@ public class Message implements Parcelable{
 			message.title = this._title;
 			message.type = this._type;
 			message.content = this._content;
-			message.appendix = this._appendix;
 			message.sender = this._sender;
 			message.receivers = this._receivers;
 			message.TS = this._TS;
@@ -291,7 +332,6 @@ public class Message implements Parcelable{
 		dest.writeString(title);
 		dest.writeInt(type);
 		dest.writeString(content);
-		dest.writeParcelable(appendix, flags); 
 		dest.writeParcelable(sender, flags);
 		dest.writeTypedList(receivers);
 		dest.writeLong(TS);
@@ -305,7 +345,6 @@ public class Message implements Parcelable{
 		title = source.readString();
 		type = source.readInt();
 		content = source.readString();
-		appendix = source.readParcelable(Appendix.class.getClassLoader());
 		sender = source.readParcelable(User.class.getClassLoader());
 		receivers = source.createTypedArrayList(User.CREATOR);
 		TS = source.readLong();
@@ -326,12 +365,12 @@ public class Message implements Parcelable{
 	
 	public static ArrayList<User> getUncheckersWithMessageTypeAndIndex(int type, String index) {
 		ArrayList<String> uncheckers = getUncheckersIdxsWithMessageTypeAndIndex(type, index);
-		return User.getUsersWithIndexes(uncheckers);
+		return User.getUsersWithIdxs(uncheckers);
 	}
 	
 	public static ArrayList<User> getUncheckersInUsersWithMessage(Message message) {
 		ArrayList<String> uncheckers = getUncheckersIdxsWithMessage(message);
-		return User.getUsersWithIndexes(uncheckers);
+		return User.getUsersWithIdxs(uncheckers);
 	}
 
 	public void setChecked(Context context) {
@@ -361,35 +400,5 @@ public class Message implements Parcelable{
 	}
 	
 	
-	public static String getTableNameWithMessageType(int type) {
-		int messageType = type/MESSAGE_TYPE_DIVIDER;
-		int messageSubType = type%MESSAGE_TYPE_DIVIDER;
-		
-		String tableName = null;
-		if(messageType == Message.MESSAGE_TYPE_CHAT) {
-			switch(messageSubType) {
-				case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
-				case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
-			}
-		} else if(messageType == Message.MESSAGE_TYPE_DOCUMENT) {
-			switch(messageSubType) {
-				case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
-				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
-				case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
-			}
-			
-		} else if(messageType == Message.MESSAGE_TYPE_SURVEY) {
-			switch(messageSubType) {
-				case Survey.TYPE_DEPARTED : tableName = DBManager.TABLE_SURVEY; break;
-				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_SURVEY; break;
-			}
-		}
-		
-		return tableName;
-		
-	}
 	
-	public static String getTableNameWithMassage(Message message) {
-		return getTableNameWithMessageType(message.type);
-	}
 }

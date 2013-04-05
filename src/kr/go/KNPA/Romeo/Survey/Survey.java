@@ -61,8 +61,9 @@ public class Survey extends Message implements Parcelable{
 	public Survey(Parcel source) {
 		readRomParcel(source);
 	}
-	
-	public Survey(Payload payload) {
+
+	/*
+	public Survey(Payload payload, boolean received, long checkTS) {
 		this.type = payload.message.type;
 		this.idx = payload.message.idx;
 		this.sender = payload.sender;
@@ -77,10 +78,8 @@ public class Survey extends Message implements Parcelable{
 		this.openTS = payload.message.appendix.getOpenTS();
 		this.closeTS = payload.message.appendix.getCloseTS();
 		this.answered = payload.message.appendix.getAnswered();
-	}
-	
-	public Survey(Payload payload, boolean received, long checkTS) {
-		this(payload);
+		
+		
 		this.received = received;
 		this.checkTS = checkTS;
 		if(this.checkTS == Message.NOT_SPECIFIED) {
@@ -90,6 +89,7 @@ public class Survey extends Message implements Parcelable{
 		}
 		// answered TODO
 	}
+	*/
 	
 	public Survey clone() {
 		Survey survey = new Survey();
@@ -98,7 +98,6 @@ public class Survey extends Message implements Parcelable{
 		survey.title = this.title;
 		survey.type = this.type;
 		survey.content = this.content;
-		survey.appendix = this.appendix;
 		survey.sender = this.sender;
 		survey.receivers = this.receivers;
 		survey.TS = this.TS;
@@ -115,10 +114,10 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	public long openTS() {
-		return appendix.getOpenTS();
+		return this.openTS;
 	}
 	public long closeTS() {
-		return appendix.getCloseTS();
+		return this.closeTS;
 	}
 	
 	public boolean answered() {
@@ -183,7 +182,6 @@ public class Survey extends Message implements Parcelable{
 			survey.title = this._title;
 			survey.type = this._type;
 			survey.content = this._content;
-			survey.appendix = this._appendix;
 			survey.sender = this._sender;
 			survey.receivers = this._receivers;
 			survey.TS = this._TS;
@@ -234,14 +232,18 @@ public class Survey extends Message implements Parcelable{
 		DBManager dbManager = new DBManager(context);
 		SQLiteDatabase db = dbManager.getWritableDatabase();
 		
+		StringBuilder recs = new StringBuilder();
+		for(int i=0; i<this.receivers.size(); i++) {
+			recs.append( this.receivers.get(i).toJSON() );
+		}
+		
 		// DB에 등록
 		long currentTS = System.currentTimeMillis();
 		ContentValues vals = new ContentValues();
 		vals.put("title", this.title);
 		vals.put("content", this.content);
-		vals.put("appendix", this.appendix.toBlob());
 		vals.put("sender", this.sender.idx);
-		vals.put("receivers", User.usersToString(this.receivers));
+		vals.put("receivers", recs.toString());
 		vals.put("received", 0);
 		vals.put("TS", currentTS);
 		vals.put("checked", 1);
@@ -270,11 +272,11 @@ public class Survey extends Message implements Parcelable{
 		
 		private ArrayList<Question> _questions;
 		
-		public Sheet() {}
+		public Form() {}
 		
 		public ArrayList<Question> questions() { return _questions;}
 		
-		public Sheet addQuestion(Question q) {
+		public Form addQuestion(Question q) {
 			if(_questions == null)
 				_questions = new ArrayList<Question>();
 			_questions.add(q);
@@ -282,22 +284,28 @@ public class Survey extends Message implements Parcelable{
 			return this;
 		}
 		
-		public static class Question extends HashMap<String, Object> {
-			private ArrayList<String> _options;
-			private boolean _isMultiple = false;
+		public static class Question {
+			private String title;
+			private String content;
+			private ArrayList<String> options;
+			private boolean isMultiple = false;
 			
-			public ArrayList<String> options() { return _options;}
+			public String title() {	return title;		}
+			public Question title(String title) {this.title = title; return this;}
+			public String content() { return content;	}
+			public Question content(String content) {this.content = content; return this;}
+			public ArrayList<String> options() { return options;}
 			
-			public boolean isMultiple() {	return _isMultiple;	}
+			public boolean isMultiple() {	return isMultiple;	}
 			
 			public Question isMultiple(boolean isMultiple) { 
-				this._isMultiple = isMultiple; 
+				this.isMultiple = isMultiple; 
 				return this;
 			}
 			public Question addOption(String o) {
-				if(_options == null)
-					_options = new ArrayList<String>();
-				_options.add(o);
+				if(options == null)
+					options = new ArrayList<String>();
+				options.add(o);
 				return this;
 			}
 		}

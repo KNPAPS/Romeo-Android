@@ -1,42 +1,30 @@
 package kr.go.KNPA.Romeo.Register;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
+
+import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Member.MemberManager;
+import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Connection.Connection;
-import kr.go.KNPA.Romeo.Member.MemberManager;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.R.id;
-import kr.go.KNPA.Romeo.R.layout;
-import kr.go.KNPA.Romeo.Util.ImageManager;
-import kr.go.KNPA.Romeo.Util.UserInfo;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore.Images;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class UserRegisterActivity extends Activity {
@@ -189,19 +177,21 @@ public class UserRegisterActivity extends Activity {
 
 	public void goSubmit() {
 		// TODO : go Resgister
+		
 		Bundle b = new Bundle();
 		b.putString("name", name);
 		b.putStringArray("departments", departments);
 		b.putInt("rank", rank);
 		b.putString("role", role);
-		if(picURI != null)	b.putString("picURI", picURI.toString());
+		
+		//if(picURI != null)	b.putString("picURI", picURI.toString());
 		
 		Bundle result = MemberManager.sharedManager().registerUser(UserRegisterActivity.this, b);
 		int status = result.getInt("status");
 		if(status == 1) {
 			
-			long userIdx = result.getLong("userIdx");
-			long depIdx = result.getLong("departmentIdx");
+			String userIdx = result.getString("userIdx");
+			String depIdx = result.getString("departmentIdx");
 			
 			String path = "USERPIC_"+userIdx+".jpg";
 //			ImageManager.saveBitmapFromURIToPath(UserRegisterActivity.this, picURI, path);
@@ -246,9 +236,29 @@ public class UserRegisterActivity extends Activity {
 		} 
 	}
 	
-
+	/**
+	 * 이 액티비티에 설정된 멤버 변수들을 토대로 서버에 유저 등록 후 user hash를 받아와 반환
+	 * @return
+	 */
 	public Bundle registerUser(Context context, Bundle b) {
-		String name = b.getString("name");
+		Payload request = new Payload(Event.User.register());
+		Data data = new Data();
+		
+		data.add(0,Data.KEY_USER_NAME,b.getString("name"));
+		data.add(0,Data.KEY_USER_RANK,userHash);
+		data.add(0,Data.KEY_USER_ROLE,rank);
+		data.add(0,Data.KEY_DEPT_HASH,deptHash);
+		request.setData(data);
+		
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Payload response = conn.getResponsePayload();
+		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
+			return response.getData().get(0,Data.KEY_USER_HASH).toString();
+		} else {
+			return null;
+		}
+		
+		String name = ;
 		String[] departments = b.getStringArray("departments");
 		int rank = b.getInt("rank");
 		String role = b.getString("role");
@@ -325,8 +335,8 @@ public class UserRegisterActivity extends Activity {
 		
 		
 		// TODO 사진 업로드하는 코드를 삽입한다.
-		if(picURI != null)
-			ImageManager.bitmapFromURI(context, picURI);
+		//if(picURI != null)
+			//ImageManager.bitmapFromURI(context, picURI);
 		// 사진 업로드는 비동기로 이루어지며,
 		// sharedPreference에 사진 업로드 여부를 체크하는 변수를 할당한다. ( 추후 사진 변경시 등등 활용 할 수 있기 때문이다.)
 		// 앱이 켜질때 혹은 조직도 등 특정 조건 하에서 사진 전송 여부를 확인하여 되어있지 않았다면 수시로 업로드 할 수 있는 기회를 제공하도록 한다.

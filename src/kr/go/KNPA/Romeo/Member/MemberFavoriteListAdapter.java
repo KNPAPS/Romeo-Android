@@ -94,7 +94,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			// 그룹
 		} else {
 			// 개인
-			User user = User.getUserWithIndex(_idxs[0]);
+			User user = User.getUserWithIdx(_idxs[0]);
 			rank = User.RANK[user.rank];
 			name = user.name;
 			department = user.department.nameFull;

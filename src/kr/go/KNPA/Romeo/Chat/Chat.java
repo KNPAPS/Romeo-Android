@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ public class Chat extends Message {
 	public static final int TYPE_MEETING = 0;
 	public static final int TYPE_COMMAND = 1;
 	
-	private String roomCode;
+	public String roomCode;
 	
 	private static final String KEY_ROOMCODE = "room_hash";
 	
@@ -33,29 +34,10 @@ public class Chat extends Message {
 		JSONObject jo = new JSONObject(json);
 		this.roomCode = jo.getString(KEY_ROOMCODE);
 	}
+
 	/*
-	public Chat(Cursor c, int type) {
-		idx = c.getString(c.getColumnIndex("idx"));;
-		this.type = type;
-	//	title = ;
-		content = c.getString(c.getColumnIndex("content"));
-		appendix = Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
-		sender = User.getUserWithIdx(c.getInt(c.getColumnIndex("sender")));
-		String _rec = c.getString(c.getColumnIndex("receivers"));
-		if(_rec != null && _rec.trim().length() > 0) {
-			receivers = User.indexesInStringToArrayListOfUser(_rec);
-		} else {
-			receivers = new ArrayList<User>();
-		}
+	public Chat(Payload payload, boolean received, long checkTS) {
 		
-		TS = c.getLong(c.getColumnIndex("TS"));
-		checked = (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);;
-		checkTS = c.getLong(c.getColumnIndex("checkTS"));
-		received = (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);	
-	}
-	*/
-	
-	public Chat(Payload payload) {
 		this.idx = payload.message.idx;
 		this.type = payload.message.type;
 		this.title = payload.message.title;
@@ -67,10 +49,7 @@ public class Chat extends Message {
 		//this.received = true;
 		//this.checkTS = NOT_SPECIFIED;
 		//this.checked = false;
-	}
-	
-	public Chat(Payload payload, boolean received, long checkTS) {
-		this(payload);
+		
 		this.received = received;
 		this.checkTS = checkTS;
 		if(this.checkTS == Message.NOT_SPECIFIED) {
@@ -79,7 +58,7 @@ public class Chat extends Message {
 			this.checked = true;
 		}
 	}
-	
+	*/
 	
 	public Chat clone() {
 		Chat chat = new Chat();
@@ -87,7 +66,6 @@ public class Chat extends Message {
 		chat.title = this.title;
 		chat.type = this.type;
 		chat.content = this.content;
-		chat.appendix = this.appendix;
 		chat.sender = this.sender;
 		chat.receivers = this.receivers;
 		chat.TS = this.TS;
@@ -97,10 +75,8 @@ public class Chat extends Message {
 		
 		return chat;
 	}
-	//
-	public String getRoomCode() {
-		return this.appendix.getRoomCode();
-	}
+
+	
 	
 	public void insertIntoDatabase(String tableName) {
 		
@@ -130,7 +106,6 @@ public class Chat extends Message {
 			chat.title = this._title;
 			chat.type = this._type;
 			chat.content = this._content;
-			chat.appendix = this._appendix;
 			chat.sender = this._sender;
 			chat.receivers = this._receivers;
 			chat.TS = this._TS;
@@ -159,13 +134,18 @@ public class Chat extends Message {
 		long currentTS = System.currentTimeMillis();
 		ContentValues vals = new ContentValues();
 		vals.put("content", this.content);
-		vals.put("appendix", this.appendix.toBlob());
 		vals.put("sender", this.sender.idx);
-		vals.put("receivers", User.usersToString(this.receivers));
+		
+		StringBuilder recs = new StringBuilder();
+		for(int i=0; i< this.receivers.size(); i++) {
+			if(i!=0) recs.append(":");
+			recs.append( this.receivers.get(i) );
+		}
+		vals.put("receivers", recs.toString() );
 		vals.put("received", 0); // 보낸 것이다.
 		vals.put("TS", currentTS);
 		vals.put("checked", 1);
-		vals.put("roomCode", this.getRoomCode());
+		vals.put("roomCode", this.roomCode);
 		vals.put("checkTS", currentTS);	// 지금 보내고 지금 확인한 것이므로, 현재 시간을 넣어준다.
 		vals.put("idx", idx);
 		db.insert(tableName, null, vals);
@@ -173,5 +153,6 @@ public class Chat extends Message {
 		db.close();
 		dbManager.close();
 	}
+
 
 }

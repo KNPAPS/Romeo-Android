@@ -135,11 +135,11 @@ public class RoomFragment extends RomeoFragment {
 				
 
 				
-				long senderIdx = UserInfo.getUserIdx(getActivity());
+				String senderIdx = UserInfo.getUserIdx(getActivity());
 				User sender = User.getUserWithIdx(senderIdx);
 				
 				ArrayList<User> roomUsers = room.users;
-				ArrayList<User> receivers = User.usersRemoveUserHavingIndex(roomUsers, senderIdx);
+				ArrayList<User> receivers = User.removeUserHavingIndex(roomUsers, senderIdx);
 				
 				
 				Appendix adx = new Appendix();
@@ -203,11 +203,11 @@ public class RoomFragment extends RomeoFragment {
 		
 		if(requestCode == MemberSearch.REQUEST_CODE) {
 			if(resultCode == Activity.RESULT_OK) {
-				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
 				ArrayList<User> newUsers = new ArrayList<User>();
 				
-				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
+				for(int i=0; i< receiversIdxs.size(); i++ ){
+					User user = User.getUserWithIdx(receiversIdxs.get(i));
 					if(room.users.contains(user)) continue;
 					newUsers.add(user);
 				}

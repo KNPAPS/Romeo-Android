@@ -88,15 +88,15 @@ public class SurveyDetailFragment extends Fragment  {
 
 		TextView senderTV = (TextView)view.findViewById(R.id.sender);
 		User user = this.survey.sender;
-		String sender = user.getDepartmentFull() + " " + User.RANK[user.rank] +" "  + user.name;
+		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS, getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS(), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat(this.survey.closeTS, getString(R.string.formatString_closeDT));
+		String closeDT = Formatter.timeStampToStringWithFormat(this.survey.closeTS(), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 
 		TextView contentTV = (TextView)view.findViewById(R.id.content);
@@ -105,7 +105,8 @@ public class SurveyDetailFragment extends Fragment  {
 
 		qm = new QuestionManager();
 
-		// parsing Start
+		// parsing Start TODO
+		/*
 		Appendix adx = survey.appendix;
 		String json = adx.getAttachmentWithKey(Message.MESSAGE_KEY_SURVEY).getJSON();
 
@@ -202,6 +203,7 @@ public class SurveyDetailFragment extends Fragment  {
 			}// qs != null END
 
 		}// s != null END
+		*/
 		/*
 		for(int q=0; q<   ; q++) {
 			View questionView = inflater.inflate(R.layout.survey_question_detail, questionsLL, false);

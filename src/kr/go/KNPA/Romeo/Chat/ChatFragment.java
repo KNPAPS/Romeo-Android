@@ -151,14 +151,14 @@ public class ChatFragment extends RomeoFragment {
 	// Message Receiving
 	public static void receive(Chat chat) {
 		RoomFragment rf = getCurrentRoom();
-		if(rf !=null && rf.room != null && rf.room.roomCode !=null && rf.room.roomCode.equals(chat.getRoomCode())){//ra.room!=null && ra.room.roomCode == chat.roomCode) {
+		if(rf !=null && rf.room != null && rf.room.roomCode !=null && rf.room.roomCode.equals(chat.roomCode)){//ra.room!=null && ra.room.roomCode == chat.roomCode) {
 			rf.receive(chat);
 		}
 		
 		ChatFragment f = null;
-		if(chat.type % 100 == Chat.TYPE_COMMAND) 
+		if(chat.subType() == Chat.TYPE_COMMAND) 
 			f = _commandFragment;
-		else if(chat.type % 100 == Chat.TYPE_MEETING)
+		else if(chat.subType() == Chat.TYPE_MEETING)
 			f = _meetingFragment;
 	
 		if(f == null) return;
@@ -182,21 +182,10 @@ public class ChatFragment extends RomeoFragment {
 			} else {
 				//data.getExtras().get;
 				
-				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
 				
-				ArrayList<User> newUsers = new ArrayList<User>();
-				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
-					// TODO 이미 선택되어 잇는 사람은 ..
-					newUsers.add(user);
-				}
-
-				
-				Room room = new Room();
-				room.type = this.type;
-				room.roomCode = UserInfo.getUserIdx(getActivity())+":"+System.currentTimeMillis();
-				room.users = newUsers;
-				RoomFragment fragment = new RoomFragment(room);
+				ArrayList<User> newUsers = User.getUsersWithIdxs(receiversIdxs);
+				RoomFragment fragment = new RoomFragment(new Room(this.type, Room.makeRoomCode(getActivity()), newUsers));
 				MainActivity.sharedActivity().pushContent(fragment);
 			}
 		} else {

@@ -62,7 +62,7 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		}
 		
 		// User 정보를 얻어온다.
-		ArrayList<User> users = User.getUsersWithIndexes(__idxs);
+		ArrayList<User> users = User.getUsersWithIdxs(__idxs);
 		
         //배경투명처리
 		/*

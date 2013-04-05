@@ -113,7 +113,7 @@ public class DocumentForwardFragment extends Fragment {
 		forward.put("forwarder", ""+UserInfo.getUserIdx(getActivity()));
 		forward.put("TS", ""+System.currentTimeMillis());
 		forward.put("content", contentET.getText().toString());
-		fwdDocument.appendix.addForward(forward);
+		fwdDocument.getForwards().add(forward);
 		
 		fwdDocument.receivers = receivers;
 		
@@ -139,11 +139,11 @@ public class DocumentForwardFragment extends Fragment {
 				//data.getExtras().get;
 				Toast.makeText(getActivity(), "Activity Result Success", Toast.LENGTH_SHORT).show();
 				
-				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
 				
 				ArrayList<User> newUsers = new ArrayList<User>();
-				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
+				for(int i=0; i< receiversIdxs.size(); i++ ){
+					User user = User.getUserWithIdx(receiversIdxs.get(i));
 					// TODO 이미 선택되어 잇는 사람은 ..
 					if(receivers.contains(user)) continue;
 					newUsers.add(user);

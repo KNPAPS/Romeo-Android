@@ -27,7 +27,6 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
 	
-	private	static final String FWD_FORWARDS 		= "forwards";
 	public	static final String FWD_FORWARDER_IDX 	= "forwarder";
 	public	static final String FWD_ARRIVAL_DT 		= "TS";
 	public	static final String FWD_CONTENT 		= "content";
@@ -45,7 +44,7 @@ public class Document extends Message implements Parcelable{
 	public Document(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
 		
-		JSONArray ja = jo.getJSONArray(FWD_FORWARDS);
+		JSONArray ja = jo.getJSONArray("forwards");
 		for(int i=0; i<ja.length(); i++) {
 			HashMap<String, String> hmap = new HashMap<String, String>();
 			
@@ -61,9 +60,6 @@ public class Document extends Message implements Parcelable{
 		
 		this.type = getType();
 		
-		Appendix _appendix = Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
-		this.appendix = _appendix; 
-		
 		boolean _favorite = (c.getInt(c.getColumnIndex("favorite")) == 1? true : false);
 		this.favorite = _favorite;
 	}
@@ -71,8 +67,9 @@ public class Document extends Message implements Parcelable{
 	public Document(Parcel source) {
 		readFromParcel(source);
 	}
-	
-	public Document(Payload payload) {
+
+	/*
+	public Document(Payload payload, boolean received, long checkTS, boolean favorite) {
 		this.idx = payload.message.idx;
 		this.title = payload.message.title;
 		this.type = payload.message.type;
@@ -85,10 +82,8 @@ public class Document extends Message implements Parcelable{
 		//this.checked = false;
 		this.appendix = payload.message.appendix;
 		//this.favorite = false;
-	}
-	
-	public Document(Payload payload, boolean received, long checkTS, boolean favorite) {
-		this(payload);
+		
+		
 		this.received = received;
 		this.checkTS = checkTS;
 		this.favorite = favorite;
@@ -96,7 +91,7 @@ public class Document extends Message implements Parcelable{
 			this.checked = false;
 		}
 	}
-	
+	*/
 	public Document clone() {
 		Document document = new Document();
 		
@@ -104,7 +99,6 @@ public class Document extends Message implements Parcelable{
 		document.title = this.title;
 		document.type = this.type;
 		document.content = this.content;
-		document.appendix = this.appendix;
 		document.sender = this.sender;
 		document.receivers = this.receivers;
 		document.TS = this.TS;
@@ -127,12 +121,17 @@ public class Document extends Message implements Parcelable{
 		
 		DBManager dbManager = new DBManager(context);
 		SQLiteDatabase db = dbManager.getWritableDatabase();
+		
+		StringBuilder recs = new StringBuilder();
+		for(int i=0; i<this.receivers.size(); i++) {
+			recs.append( this.receivers.get(i).toJSON() );
+		}
+		
 		ContentValues vals = new ContentValues();
 		vals.put("title", this.title);
 		vals.put("content", this.content);
-		vals.put("appendix", this.appendix.toBlob());
 		vals.put("sender", this.sender.idx);
-		vals.put("receivers", User.usersToString(this.receivers));
+		vals.put("receivers", recs.toString() );
 		vals.put("received", (this.received?1:0));
 		vals.put("TS", System.currentTimeMillis());
 		vals.put("checked", (this.checked?1:0));							
@@ -174,7 +173,6 @@ public class Document extends Message implements Parcelable{
 			document.title = this._title;
 			document.type = this._type;
 			document.content = this._content;
-			document.appendix = this._appendix;
 			document.sender = this._sender;
 			document.receivers = this._receivers;
 			document.TS = this._TS;
@@ -275,12 +273,16 @@ public class Document extends Message implements Parcelable{
 		SQLiteDatabase db = dbManager.getWritableDatabase();
 		long currentTS = System.currentTimeMillis();
 		
+		StringBuilder recs = new StringBuilder();
+		for(int i=0; i<this.receivers.size(); i++) {
+			recs.append( this.receivers.get(i).toJSON() );
+		}
+		
 		ContentValues vals = new ContentValues();
 		vals.put("title", this.title);
 		vals.put("content", this.content);
-		vals.put("appendix", this.appendix.toBlob());
 		vals.put("sender", this.sender.idx);
-		vals.put("receivers", User.usersToString(this.receivers));
+		vals.put("receivers", recs.toString());
 		vals.put("received", false);
 		vals.put("TS", currentTS);
 		vals.put("checked", true);							

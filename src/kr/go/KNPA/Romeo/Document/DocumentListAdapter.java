@@ -41,9 +41,9 @@ class DocumentListAdapter extends CursorAdapter {
 			
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
-			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx((int)senderIdx);
-			String sender = user.getDepartmentFull() + " "+User.RANK[user.rank] +" "+ user.name;
+			String senderIdx = c.getString(c.getColumnIndex("sender"));
+			User user = User.getUserWithIdx(senderIdx);
+			String sender = user.department.nameFull + " "+User.RANK[user.rank] +" "+ user.name;
 			
 			String arrivalDT = "";
 			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
@@ -62,9 +62,9 @@ class DocumentListAdapter extends CursorAdapter {
 			
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
-			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx((int)senderIdx);
-			String sender = user.getDepartmentFull() + " "+User.RANK[user.rank] +" "+ user.name;
+			String senderIdx = c.getString(c.getColumnIndex("sender"));
+			User user = User.getUserWithIdx(senderIdx);
+			String sender = user.department.nameFull + " "+User.RANK[user.rank] +" "+ user.name;
 			
 			String arrivalDT = "";
 			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
@@ -83,9 +83,9 @@ class DocumentListAdapter extends CursorAdapter {
 			
 			String title = "";
 			title = c.getString(c.getColumnIndex("title"));
-			long senderIdx = c.getLong(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx((int)senderIdx);
-			String sender = user.getDepartmentFull() + " "+User.RANK[user.rank] +" "+ user.name;
+			String senderIdx = c.getString(c.getColumnIndex("sender"));
+			User user = User.getUserWithIdx(senderIdx);
+			String sender = user.department.nameFull + " "+User.RANK[user.rank] +" "+ user.name;
 			
 			String arrivalDT = "";
 			long arrivalTS = c.getLong(c.getColumnIndex("TS"));

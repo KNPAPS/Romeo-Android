@@ -308,21 +308,25 @@ public class SurveyComposeFragment extends Fragment {
 		
 		
 		sb.append(lo);
-//TODO
+
 		String title = titleET.getText().toString();
 		String content = contentET.getText().toString();
 		User sender = User.getUserWithIdx(UserInfo.getUserIdx(getActivity()));
 		
-		receivers.add(User.userWithIdx(1));
-		receivers.add(User.userWithIdx(2));
-		receivers.add(User.userWithIdx(3));
-		//receivers.add(User.userWithIdx(4));
+		// receivers.add(); TODO : register Receivers
+		
+		// receivers TODO
+		String recs = "";
+		for(int i=0; i<receivers.size(); i++) {
+			if(i!=0) recs+=":";
+			recs += receivers.get(i).toJSON();
+		}
 		
 		sb.append(q).append("title").append(q).append(c).append(q).append(title).append(q).append(",");
 		sb.append(q).append("content").append(q).append(c).append(q).append(content).append(q).append(",");
 		sb.append(q).append("openTS").append(q).append(c).append(openTS).append(",");
 		sb.append(q).append("closeTS").append(q).append(c).append(closeTS).append(",");
-		sb.append(q).append("receivers").append(q).append(c).append(q).append(User.usersToString(receivers)).append(q).append(",");
+		sb.append(q).append("receivers").append(q).append(c).append(q).append(recs).append(q).append(",");
 		
 		//		EditText receiversET;
 		sb.append(q).append("questions").append(q).append(c);
@@ -438,11 +442,11 @@ public class SurveyComposeFragment extends Fragment {
 				//data.getExtras().get;
 				Toast.makeText(getActivity(), "Activity Result Success", Toast.LENGTH_SHORT).show();
 				
-				long[] receiversIdx = data.getExtras().getLongArray("receivers");
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
 				
 				ArrayList<User> newUsers = new ArrayList<User>();
-				for(int i=0; i< receiversIdx.length; i++ ){
-					User user = User.getUserWithIdx(receiversIdx[i]);
+				for(int i=0; i< receiversIdxs.size(); i++ ){
+					User user = User.getUserWithIdx( receiversIdxs.get(i) );
 					// TODO 이미 선택되어 잇는 사람은 ..
 					if(receivers.contains(user)) continue;
 					newUsers.add(user);
