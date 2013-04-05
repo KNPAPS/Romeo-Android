@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.Event;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +18,6 @@ import org.json.JSONObject;
  * @author 최영우
  * @since 2013.4.1
  */
-@SuppressWarnings("unchecked")
 public class DataParser {
 
 	/**
@@ -32,10 +34,13 @@ public class DataParser {
 	 */
 	public static Data parse( String event, int status, JSONArray dataJSONArray ) throws JSONException {
 		Data dataNative = null;
-		//TODO: 특정 method에 대해 서버와 주고받는 자료구조 변경해야 할듯
-				
-		dataNative = basicParse(dataJSONArray);
 		
+		if ( event == Event.MESSAGE_SEND ) {
+			dataNative = new Data();
+			dataNative.add(0, Data.KEY_MESSAGE,  Message.parseMessage(dataJSONArray.toString()) );
+		} else {
+			dataNative = basicParse(dataJSONArray);
+		}
 		
 		return dataNative;
 	}
