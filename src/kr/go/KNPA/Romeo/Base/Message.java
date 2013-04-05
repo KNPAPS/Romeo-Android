@@ -11,6 +11,7 @@ import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,6 +40,11 @@ public class Message implements Parcelable{
 	public static final String MESSAGE_KEY_DOCUMENT = "DOCUMENT";
 	public static final String MESSAGE_KEY_SURVEY = "SURVEY";
 	
+	protected static final String KEY_TYPE		=	"type";
+	protected static final String KEY_TITLE		=	"title";
+	protected static final String KEY_CONTENT	=	"content";
+	protected static final String KEY_SENDER	=	"sender";
+	protected static final String KEY_RECEIVERS	=	"receivers";
 	
 	// Variables to be sent
 	public String 			idx 		= null;
@@ -66,17 +72,35 @@ public class Message implements Parcelable{
 	public static Message parseMessage(String json) {
 		Message message = null;
 		
-		JSONObject jo = new JSONObject(json);
+		JSONObject jo = null;
 		int type = NOT_SPECIFIED;
+		
 		try {
+			jo = new JSONObject(json);
 			type = jo.getInt(Data.KEY_MESSAGE_TYPE);
 		} catch (JSONException e) {
 		}
 		
-		switch(type/MESSAGE_TYPE_DIVIDER) {
-			case Message.MESSAGE_TYPE_CHAT		:		message = new Chat(json);		break;
-			case Message.MESSAGE_TYPE_DOCUMENT	:		message = new Document(json);	break;
-			case Message.MESSAGE_TYPE_SURVEY	:		message = new Survey(json);		break;
+		try {
+			switch(type/MESSAGE_TYPE_DIVIDER) {
+				case Message.MESSAGE_TYPE_CHAT		:		message = new Chat(json);		break;
+				case Message.MESSAGE_TYPE_DOCUMENT	:		message = new Document(json);	break;
+				case Message.MESSAGE_TYPE_SURVEY	:		message = new Survey(json);		break;
+			}
+			
+			message.type = jo.getInt(KEY_TYPE);
+			message.title = jo.getString(KEY_TITLE);
+			message.content = jo.getString(KEY_CONTENT);
+			message.sender = User.getUserWithIndex(jo.getString(KEY_SENDER));
+			
+			JSONArray __receivers = jo.getJSONArray(KEY_RECEIVERS);
+			ArrayList<String> _receivers = new ArrayList<String>(__receivers.length()); 
+			for(int i=0; i<__receivers.length(); i++) {
+				_receivers.add(__receivers.getString(i));
+			}
+			message.receivers = User.getUsersWithIndexes(_receivers);
+		} catch (JSONException e) {
+			message = null;
 		}
 		
 		return message;
