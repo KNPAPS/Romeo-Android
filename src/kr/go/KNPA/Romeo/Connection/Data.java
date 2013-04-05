@@ -121,4 +121,6 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	public static final String KEY_DEVICE_IS_ENABLED = "isEnabled";
 	//! 하위 부서를 전부 가져오는지
 	public static final String KEY_GET_MEMBER_FETCH_ALL = "fetch_all";
+	
+	public static final String KEY_FILE = "fetched_file";
 }

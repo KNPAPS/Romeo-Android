@@ -20,8 +20,8 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.MimeType;
+import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -66,8 +66,6 @@ import android.util.Pair;
 
 public class Connection {
 	private static final String TAG = Connection.class.getName();
-	private static final String BUNDLE_KEY_STATUS_CODE = "HTTPStatusCode";
-	private static final String BUNDLE_KEY_RESPONSE_JSON = "responsePayloadJSON";
 	/**
 	 * @name settings
 	 * 설정 변수들. 기본값은 ConnectionConfig에서 받아옴
@@ -76,11 +74,10 @@ public class Connection {
 	private String sUrl = ConnectionConfig.sUrl;
 	private String accepts = ConnectionConfig.accepts;
 	private boolean async = ConnectionConfig.async;
-	private ConnectionCallback callBack = ConnectionConfig.callBack;
+	private CallbackEvent<Payload, Integer, Payload> callBack = ConnectionConfig.callBack;
 	private String contentType = ConnectionConfig.contentType;
 	private Context context = ConnectionConfig.context;
 	private String requestPayloadJSON = ConnectionConfig.requestPayloadJSON;
-	private String dataType = ConnectionConfig.dataType;
 	private int HTTPStatusCode = ConnectionConfig.HTTPStatusCode;
 	private int timeout = ConnectionConfig.timeout;
 	private String type = ConnectionConfig.type;
@@ -113,7 +110,7 @@ public class Connection {
 	public Connection url( String v ) { this.sUrl = v; return this; }
 	public Connection accepts( String v ) { this.accepts = v; return this; }
 	public Connection async( boolean v ) { this.async = v; return this; }
-	public Connection callBack(ConnectionCallback v) { this.callBack = v; return this; }
+	public Connection callBack(CallbackEvent<Payload, Integer, Payload> v) { this.callBack = v; return this; }
 	public Connection contentType( String v ) { this.contentType = v; return this; }
 	public Connection context( Context v ) { this.context = v; return this; }
 	public Connection requestPayloadJSON( String v ) { 
@@ -121,7 +118,6 @@ public class Connection {
 		requestPayload = new Payload(requestPayloadJSON);
 		return this; 
 	}
-	public Connection dataType( String v ) { this.dataType = v; return this; }
 	public Connection timeout( int v ) { this.timeout = v; return this; }
 	public Connection type( String v ) { this.type = v; return this; }
 	/** @} */
@@ -146,21 +142,21 @@ public class Connection {
 	 * @return
 	 */
 	public Connection request(){
+		
 		callBack.beforeSend(requestPayload);
 		if ( async == false ) {
 			try {
-				Pair<Integer,String> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);
+				Pair<Integer,Payload> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);
 				HTTPStatusCode = result.first;
-				responsePayloadJSON = result.second;
+				responsePayload = result.second;
 			} catch ( RuntimeException e ) {
-				callBack.error(requestPayload, context.getString( R.string.error_connection), e);
+				callBack.error(context.getString( R.string.error_connection), e);
 			}
 			
 			if ( HTTPStatusCode == HttpURLConnection.HTTP_OK ) { //성공
 				callBack.success(responsePayload);	
 			} else { //HTTP 에러
-				callBack.error(requestPayload, 
-						context.getString(R.string.error_connection), 
+				callBack.error(context.getString(R.string.error_connection), 
 						new Exception("HTTP response Code : "+HTTPStatusCode));
 			}
 			
@@ -172,21 +168,20 @@ public class Connection {
 				public void run(){
 					
 					/**
-					 * doRequest를 해서 HTTP statusCode와 responsePayloadJSON을 번들로 data에 저장하고
+					 * doRequest를 해서 HTTP statusCode와 responsePayload pair를 obj로 설정해 전달하고
 					 * 만약 에러가 나면 그 에러 객체를 obj에 담아 핸들러로 전달
+					 * msg.arg1에 1이 들어가면 성공. 0이면 에러로 구분
 					 */
 					
 					Message msg = new Message();
-					Bundle bundle = new Bundle();
 					try {
-						Pair<Integer,String> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);//HTTPStatusCode
-						
-						bundle.putInt(BUNDLE_KEY_STATUS_CODE, result.first);
-						bundle.putString(BUNDLE_KEY_RESPONSE_JSON, result.second);
+						Pair<Integer,Payload> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);
+						msg.obj = result;
+						msg.what = 1;
 					} catch ( RuntimeException e ) {
 						msg.obj = e;
+						msg.arg1 = 0;
 					}
-					msg.setData(bundle);
 					mHandler.sendMessage(msg);
 				}
 			});
@@ -201,10 +196,12 @@ public class Connection {
 	 * HTTP status code와 responsePayloadJSON을 반환하며, HTTP에러가 아닌 에러가 났을 경우 error throw
 	 * @return statusCode
 	 */
-	private Pair<Integer,String> doRequest(String accepts, String contentType, String requestPayloadJSON, int timeout, String type) throws RuntimeException {
+	private Pair<Integer,Payload> doRequest(String accepts, String contentType, String requestPayloadJSON, int timeout, String type) 
+			throws RuntimeException {
 		HttpURLConnection conn = null;
 		Integer statusCode = Constants.NOT_SPECIFIED;
 		String responsePayloadJSON = null;
+		Payload responsePayload = null;
 				
 		//url connection
 		try {
@@ -239,8 +236,9 @@ public class Connection {
 		//타임아웃 설정
 		conn.setConnectTimeout(timeout);
 		conn.setReadTimeout(timeout);
-		
+
 		conn.setRequestProperty("Cache-Control", "no-cache, no-store");
+		
 		conn.setRequestProperty("Accept", accepts);
 
 		try {
@@ -324,25 +322,21 @@ public class Connection {
 	
 			//HTTP 통신이 올바르게 되었으면 response 읽어들인다.
 			if ( statusCode == HttpURLConnection.HTTP_OK ) {
-	
-				StringBuffer resp = new StringBuffer();
-				
-				String line;
-				
 				InputStream _is;
 				_is = conn.getInputStream();
-				InputStreamReader _isr;
-				
-				_isr = new InputStreamReader(_is, ConnectionConfig.CHARSET_RESPONSE_ENCODING);
-	
-				BufferedReader br = new BufferedReader(_isr);
 			
+				//가져오는 정보가 파일이 아닐 때
+				StringBuffer resp = new StringBuffer();
+				String line;
+				InputStreamReader _isr;
+				_isr = new InputStreamReader(_is, ConnectionConfig.CHARSET_RESPONSE_ENCODING);
+				BufferedReader br = new BufferedReader(_isr);
 				while ((line = br.readLine() ) != null) {
 					resp.append(line);
 				}
-	
 				br.close();
 				responsePayloadJSON = resp.toString();
+				responsePayload = new Payload(responsePayloadJSON);
 			} else {
 				Log.e(TAG, "HTTP response code : "+statusCode );
 			}
@@ -353,7 +347,7 @@ public class Connection {
 			throw new RuntimeException(e);
 		}
 
-		return new Pair<Integer,String>(statusCode,responsePayloadJSON);
+		return new Pair<Integer,Payload>(statusCode,responsePayload);
 	}
 	
 	private static class NetHandler extends Handler {
@@ -368,20 +362,18 @@ public class Connection {
 	    public void handleMessage(Message msg) {
 	    	Connection connection = mConnection.get();
 			if (mConnection != null) {
-										
-				connection.responsePayloadJSON = msg.getData().getString(BUNDLE_KEY_RESPONSE_JSON);
-				connection.HTTPStatusCode = msg.getData().getInt(BUNDLE_KEY_STATUS_CODE);
-				
-				connection.responsePayload = new Payload(connection.responsePayloadJSON);
-				
-				if ( connection.HTTPStatusCode == Constants.NOT_SPECIFIED ) {
+				if ( msg.arg1 == 0 ) {
 					//doRequest() 도중 예외가 발생한거임. 그러니 콜백으로 error를 호출
 					//msg.obj = RuntimeException 객체임
-					connection.callBack.error(connection.requestPayload, 
-												connection.context.getString(R.string.error_connection), 
+					
+					connection.callBack.error(connection.context.getString(R.string.error_connection), 
 												(RuntimeException)msg.obj);
 										
 				} else {
+					@SuppressWarnings("unchecked")
+					Pair<Integer,Payload> pair = (Pair<Integer,Payload>)msg.obj;
+					connection.HTTPStatusCode = pair.first;
+					connection.responsePayload = pair.second;
 					
 					connection.callBack.success(connection.responsePayload);
 				}
