@@ -11,9 +11,8 @@ import android.content.Context;
  * @author 최영우
  */
 public class ConnectionConfig {
-	//protected static final static String HOST_URL = "http://116.67.94.11:9876/index.php/handler/call";
 	//! 서버호스트
-	public static final String SERVER_HOST = "http://localhost/";
+	public static final String SERVER_HOST = "http://116.67.94.11:9876/";
 	//! event request url
 	public static final String REQUEST_URL = SERVER_HOST+"juliet/index.php/handler/call";
 	//! 업로드된 파일 url
