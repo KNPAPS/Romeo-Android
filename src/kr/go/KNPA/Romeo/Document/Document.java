@@ -260,8 +260,16 @@ public class Document extends Message implements Parcelable{
 	};
 	
 	public void send(Context context) {
-		long idx = super.send();
+		super.send();
 		
+		
+
+	}
+	
+	@Override
+	public void afterSend() {
+		// TODO :  Insert into DB
+		/*
 		String tableName = null;
 		switch(this.type%MESSAGE_TYPE_DIVIDER) {
 			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
@@ -293,6 +301,6 @@ public class Document extends Message implements Parcelable{
 
 		db.close();
 		dbManager.close();
-
+		*/
 	}
 }

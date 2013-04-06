@@ -89,6 +89,8 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	public static final String KEY_MESSAGE_CONTENT = "content";
 	//!  
 	public static final String KEY_MESSAGE_APPENDIX = "appendix";
+	//! 
+	public static final String KEY_MESSAGE_SURVEY_HASH = "survey_hash";
 	//! HashMap GCM SendResult 
 	public static final String KEY_GCM_SEND_RESULT = "sendResultFromGCM";
 	//!  

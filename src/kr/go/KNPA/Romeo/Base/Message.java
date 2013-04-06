@@ -212,9 +212,11 @@ public class Message implements Parcelable{
 	}
 	
 
-	public long send() {
-		return GCMMessageSender.sendMessage(this);
+	public void send() {
+		GCMMessageSender.sendMessage(this);
 	}
+	
+	public void afterSend() {}
 	
 	public static class Builder {
 		protected String 		_idx 		= null;

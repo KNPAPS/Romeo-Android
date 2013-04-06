@@ -152,4 +152,11 @@ public class UserInfo {
 		if(enc == null) return null;
 		return Encrypter.sharedEncrypter().decryptString(enc);
 	}
+	
+	public static void clear(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor e = prefs.edit();
+		e.clear();
+		e.commit();
+	}
 }

@@ -3,19 +3,21 @@ package kr.go.KNPA.Romeo.GCM;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Member.Department;
-import kr.go.KNPA.Romeo.Util.CollectionFactory;
-import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Util.CallbackEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.util.Log;
 
 public class GCMMessageSender {
@@ -37,25 +39,6 @@ public class GCMMessageSender {
 	public static final String TAG = "GCMMessageSender";
 	
 	public GCMMessageSender() {
-	}
-	
-	public String sendMessageWithPayload(Payload p) {
-		Connection conn = new Connection.Builder()
-										.dataType(Connection.DATATYPE_JSON)
-										.type(Connection.TYPE_POST)
-										.url(Connection.HOST_URL + "/message/sendMessageWithGCM")
-										.data(CollectionFactory.hashMapWithKeysAndValues("payload", p))
-										.build();
-		String result = null;
-		int requestCode = conn.request();
-		if(requestCode == Connection.HTTP_OK) {
-			result = conn.getResponse();
-		} else {
-			return null;
-		}
-		
-		
-		return result;
 	}
 	
 	public static boolean setMessageChecked(int type, String messageIdx, String userIdx) {
@@ -94,141 +77,65 @@ public class GCMMessageSender {
 		return uncheckers;
 	}
 	
-	public static long sendMessage(Message message) {
-		Data data = new Data();
-		data.add(0, Data.KEY_SENDER_HASH, message.sender.idx);
-		data.add(0, Data.KEY_RECEIVER_HASH, message.receivers);
-		if(message.mainType() == Message.MESSAGE_TYPE_CHAT) {
-			data.add(0, Data.KEY_ROOM_HASH, message.appendix.getRoomCode());
-		}
+	public static void sendMessage(Message message) {
+		Data reqData = new Data().add(0, Data.KEY_MESSAGE, message);
+		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 		
-		data.add(0, Data.Key_, value)
-		Payload request = new Payload().setData(data);
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
-		
-		Payload payload = new Payload.Builder()
-									.message(message)
-									.sender(message.sender)
-									.receivers(message.receivers)
-									.event(MESSAGE_DEPARTED)
-									.build();
-		return sendJSON(payload.toJSON());
-	}
-	
-	public static long sendJSON(String json) {
-		// Payload
-		//HashMap<String, Object> data = null;
-		Connection conn = new Connection.Builder()
-										.url(Connection.HOST_URL + "/message/sendMessageWithGCM")
-										.type(Connection.TYPE_POST)
-										.dataType(Connection.DATATYPE_JSON)
-										.data(json)
-										.build();
-		int responseCode = conn.request();
-		String response = null;
-		if(responseCode == Connection.HTTP_OK) {
-			response = conn.getResponse();
-		}
-		// TODO with response
-		// TODO 
-		return getMessageIndexFromJSONResponse(response);
-	}
-	
-	public static long getMessageIndexFromJSONResponse(String json) {
-		JSONObject response;
-		try {
-			response = new JSONObject(json);
-			return response.getLong("messageIdx");
-		} catch (JSONException e) {
-			Log.w(TAG, "Cannot get MessageIdx From Responsed JSON Message");
-			return Message.NOT_SPECIFIED;
-		}
-		
-	}
-	
-	public static boolean sendSurveyAnswerSheet(String json) {
-		
-		Connection conn = new Connection.Builder()
-				.url(Connection.HOST_URL + "/survey/answerSurvey")
-				.type(Connection.TYPE_POST)
-				.dataType(Connection.DATATYPE_JSON)
-				.data(json)
-				.build();
-		String result = null;
-		int requestCode = conn.request();
-		if(requestCode == Connection.HTTP_OK) {
-			result = conn.getResponse();
-		} else {
-			return false;
-		}
-		
-		if(result == null) return false;
-		
-		JSONObject jo=null;
-		try {
-			 jo = new JSONObject(result);
-		} catch (JSONException e) {
-			return false;
-		}
-		
-		if(jo == null) return false;
-		
-		boolean status = false;
-		try {
-			status = (jo.getInt("status") == 1?true:false);
-		} catch (JSONException e) {
-			return false;
-		}
-		
-		return status;
-	}
-	
-	public static ArrayList<Department> getSubDepartment(String json) {
-		Connection conn = new Connection.Builder()
-										.url(Connection.HOST_URL + "/member/getSubDepartment")
-										.type(Connection.TYPE_GET)
-										.dataType(Connection.DATATYPE_JSON)
-										.data(json)
-										.build();
-		
-		String result = null;
-		int requestCode = conn.request();
-		if(requestCode == Connection.HTTP_OK) {
-			result = conn.getResponse();
-		} else {
-			return null;
-		}
-		
-		JSONObject jo = null;
-		
-		try {
-			jo = new JSONObject(result);
-		} catch (JSONException e) {
-			return null;
-		}
-		
-		JSONArray ja = null;
-		try {
-			ja  = jo.getJSONArray("departments");
-		} catch (JSONException e) {
-			return null;
-		}
-		
-		if(ja == null) return null;
-		
-		ArrayList<Department> departments = new ArrayList<Department>(ja.length());
-		
-		for(int i=0; i < ja.length(); i++) {
-			try {
-				JSONObject _dep = ja.getJSONObject(i);
-				Department dep = new Department();
-				dep.title = _dep.getString("title");
-				dep.sequence = _dep.getLong("sequence");
-				departments.add(dep);
-			} catch (JSONException e) {
+		CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload, Integer, Payload>(){
+			private Message _message;
+			@Override
+			public void onPreExecute(Payload request){
+				_message = (Message)request.getData().get(0,"message");
 			}
-		}
+			
+			@Override
+			public void onPostExecute(Payload response) {
+				
+				if(response.getStatusCode() == StatusCode.SUCCESS) {
+				
+					String messageIdx = (String)response.getData().get(0, Data.KEY_MESSAGE_HASH);
+					_message.idx = messageIdx;
+					// TODO :  실패한 발신자
+					// TODO : 발신자 별 에러 컨트롤
+					
+					if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
+						((Chat)_message).afterSend();
+					} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
+						((Document)_message).afterSend();
+					} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
+						((Survey)_message).afterSend();
+					}
+				} else {
+					// TODO : 실패했을때??
+				}
+				
+			}
+		};
 		
-		return departments;
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callBack);
+		conn.request();
 	}
+	
+	public static void sendSurveyAnswerSheet(String json) {
+		
+		Data reqData = new Data().add(0, Data.KEY_USER_HASH, "").add(0, Data.KEY_MESSAGE_SURVEY_HASH, "");
+		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
+		
+		CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload, Integer, Payload>(){
+			private Message _message;
+			@Override
+			public void onPreExecute(Payload request){
+				
+			}
+			
+			@Override
+			public void onPostExecute(Payload response) {
+				Survey.afterSendAnswerSheet();
+			}
+		};
+		
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callBack);
+		conn.request();
+	}
+	
 }

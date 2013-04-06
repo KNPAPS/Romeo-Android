@@ -253,13 +253,15 @@ public class SurveyDetailFragment extends Fragment  {
 	};
 
 	private void submit() {
+		// TODO
+		/*
 		String qJson = qm.toJSON();
 		String json = "{\"idx\":"+survey.idx+",\"answersheet\":"+qJson+",\"userIdx\":"+UserInfo.getUserIdx(context)+"}";
 		boolean result = survey.sendAnswerSheet(json, getActivity());
 
 		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).listView.refresh();
 		if(result == true) MainActivity.sharedActivity().popContent(this);
-
+*/
 	}
 
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {

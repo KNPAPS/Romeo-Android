@@ -188,5 +188,6 @@
     
     
     <string name="placehold_search">Search</string>
+    <string name="ok">&quot;확인&quot;</string>
     
 </resources>

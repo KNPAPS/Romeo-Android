@@ -195,18 +195,22 @@ public class Survey extends Message implements Parcelable{
 		}
 	}
 
-	public boolean sendAnswerSheet(String json, Context context) {
-		boolean result = GCMMessageSender.sendSurveyAnswerSheet(json);
+	public void sendAnswerSheet(String json, Context context) {
+		GCMMessageSender.sendSurveyAnswerSheet(json);
 		
 		// TODO : make Async
-		if(result == true) {
-			setAnswered(json, context);
-		}
 		
-		return result;
+			setAnswered(json, context);
+		
+	}
+	
+	public static void afterSendAnswerSheet() {
+		
 	}
 	
 	public void setAnswered(String json, Context context) {
+		// TODO :  Insert into DB
+		/*
 		if(this.checked != false) {
 
 			DBManager dbManager = new DBManager(context);
@@ -222,13 +226,20 @@ public class Survey extends Message implements Parcelable{
 			this.checked = true;
 			this.answered = true;
 		}
+		*/
 	}
 	
 
 	public void send(Context context) {
-		long idx = super.send();
+		super.send();
 		
 		
+	}
+	
+	@Override
+	public void afterSend() {
+		// TODO :  Insert into DB
+		/*
 		DBManager dbManager = new DBManager(context);
 		SQLiteDatabase db = dbManager.getWritableDatabase();
 		
@@ -256,8 +267,8 @@ public class Survey extends Message implements Parcelable{
 		
 		db.close();
 		dbManager.close();
+		*/
 	}
-	
 	
 	public static class Form extends HashMap<String, Object>{
 		public static final String TITLE = "title";

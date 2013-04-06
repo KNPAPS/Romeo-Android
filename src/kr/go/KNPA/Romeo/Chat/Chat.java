@@ -118,8 +118,13 @@ public class Chat extends Message {
 	}
 	
 	public void send(Context context, Room room) {
-		long idx = super.send();
-		
+		super.send();
+	}
+
+	@Override
+	public void afterSend() {
+		// TODO :  Insert into DB
+		/*
 		DBManager dbManager = new DBManager(context);
 		SQLiteDatabase db = dbManager.getWritableDatabase();
 		
@@ -152,7 +157,7 @@ public class Chat extends Message {
 		
 		db.close();
 		dbManager.close();
+		*/
 	}
-
 
 }
