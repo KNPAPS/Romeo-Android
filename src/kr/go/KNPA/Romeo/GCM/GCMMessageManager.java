@@ -121,7 +121,7 @@ public class GCMMessageManager {
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
 		
         DBProcManager.sharedManager(context)
-        		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.TS, chat.checkTS);
+        		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.TS);
 		
 		notifyMessage(chat);
 	}
@@ -153,7 +153,7 @@ public class GCMMessageManager {
 		if(isRunningProcess(context))
 			SurveyFragment.receive(survey);		//리스트뷰에 notify
 
-		DBProcManager.sharedManager(context).survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
+		DBProcManager.sharedManager(context).survey().saveSurvey(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
 		
 		notifyMessage(survey);
 	}
