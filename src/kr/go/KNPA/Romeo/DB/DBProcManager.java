@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 /**
  * DB 프로시져 모음
@@ -16,14 +17,22 @@ public class DBProcManager {
 	 * @name Singleton
 	 * @{
 	 */
-	private static DBProcManager _sharedManager;
-	private ChatProcManager chat;
-	private DocumentProcManager document;
-	private SurveyProcManager survey;
-	
+	private static DBProcManager _sharedManager = null;
+	private ChatProcManager chat = null;
+	private DocumentProcManager document = null;
+	private SurveyProcManager survey = null;
+	private DBManager dbm = null;
+	private SQLiteDatabase db = null;
 	private DBProcManager(Context context) {
 		//TODO 접근가능한 DB가 있는지 확인
-		//this.dbm = new DBManager(context);
+		
+		if ( this.dbm == null ) {
+			this.dbm = new DBManager(context);  
+		}
+		
+		if ( this.db == null ) {
+			this.db = dbm.getWritableDatabase();
+		}
 	}
 	
 	public static DBProcManager sharedManager(Context context) {
@@ -33,20 +42,23 @@ public class DBProcManager {
 	}
 	
 	public ChatProcManager chat() {
-		if(chat == null)
+		if(chat == null){
 			chat = new ChatProcManager();
+		}
 		return  chat; 
 	}
 	
 	public DocumentProcManager document() {
-		if(document == null)
+		if(document == null){
 			document = new DocumentProcManager();
+		}
 		return document; 
 	}
 	
 	public SurveyProcManager survey() {
-		if(survey == null)
+		if(survey == null){
 			survey = new SurveyProcManager();
+		}
 		return survey; 
 	}
 	/** @} */
