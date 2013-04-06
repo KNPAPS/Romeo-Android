@@ -95,6 +95,14 @@ public class DBProcManager {
 		}
 		
 		/**
+		 * 채팅방을 즐겨찾기에 추가
+		 * @param hash
+		 */
+		public void addFavorite( String hash ) {
+			
+		}
+		
+		/**
 		 * 채팅방 목록에 대한 정보를 담고 있는 커서를 반환
 		 * @param roomType
 		 * @return 
@@ -157,6 +165,14 @@ public class DBProcManager {
 		}
 		
 		/**
+		 * 문서를 즐겨찾기에 추가
+		 * @param hash
+		 */
+		public void addFavorite( String hash ) {
+			
+		}
+		
+		/**
 		 * 문서를 확인했을 때
 		 * @param docHash 채팅 해쉬
 		 * @param checkedTS 체크한 시간
@@ -198,9 +214,70 @@ public class DBProcManager {
 			
 		}
 		
+		/**
+		 * 설문조사를 즐겨찾기에 추가
+		 * @param hash
+		 */
+		public void addFavorite( String hash ) {
+			
+		}
+		
+		/**
+		 * 설문조사 목록 가져오기
+		 * @param svyCategory 
+		 * @return
+		 */
+		public Cursor getSurveyList(int svyCategory) {
+			Cursor cursor = null;
+			return cursor;
+		}
 		
 	}
 	
-	
-
+	public class MemberProcManager {
+		
+		/**
+		 * 멤버를 즐겨찾기에 추가
+		 * @param hash
+		 */
+		public void addFavorite( String hash ) {
+			
+		}
+		
+		/**
+		 * 멤버 여러명을 한 즐겨찾기 그룹으로 등록
+		 * @param hash
+		 */
+		public void addFavorite( ArrayList<String> hashArray ) {
+			
+		}
+		
+		/**
+		 * 즐겨찾기 멤버나 멤버그룹 이름 변경
+		 * @param hash 즐겨찾기 멤버 해시나 그룹 해시
+		 * @param title 변경할 이름
+		 */
+		public void updateFavoriteTitle( String hash, String title ) {
+			
+		}
+		
+		/**
+		 * 즐겨찾기 목록 가져옴
+		 * @return
+		 */
+		public Cursor getFavoriteList() {
+			Cursor cursor = null;
+			return cursor;
+		}
+		
+		/**
+		 * 즐겨찾기 그룹에 소속된 멤버들의 hash를 array로 리턴
+		 * @param hash
+		 * @return
+		 */
+		public Cursor getFavoriteGroupMemberList(String hash){
+			Cursor cursor = null;
+			return cursor;
+		}
+	}
 }
