@@ -104,8 +104,15 @@ public class DBProcManager {
 		
 		/**
 		 * 채팅방 목록에 대한 정보를 담고 있는 커서를 반환
-		 * @param roomType
-		 * @return 
+		 * @b 커서구조
+		 * @b COLUMN_ROOM_HASH 채팅방 해시\n
+		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
+		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
+		 * @b COLUMN_ROOM_NUM_UNCHECKED_CHAT 읽지 않은 채팅 수\n
+		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
+		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
+		 * @param roomType 
+		 * @return cursor
 		 */
 		public Cursor getRoomList(int roomType) {
 			Cursor cursor = null;
@@ -113,16 +120,51 @@ public class DBProcManager {
 		}
 		
 		/**
-		 * 채팅방 내의 채팅 목록 불러오기
-		 * @param roomHash
+		 * 채팅을 전송할 때 채팅방에 있는 사람들의 목록을 리턴
+		 * @b 커서구조
+		 * @b COLUMN_USER_HASH 리시버 해쉬
+		 * @param hash 채팅방 해쉬
 		 * @return
 		 */
-		public Cursor getChatList(String roomHash) {
+		public Cursor getReceiverList( String hash ) {
+			Cursor cursor = null;
+			return cursor;
+		}
+		
+		/**
+		 * 채팅방 내의 채팅 목록 불러오기
+		 * @b 커서구조
+		 * @b COLUMN_CHAT_SENDER_HASH \n
+		 * @b COLUMN_CHAT_TS \n
+		 * @b COLUMN_CHAT_NUM_UNCHECKERS \n
+		 * @b COLUMN_CHAT_CONTENT 내용\n
+		 * @b COLUMN_CHAT_CONTENT_TYPE 내용의 종류 @see{CHAT_CONTENT_TYPE_TEXT} @see{CHAT_CONTENT_TYPE_PICTURE}\n
+		 * @param roomHash
+		 * @param TS 역순으로 정렬시 불러올 목록 시작 index
+		 * @param 불러올 채팅의 개수
+		 * @return
+		 */
+		public Cursor getChatList(String roomHash, int start, int count) {
 			Cursor cursor = null;
 			return cursor;
 		}
 		
 		public static final String COLUMN_ROOM_HASH = "room_hash";
+		public static final String COLUMN_ROOM_TITLE = "room_hash";
+		public static final String COLUMN_ROOM_NUM_CHATTER = "room_hash";
+		public static final String COLUMN_ROOM_NUM_NEW_CHAT = "";
+		public static final String COLUMN_ROOM_LAST_CHAT_TS = "";
+		public static final String COLUMN_ROOM_LAST_CHAT_CONTENT = "";
+		public static final String COLUMN_USER_HASH = "user_hash";
+		public static final String COLUMN_CHAT_SENDER_HASH = "";
+		public static final String COLUMN_CHAT_TS = "";
+		public static final String COLUMN_CHAT_NUM_UNCHECKERS = "";
+		public static final String COLUMN_CHAT_CONTENT = "";
+		public static final String COLUMN_CHAT_CONTENT_TYPE = "";
+		
+		public static final int CHAT_CONTENT_TYPE_TEXT = 1;
+		public static final int CHAT_CONTENT_TYPE_PICTURE = 2;
+		
 	}
 
 	public class DocumentProcManager {
@@ -181,15 +223,76 @@ public class DBProcManager {
 			
 		}
 		
+		/**
+		 * 문서 목록 가져오기
+		 * @b 커서구조
+		 * @b COLUMN_DOC_HASH str 문서해쉬\n
+		 * @b COLUMN_DOC_TITLE str 문서제목\n
+		 * @b COLUMN_IS_CHECKED int 자기가확인했는지\n
+		 * @b COLUMN_SENDER_HASH str 문서보낸사람\n
+		 * @b COLUMN_CREATED_TS int 문서생성일(보낸시간)\n
+		 * @param docCategory 문서타입 @see {Document.TYPE_RECEIVED} @see {Document.TYPE_FAVORITE} @see {Document.TYPE_DEPARTED} 
+		 * @return 
+		 */
 		public Cursor getDocumentList(int docCategory) {
 			Cursor cursor = null;
 			return cursor;
 		}
-		
+
+		/**
+		 * 한 문서의 기본 정보 조회(포워딩,파일빼고)
+		 * @b 커서구조
+		 * @b COLUMN_DOC_TITLE str 제목\n
+		 * @b COLUMN_DOC_CONTENT str 내용\n
+		 * @b COLUMN_DOC_SENDER_HASH str 발신자\n
+		 * @b COLUMN_DOC_TS int 발신일시\n
+		 * @param docHash 문서 해시
+		 * @return
+		 */
 		public Cursor getDocumentContent(String docHash) {
 			Cursor cursor = null;
 			return cursor;			
 		}
+		
+		/**
+		 * 문서의 포워딩 정보
+		 * @b 커서구조
+		 * @b COLUMN_FORWARDER_HASH str 포워더\n
+		 * @b COLUMN_FORWARD_COMMENT str 코멘트\n
+		 * @b COLUMN_FORWARD_TS int 포워딩한 시간\n
+		 * @param docHash
+		 * @return
+		 */
+		public Cursor getDocumentForwardInfo(String docHash) {
+			Cursor cursor = null;
+			return cursor;
+		}
+		
+		/**
+		 * 문서의 첨부파일 정보
+		 * @b 커서구조
+		 * @b COLUMN_FILE_NAME str 파일이름\n
+		 * @b COLUMN_FILE_TYPE int 파일종류\n
+		 * @b COLUMN_FILE_SIZE int 파일사이즈 in byte\n
+		 * @param docHash
+		 * @return
+		 */
+		public Cursor getDocumentAttachment(String docHash) {
+			Cursor cursor = null;
+			return cursor;
+		}
+		
+		public static final String COLUMN_DOC_HASH = "";
+		public static final String COLUMN_DOC_TITLE = "";
+		public static final String COLUMN_IS_CHECKED = "";
+		public static final String COLUMN_SENDER_HASH = "";
+		public static final String COLUMN_CREATED_TS = "";
+		public static final String COLUMN_FORWARDER_HASH = "";
+		public static final String COLUMN_FORWARD_COMMENT = "";
+		public static final String COLUMN_FORWARD_TS = "";
+		public static final String COLUMN_FILE_NAME = "";
+		public static final String COLUMN_FILE_TYPE = "";
+		public static final String COLUMN_FILE_SIZE = "";
 	}
 
 	public class SurveyProcManager {
@@ -224,6 +327,13 @@ public class DBProcManager {
 		
 		/**
 		 * 설문조사 목록 가져오기
+		 * @b 커서구조
+		 * @b COLUMN_SURVEY_HASH str 해시\n
+		 * @b COLUMN_SURVEY_NAME str 설문제목\n
+		 * @b COLUMN_SURVEY_OPEN_TS int open ts\n
+		 * @b COLUMN_SURVEY_CLOSE_TS int close ts\n
+		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
+		 * @b COLUMN_SURVEY_IS_ANSWERED int 대답여부\n
 		 * @param svyCategory 
 		 * @return
 		 */
@@ -232,6 +342,33 @@ public class DBProcManager {
 			return cursor;
 		}
 		
+		/**
+		 * 설문조사 기본 정보 가져오기
+		 * @b 커서구조
+		 * @b COLUMN_SURVEY_NAME str 설문제목\n
+		 * @b COLUMN_SURVEY_CONTENT str 내용\n
+		 * @b COLUMN_SURVEY_CREATED_TS int 설문조사 만든시간\n
+		 * @b COLUMN_SURVEY_OPEN_TS int 오픈시간\n
+		 * @b COLUMN_SURVEY_CLOSE_TS int 마감시간\n
+		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
+		 * @b COLUMN_SURVEY_ANSWERED_TS int 응답한시간\n
+		 * @param hash
+		 * @return
+		 */
+		public Cursor getSurveyInfo(String hash) {
+			Cursor cursor = null;
+			return cursor;			
+		}
+		
+		public static final String COLUMN_SURVEY_NAME = "";
+		public static final String COLUMN_SURVEY_HASH = "";
+		public static final String COLUMN_SURVEY_OPEN_TS = "";
+		public static final String COLUMN_SURVEY_CLOSE_TS = "";
+		public static final String COLUMN_SURVEY_IS_CHECKED = "";
+		public static final String COLUMN_SURVEY_IS_ANSWERED = "";
+		public static final String COLUMN_SURVEY_ANSWERED_TS = "";
+		public static final String COLUMN_SURVEY_CONTENT = "";
+		public static final String COLUMN_SURVEY_CREATED_TS = "";
 	}
 	
 	public class MemberProcManager {
@@ -263,6 +400,10 @@ public class DBProcManager {
 		
 		/**
 		 * 즐겨찾기 목록 가져옴
+		 * @b 커서구조
+		 * @b COLUMN_FAVORITE_HASH str 즐겨찾기 해쉬(유저면 유저해쉬 그룹이면 즐찾그룹해쉬)\n
+		 * @b COLUMN_FAVORITE_NAME str 즐겨찾기 이름\n
+		 * @b COLUMN_FAVORITE_IS_GROUP int 그룹인지 아닌지\n
 		 * @return
 		 */
 		public Cursor getFavoriteList() {
@@ -272,6 +413,8 @@ public class DBProcManager {
 		
 		/**
 		 * 즐겨찾기 그룹에 소속된 멤버들의 hash를 array로 리턴
+		 * @b 커서구조
+		 * @b COLUMN_USER_HASH 유저해쉬\n
 		 * @param hash
 		 * @return
 		 */
@@ -279,5 +422,10 @@ public class DBProcManager {
 			Cursor cursor = null;
 			return cursor;
 		}
+		public static final String COLUMN_FAVORITE_HASH = "";
+		public static final String COLUMN_FAVORITE_NAME = "";
+		public static final String COLUMN_FAVORITE_IS_GROUP = "";
+		public static final String COLUMN_USER_HASH = "";
+		
 	}
 }
