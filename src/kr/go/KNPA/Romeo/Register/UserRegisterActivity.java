@@ -38,6 +38,7 @@ public class UserRegisterActivity extends Activity {
 	 * @{
 	 */
 	public	String 		name;
+	
 	public	Department 	department;
 	public	int 		rank;
 	public	String 		role;
@@ -45,6 +46,7 @@ public class UserRegisterActivity extends Activity {
 	public	Uri 		picURI;
 	public	String 		password;	// TODO
 	private String		userIdx;
+	Department[] selectedDepartments;
 	/** @} */
 	
 	/**
@@ -83,6 +85,9 @@ public class UserRegisterActivity extends Activity {
 		case UserRegisterEditView.KEY_DEPARTMENT :		
 			view = getView(key, "department"); 
 			im.hideSoftInputFromWindow(view.getDropdown(0).getWindowToken(), 0);
+			// selectedDepartments??
+			// View가 죽은게 아니라, 뒤에 가려지기만 한 것이므로, 정보가 저장된 채, 잘 살아 있을 것이다. 
+			// TODO : 페이지가 바뀌어도 정보가 사라지지 않는 것을 확인하면, selectedDepartments 지우기
 			break;
 			
 		case UserRegisterEditView.KEY_RANK :			

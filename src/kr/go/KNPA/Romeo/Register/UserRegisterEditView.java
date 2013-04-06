@@ -1,7 +1,5 @@
 package kr.go.KNPA.Romeo.Register;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,30 +7,21 @@ import java.util.Comparator;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.Department;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.R.color;
-import kr.go.KNPA.Romeo.R.id;
-import kr.go.KNPA.Romeo.R.layout;
-import kr.go.KNPA.Romeo.R.string;
-import kr.go.KNPA.Romeo.Util.Encrypter;
-import kr.go.KNPA.Romeo.Util.ImageManager;
-import kr.go.KNPA.Romeo.Util.IndexPath.Iterator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.provider.MediaStore.Images;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Toast;
 
 /**
@@ -64,6 +52,7 @@ public class UserRegisterEditView extends LinearLayout {
 	public static final int REQUEST_PIC_PICKER = 300;
 	private static final int DROPDOWN_MAX_LENGTH = 6;
 	
+	private static final String MAKE_DUMMY_SET	= "MAKE_DUMMY_SET";
 	
 	private View navBar;
 	private View view;
@@ -72,7 +61,8 @@ public class UserRegisterEditView extends LinearLayout {
 	
 	private UserRegisterActivity context;
 	
-	private final String[] emptySet = {getContext().getString(R.string.none)};
+	private ArrayList<Department> dummySet;
+	private Department dummy;
 	
 	/**
 	 * @name Constructors
@@ -84,6 +74,13 @@ public class UserRegisterEditView extends LinearLayout {
 		this(activity);
 		this.key = key;
 		this.context = activity;
+		
+		dummy = new Department();
+		dummy.idx = null;
+		dummy.name = context.getString(R.string.none);
+		
+		dummySet = new ArrayList<Department>(1);
+		dummySet.add(dummy);
 		
 		//주어진 key에 따라 inflate할 XML파일을 정한다.
 		switch(key) {
@@ -121,8 +118,6 @@ public class UserRegisterEditView extends LinearLayout {
 			public void onClick(View v) {	clearEdit(); }
 		});
 		
-		addDropDownListener();
-		
 		// key 값에 따라 본격적인 초기화를 진행한다.
 		switch(key) {
 		case KEY_NAME:
@@ -132,21 +127,24 @@ public class UserRegisterEditView extends LinearLayout {
 			
 		case KEY_DEPARTMENT:
 		{
-			Spinner _dd = getDropdown(0);
-			String[] level1Set = getDepartment(null);
-			DepartmentDropdownAdapter _adapter = new DepartmentDropdownAdapter(context, level1Set);
+			// 초기 목록 정보 할당
+			Spinner dd1 = getDropdown(0);
+			ArrayList<Department> level1Set = getDepartment(null);
+			DepartmentDropdownAdapter adapter1 = new DepartmentDropdownAdapter(context, level1Set);
 			// TODO _adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
-			_dd.setAdapter(_adapter);
-			_dd.setOnItemSelectedListener(listener);
-			_dd.setPrompt(context.getString(R.string.department)+" 선택");
+			dd1.setAdapter(adapter1);
+			dd1.setOnItemSelectedListener(deptListener);
+			dd1.setPrompt(context.getString(R.string.department)+" 선택");
+			
+			// 2~6번의 DropDown에도 Listener 할당
 			for(int i=1; i<DROPDOWN_MAX_LENGTH; i++) {
 				Spinner dd = getDropdown(i);
-				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, emptySet);
+				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, dummySet);
 				// TODO adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
 				dd.setAdapter(adapter);
 				dd.setPrompt(context.getString(R.string.department)+" 선택");
 				if(i != DROPDOWN_MAX_LENGTH-1 )
-					dd.setOnItemSelectedListener(listener);
+					dd.setOnItemSelectedListener(deptListener);
 			}
 		}
 			setHeaderTitle("본인 소속 부서를 선택해주세요.");
@@ -156,15 +154,16 @@ public class UserRegisterEditView extends LinearLayout {
 		case KEY_RANK:
 		{
 			Spinner dd = getDropdown();
-			String[] ranks = new String[User.RANK.length+1];
-			for(int i=0; i<ranks.length; i++) {
+			ArrayList<String> ranks = new ArrayList<String>(User.RANK.length+1);
+			for(int i=0; i<ranks.size(); i++) {
 				if(i==0) {
-					ranks[i] = context.getString(R.string.letSelect);
+					ranks.add( context.getString(R.string.letSelect) );
 				} else {
-					ranks[i] = User.RANK[i-1];
+					ranks.add( User.RANK[i-1] );
 				}
 			}
-			DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, ranks);
+			
+			ArrayAdapter<String> adapter = new ArrayAdapter<String> (context,  android.R.layout.simple_spinner_item, ranks ); //TODO : template
 			// TODO adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
 			dd.setAdapter(adapter);
 			dd.setPrompt(context.getString(R.string.rank)+" 선택");
@@ -211,62 +210,91 @@ public class UserRegisterEditView extends LinearLayout {
 		
 		setSubmitButtonVisible(false);
 	}
+	/** @} */
 	
 	/**
-	 * Constructor에서 호출되어, 현재 Layout (this) 상에 존재하는 SubView들의 존재 여부에 따라 필요한 Listener들을 적절히 붙여주는 역할을 한다는 메서드이다. 
+	 * @name Dropdown Listner 관련
+	 * @{
 	 */
-	private void addClearEditListner() {
+	/**
+	 * DEPARTMENT 에서 사용하는 이벤트 리스너이다. \n
+	 * 6개의 Dropdown의 이벤트 핸들링을 처리한다. 
+	 */
+	private OnItemSelectedListener deptListener = new OnItemSelectedListener() {
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+			
+			// 몇 번째 DropDown인지
+			int ddIdx = Integer.parseInt((String)parent.getTag());
+			
+			// 현재 선택한 Department
+			Department dep = ((Department)parent.getSelectedItem());
+			
+			if( (ddIdx+1) != DROPDOWN_MAX_LENGTH) {
+				// 선택된 정보를 가지고 서버에 하위 부서들을 요청한다.
+				ArrayList<Department> deps = null;
+				
+				if( !dep.equals(dummy) && dep.idx != null ) {
+					getDepartment( dep.idx );
+				} else {
+					// 선택된 Department가 dummy일 경우
+					//  "해당 없음" 아이템이 선택된 경우(자신이 실제로는 빈 집합을 받은 경우) 아래 스피너에 빈 어댑터를 할당한다.
+					deps = dummySet;
+				}
+				
+				// 선택된 스피너의 다음 스피너를 위한 새 어댑터를 생성한다.
+				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
+				
+				// 다음 스피너에 조금 전에 생성한 어댑터를 할당한다.
+					getDropdown((ddIdx+1)).setAdapter(adapter);
+				//  스피너에 어댑터를 할당하게 되면 스피너 내의 리스트가 업데이트 되면서, 자동으로 첫 번째 아이템이 선택되게 되므로,
+				//  어댑터를 할당하는 것만으로도 이벤트 전파 효과가 난다.
+			}
+				
+		}
 
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+			int ddIdx = Integer.parseInt((String)parent.getTag());
+			getDropdown(ddIdx).setAdapter(new DepartmentDropdownAdapter(getContext(), dummySet));
+			// 자동으로 전파된다.
+		}
+		
+	};
+	
+	
+	public ArrayList<Department> getDepartment(String depIdx) {
+		ArrayList<Department> departments = null;
+		
+		departments = MemberManager.sharedManager().getChildDepts(depIdx);
+		
+		Department dummy = new Department();
+		
+		if(departments.size() == 0) {			
+			dummy.idx = null;
+			dummy.name = context.getString(R.string.none);			
+		} else {
+			
+			Comparator<Department> _comp = new Comparator<Department>() {
+				@Override
+				public int compare(Department lhs, Department rhs) {
+					 if( lhs.sequence > rhs.sequence ) return 1;
+					 if( lhs.sequence < rhs.sequence ) return -1;	 
+					return 0;
+				}
+			};
+			
+			Collections.sort(departments, _comp);
+			
+			dummy.idx = null;
+			dummy.name = context.getString(R.string.letSelect);
+		}
+		
+		departments.add(0, dummy);
+		
+		return departments;
 	}
 	
-	private void addDropDownListener() {
-		// Dropdown이 존재한다면, OnItemSelectedListener 를 붙여준다.
-		OnItemSelectedListener listener = new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				int index = Integer.parseInt((String)parent.getTag());
-				Spinner _dd = (Spinner)parent;
-				
-				String[] selected = new String[index+1];
-				for(int i=0; i<selected.length; i++) {
-					Spinner dd = getDropdown(i);
-					String str = (String)dd.getSelectedItem();
-					selected[i] = str;
-					
-				}
-				
-				// 선택된 스피너의 다음 스피너.
-				String[] deps = getDepartment(selected);
-				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
-				Spinner dd = getDropdown((index+1));
-				dd.setAdapter(adapter);
-				
-/*				// 선택된 스피너의 다음 스피너 그 이상.
-				for(int i=(index+2); i<DROPDOWN_MAX_LENGTH; i++) {
-					ArrayAdapter<String> __adapter = new ArrayAdapter<String>(getContext(), DROPDOWN_ITEM_LAYOUT, emptySet);
-					Spinner __dd = getDropdown((index+1));
-					__dd.setAdapter(__adapter);
-				}
-*/				
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				int index = Integer.parseInt((String)parent.getTag());
-				
-				for(int i=index; i<DROPDOWN_MAX_LENGTH; i++) {
-					Spinner dd = getDropdown(i);
-					DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(),  emptySet);
-					// adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT); TODO
-					dd.setAdapter(adapter);
-				}
-				
-			}
-			
-		};
-		
-	}
 	/** @} */
 	
 	/**
@@ -313,12 +341,12 @@ public class UserRegisterEditView extends LinearLayout {
 	 * @{
 	 */
 	private	Button 		getImageButton() 		{	return (Button)view.findViewById(R.id.editPic);		}
-	private	ImageView 	getImageView() 			{	return (ImageView)view.findViewById(R.id.image);	}
+	public ImageView 	getImageView() 			{	return (ImageView)view.findViewById(R.id.image);	}
 	private	void 		setImage(int resId) 	{	getImageView().setImageResource(resId);				}
 	private	void 		setImage(Drawable d) 	{	getImageView().setImageDrawable(d);					}
 	private	void 		setImage(Bitmap b) 		{	getImageView().setImageBitmap(b);					}
 	private	void 		setImage(Matrix m) 		{	getImageView().setImageMatrix(m);					}
-	private	void 		setImage(Uri uri) 		{
+	public void 		setImage(Uri uri) 		{
 		//Bitmap b = ImageManager.bitmapFromURI(context, uri);
 		//if(b!= null) setImage(b);
 		//getImageView().setImageURI(uri);
@@ -329,63 +357,14 @@ public class UserRegisterEditView extends LinearLayout {
 		return Bitmap.createBitmap(d.getIntrinsicWidth(), d.getIntrinsicHeight(), Config.ARGB_8888);
 	}
 	
-	private	void 		imagePicked(Intent data) {
+	public void 		imagePicked(Intent data) {
 		Uri imgURI = data.getData();
 		setImage(imgURI);
 		context.picURI = imgURI;
 	}
 	/** @} */
 	
-	public String[] getDepartment(String[] deps) {
-		if(deps != null && ( deps[(deps.length-1)].equals(context.getString(R.string.none)) || deps[(deps.length-1)].equals(context.getString(R.string.letSelect)) ) ) return emptySet;
-		StringBuilder j = new StringBuilder("{\"departments\" : [");
-		for(int i=0; deps!=null && i<deps.length; i++) {
-			j.append("\"").append(deps[i]).append("\"");
-			if(i!= (deps.length-1)) j.append(",");
-		}
-		j.append("]").append("}");
-		
-		ArrayList<Department> departments = GCMMessageSender.getSubDepartment(j.toString());
-		java.util.Iterator<Department> itr = ((ArrayList<Department>)departments.clone()).iterator();
-		while(itr.hasNext()) {
-			Department d = itr.next();
-			if(d.name.trim().equals(""))
-				departments.remove(d);
-		}
-		
-		String[] result = null;
-		
-		if(departments.size() == 0) {
-			result = new String[1];
-			result[0] = context.getString(R.string.none);
-			
-		} else {
-			
-			Comparator<Department> _comp = new Comparator<Department>() {
-
-				@Override
-				public int compare(Department lhs, Department rhs) {
-					long lSeq = lhs.sequence;
-					long rSeq = rhs.sequence;
-					 if( lSeq > rSeq ) return 1;
-					 if( lSeq < rSeq ) return -1;	 
-					return 0;
-				}
-			};
-			
-			Collections.sort(departments, _comp);
-			
-			result = new String[departments.size()+1];
-			for(int i=0; i<departments.size()+1;i++) {
-				if(i == 0 ) {
-					result[i] = context.getString(R.string.letSelect);
-				} else {
-					result[i] = departments.get(i-1).name;
-				}
-			}
-		}
-		return result;
-	}
+	
 	
 	private void initNavigationBar(View navBar, int key) {
 		String titleText	= null;
@@ -434,33 +413,25 @@ public class UserRegisterEditView extends LinearLayout {
 				public void onClick(View v) {
 					boolean selected = true;
 					
+					Department[] selectedDeps = new Department[DROPDOWN_MAX_LENGTH];
+					int depth = 0;
+					
 					for(int i=0; i<DROPDOWN_MAX_LENGTH; i++) {
-						if(getDropdown(i).getSelectedItem().equals(context.getString(R.string.letSelect)))
-								selected = false;
+						Department selectedDep = (Department)getDropdown(i).getSelectedItem();
+						if( selectedDep.idx == null || selectedDep.name.equals(context.getString(R.string.letSelect))) {
+							selected = false;
+							selectedDeps[i] = null;
+						} else {
+							selectedDeps[i] = selectedDep;
+							depth++;
+						}
 					}
+					
 					if(!selected) {
 						Toast.makeText(context, "소속 부서를 올바르게 선택해 주세요.", Toast.LENGTH_SHORT).show();
 					} else {
-										
-						String[] _deps = new String[DROPDOWN_MAX_LENGTH];
-						int cnt = 0;
-						for(int i=0; i<DROPDOWN_MAX_LENGTH; i++) {
-							Spinner dd = getDropdown(i);
-							String str = (String)dd.getSelectedItem();
-							 
-							if(str.equals(emptySet[0])) {
-								_deps[i] = null;
-							} else {
-								_deps[i] = str;
-								cnt++;
-							}
-						}
 						
-						//String[] deps = new String[cnt];
-						//for(int i=0; i<cnt; i++) {
-						//	deps[i] = _deps[i];
-						//}
-						context.departments = _deps;
+						context.selectedDepartments = selectedDeps;
 						context.setFrontViewWithKey(KEY_RANK);
 					}
 				}
@@ -632,28 +603,26 @@ public class UserRegisterEditView extends LinearLayout {
 	}
 	
 	
-	private class DepartmentDropdownAdapter extends ArrayAdapter<String> {
+	private class DepartmentDropdownAdapter extends ArrayAdapter<Department> {
 
-		public DepartmentDropdownAdapter(Context context,
-				int textViewResourceId, String[] objects) {
-			super(context, textViewResourceId, objects);
+		public DepartmentDropdownAdapter(Context context, int textViewResourceId, ArrayList<Department> deps) {
+			super(context, textViewResourceId, deps);
 		}
 		
-		public DepartmentDropdownAdapter(Context context, String[] strings) {
-			this(context, android.R.layout.simple_spinner_item, strings);
+		public DepartmentDropdownAdapter(Context context, ArrayList<Department> deps) {
+			this(context, android.R.layout.simple_spinner_item, deps);
 		}
 		
 		@Override
-		public View getDropDownView(int position, View convertView,
-				ViewGroup parent) {
+		public View getDropDownView(int position, View convertView, ViewGroup parent) {
 			if(convertView == null) {
 				LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = inflater.inflate(R.layout.edit_dropdown_item_layout, parent, false);
 			}
 			
-			String dep = getItem(position);
+			Department dep = getItem(position);
 			TextView depTV = (TextView)convertView.findViewById(R.id.title);
-			depTV.setText(dep);
+			depTV.setText(dep.name);
 			
 			return convertView;
 		}
