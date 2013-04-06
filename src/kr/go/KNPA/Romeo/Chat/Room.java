@@ -7,8 +7,8 @@ import android.content.Context;
 import android.database.Cursor;
 
 import kr.go.KNPA.Romeo.Base.Appendix;
+import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
 public class Room {

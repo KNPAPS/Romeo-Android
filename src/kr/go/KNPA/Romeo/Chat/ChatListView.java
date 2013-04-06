@@ -1,8 +1,8 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.RomeoListView;
+import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
-import kr.go.KNPA.Romeo.Util.DBManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

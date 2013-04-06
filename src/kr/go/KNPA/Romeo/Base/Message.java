@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONArray;

@@ -6,9 +6,9 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 
 import org.json.JSONException;

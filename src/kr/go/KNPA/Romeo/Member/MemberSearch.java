@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.DB.DBManager;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.DBManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONException;

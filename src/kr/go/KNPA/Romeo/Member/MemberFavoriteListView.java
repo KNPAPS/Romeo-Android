@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Util.DBManager;
+import kr.go.KNPA.Romeo.DB.DBManager;
 
 public class MemberFavoriteListView extends RomeoListView {
 
