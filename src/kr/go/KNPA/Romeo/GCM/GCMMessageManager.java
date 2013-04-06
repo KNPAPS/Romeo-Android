@@ -138,8 +138,8 @@ public class GCMMessageManager {
 			DocumentFragment.receive(document);		//리스트뷰에 notify
 
 		DBProcManager.sharedManager(context)
-			.document().saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, document.TS, document.files())
-		
+			.document().saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, document.TS, document.files);
+		     
 		notifyMessage(document);
 	}
 	
@@ -153,7 +153,7 @@ public class GCMMessageManager {
 		if(isRunningProcess(context))
 			SurveyFragment.receive(survey);		//리스트뷰에 notify
 
-		// TODO : DB에 삽입
+		DBProcManager.sharedManager(context).survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
 		
 		notifyMessage(survey);
 	}

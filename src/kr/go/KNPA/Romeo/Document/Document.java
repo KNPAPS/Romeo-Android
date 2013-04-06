@@ -35,8 +35,8 @@ public class Document extends Message implements Parcelable{
 	// Specific Variables not to be sent
 	public boolean favorite = false;
 	
-	private ArrayList<HashMap<String, String>> forwards;
-	private	ArrayList<HashMap<String, String>> files; 
+	public ArrayList<HashMap<String, String>> forwards;
+	public	ArrayList<HashMap<String, String>> files; 
 	
 	// Constructor
 	public Document() {}
@@ -183,16 +183,6 @@ public class Document extends Message implements Parcelable{
 			document.favorite = this._favorite;			
 			return document;
 		}
-	}
-
-	public ArrayList<HashMap<String, String>> getForwards() {
-		if(forwards == null)
-			forwards = new ArrayList<HashMap<String, String>>();
-		return forwards;
-	}
-	
-	public ArrayList<HashMap<String, String>> getFilesInfo() {
-		return files;
 	}
 	
 	protected int getType() {
