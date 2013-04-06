@@ -9,10 +9,7 @@ import android.database.Cursor;
 /**
  * DB 프로시져 모음
  */
-@SuppressWarnings("unused")
 public class DBProcManager {
-	
-	
 	//private DBManager dbm;
 	
 	/**
@@ -73,10 +70,27 @@ public class DBProcManager {
 		 * @param chatHash 서버에서 부여한 채팅의 hash
 		 * @param senderHash 보내는 사람 
 		 * @param content 채팅 내용
-		 * @param createdTS 채팅을 보낸 타임스탬프
-		 * @param checkedTS 채팅을 확인한 타임스탬프
+		 * @param createdTS 채팅을 받은 타임스탬프
 		 */
-		public void saveChatOnReceived(String roomHash, String chatHash, String senderHash, String content, long createdTS, long checkedTS) {
+		public void saveChatOnReceived(String roomHash, String chatHash, String senderHash, String content, long createdTS) {
+			
+		}
+		
+		/**
+		 * 채팅 메세지를 확인했을 때
+		 * @param chatHash 채팅 해쉬
+		 * @param checkedTS 체크한 시간
+		 */
+		public void updateCheckedTS( String chatHash, long checkedTS ) {
+			
+		}
+		
+		/**
+		 * 유저가 채팅방에 들어가 메세지들을 확인했을 때의 시간을 기록함 
+		 * @param roomHash 채팅방 해쉬
+		 * @param userHash lastReadTS를 수정할 유저해쉬
+		 */
+		public void updateLastReadTS( String roomHash, String userHash, long lastReadTS ) {
 			
 		}
 		
@@ -110,10 +124,10 @@ public class DBProcManager {
 		 * @param senderHash 보내는 사람 해쉬 (자기자신)
 		 * @param title 문서 제목
 		 * @param content 문서 내용
-		 * @param createdTS 문서를 만든 시점의 타임스탬프
+		 * @param createdTS 문서를 보낸 TS
 		 * @param files 첨부파일정보. \n @see {Document.ATTACH_FILE_URL}, @see {Document.ATTACH_FILE_NAME}, @see {Document.ATTACH_FILE_TYPE}, @see {Document.ATTACH_FILE_SIZE} 가 key로 설정되어야함
 		 */
-		public void saveDocumentOnCreate(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, String>> files) {
+		public void saveDocumentOnSend(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, String>> files) {
 			
 		}
 		
@@ -142,6 +156,15 @@ public class DBProcManager {
 			
 		}
 		
+		/**
+		 * 문서를 확인했을 때
+		 * @param docHash 채팅 해쉬
+		 * @param checkedTS 체크한 시간
+		 */
+		public void updateCheckedTS( String docHash, long checkedTS ) {
+			
+		}
+		
 		public Cursor getDocumentList(int docCategory) {
 			Cursor cursor = null;
 			return cursor;
@@ -155,14 +178,23 @@ public class DBProcManager {
 
 	public class SurveyProcManager {
 		/**
-		 * 설문조사를 받았을 때 기본 정보 저장
+		 * 설문조사를 보내거나 받았을 때 기본 정보 저장
 		 * @param surveyHash 서버가 부여한 설문조사 해쉬
 		 * @param title 설문조사 제목
 		 * @param content 설문조사 설명
 		 * @param creatorHash 설문조사 만든사람 해쉬
 		 * @param createdTS 설문조사 만든 시간 TS
 		 */
-		public void saveSurveyOnReceived(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+		public void saveSurvey(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+			
+		}
+		
+		/**
+		 * 설문조사를 확인했을 때
+		 * @param svyHash 채팅 해쉬
+		 * @param checkedTS 체크한 시간
+		 */
+		public void updateCheckedTS( String svyHash, long checkedTS ) {
 			
 		}
 		
