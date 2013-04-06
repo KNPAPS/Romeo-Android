@@ -2,6 +2,7 @@ package kr.go.KNPA.Romeo.Util;
 
 import java.util.UUID;
 
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Member.User;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -74,17 +75,22 @@ public class UserInfo {
 		return Integer.parseInt(_var);
 	}
 	
-	public static void setRank(Context context, String rank) {
+	public static void setRank(Context context, int rank) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
-		e.putString("rank", Encrypter.sharedEncrypter().encryptString(rank));
+		e.putString("rank", Encrypter.sharedEncrypter().encryptString(""+rank));
 		e.commit();
 	}
-	public static String getRank(Context context) {
+	public static int getRank(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		String enc = prefs.getString("rank", null);
-		if(enc == null) return null;
-		return Encrypter.sharedEncrypter().decryptString(enc);
+		if(enc == null) return Constants.NOT_SPECIFIED;
+		
+		try {
+			return Integer.parseInt( Encrypter.sharedEncrypter().decryptString(enc) );
+		} catch (NumberFormatException e) {
+			return Constants.NOT_SPECIFIED;
+		}
 	}
 	
 	public static void setPicPath(Context context, String path) {

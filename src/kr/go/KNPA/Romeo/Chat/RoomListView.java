@@ -26,66 +26,68 @@ import android.widget.ListView;
 import android.view.View;
 import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * ChatFragment로 진입하면 보게되는 ListView이다. 방 목록을 포함하고 있다.
+ */
 public class RoomListView extends RomeoListView implements OnItemClickListener {
 
-	// Constructor
-	public RoomListView(Context context) {
-		this(context, null);
-	}
-
-	public RoomListView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
-	public RoomListView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+	/** 
+	 * @name Constructors
+	 * @{
+	 */
+	public RoomListView(Context context) 									{	this(context, null);				}
+	public RoomListView(Context context, AttributeSet attrs) 				{	this(context, attrs, 0);			}
+	public RoomListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle);	}
+	/** @} */
 	
-	
-	// Database Managemant
+	/** 
+	 * @name Database Managemant
+	 * *{
+	 */
 	@Override
-	protected Cursor query() {
-		String subSql = "SELECT "+BaseColumns._ID+", roomCode, MAX(TS) FROM "+getTableName()+" GROUP BY roomCode";
-		String sql = "SELECT "+getTableName()+".* FROM "+getTableName()+", ("+subSql+") sq WHERE "+getTableName()+"."+BaseColumns._ID+"=sq."+BaseColumns._ID+" ORDER BY checked desc, TS desc;";
-		Cursor c = db.rawQuery(sql, null);
-
-		return c;
-	}
+	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).chat().getRoomList(this.type);	}
 	
 	@Override
 	public String getTableName() {
+		String tableName = null;
 		switch(this.type) {
-			case Chat.TYPE_COMMAND : return DBManager.TABLE_COMMAND;
-			case Chat.TYPE_MEETING : return DBManager.TABLE_MEETING;
-			default : case Chat.NOT_SPECIFIED : return null;
+			case Chat.TYPE_COMMAND : tableName =  DBManager.TABLE_COMMAND; break;
+			case Chat.TYPE_MEETING : tableName =  DBManager.TABLE_MEETING; break;
 		}
+		return tableName;
 	}
+	/** @} */
 	
-	// initialize
+	/**
+	 * @name initialize
+	 * @{
+	 */
 	@Override
 	public RoomListView initWithType (int type) {
 		this.type = type;
 		
-				
 		Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 			@Override
-			public String getSectionTitleForItem(Cursor c) {
-				boolean checked = (c.getLong(c.getColumnIndex("checked")) >0 ? true : false);
+			public String getSectionTitleForItem(Cursor c) {	// TODO
+				boolean checked = (c.getInt(c.getColumnIndex( DBProcManager.sharedManager(getContext()).chat().COLUMN_ROOM_NUM_UNCHECKED_CHAT )) > 0 ? false : true );
 				return (checked ? getContext().getString(R.string.checkedChat)  : getContext().getString(R.string.unCheckedChat));
 			}
 		};
 		
 		listAdapter = new RoomListAdapter(getContext(), null, false, this.type);
-		 SimpleSectionAdapter<Cursor> sectionAdapter
+		SimpleSectionAdapter<Cursor> sectionAdapter
 			= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.cell_title, sectionizer);
 		this.setAdapter(sectionAdapter);
 		this.setOnItemClickListener(this);
 		
 		return this;
 	}
+	/** @} */
 	
-	
-	// Click Listener
+	/**
+	 * @name Click Listener
+	 *  @{
+	 */
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
 		// 추가 정보
@@ -102,7 +104,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		
 		MainActivity.sharedActivity().pushContent(fragment);
 	}
-
+	/** @} */
 
 	
 	

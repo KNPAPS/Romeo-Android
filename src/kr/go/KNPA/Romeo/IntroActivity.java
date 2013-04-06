@@ -130,6 +130,7 @@ public class IntroActivity extends Activity{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == RESULT_OK) {
 			if(requestCode == REQUEST_REGISTER_USER) {
+				// UserRegisterActivity를 통해 User는 성공적으로 동록되었다고 본다. (UserRegisterActivity가 유저의 등록을 책임진다.)
 				
 				boolean isDeviceRegistered = checkDeviceRegistered();
 				if(isDeviceRegistered == true)
