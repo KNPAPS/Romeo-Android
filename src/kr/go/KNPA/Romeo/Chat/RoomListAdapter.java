@@ -14,21 +14,19 @@ import android.widget.TextView;
 class RoomListAdapter extends CursorAdapter {
 	public int type = Chat.NOT_SPECIFIED;
 	
-	// Constructor
-	public RoomListAdapter(Context context, Cursor c, boolean autoRequery) {
-		super(context, c, autoRequery);
-	}
-
-	public RoomListAdapter(Context context, Cursor c, boolean autoRequery, int type) {
-		super(context, c, autoRequery);
-		this.type = type;
-	}
-
-	public RoomListAdapter(Context context, Cursor c, int flags) {
-		super(context, c, flags);
-	}
-
-	// Adapter Delegates Method
+	/** 
+	 * @name Constructors
+	 * @{
+	 */
+	public RoomListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);	}
+	public RoomListAdapter(Context context, Cursor c, boolean autoRequery, int type) 	{	super(context, c, autoRequery);	this.type = type;	}
+	public RoomListAdapter(Context context, Cursor c, int flags) 						{	super(context, c, flags);	}
+	/** @} */
+	
+	/**
+	 * @name Adapter Delegates Method
+	 * @{
+	 */
 	@Override
 	public Object getItem(int position) {
 		return super.getItem(position);
@@ -36,6 +34,7 @@ class RoomListAdapter extends CursorAdapter {
 	
 	@Override
 	public void bindView(View v, Context ctx, Cursor c) {
+		// TODO
 		ImageView userPicIV = (ImageView)v.findViewById(R.id.userPic);
 		TextView departmentTV = (TextView)v.findViewById(R.id.department);
 		TextView rankNameTV = (TextView)v.findViewById(R.id.rankName);
@@ -78,5 +77,5 @@ class RoomListAdapter extends CursorAdapter {
 		View v = inflater.inflate(R.layout.chat_room_list_cell, parent,false);
 		return v;
 	}
-
+	/** @} */
 }

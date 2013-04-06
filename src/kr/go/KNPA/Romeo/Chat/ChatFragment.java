@@ -8,23 +8,14 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
-import kr.go.KNPA.Romeo.Survey.SurveyComposeFragment;
-import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ListAdapter;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
 /**
  * 메뉴에서 Chat 종류의 기능을 선택했을 때 만날 수 있는 Fragment. \n
@@ -156,7 +147,12 @@ public class ChatFragment extends RomeoFragment {
 	}
 	
 	
-	// Message Receiving
+	/**
+	 * (Message Receiving) GCMMessageManager에서 onMessage, onChat을 거쳐 이 메서드가 호출되게 된다. \n
+	 * GCM 모듈을 통해서 진입했으므로 당연히 별도의 thread상에서 작업이 이루어진다.
+	 * @param chat 새로 도착한 chat의 instance
+	 */
+
 	public static void receive(Chat chat) {
 		// 현재 방에 대해서 작업을 한다.
 		// 현재 특정 방안에 입장해 있다면, 그 방의 인스턴스에도 메시지를 전달한다.
@@ -187,6 +183,10 @@ public class ChatFragment extends RomeoFragment {
 	}
 
 	
+	/**
+	 * ChatFragment의 RoomListView 상단의 NavigationBar의 버튼 중 새 채팅을 시작하는 버튼이 있다. \n
+	 * 이 버튼을 누르면 조건부 검색 창이 떠서 사람들을 선택할 수 있고, 그 결과를 이 onActivityResult 에서 처리한다.
+	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MemberSearch.REQUEST_CODE) {

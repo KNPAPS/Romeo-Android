@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
@@ -28,35 +29,39 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+/*
+ * ChatFragment의 RoomListView 중 하나의 Cell을 누르면 RoomFragment로 진입하게 된다.
+ */
 public class RoomFragment extends RomeoFragment {
 
-	public Room room;
+	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	
-	// Constructor
+	/**
+	 * @name Constructor
+	 * @{
+	 */
 	public RoomFragment() {	}
+	public RoomFragment(Room room) {	this.room = room;	}
+	/** @} */
 	
-	public RoomFragment(Room room) {
-		this.room = room;
-	}
-
 	// Manage List View
 	public ChatListView getListView() {
-		View view = ((ViewGroup)getView());
 		ChatListView lv = null;
+		View view = ((ViewGroup)getView());
 		
-		if(view!=null) {
+		if(view!=null)
 			lv = (ChatListView)view.findViewById(R.id.chatListView);
-		}
 		
 		return lv;
 	}
 
-	// View Life-Cycle
+	/**
+	 * @name View Life-Cycle
+	 * @{
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 	}
 
 	@Override
@@ -64,6 +69,8 @@ public class RoomFragment extends RomeoFragment {
 		ChatFragment.setCurrentRoom(this);
 		super.onResume();
 		getListView().scrollToBottom();
+		//DBProcManager.sharedManager(getActivity()).chat().
+		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로.. TODO
 	}
 
 	@Override
@@ -71,10 +78,12 @@ public class RoomFragment extends RomeoFragment {
 		super.onDestroy();
 		ChatFragment.unsetCurrentRoom();
 	}
+	/** @} */
 	
 	@Override
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		// Navigation BarButton ClickListneer
 		OnClickListener lbbOnClickListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -90,6 +99,7 @@ public class RoomFragment extends RomeoFragment {
 			}
 		};
 		
+		// Navigation Bar Initilize
 		View view = inflater.inflate(R.layout.chat_room_fragment, null, false);
 		initNavigationBar(
 				view, 
@@ -100,42 +110,40 @@ public class RoomFragment extends RomeoFragment {
 				R.string.edit, 
 				lbbOnClickListener, rbbOnClickListener);
 		
+		// listView 인스턴스화
 		ChatListView listView = (ChatListView)view.findViewById(R.id.chatListView);
+		
+		// listView에 room 설정
 		listView.setRoom(room);
-		
-		
-		
 		
 		// Room Setting
 		final EditText inputET = (EditText)view.findViewById(R.id.edit);
 		final Button submitBT = (Button)view.findViewById(R.id.submit);
 		
+		// 채팅 입력 창에 글씨 숫자에 따라 전송 버튼을 활성화/비활성화 하기 위한 Listener
 		inputET.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) { // 눌린 키 반영하기 전
-			}
+			public void onTextChanged(CharSequence s, int start, int before, int count) 	{ /* 눌린 키 반영하기 전 */ }
 			
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {// 눌린 키 반영 후
-				
-			}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) 	{ /* 눌린 키 반영 후 */		}
 			
 			@Override
-			public void afterTextChanged(Editable s) {	// 결과		
+			public void afterTextChanged(Editable s) {	/* 결과 */		
 				if(s.length() > 0) submitBT.setEnabled(true);
 				else	submitBT.setEnabled(false);
-				Log.i("after", "e : "+submitBT.isEnabled());
 			}
 		});
 		
+		// 전송버튼에 대한 ClickListener
 		submitBT.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				EditText et = inputET;
 				
-
-				
+				DBProcManager.sharedManager(getActivity()).chat().
 				String senderIdx = UserInfo.getUserIdx(getActivity());
+				
 				User sender = User.getUserWithIdx(senderIdx);
 				
 				ArrayList<User> roomUsers = room.users;

@@ -4,16 +4,13 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.Member.MemberManager;
+import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,116 +24,88 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * Application을 처음 실행했을 때, 서버에 User와 Device가 등록되어 있는지 확인하는 절차를 밟게 된다.  \n 
+ * 이때, 서버에 User가 등록되어 있지 않다면, 이 Activity를 통해 User를 서버에 등록하게 된다.
+ */
 public class UserRegisterActivity extends Activity {
 
-	HashMap <String, UserRegisterEditView> screens;
-	ViewGroup layout;
+	private	HashMap <String, UserRegisterEditView> screens;		//< 여러 화면들이 있는데, 이들을 ViewGroup에 넣어 순서를 바꿔가며 보여주게 된다. 
+	private	ViewGroup layout;									//< screens에 넣어진 View 객체들을 한꺼번에 담고 있는 ViewGroup
 	
-	public String name;
-	public String[] departments;
-	public int rank;
-	public String role;
+	/**
+	 * @name 입력된 사용자 정보들
+	 * @{
+	 */
+	public	String 		name;
+	public	Department 	department;
+	public	int 		rank;
+	public	String 		role;
 	//public Bitmap pic;
-	public Uri picURI;
-	public String password;	// TODO
+	public	Uri 		picURI;
+	public	String 		password;	// TODO
+	private String		userIdx;
+	/** @} */
 	
+	/**
+	 * onCreat.\n
+	 * 필요한 변수들에 공간을 할당하고, 사용자 이름을 선택받는 뷰를 보여주도록 위치시킨다.
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		Context context = UserRegisterActivity.this;
-		
 		screens = new HashMap<String, UserRegisterEditView>();
-		
-		layout = (ViewGroup) ((LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.edit_frame, null, false);
-		
+		layout = (ViewGroup) ((LayoutInflater)UserRegisterActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE))
+											 .inflate(R.layout.edit_frame, null, false);
 		setFrontViewWithKey(UserRegisterEditView.KEY_NAME);
-		
 		setContentView(layout);
-
 	}
 	
+	/**
+	 * 뭉쳐있는 여러 뷰들 중, key에 해당하는 뷰를 보이도록 위치시킨다. 
+	 * @param key 보이고자 하는 뷰를 나타내는 key값. UserRegisterEditView 에 등록되어 있다.
+	 */
 	public void setFrontViewWithKey(int key) {
-		String sKey = null;
-
-		Context context = UserRegisterActivity.this;
-
-		LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
 		UserRegisterEditView view = null;
 		InputMethodManager im = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 		
 		switch(key) {
 		case UserRegisterEditView.KEY_NAME :
-			sKey = "name";
-			view = screens.get(sKey);
-			
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_NAME);
-				screens.put("name", view);
-				layout.addView(view);
-			}
+			view = getView(key, "name");
 			
 			EditText ev = view.getEditView();
 			ev.setInputType(InputType.TYPE_CLASS_TEXT);
 			if(name != null) ev.setText(name);
 			im.showSoftInput(ev, InputMethodManager.SHOW_FORCED);
 			//ev.requestFocus();
-			
 			break;
+			
 		case UserRegisterEditView.KEY_DEPARTMENT :		
-			sKey = "department"; 
-			view = screens.get(sKey);
-			
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_DEPARTMENT);
-				screens.put("department", view);
-				layout.addView(view);
-			}
-			
+			view = getView(key, "department"); 
 			im.hideSoftInputFromWindow(view.getDropdown(0).getWindowToken(), 0);
-			
 			break;
+			
 		case UserRegisterEditView.KEY_RANK :			
-			sKey = "rank";	
-			view = screens.get(sKey);
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_RANK);
-				screens.put("rank", view);
-				layout.addView(view);
-			}
+			view = getView(key, "rank");
 			im.hideSoftInputFromWindow(view.getDropdown().getWindowToken(), 0);
 			break;
+			
 		case UserRegisterEditView.KEY_ROLE :			
-			sKey = "role";
-			view = screens.get(sKey);
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_ROLE);
-				screens.put("role", view);
-				layout.addView(view);
-			}
+			view = getView(key,"role");
+			
 			EditText roleET = view.getEditView();
 			if(role != null) roleET.setText(role);
 			im.showSoftInput(roleET, InputMethodManager.SHOW_FORCED);
 			//im.hideSoftInputFromWindow(view.getDropdown().getWindowToken(), 0);
 			break;
+			
 		case UserRegisterEditView.KEY_PIC :				
-			sKey = "pic";	
-			view = screens.get(sKey);
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_PIC);
-				screens.put("pic", view);
-				layout.addView(view);
-			}
+			view = getView(key, "pic");	
 			im.hideSoftInputFromWindow(view.getImageView().getWindowToken(), 0);
 			break;
+			
 		case UserRegisterEditView.KEY_PASSWORD :		
-			sKey = "password";		
-			view = screens.get(sKey);
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_PASSWORD);
-				screens.put("password", view);
-				layout.addView(view);
-			}
+			view = getView(key, "password");		
 			
 			EditText passEV = view.getEditView();
 			//passEV.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
@@ -145,24 +114,22 @@ public class UserRegisterActivity extends Activity {
 			if(password != null) passEV.setText(password);
 			im.showSoftInput(passEV, InputMethodManager.SHOW_FORCED);
 			//passEV.requestFocus();
-			
 			break;
+			
 		case UserRegisterEditView.KEY_CONFIRM :			
-			sKey = "confirm";	
-			view = screens.get(sKey);
-			if(view == null) {
-				view = new UserRegisterEditView(this, UserRegisterEditView.KEY_CONFIRM);
-				screens.put("confirm", view);
-				layout.addView(view);
+			view = getView(key, "confirm");	
+			
+			String deps[] = department.nameFull.split(" ");
+			String dep1 = deps[0];
+			String dep23456 = "";
+			for( int i=1; i<deps.length; i++){
+				dep23456 += (" " + deps[i]);
 			}
-			String subDepartment = "";
-			for(int i=1; i< UserRegisterEditView.DROPDOWN_MAX_LENGTH; i++) {
-				if(departments !=null && departments[i] != null)
-					subDepartment = subDepartment + departments[i] + " ";
-			}
+			
+					
 			//if(pic != null) view.setImage(pic);
 			if(picURI != null) view.setImage(picURI);
-			((TextView)view.findViewById(R.id.footer1)).setText(departments[0]+"\n"+subDepartment);
+			((TextView)view.findViewById(R.id.footer1)).setText(dep1+"\n"+dep23456);
 			((TextView)view.findViewById(R.id.footer2)).setText(User.RANK[rank]+" "+name);
 			((TextView)view.findViewById(R.id.password)).setText(password);
 			im.hideSoftInputFromWindow(view.getImageView().getWindowToken(), 0);
@@ -175,63 +142,55 @@ public class UserRegisterActivity extends Activity {
 		layout.invalidate();
 	}
 
+	/**
+	 * setFrontViewWithKey(int)를 돕는 함수
+	 * @param key	setFrontViewWithKey(int)에 입력된 int형 인자와 동일한 인자
+	 * @param sKey	내부적으로 저장될 키 값
+	 * @return 생성된 view
+	 */
+	private UserRegisterEditView getView(int key, String sKey) {
+		UserRegisterEditView view = screens.get(sKey);
+		if(view == null) {
+			view = new UserRegisterEditView(this, UserRegisterEditView.KEY_NAME);
+			screens.put(sKey, view);
+			layout.addView(view);
+		}
+		return view;
+	}
+	
+	/**
+	 * 확인 스크린 이후, 제출 버튼을 누르면 실제 등록을 위한 절차를 진행하게 된다.\n
+	 * 제출 버튼을 눌렀을 때 동작할 메서드이다.
+	 */
 	public void goSubmit() {
-		// TODO : go Resgister
+
+		// TODO : register 성공할 때 까지 반복
+		boolean registered = registerUser();
 		
-		Bundle b = new Bundle();
-		b.putString("name", name);
-		b.putStringArray("departments", departments);
-		b.putInt("rank", rank);
-		b.putString("role", role);
-		
-		//if(picURI != null)	b.putString("picURI", picURI.toString());
-		
-		Bundle result = MemberManager.sharedManager().registerUser(UserRegisterActivity.this, b);
-		int status = result.getInt("status");
-		if(status == 1) {
-			
-			String userIdx = result.getString("userIdx");
-			String depIdx = result.getString("departmentIdx");
-			
-			String path = "USERPIC_"+userIdx+".jpg";
-//			ImageManager.saveBitmapFromURIToPath(UserRegisterActivity.this, picURI, path);
-			
-			String deps = "";
-			
-			for(int i=0; i<departments.length; i++) {
-				if(departments[i] == null) continue;
-				deps += departments[i];
-				deps += " ";
-			}
+		if(registered == true) {
 			//Shared Preference
-					Context context = UserRegisterActivity.this;
-					UserInfo.setUserIdx(context, userIdx);
-					UserInfo.setName(context, name);
-					UserInfo.setDepartment(context, deps);
-					UserInfo.setDepartmentIdx(context, depIdx);
-					UserInfo.setRankIdx(context, rank);
-					UserInfo.setRank(context, User.RANK[rank]);
-					UserInfo.setPassword(context, password);
-			//		UserInfo.setPi                                                              cPath(context, path);
+			Context context = UserRegisterActivity.this;
+			UserInfo.setUserIdx(context, userIdx);
+			UserInfo.setName(context, name);
+			UserInfo.setDepartment(context, department.nameFull);
+			UserInfo.setDepartmentIdx(context, department.idx);
+			UserInfo.setRankIdx(context, rank);
+			UserInfo.setRank(context, rank);
+			UserInfo.setPassword(context, password);
+			// TODO : 사진
 			
-			
-//			Intent intent = new Intent(UserRegisterActivity.this, NotRegisteredActivity.class);
-//			startActivity(intent);
-			
-		Bundle r = new Bundle();
-		r.putBoolean("status", true);
-		Intent intent = new Intent();
-		intent.putExtras(r);
-		
-		setResult(RESULT_OK, intent);
-		finish();
-		} else {
-			Bundle r = new Bundle();
-			r.putBoolean("status", false);
 			Intent intent = new Intent();
-			intent.putExtras(r);
-			
+			Bundle resultBundle = new Bundle();
+			resultBundle.putBoolean("status", true);
+			intent.putExtras(resultBundle);
 			setResult(RESULT_OK, intent);
+			finish();
+		} else {
+			Intent intent = new Intent();
+			Bundle resultBundle = new Bundle();
+			resultBundle.putBoolean("status", false);
+			intent.putExtras(resultBundle);
+			setResult(RESULT_CANCELED, intent);
 			finish();
 		} 
 	}
@@ -240,99 +199,23 @@ public class UserRegisterActivity extends Activity {
 	 * 이 액티비티에 설정된 멤버 변수들을 토대로 서버에 유저 등록 후 user hash를 받아와 반환
 	 * @return
 	 */
-	public Bundle registerUser(Context context, Bundle b) {
-		Payload request = new Payload(Event.User.register());
-		Data data = new Data();
+	public boolean registerUser() {
+		Data reqData = new Data().add(0, Data.KEY_USER_NAME, name)
+								 .add(0, Data.KEY_USER_ROLE, role)
+								 .add(0, Data.KEY_USER_RANK, rank)
+								 .add(0, Data.KEY_DEPT_HASH, department.idx);
+		// TODO : 사진 업로드
 		
-		data.add(0,Data.KEY_USER_NAME,b.getString("name"));
-		data.add(0,Data.KEY_USER_RANK,userHash);
-		data.add(0,Data.KEY_USER_ROLE,rank);
-		data.add(0,Data.KEY_DEPT_HASH,deptHash);
-		request.setData(data);
-		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Payload request = new Payload().setEvent(Event.User.register()).setData(reqData);
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false).request();
 		Payload response = conn.getResponsePayload();
-		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
-			return response.getData().get(0,Data.KEY_USER_HASH).toString();
+		
+		if(response.getStatusCode() == StatusCode.SUCCESS) {
+			userIdx = (String)response.getData().get(0, Data.KEY_USER_HASH);
+			return true;
 		} else {
-			return null;
+			return false;
 		}
-		
-		String name = ;
-		String[] departments = b.getStringArray("departments");
-		int rank = b.getInt("rank");
-		String role = b.getString("role");
-		String _picURI = b.getString("picURI");
-		Uri picURI = null;
-		if(_picURI != null) Uri.parse(_picURI);
-		
-		
-		StringBuilder sb = new StringBuilder();
-		
-		String q = "\"";
-		String c = ":";
-		
-		sb.append("{");
-		sb.append(q).append("name").append(q).append(c).append(q).append(name).append(q).append(",");
-		sb.append(q).append("levels").append(q).append(c).append("[");
-		for(int i=0; i<UserRegisterEditView.DROPDOWN_MAX_LENGTH; i++) {
-			if(departments[i]==null || departments[i].equals(context.getString(R.string.none))) break;
-			if(i!= 0) sb.append(",");
-			sb.append(q).append(departments[i]).append(q);
-		}
-		sb.append("]").append(",");
-		if(role != null && role.length()>0) 
-			sb.append(q).append("role").append(q).append(c).append(q).append(role).append(q).append(",");
-		sb.append(q).append("rank").append(q).append(c).append(rank);
-	
-		sb.append("}");
-		
-		String json = null;
-		
-		String url = Connection.HOST_URL + "/member/register";
-		Connection conn = new Connection.Builder()
-								.url(url)
-								.async(false)
-								.data(sb.toString())
-								.type(Connection.TYPE_POST)
-								.dataType(Connection.DATATYPE_JSON)
-								.build();
-		int requestCode = conn.request();
-		
-		if( requestCode == Connection.HTTP_OK) {
-			json = conn.getResponse();
-		}
-	
-		
-		Bundle result = new Bundle();
-		if(json == null ){
-			result.putBoolean("status",false);
-			return result;
-		}
-		
-		JSONObject jo = null;
-		try {
-			jo = new JSONObject(json);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(jo == null ){
-			result.putBoolean("status",false);
-			return result;
-		} 
-		
-		try {
-			result.putInt("status", jo.getInt("status"));
-			result.putLong("userIdx", jo.getLong("userIdx"));
-			result.putLong("departmentIdx", jo.getLong("departmentIdx"));			
-		} catch (JSONException e) {
-			result.putBoolean("status",false);
-			return result;
-		}
-
-		
 		
 		// TODO 사진 업로드하는 코드를 삽입한다.
 		//if(picURI != null)
@@ -340,12 +223,13 @@ public class UserRegisterActivity extends Activity {
 		// 사진 업로드는 비동기로 이루어지며,
 		// sharedPreference에 사진 업로드 여부를 체크하는 변수를 할당한다. ( 추후 사진 변경시 등등 활용 할 수 있기 때문이다.)
 		// 앱이 켜질때 혹은 조직도 등 특정 조건 하에서 사진 전송 여부를 확인하여 되어있지 않았다면 수시로 업로드 할 수 있는 기회를 제공하도록 한다.
-		
-		
-		return result;
 	}
 	
-	
+	/**
+	 * 사진선택은 갤러리에서 이루어진다.\n
+	 * 이 갤러리는 안드로이드에서 제공하는 별도의 Activity로 이루어져 있다.\n
+	 * 이 액티비티가 종료되며 결과값을 반납할 때 호출되는 메서드이다. 
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == RESULT_OK) {
@@ -354,9 +238,13 @@ public class UserRegisterActivity extends Activity {
 				picEditView.imagePicked(data);
 			}
 		}
+		// TODO : 
 		//super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	/**
+	 * 반드시 유저 등록이 이루어져야 하므로, 백버튼을 통해 UserRegisterActivity가 종료되거나 이를 벗어나는 일이 없도록 방지한다.
+	 */
 	@Override
 	public void onBackPressed() {
 		return ;

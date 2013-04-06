@@ -43,8 +43,15 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Toast;
 
+/**
+ * UserRegisterActivity의 View를 담당한다.
+ */
 public class UserRegisterEditView extends LinearLayout {
 	
+	/**
+	 * @name Defined KEYs
+	 * @{
+	 */
 	public static final int KEY_NAME 			= 0;
 	public static final int KEY_DEPARTMENT 		= 1;
 	public static final int KEY_RANK			= 2;
@@ -52,35 +59,33 @@ public class UserRegisterEditView extends LinearLayout {
 	public static final int KEY_PIC				= 4;
 	public static final int KEY_PASSWORD		= 5;
 	public static final int KEY_CONFIRM			= 6;
-	
-	public static final int DROPDOWN_MAX_LENGTH = 6;
-//	private static final int DROPDOWN_VIEW_LAYOUT = R.layout.edit;
-//	private static final int DROPDOWN_ITEM_LAYOUT = R.layout.edit_dropdown_layout;
+	/** @} */
 	
 	public static final int REQUEST_PIC_PICKER = 300;
+	private static final int DROPDOWN_MAX_LENGTH = 6;
 	
-	public View navBar;
-	public View view;
-	public int res;
-	public int key;
+	
+	private View navBar;
+	private View view;
+	private int res;
+	private int key;
 	
 	private UserRegisterActivity context;
 	
 	private final String[] emptySet = {getContext().getString(R.string.none)};
 	
-	public UserRegisterEditView(Context context) {
-		this(context, null);
-	}
-	
-	public UserRegisterEditView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-
+	/**
+	 * @name Constructors
+	 * @{
+	 */
+	public UserRegisterEditView(Context context) 						{	this(context, null);	}
+	public UserRegisterEditView(Context context, AttributeSet attrs)	{	super(context, attrs);	}
 	public UserRegisterEditView(UserRegisterActivity activity, int key) {
 		this(activity);
 		this.key = key;
 		this.context = activity;
 		
+		//주어진 key에 따라 inflate할 XML파일을 정한다.
 		switch(key) {
 			case KEY_NAME : 		this.res = R.layout.edit_text;		break;
 			case KEY_DEPARTMENT : 	this.res = R.layout.edit_dropdown6;	break;
@@ -91,74 +96,34 @@ public class UserRegisterEditView extends LinearLayout {
 			case KEY_CONFIRM : 		this.res = R.layout.edit_confirm;	break;
 		}
 		
+		// Layout차원에서 여러가지 설정을 한다.
 		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.setOrientation(LinearLayout.VERTICAL);
 		this.setBackgroundResource(R.color.lighter);
+		
+		// inflater를 구하고, 정해진 XML파일을 inflate 한다/
 		LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		
-		 
+		// NavigationBar 부터 Inflate하고, key를 통해 초기화 하여 현재 Layout (this)에 붙인다.
 		View navBar = inflater.inflate(R.layout.navigation_bar, this, false);
 		initNavigationBar(navBar, key);
-		this.addView(navBar);
-		
+		this.addView(navBar);	
+		// 본격적인 View를 inflate 하고 현재 Layout (this)에 붙인다.
 		view = inflater.inflate(this.res, this, false);
 		this.addView(view);
 		
+		
+		// 각종 Listener를 더한다.
+		
+		// Clear Edit이 존재한다면, Click Listener를 더해준다.
 		Button clearEdit = getClearEditButton();
 		if(clearEdit != null)  clearEdit.setOnClickListener(new OnClickListener() {
-			
 			@Override
-			public void onClick(View v) {
-				clearEdit();
-			}
+			public void onClick(View v) {	clearEdit(); }
 		});
 		
-		OnItemSelectedListener listener = new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				int index = Integer.parseInt((String)parent.getTag());
-				Spinner _dd = (Spinner)parent;
-				
-				String[] selected = new String[index+1];
-				for(int i=0; i<selected.length; i++) {
-					Spinner dd = getDropdown(i);
-					String str = (String)dd.getSelectedItem();
-					selected[i] = str;
-					
-				}
-				
-				// 선택된 스피너의 다음 스피너.
-				String[] deps = getDepartment(selected);
-				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
-				Spinner dd = getDropdown((index+1));
-				dd.setAdapter(adapter);
-				
-/*				// 선택된 스피너의 다음 스피너 그 이상.
-				for(int i=(index+2); i<DROPDOWN_MAX_LENGTH; i++) {
-					ArrayAdapter<String> __adapter = new ArrayAdapter<String>(getContext(), DROPDOWN_ITEM_LAYOUT, emptySet);
-					Spinner __dd = getDropdown((index+1));
-					__dd.setAdapter(__adapter);
-				}
-*/				
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				int index = Integer.parseInt((String)parent.getTag());
-				
-				for(int i=index; i<DROPDOWN_MAX_LENGTH; i++) {
-					Spinner dd = getDropdown(i);
-					DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(),  emptySet);
-					// adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT); TODO
-					dd.setAdapter(adapter);
-				}
-				
-			}
-			
-		};
+		addDropDownListener();
 		
+		// key 값에 따라 본격적인 초기화를 진행한다.
 		switch(key) {
 		case KEY_NAME:
 			setHeaderTitle("본인 이름을 입력해 주세요.");
@@ -214,8 +179,6 @@ public class UserRegisterEditView extends LinearLayout {
 			setFooterTitle("");
 			EditText roleET= getEditView();
 			roleET.setHint("국장, 과장, 계장, 반장, 주임 ...");
-			//Spinner dd = getDropdown();
-			//dd.setPrompt(context.getString(R.string.role)+" 선택");
 			break;
 			
 		case KEY_PIC:
@@ -230,7 +193,6 @@ public class UserRegisterEditView extends LinearLayout {
 					Intent intent = new Intent(Intent.ACTION_PICK);
 					intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
 					context.startActivityForResult(intent, REQUEST_PIC_PICKER);
-					
 				}
 			});
 			break;
@@ -242,117 +204,93 @@ public class UserRegisterEditView extends LinearLayout {
 			
 		case KEY_CONFIRM:
 			setHeaderTitle("");
-			
-
 			((TextView)view.findViewById(R.id.footer3)).setText("정보가 올바르게 입력되었는지 확인 후\n완료 버튼을 눌러주시면\n등록이 정상적으로 진행됩니다.");
 			break;
-			
 		
 		}
-		
-		
 		
 		setSubmitButtonVisible(false);
 	}
 	
-	public void setHeaderTitle(String title) {
-		this.getHeaderView().setText(title);
+	/**
+	 * Constructor에서 호출되어, 현재 Layout (this) 상에 존재하는 SubView들의 존재 여부에 따라 필요한 Listener들을 적절히 붙여주는 역할을 한다는 메서드이다. 
+	 */
+	private void addClearEditListner() {
+
 	}
 	
-	public void setFooterTitle(String title) {
-		this.getFooterView().setText(title);
+	private void addDropDownListener() {
+		// Dropdown이 존재한다면, OnItemSelectedListener 를 붙여준다.
+		OnItemSelectedListener listener = new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+				int index = Integer.parseInt((String)parent.getTag());
+				Spinner _dd = (Spinner)parent;
+				
+				String[] selected = new String[index+1];
+				for(int i=0; i<selected.length; i++) {
+					Spinner dd = getDropdown(i);
+					String str = (String)dd.getSelectedItem();
+					selected[i] = str;
+					
+				}
+				
+				// 선택된 스피너의 다음 스피너.
+				String[] deps = getDepartment(selected);
+				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
+				Spinner dd = getDropdown((index+1));
+				dd.setAdapter(adapter);
+				
+/*				// 선택된 스피너의 다음 스피너 그 이상.
+				for(int i=(index+2); i<DROPDOWN_MAX_LENGTH; i++) {
+					ArrayAdapter<String> __adapter = new ArrayAdapter<String>(getContext(), DROPDOWN_ITEM_LAYOUT, emptySet);
+					Spinner __dd = getDropdown((index+1));
+					__dd.setAdapter(__adapter);
+				}
+*/				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				int index = Integer.parseInt((String)parent.getTag());
+				
+				for(int i=index; i<DROPDOWN_MAX_LENGTH; i++) {
+					Spinner dd = getDropdown(i);
+					DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(),  emptySet);
+					// adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT); TODO
+					dd.setAdapter(adapter);
+				}
+				
+			}
+			
+		};
+		
 	}
+	/** @} */
 	
-	public TextView getHeaderView() {
-		return (TextView)view.findViewById(R.id.header);
-	}
-	
-	public TextView getFooterView() {
-		return (TextView)view.findViewById(R.id.footer);
-	}
-	
-	public EditText getEditView() {
-		return (EditText)view.findViewById(R.id.edit);
-	}
-	
-	public String getEditTitle() {
-		return getEditView().getText().toString();
-	}
-	
-	public void setEditTitle(String title) {
-		getEditView().setText(title);
-	}
-	
-	public Button getClearEditButton() {
-		return (Button)view.findViewById(R.id.clearEdit);
-	}
-	
-	public void clearEdit() {
-		getEditView().setText("");
-	}
-	
-	public Button getSubmitButton() {
-		return (Button)view.findViewById(R.id.submit);
-	}
-	
-	public void setSubmitButtonVisible(Boolean isVisible) {
+	/**
+	 * @name subView Getters && Setters
+	 * XML로부터 생선된 view에서 subView들을 쉽게 찾아내도록 돕는 메서드들이다.
+	 * @{
+	 */
+	public	EditText 	getEditView() 					{	return (EditText)view.findViewById(R.id.edit);		}
+	private	String 		getEditTitle() 					{	return getEditView().getText().toString();			}
+	private	void 		setEditTitle(String title) 		{	getEditView().setText(title);						}
+	private	Button 		getClearEditButton() 			{	return (Button)view.findViewById(R.id.clearEdit);	}
+	private	void 		clearEdit() 					{	getEditView().setText("");							}
+	private	void 		setHeaderTitle(String title) 	{	this.getHeaderView().setText(title);				}
+	private	void 		setFooterTitle(String title) 	{	this.getFooterView().setText(title);				}
+	private	TextView 	getHeaderView() 				{	return (TextView)view.findViewById(R.id.header);	}
+	private	TextView 	getFooterView() 				{	return (TextView)view.findViewById(R.id.footer);	}
+	private	Button 		getSubmitButton() 				{	return (Button)view.findViewById(R.id.submit);		}
+	private	void 		setSubmitButtonVisible(Boolean isVisible) {
 		int v = (isVisible? View.VISIBLE : View.INVISIBLE);
 		Button b = getSubmitButton();
 		if(b != null) b.setVisibility(v);
 	}
-	
-	public Button getImageButton() {
-		return (Button)view.findViewById(R.id.editPic);
-	}
-	
-	public void imagePicked(Intent data) {
-		
-		
-		Uri imgURI = data.getData();
-		
-		setImage(imgURI);
-		context.picURI = imgURI;
-	}
-	
-	public ImageView getImageView() {
-		return (ImageView)view.findViewById(R.id.image);
-		
-	}
-	
-	public void setImage(int resId) {
-		getImageView().setImageResource(resId);
-	}
-	
-	public void setImage(Drawable d) {
-		getImageView().setImageDrawable(d);
-	}
-	
-	public void setImage(Bitmap b) {
-		getImageView().setImageBitmap(b);
-	}
-	
-	public void setImage(Matrix m) {
-		getImageView().setImageMatrix(m);
-	}
-	
-	public void setImage(Uri uri) {
-		//Bitmap b = ImageManager.bitmapFromURI(context, uri);
-		//if(b!= null) setImage(b);
-		//getImageView().setImageURI(uri);
-	}
-	
-	public Drawable getDrawable() {
-		return getImageView().getDrawable();
-	}
-	
-	public Bitmap getBitmap() {
-		Drawable d = getDrawable();
-		return Bitmap.createBitmap(d.getIntrinsicWidth(), d.getIntrinsicHeight(), Config.ARGB_8888);
-	}
-	
-	public Spinner getDropdown() {
-		return (Spinner)view.findViewById(R.id.dropdown);
-	}
+
+	public Spinner getDropdown() {	return (Spinner)view.findViewById(R.id.dropdown);	}
 	
 	public Spinner getDropdown(int i) {
 		Spinner dd = null;
@@ -366,6 +304,37 @@ public class UserRegisterEditView extends LinearLayout {
 			default : return null;
 		}
 	}
+	/** @} */
+	
+	
+	/**
+	 * @name subView (Image)
+	 * 이미지와 관련된 SubView들에 대한 메소드이다.
+	 * @{
+	 */
+	private	Button 		getImageButton() 		{	return (Button)view.findViewById(R.id.editPic);		}
+	private	ImageView 	getImageView() 			{	return (ImageView)view.findViewById(R.id.image);	}
+	private	void 		setImage(int resId) 	{	getImageView().setImageResource(resId);				}
+	private	void 		setImage(Drawable d) 	{	getImageView().setImageDrawable(d);					}
+	private	void 		setImage(Bitmap b) 		{	getImageView().setImageBitmap(b);					}
+	private	void 		setImage(Matrix m) 		{	getImageView().setImageMatrix(m);					}
+	private	void 		setImage(Uri uri) 		{
+		//Bitmap b = ImageManager.bitmapFromURI(context, uri);
+		//if(b!= null) setImage(b);
+		//getImageView().setImageURI(uri);
+	}
+	private	Drawable 	getDrawable() 			{	return getImageView().getDrawable();				}
+	private	Bitmap 		getBitmap() {
+		Drawable d = getDrawable();
+		return Bitmap.createBitmap(d.getIntrinsicWidth(), d.getIntrinsicHeight(), Config.ARGB_8888);
+	}
+	
+	private	void 		imagePicked(Intent data) {
+		Uri imgURI = data.getData();
+		setImage(imgURI);
+		context.picURI = imgURI;
+	}
+	/** @} */
 	
 	public String[] getDepartment(String[] deps) {
 		if(deps != null && ( deps[(deps.length-1)].equals(context.getString(R.string.none)) || deps[(deps.length-1)].equals(context.getString(R.string.letSelect)) ) ) return emptySet;
