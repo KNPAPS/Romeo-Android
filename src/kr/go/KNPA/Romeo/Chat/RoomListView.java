@@ -4,8 +4,10 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -95,6 +97,9 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		
 		Room room = new Room(c, this.type);
 		RoomFragment fragment = new RoomFragment(room);
+		
+		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.roomCode, UserInfo.getUserIdx(getContext()), System.currentTimeMillis());
+		
 		MainActivity.sharedActivity().pushContent(fragment);
 	}
 

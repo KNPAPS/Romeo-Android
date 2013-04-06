@@ -6,6 +6,8 @@ import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.GCM.proc;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
@@ -79,7 +81,9 @@ public class Chat extends Message {
 	
 	
 	public void insertIntoDatabase(String tableName) {
-		
+		DBProcManager proc = DBProcManager.sharedManager(context);
+		Cursor c = proc.chat.getChatList(roomHash);
+		proc.chat.CO
 	}
 	
 	public static class Builder extends Message.Builder {

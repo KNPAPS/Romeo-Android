@@ -26,22 +26,29 @@ import android.view.View.OnClickListener;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
-
+/**
+ * 메뉴에서 Chat 종류의 기능을 선택했을 때 만날 수 있는 Fragment. \n
+ * Meeting과 Command가 존재한다.
+ */
 public class ChatFragment extends RomeoFragment {
 
+	
+	
+
+	/**
+	 * @name Constructors
+	 * @{
+	 */
+	public ChatFragment() 			{	this(Chat.TYPE_MEETING);	}
+	public ChatFragment(int type) 	{	super(type);				}
+	/** @} */
+	
+	/**
+	 * @name Singleton (Fragment)
+	 * @{
+	 */
 	private static ChatFragment _commandFragment = null;
 	private static ChatFragment _meetingFragment = null;
-	private static RoomFragment _currentRoom = null;
-
-	// Constructor
-	public ChatFragment() {
-		this(Chat.TYPE_MEETING);
-	}
-	
-	public ChatFragment(int type) {
-		super(type);
-	}
-	
 	public static ChatFragment chatFragment(int type) {
 		ChatFragment f = null;
 		if(type == Chat.TYPE_COMMAND) {
@@ -56,20 +63,21 @@ public class ChatFragment extends RomeoFragment {
 		
 		return f;
 	}
+	/** @} */
 	
-	
-	// Manager Current Room
-	public static RoomFragment getCurrentRoom() {
-		return _currentRoom;
-	}
-	
-	public static void setCurrentRoom(RoomFragment ra) {
-		_currentRoom = ra;
-	}
-	
-	public static void unsetCurrentRoom() {
-		_currentRoom = null;
-	}
+	/** 
+	 * @name Singleton (Room)
+	 * 현재 특정 Room Fragment안에 입장해 있다면, 해당 RoomFragment를 반환한다.
+	 * @{
+	 */
+	private static RoomFragment _currentRoom = null;
+	/*
+	 * Manager Current Room
+	 */
+	public static RoomFragment 	getCurrentRoom() 					{	return _currentRoom;	}
+	public static void		 	setCurrentRoom(RoomFragment ra) 	{	_currentRoom = ra;		}
+	public static void 			unsetCurrentRoom() 					{	_currentRoom = null;	}
+	/** @} */
 	
 	// Manage List View
 	public RoomListView getListView() {
@@ -150,11 +158,16 @@ public class ChatFragment extends RomeoFragment {
 	
 	// Message Receiving
 	public static void receive(Chat chat) {
+		// 현재 방에 대해서 작업을 한다.
+		// 현재 특정 방안에 입장해 있다면, 그 방의 인스턴스에도 메시지를 전달한다.
 		RoomFragment rf = getCurrentRoom();
-		if(rf !=null && rf.room != null && rf.room.roomCode !=null && rf.room.roomCode.equals(chat.roomCode)){//ra.room!=null && ra.room.roomCode == chat.roomCode) {
+		if(	rf !=null && 
+			rf.room != null && 
+			rf.room.roomCode !=null &&
+			rf.room.roomCode.equals(chat.roomCode))
 			rf.receive(chat);
-		}
 		
+		// 현재 Fragment의 ListView에도 메시지를 전달하여 refresh할 수 있도록 한다.
 		ChatFragment f = null;
 		if(chat.subType() == Chat.TYPE_COMMAND) 
 			f = _commandFragment;
