@@ -147,14 +147,6 @@ public class GCMRegisterManager {
         };
         Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callback);
         conn.request();
-        
-        /*
-        DBProcManager proc = new DBProcManager(this);
-        
-        proc.chat.saveChatOnSend(sdfsdfsdf);
-        */
-        
-         
     }
 	
 	/**
