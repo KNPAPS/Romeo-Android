@@ -1,6 +1,8 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
@@ -35,6 +37,26 @@ class RoomListAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View v, Context ctx, Cursor c) {
 		// TODO
+		
+		DBProcManager.sharedManager(ctx);
+		
+		// 채팅방 해시
+		String roomIdx = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_HASH ) );
+		// 채팅방 제목
+		String title = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_TITLE ) );
+		// 채팅방에 있는 사람 수
+		int nUsers = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_CHATTER ) );
+		// 읽지 않은 채팅 수
+		int nUnchecked = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_UNCHECKED_CHAT ));
+		// 마지막 채팅이 도착한 시간 TS
+		long lastTS = c.getLong( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_LAST_CHAT_TS ) );
+		// 마지막 채팅의 내용
+		String lastContent = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_LAST_CHAT_CONTENT ) );
+
+		
+		
+		
+		
 		ImageView userPicIV = (ImageView)v.findViewById(R.id.userPic);
 		TextView departmentTV = (TextView)v.findViewById(R.id.department);
 		TextView rankNameTV = (TextView)v.findViewById(R.id.rankName);
