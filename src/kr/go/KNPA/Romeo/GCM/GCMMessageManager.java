@@ -119,7 +119,9 @@ public class GCMMessageManager {
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
 		
-		// TODO : DB에 삽입
+        DBProcManager proc = new DBProcManager(this);
+        
+        proc.chat.saveChatOnSend(sdfsdfsdf);
 		
 		notifyMessage(chat);
 	}
