@@ -12,21 +12,49 @@ import android.database.Cursor;
 @SuppressWarnings("unused")
 public class DBProcManager {
 	
-	public ChatProcManager chat;
-	public DocumentProcManager document;
-	public SurveyProcManager survey;
+	
 	//private DBManager dbm;
 	
-	public DBProcManager(Context context) {
-		
+	/**
+	 * @name Singleton
+	 * @{
+	 */
+	private static DBProcManager _sharedManager;
+	private ChatProcManager chat;
+	private DocumentProcManager document;
+	private SurveyProcManager survey;
+	
+	private DBProcManager(Context context) {
 		//TODO 접근가능한 DB가 있는지 확인
 		//this.dbm = new DBManager(context);
-		this.chat = new DBProcManager.ChatProcManager();
-		this.document = new DBProcManager.DocumentProcManager();
-		this.survey = new DBProcManager.SurveyProcManager();
 	}
 	
-	private class ChatProcManager {
+	public static DBProcManager sharedManager(Context context) {
+		if(_sharedManager == null)
+			_sharedManager = new DBProcManager(context);
+		return _sharedManager;
+	}
+	
+	public ChatProcManager chat() {
+		if(chat == null)
+			chat = new ChatProcManager();
+		return  chat; 
+	}
+	
+	public DocumentProcManager document() {
+		if(document == null)
+			document = new DocumentProcManager();
+		return document; 
+	}
+	
+	public SurveyProcManager survey() {
+		if(survey == null)
+			survey = new SurveyProcManager();
+		return survey; 
+	}
+	/** @} */
+	
+	public class ChatProcManager {
 		/**
 		 * 채팅 전송 시 메세지 내용 저장 
 		 * @param roomHash 채팅방 해쉬
@@ -75,7 +103,7 @@ public class DBProcManager {
 		public static final String COLUMN_ROOM_HASH = "room_hash";
 	}
 
-	private class DocumentProcManager {
+	public class DocumentProcManager {
 		/**
 		 * 문서를 자신이 만들어서 보낼 때 문서 내용 저장
 		 * @param docHash 서버가 부여한 문서 해쉬
@@ -125,7 +153,7 @@ public class DBProcManager {
 		}
 	}
 
-	private class SurveyProcManager {
+	public class SurveyProcManager {
 		/**
 		 * 설문조사를 받았을 때 기본 정보 저장
 		 * @param surveyHash 서버가 부여한 설문조사 해쉬

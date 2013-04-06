@@ -8,10 +8,11 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Config.DBManager;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
@@ -35,7 +36,7 @@ public class GCMMessageManager {
 	private static final String TAG = "GCMMessageManager";
 	
 	/**
-	 * @name GCMMessageManager Single-Tone
+	 * @name GCMMessageManager Singleton
 	 * @{
 	 */
 	private static GCMMessageManager _sharedManager = null;
@@ -119,9 +120,8 @@ public class GCMMessageManager {
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
 		
-        DBProcManager proc = new DBProcManager(this);
-        
-        proc.chat.saveChatOnSend(sdfsdfsdf);
+        DBProcManager.sharedManager(context)
+        		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.TS, chat.checkTS);
 		
 		notifyMessage(chat);
 	}
@@ -137,7 +137,8 @@ public class GCMMessageManager {
 		if(isRunningProcess(context))
 			DocumentFragment.receive(document);		//리스트뷰에 notify
 
-		// TODO : DB에 삽입
+		DBProcManager.sharedManager(context)
+			.document().saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, document.TS, document.files())
 		
 		notifyMessage(document);
 	}

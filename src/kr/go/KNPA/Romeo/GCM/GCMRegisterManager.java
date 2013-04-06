@@ -29,7 +29,7 @@ public class GCMRegisterManager {
 	private static final String tag = "GCMRegisterManager";
     
 	/**
-	 * @name Single-tone
+	 * @name Singleton
 	 * @{ 
 	 */
 	private static GCMRegisterManager _sharedManager = null;
