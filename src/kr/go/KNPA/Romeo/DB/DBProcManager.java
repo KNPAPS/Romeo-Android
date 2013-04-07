@@ -307,7 +307,7 @@ public class DBProcManager {
 					
 					" (select count(rc._id) " +
 						"from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" rc " +
-						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id ) "+
+						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id )+1 "+
 						COLUMN_ROOM_NUM_CHATTER+", " +
 					
 					" (select count(c._id) " +
@@ -406,9 +406,9 @@ public class DBProcManager {
 				for ( int i=0; i<files.size(); i++) {
 					HashMap<String,Object> hm = files.get(i);
 					
-					String[] binds = { hm.get("file_url").toString(), hm.get("file_name").toString() } ;
-					long fileSize = (Long)hm.get("file_size");
-					int fileType = (Integer) hm.get("file_type") ;
+					String[] binds = { hm.get(Document.ATTACH_FILE_URL).toString(), hm.get(Document.ATTACH_FILE_NAME).toString() } ;
+					long fileSize = (Long)hm.get(Document.ATTACH_FILE_SIZE);
+					int fileType = (Integer) hm.get(Document.ATTACH_FILE_TYPE) ;
 					
 					String sql = "insert into "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
 							"("+
