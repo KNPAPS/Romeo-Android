@@ -748,37 +748,53 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_SURVEY_HASH str 해시\n
 		 * @b COLUMN_SURVEY_NAME str 설문제목\n
+		 * @b COLUMN_SURVEY_SENDER_HASH str 보낸사람 해쉬\n
 		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 대답여부\n
 		 * @param svyCategory 내가받은거면 Survey.TYPE_RECEIVED, 내가보낸거면 Survey.TYPE_DEPARTED
 		 * @return
 		 */
 		public Cursor getSurveyList(int svyCategory) {
-			return null;
+			String sql ="select "+
+					DBSchema.SURVEY.COLUMN_HASH+COLUMN_SURVEY_HASH+", "+
+					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
+					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
+					DBSchema.SURVEY.COLUMN_CREATOR_HASH+COLUMN_SURVEY_SENDER_HASH+", "+
+					DBSchema.SURVEY.COLUMN_IS_ANSWERED+COLUMN_SURVEY_IS_ANSWERED+
+					" from"+DBSchema.SURVEY.TABLE_NAME+
+					"where "+DBSchema.SURVEY.COLUMN_CATEGORY+" = "+String.valueOf(svyCategory);
+			return db.rawQuery(sql, null);
 		}
 		
 		/**
 		 * 설문조사 기본 정보 가져오기
 		 * @b 커서구조
 		 * @b COLUMN_SURVEY_NAME str 설문제목\n
-		 * @b COLUMN_SURVEY_CONTENT str 내용\n
+		 * @b COLUMN_SURVEY_CONTENT str 설문조사설명내용\n
 		 * @b COLUMN_SURVEY_CREATED_TS int 설문조사 만든시간\n
-		 * @b COLUMN_SURVEY_OPEN_TS int 오픈시간\n
-		 * @b COLUMN_SURVEY_CLOSE_TS int 마감시간\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
 		 * @b COLUMN_SURVEY_ANSWERED_TS int 응답한시간\n
+		 * @b COLUMN_SURVEY_SENDER_HASH str 보낸사람 해쉬\n
 		 * @param hash
 		 * @return
 		 */
 		public Cursor getSurveyInfo(String hash) {
-			Cursor cursor = null;
-			return cursor;			
+			String sql ="select "+
+					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
+					DBSchema.SURVEY.COLUMN_CONTENT+COLUMN_SURVEY_CONTENT+", "+
+					DBSchema.SURVEY.COLUMN_CREATED_TS+COLUMN_SURVEY_CREATED_TS+", "+
+					DBSchema.SURVEY.COLUMN_ANSWERED_TS+COLUMN_SURVEY_ANSWERED_TS+", "+
+					DBSchema.SURVEY.COLUMN_CREATOR_HASH+COLUMN_SURVEY_SENDER_HASH+", "+
+					DBSchema.SURVEY.COLUMN_IS_ANSWERED+COLUMN_SURVEY_IS_ANSWERED+
+					" from"+DBSchema.SURVEY.TABLE_NAME+
+					"where "+DBSchema.SURVEY.COLUMN_HASH+" = ?";
+			String[] val = {hash};
+			return db.rawQuery(sql, val);		
 		}
 		
 		public static final String COLUMN_SURVEY_NAME = "";
 		public static final String COLUMN_SURVEY_HASH = "";
-		public static final String COLUMN_SURVEY_OPEN_TS = "";
-		public static final String COLUMN_SURVEY_CLOSE_TS = "";
+		public static final String COLUMN_SURVEY_SENDER_HASH = "";
 		public static final String COLUMN_SURVEY_IS_CHECKED = "";
 		public static final String COLUMN_SURVEY_IS_ANSWERED = "";
 		public static final String COLUMN_SURVEY_ANSWERED_TS = "";
@@ -789,19 +805,82 @@ public class DBProcManager {
 	public class MemberProcManager {
 		
 		/**
-		 * 멤버를 즐겨찾기에 추가
+		 * 멤버를 즐겨찾기에 추가/삭제
 		 * @param hash
 		 */
-		public void addFavorite( String hash ) {
+		public void setFavorite( String hash, boolean isFavorite ) {
+			String sql = null;
+			if ( isFavorite ) {
+				
+				sql = "insert or ignore into "+
+				DBSchema.USER_FAVORITE.TABLE_NAME+"("+
+				DBSchema.USER_FAVORITE.COLUMN_HASH+", "+
+				DBSchema.USER_FAVORITE.COLUMN_IS_GROUP+") "+
+				" values (?, 0)";
+				String[] val = {hash};
+				db.execSQL(sql,val);
+			} else {
+				
+				sql = "delete from "+
+				DBSchema.USER_FAVORITE.TABLE_NAME+"" +
+				" where "+DBSchema.USER_FAVORITE.COLUMN_HASH+" = ? ";
+				String[] val = {hash};
+				db.execSQL(sql,val);
+			}
+		}
+		
+		/**
+		 * 멤버 여러명을 한 즐겨찾기 그룹으로 등록\n
+		 * @param hash
+		 */
+		public void addFavoriteGroup( ArrayList<String> hashArray ) {
+			if ( hashArray.size() == 0 ) {
+				return;
+			}
+			
+			String sql = "insert into "+DBSchema.USER_FAVORITE.TABLE_NAME+" ("+
+			DBSchema.USER_FAVORITE.COLUMN_IS_GROUP+") values(1)";
+			db.execSQL(sql);
+			
+			long gpId = lastInsertId();
+			String gpHash = md5(DBSchema.USER_FAVORITE.TABLE_NAME+String.valueOf(gpId));
+			
+			sql = "update "+DBSchema.USER_FAVORITE.TABLE_NAME+" set hash = "+gpHash+" where _id = "+String.valueOf(gpId);
+			db.execSQL(sql);
+			
+			db.beginTransaction();
+			try {
+				for ( int i=0; i<hashArray.size(); i++ ) {
+					sql = "insert into "+DBSchema.USER_FAVORITE_GROUP.TABLE_NAME+" ("+
+							DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID+", "+
+							DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH+") " +
+							"values ("+String.valueOf(gpId)+", ?)";
+					String[] val = { hashArray.get(i) };
+					db.execSQL(sql,val);
+				}
+				db.setTransactionSuccessful();
+			} finally {
+				db.endTransaction();
+			}
 			
 		}
 		
 		/**
-		 * 멤버 여러명을 한 즐겨찾기 그룹으로 등록
-		 * @param hash
+		 * 즐겨찾기그룹삭제
+		 * @param hash 즐겨찾기그룹hash
 		 */
-		public void addFavorite( ArrayList<String> hashArray ) {
+		public void removeFavoriteGroup( String groupHash ) {
+			long gpId = hashToId(DBSchema.USER_FAVORITE.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_HASH, groupHash);
+			if ( gpId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			//소속멤버들을 group테이블에서 삭제
+			String sql = "delete from "+DBSchema.USER_FAVORITE_GROUP.TABLE_NAME+" where favorite_id = "+String.valueOf(gpId);
+			db.execSQL(sql);
 			
+			//그룹삭제
+			sql = "delete from "+DBSchema.USER_FAVORITE.TABLE_NAME+" where _id = "+String.valueOf(gpId);
+			db.execSQL(sql);
 		}
 		
 		/**
@@ -810,7 +889,10 @@ public class DBProcManager {
 		 * @param title 변경할 이름
 		 */
 		public void updateFavoriteTitle( String hash, String title ) {
-			
+			String sql = "update "+DBSchema.USER_FAVORITE.TABLE_NAME+" set "+DBSchema.USER_FAVORITE.COLUMN_TITLE+" = ? " +
+					"where "+DBSchema.USER_FAVORITE.COLUMN_HASH+" = ?";
+			String[] val = { title, hash };
+			db.execSQL(sql,val);
 		}
 		
 		/**
@@ -821,8 +903,11 @@ public class DBProcManager {
 		 * @return
 		 */
 		public boolean isUserFavorite(String hash) {
-			
-			return false;
+			String sql = "select count(_id) isFav from "+DBSchema.USER_FAVORITE.TABLE_NAME+" where "+DBSchema.USER_FAVORITE.COLUMN_HASH+"=?";
+			String[] val = {hash};
+			Cursor c = db.rawQuery(sql, val);
+			c.moveToNext();
+			return c.getInt(0)>0 ? true:false;
 		}
 		
 		/**
@@ -834,8 +919,13 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getFavoriteList() {
-			Cursor cursor = null;
-			return cursor;
+			String sql = "select "+
+					DBSchema.USER_FAVORITE.COLUMN_HASH+COLUMN_FAVORITE_HASH+", "+
+					DBSchema.USER_FAVORITE.COLUMN_TITLE+COLUMN_FAVORITE_NAME+", "+
+					DBSchema.USER_FAVORITE.COLUMN_IS_GROUP+COLUMN_FAVORITE_IS_GROUP+
+					" from "+DBSchema.USER_FAVORITE.TABLE_NAME+
+					" where 1=1 order by "+DBSchema.USER_FAVORITE.COLUMN_TITLE+" asc";
+			return db.rawQuery(sql, null);
 		}
 		
 		/**
@@ -846,15 +936,21 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getFavoriteGroupMemberList(String hash){
-			Cursor cursor = null;
-			return cursor;
+			
+			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_HASH, hash);
+			
+			String sql = "select "+
+					DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH+COLUMN_USER_HASH+
+					" from "+DBSchema.USER_FAVORITE_GROUP.TABLE_NAME+
+					" where "+DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID+" = "+String.valueOf(gpId);
+			return db.rawQuery(sql, null);
 		}
 		
-		public static final String COLUMN_FAVORITE_HASH = "";
-		public static final String COLUMN_FAVORITE_NAME = "";
-		public static final String COLUMN_FAVORITE_IS_GROUP = "";
-		public static final String COLUMN_USER_HASH = "";
-		public static final String COLUMN_IS_FAVORITE = "";
+		public static final String COLUMN_FAVORITE_HASH = "fav_hash";
+		public static final String COLUMN_FAVORITE_NAME = "fav_name";
+		public static final String COLUMN_FAVORITE_IS_GROUP = "fav_is_group";
+		public static final String COLUMN_USER_HASH = "user_hash";
+		public static final String COLUMN_IS_FAVORITE = "is_fav";
 		
 	}
 }
