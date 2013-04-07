@@ -11,11 +11,11 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 2;
 	private static final String TAG = DBManager.class.getName();
 	private static final String TEXT = " TEXT ";
-	private static final String INT = " TEXT ";
-	private static final String REAL = " TEXT ";
-	private static final String BLOB = " TEXT ";
+	private static final String INT = " INTEGER ";
+	private static final String REAL = " REAL ";
+	private static final String BLOB = " BLOB ";
 	private static final String UNIQUE = " UNIQUE ";
-	private static final String NOT_NULL = " NOT NULL ";
+	private static final String NOT_NULL = "  "; // do not use not null
 	private static final String AUTO_INCREMENT = " AUTOINCREMENT ";
 	private static final String PRIMARY_KEY = " PRIMARY KEY ";
 	private static final String COMMA = " , ";
@@ -30,11 +30,17 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.CHAT.COLUMN_HASH	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.CHAT.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.CHAT.COLUMN_ROOM_ID	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.CHAT.COLUMN_SENDER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.CHAT.COLUMN_SENDER_HASH	+	TEXT	+	NOT_NULL+	COMMA+
+			DBSchema.CHAT.COLUMN_CHECKED_TS	+	INT	+
 			")";
 	private static final String SQL_CREATE_INDEX_CHAT = 
 			"CREATE INDEX CHAT_IDX ON "+
 					DBSchema.CHAT.TABLE_NAME+" ("+DBSchema.CHAT.COLUMN_ROOM_ID+" ASC, "+DBSchema.CHAT.COLUMN_SENDER_HASH+" ASC)";
+	
+	private static final String SQL_CREATE_INDEX_CHAT_TS = 
+			"CREATE INDEX CHAT_TS_IDX ON "+
+					DBSchema.CHAT.TABLE_NAME+" ("+DBSchema.CHAT.COLUMN_CREATED_TS+" DESC)";
+	
 	
 	private static final String SQL_CREATE_TABLE_DOCUMENT = 
 			"CREATE TABLE "+DBSchema.DOCUMENT.TABLE_NAME+
@@ -45,9 +51,10 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.DOCUMENT.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT.COLUMN_IS_FAVORITE	+	INT	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_CATEGORY	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_CONTENT	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT.COLUMN_CHECKED_TS	+	INT	+	COMMA+
+			DBSchema.DOCUMENT.COLUMN_CHECKED_TS	+	INT+
 			")";
 	private static final String SQL_CREATE_INDEX_DOC = 
 			"CREATE INDEX DOC_IDX ON "+
@@ -61,7 +68,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_URL	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE	+	INT	+	NOT_NULL+
 			")";
 	private static final String SQL_CREATE_INDEX_DOC_ATTACH = 
 			"CREATE INDEX DOC_ATTACH_IDX ON "+
@@ -75,7 +82,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.DOCUMENT_FORWARD.COLUMN_DOC_ID  +	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS	+	INT	+	NOT_NULL+
 			")";
 	private static final String SQL_CREATE_INDEX_DOC_FORWARD = 
 			"CREATE INDEX DOC_FORWARD_IDX ON "+
@@ -90,12 +97,13 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.ROOM.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_IS_FAVORITE	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM.COLUMN_LAST_CHAT_TS	+	INT	+	COMMA+
+			DBSchema.ROOM.COLUMN_LAST_READ_TS	+	INT+COMMA+
+			DBSchema.ROOM.COLUMN_LAST_CHAT_ID	+	INT+
 			")";
 	private static final String SQL_CREATE_INDEX_ROOM = 
 			"CREATE INDEX ROOM_IDX ON "+
 					DBSchema.ROOM.TABLE_NAME+" ("+
-					DBSchema.ROOM.COLUMN_TYPE+" ASC, "+DBSchema.ROOM.COLUMN_LAST_CHAT_TS+" DESC)";
+					DBSchema.ROOM.COLUMN_TYPE+" ASC, "+DBSchema.ROOM.COLUMN_LAST_CHAT_ID+" ASC)";
 	
 	private static final String SQL_CREATE_TABLE_ROOM_CHATTER = 
 			"CREATE TABLE "+DBSchema.ROOM_CHATTER.TABLE_NAME+
@@ -103,7 +111,7 @@ public class DBManager extends SQLiteOpenHelper {
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM_CHATTER.COLUMN_USER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM_CHATTER.COLUMN_LAST_READ_TS	+	INT	+	COMMA+
+			DBSchema.ROOM_CHATTER.COLUMN_LAST_READ_TS	+	INT+
 			")";
 	private static final String SQL_CREATE_INDEX_ROOM_CHATTER = 
 			"CREATE INDEX ROOM_CHATTER_IDX ON "+
@@ -124,8 +132,9 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.SURVEY.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CHECKED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_ANSWERED	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.SURVEY.COLUMN_IS_FAVORITE	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_ANSWERED_TS	+	INT	+	COMMA+
-			DBSchema.SURVEY.COLUMN_CATEGORY	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.SURVEY.COLUMN_CATEGORY	+	INT	+	NOT_NULL	+
 			")";
 	private static final String SQL_CREATE_INDEX_SURVEY = 
 			"CREATE INDEX SURVEY_IDX ON "+
@@ -139,7 +148,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.USER_FAVORITE.COLUMN_HASH	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.USER_FAVORITE.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.USER_FAVORITE.COLUMN_IS_GROUP	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.USER_FAVORITE.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.USER_FAVORITE.COLUMN_CREATED_TS	+	INT	+	NOT_NULL+
 			")";
 	
 	private static final String SQL_CREATE_TABLE_USER_FAVORITE_GROUP = 
@@ -147,7 +156,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH	+	TEXT	+	NOT_NULL	+	
 			")";
 	
 	private static final String SQL_CREATE_INDEX_USER_FAV = 
@@ -174,6 +183,7 @@ public class DBManager extends SQLiteOpenHelper {
 			db.execSQL(SQL_CREATE_TABLE_USER_FAVORITE);
 			db.execSQL(SQL_CREATE_TABLE_USER_FAVORITE_GROUP);
 			db.execSQL(SQL_CREATE_INDEX_CHAT);
+			db.execSQL(SQL_CREATE_INDEX_CHAT_TS);
 			db.execSQL(SQL_CREATE_INDEX_DOC);
 			db.execSQL(SQL_CREATE_INDEX_DOC_ATTACH);
 			db.execSQL(SQL_CREATE_INDEX_DOC_FORWARD);
@@ -192,93 +202,97 @@ public class DBManager extends SQLiteOpenHelper {
 		
 	}
 
-	private static class DBSchema {
+	static class DBSchema {
 		private DBSchema() {}
 		public static final String DATABASE_NAME = "romeo.db";
 		public static abstract class DOCUMENT_ATTACHMENT implements BaseColumns {
-		    public static final String TABLE_NAME = "rs_document_attachment";
-		    public static final String COLUMN_DOC_ID = "doc_id";
-		    public static final String COLUMN_FILE_TYPE = "file_type";
-		    public static final String COLUMN_FILE_NAME = "file_name";
-		    public static final String COLUMN_FILE_URL = "file_url";
-		    public static final String COLUMN_FILE_SIZE_IN_BYTE = "file_size";
+		    public static final String TABLE_NAME = " rs_document_attachment ";
+		    public static final String COLUMN_DOC_ID = " doc_id ";
+		    public static final String COLUMN_FILE_TYPE = " file_type ";
+		    public static final String COLUMN_FILE_NAME = " file_name ";
+		    public static final String COLUMN_FILE_URL = " file_url ";
+		    public static final String COLUMN_FILE_SIZE_IN_BYTE = " file_size ";
 		}
 		
 		public static abstract class DOCUMENT implements BaseColumns {
-		    public static final String TABLE_NAME = "rs_document";
-		    public static final String COLUMN_HASH = "doc_hash";
-		    public static final String COLUMN_CREATOR_HASH = "creator_hash";
-		    public static final String COLUMN_CREATED_TS = "created_ts";
-		    public static final String COLUMN_TITLE = "title";
-		    public static final String COLUMN_CATEGORY = "doc_category";
-		    public static final String COLUMN_CONTENT = "content";
-		    public static final String COLUMN_IS_CHECKED = "is_checked";
-		    public static final String COLUMN_CHECKED_TS = "checked_ts";
+		    public static final String TABLE_NAME = " rs_document ";
+		    public static final String COLUMN_HASH = " doc_hash ";
+		    public static final String COLUMN_CREATOR_HASH = " creator_hash ";
+		    public static final String COLUMN_CREATED_TS = " created_ts ";
+		    public static final String COLUMN_TITLE = " title ";
+		    public static final String COLUMN_CATEGORY = " doc_category ";
+		    public static final String COLUMN_CONTENT = " content ";
+		    public static final String COLUMN_IS_CHECKED = " is_checked ";
+		    public static final String COLUMN_CHECKED_TS = " checked_ts ";
+		    public static final String COLUMN_IS_FAVORITE = " is_favorite ";
 		}
 		
 		public static abstract class DOCUMENT_FORWARD implements BaseColumns {
-		    public static final String TABLE_NAME = "rs_document_forward";
-		    public static final String COLUMN_DOC_ID = "doc_id";
-		    public static final String COLUMN_FORWARDER_HASH = "fwder_hash";
-		    public static final String COLUMN_COMMENT = "fwd_comment";
-		    public static final String COLUMN_FORWARD_TS = "fwd_ts";
+		    public static final String TABLE_NAME = " rs_document_forward ";
+		    public static final String COLUMN_DOC_ID = " doc_id ";
+		    public static final String COLUMN_FORWARDER_HASH = " fwder_hash ";
+		    public static final String COLUMN_COMMENT = " fwd_comment ";
+		    public static final String COLUMN_FORWARD_TS = " fwd_ts ";
 		}
 		
 		public static abstract class CHAT implements BaseColumns {
-			public static final String TABLE_NAME = "rs_chat";
-			public static final String COLUMN_HASH = "chat_hash";
-			public static final String COLUMN_ROOM_ID = "room_id";
-			public static final String COLUMN_SENDER_HASH = "sender_hash";
-			public static final String COLUMN_CONTENT = "chat_content";
-			public static final String COLUMN_CREATED_TS = "created_ts";
-			public static final String COLUMN_IS_CHECKED = "is_checked";
-			public static final String COLUMN_CONTENT_TYPE = "content_type";
+			public static final String TABLE_NAME = " rs_chat ";
+			public static final String COLUMN_HASH = " chat_hash ";
+			public static final String COLUMN_ROOM_ID = " room_id ";
+			public static final String COLUMN_SENDER_HASH = " sender_hash ";
+			public static final String COLUMN_CONTENT = " chat_content ";
+			public static final String COLUMN_CREATED_TS = " created_ts ";
+			public static final String COLUMN_IS_CHECKED = " is_checked ";
+			public static final String COLUMN_CHECKED_TS = " checked_ts ";
+			public static final String COLUMN_CONTENT_TYPE = " content_type ";
 		}
 		
 		public static abstract class ROOM implements BaseColumns {
-			public static final String TABLE_NAME = "rs_room";
-			public static final String COLUMN_HASH = "room_hash";
-			public static final String COLUMN_TITLE = "room_title";
-			public static final String COLUMN_TYPE = "room_type";
-			public static final String COLUMN_IS_FAVORITE = "is_favorite";
-			public static final String COLUMN_LAST_CHAT_TS = "last_chat_ts";
+			public static final String TABLE_NAME = " rs_room ";
+			public static final String COLUMN_HASH = " room_hash ";
+			public static final String COLUMN_TITLE = " room_title ";
+			public static final String COLUMN_TYPE = " room_type ";
+			public static final String COLUMN_IS_FAVORITE = " is_favorite ";
+			public static final String COLUMN_LAST_CHAT_ID = " last_chat_id ";
+			public static final String COLUMN_LAST_READ_TS = " last_read_ts ";
 		}
 		
 		public static abstract class ROOM_CHATTER implements BaseColumns {
-			public static final String TABLE_NAME = "rs_room_chatter";
-			public static final String COLUMN_ROOM_ID = "room_id";
-			public static final String COLUMN_USER_HASH = "user_hash";
-			public static final String COLUMN_LAST_READ_TS = "last_read_ts";
+			public static final String TABLE_NAME = " rs_room_chatter ";
+			public static final String COLUMN_ROOM_ID = " room_id ";
+			public static final String COLUMN_USER_HASH = " user_hash ";
+			public static final String COLUMN_LAST_READ_TS = " last_read_ts ";
 		}
 		
 		public static abstract class SURVEY implements BaseColumns {
-			public static final String TABLE_NAME = "rs_survey";
-			public static final String COLUMN_HASH = "survey_hash";
-			public static final String COLUMN_CATEGORY = "survey_category";
-			public static final String COLUMN_TITLE = "survey_title";
-			public static final String COLUMN_CONTENT = "survey_content";
-			public static final String COLUMN_OPEN_TS = "open_ts";
-			public static final String COLUMN_CLOSE_TS = "close_ts";
-			public static final String COLUMN_CREATED_TS = "created_ts";
-			public static final String COLUMN_SENDER_HASH = "sender_hash";
-			public static final String COLUMN_IS_CHECKED = "is_checked";
-			public static final String COLUMN_CHECKED_TS = "checked_ts";
-			public static final String COLUMN_IS_ANSWERED = "is_answered";
-			public static final String COLUMN_ANSWERED_TS = "answered_ts";
+			public static final String TABLE_NAME = " rs_survey ";
+			public static final String COLUMN_HASH = " survey_hash ";
+			public static final String COLUMN_CATEGORY = " survey_category ";
+			public static final String COLUMN_TITLE = " survey_title ";
+			public static final String COLUMN_CONTENT = " survey_content ";
+			public static final String COLUMN_OPEN_TS = " open_ts ";
+			public static final String COLUMN_CLOSE_TS = " close_ts ";
+			public static final String COLUMN_CREATED_TS = " created_ts ";
+			public static final String COLUMN_SENDER_HASH = " sender_hash ";
+			public static final String COLUMN_IS_CHECKED = " is_checked ";
+			public static final String COLUMN_CHECKED_TS = " checked_ts ";
+			public static final String COLUMN_IS_ANSWERED = " is_answered ";
+			public static final String COLUMN_ANSWERED_TS = " answered_ts ";
+			public static final String COLUMN_IS_FAVORITE = " is_favorite ";
 		}	
 		
 		public static abstract class USER_FAVORITE implements BaseColumns {
-			public static final String TABLE_NAME = "rs_user_favorite";
-			public static final String COLUMN_HASH = "hash";
-			public static final String COLUMN_TITLE = "";
-			public static final String COLUMN_IS_GROUP = "";
-			public static final String COLUMN_CREATED_TS = "";
+			public static final String TABLE_NAME = " rs_user_favorite ";
+			public static final String COLUMN_HASH = " hash ";
+			public static final String COLUMN_TITLE = " fav_title ";
+			public static final String COLUMN_IS_GROUP = " is_group ";
+			public static final String COLUMN_CREATED_TS = " created_ts ";
 		}
 		
 		public static abstract class USER_FAVORITE_GROUP implements BaseColumns {
-			public static final String TABLE_NAME = "rs_user_favorite_group";
-			public static final String COLUMN_FAVORITE_ID = "favorite_id";
-			public static final String COLUMN_MEMBER_HASH = "member_hash";
+			public static final String TABLE_NAME = " rs_user_favorite_group ";
+			public static final String COLUMN_FAVORITE_ID = " favorite_id ";
+			public static final String COLUMN_MEMBER_HASH = " member_hash ";
 		}
 	}
 }
