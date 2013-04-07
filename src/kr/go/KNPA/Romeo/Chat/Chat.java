@@ -1,23 +1,11 @@
 package kr.go.KNPA.Romeo.Chat;
 
-import java.util.ArrayList;
-
-import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.GCM.proc;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 public class Chat extends Message {
 	

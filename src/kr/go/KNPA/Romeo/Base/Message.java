@@ -3,13 +3,17 @@ package kr.go.KNPA.Romeo.Base;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONArray;
@@ -150,48 +154,6 @@ public class Message implements Parcelable{
 		this.checked 	= _checked;
 		this.TS 		= _TS;
 		this.uncheckers = _uncheckers;
-	}
-	
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public static String getTableNameWithMessageType(int type) {
-		int messageType = mainType(type);
-		int messageSubType = subType(type);
-		
-		String tableName = null;
-		if(messageType == Message.MESSAGE_TYPE_CHAT) {
-			switch(messageSubType) {
-				case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
-				case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
-			}
-		} else if(messageType == Message.MESSAGE_TYPE_DOCUMENT) {
-			switch(messageSubType) {
-				case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
-				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
-				case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
-			}
-			
-		} else if(messageType == Message.MESSAGE_TYPE_SURVEY) {
-			switch(messageSubType) {
-				case Survey.TYPE_DEPARTED : tableName = DBManager.TABLE_SURVEY; break;
-				case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_SURVEY; break;
-			}
-		}
-		
-		return tableName;
-		
-	}
-	
-	/**
-	 * 
-	 * @param message
-	 * @return
-	 */
-	public static String getTableNameWithMassage(Message message) {
-		return getTableNameWithMessageType(message.type);
 	}
 	
 	public String toJSON() {
@@ -376,52 +338,71 @@ public class Message implements Parcelable{
 		return User.getUsersWithIdxs(uncheckers);
 	}
 
+	/**
+	 * @name Setting Message Checked
+	 * @{
+	 */
 	public static void setChecked(Context context, ArrayList<Message> messages) {
 		
-		if(this.checked == false) {
-			switch(this.type) {
-			case MESSAGE_TYPE_CHAT :
-				DBProcManager.sharedManager(context).chat().updateCheckedTS(this.idx, System.currentTimeMillis());
-			case MESSAGE_TYPE_DOCUMENT :
-				 break;
-			case MESSAGE_TYPE_SURVEY :
-				 break;
+		if(messages == null || messages.size() < 1) return;
+		
+		int mainType = messages.get(0).mainType();
+		if( mainType == MESSAGE_TYPE_CHAT) {
+			for(int i=0; i<messages.size(); i++) {
+				if(messages.get(i).checked == false)
+					Message.setCheckedOnServer(context, messages.get(i));
 			}
-			
-			
-			// TODO : make Async
-			boolean result = GCMMessageSender.setMessageChecked(this.type, this.idx, UserInfo.getUserIdx(context));
-			
-			if(result == true) {
-				
-				DBManager dbManager = new DBManager(context);
-				SQLiteDatabase db = dbManager.getWritableDatabase();
-				
-				String tableName =  Message.getTableNameWithMessageType(this.type);
-				
-				ContentValues vals = new ContentValues();
-				vals.put("checked", 1);
-				db.update(tableName, vals, "idx=?", new String[] {this.idx+""});
-				
-				this.checked = true;
-				
-			}
-			
 		} else {
-			return;
+			for(int i=0; i<messages.size(); i++) {
+				if(messages.get(i).checked == false)
+					messages.get(i).setChecked(context);
+			}
 		}
 	}
-	
+
 	public void setChecked(Context context) {
-		if(this.mainType() == MESSAGE_TYPE_DOCUMENT || this.mainType() == MESSAGE_TYPE_SURVEY) {
-			DBProcManager.sharedManager(context).document().updateCheckedTS(this.idx, System.currentTimeMillis());
-			DBProcManager.sharedManager(context).survey().updateCheckedTS(this.idx, System.currentTimeMillis());
+		if(this.mainType() == MESSAGE_TYPE_DOCUMENT)  {
+			Message.setCheckedOnServer(context, this);
+		} else if(this.mainType() == MESSAGE_TYPE_SURVEY) {
+			Message.setCheckedOnServer(context, this);
+		} else if(this.mainType() == MESSAGE_TYPE_CHAT){
+			ArrayList<Message> messages = new ArrayList<Message>(1);
+			messages.add(this);
+			Message.setChecked(context, messages);
 		}
-		ArrayList<Message> messages = new ArrayList<Message>(1);
-		messages.add(this);
-		Message.setChecked(context, messages);
 	}
 	
+	private static void setCheckedOnLocal(Context context, Message message) {
+		if(message.mainType() == MESSAGE_TYPE_DOCUMENT)  {
+			DBProcManager.sharedManager(context).document().updateCheckedTS(message.idx, System.currentTimeMillis());
+			message.checked = true;
+		} else if(message.mainType() == MESSAGE_TYPE_SURVEY) {
+			DBProcManager.sharedManager(context).survey().updateCheckedTS(message.idx, System.currentTimeMillis());
+			message.checked = true;
+		} else if(message.mainType() == MESSAGE_TYPE_CHAT){
+			ArrayList<String> chatIdxs = new ArrayList<String>(1);
+			chatIdxs.add(message.idx);
+			message.checked = true;
+			DBProcManager.sharedManager(context).chat().updateCheckedTS(chatIdxs, System.currentTimeMillis());
+		}
+	}
 	
+	private static void setCheckedOnServer(final Context context, final Message message) {
+		Data reqData = new Data().add(0, Data.KEY_MESSAGE_TYPE, message.type)
+				 .add(0, Data.KEY_MESSAGE_HASH, message.idx)
+				 .add(0, Data.KEY_USER_HASH, UserInfo.getUserIdx(context));
+		Payload request = new Payload().setEvent(Event.Message.setChecked()).setData(reqData);
+		
+		CallbackEvent<Payload, Integer, Payload> callback = new CallbackEvent<Payload, Integer, Payload>() {
+			@Override
+			public void onPostExecute(Payload result) {
+				Message.setCheckedOnLocal(context, message);
+			}
+		};
+		
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callback);
+		conn.request();
+	}
+	/** @} */
 	
 }
