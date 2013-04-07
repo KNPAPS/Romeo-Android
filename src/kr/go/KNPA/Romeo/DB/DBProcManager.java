@@ -369,16 +369,7 @@ public class DBProcManager {
 	}
 
 	public class DocumentProcManager {
-		/**
-		 * 문서를 자신이 만들어서 보낼 때 문서 내용 저장
-		 * @param docHash 서버가 부여한 문서 해쉬
-		 * @param senderHash 보내는 사람 해쉬 (자기자신)
-		 * @param title 문서 제목
-		 * @param content 문서 내용
-		 * @param createdTS 문서를 보낸 TS
-		 * @param files 첨부파일정보. \n @see {Document.ATTACH_FILE_URL}, @see {Document.ATTACH_FILE_NAME}, @see {Document.ATTACH_FILE_TYPE}, @see {Document.ATTACH_FILE_SIZE} 가 key로 설정되어야함
-		 */
-		public void saveDocumentOnSend(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, Object>> files) {
+		private void saveDocument(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, Object>> files, int is_checked) {
 			
 			//document 테이블에 insert
 			String sql =
@@ -391,7 +382,7 @@ public class DBProcManager {
 					DBSchema.DOCUMENT.COLUMN_IS_CHECKED+","+
 					DBSchema.DOCUMENT.COLUMN_CHECKED_TS+","+
 					DBSchema.DOCUMENT.COLUMN_CATEGORY+") " +
-					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+", 1, "+String.valueOf(createdTS)+
+					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+", "+String.valueOf(is_checked)+" , "+String.valueOf(createdTS)+
 							", "+Document.TYPE_DEPARTED+")";
 			String[] val = { docHash, senderHash, title, content };
 			db.execSQL(sql,val);
@@ -428,6 +419,19 @@ public class DBProcManager {
 			} finally{
 				db.endTransaction();
 			}
+		}
+		
+		/**
+		 * 문서를 자신이 만들어서 보낼 때 문서 내용 저장
+		 * @param docHash 서버가 부여한 문서 해쉬
+		 * @param senderHash 보내는 사람 해쉬 (자기자신)
+		 * @param title 문서 제목
+		 * @param content 문서 내용
+		 * @param createdTS 문서를 보낸 TS
+		 * @param files 첨부파일정보. \n @see {Document.ATTACH_FILE_URL}, @see {Document.ATTACH_FILE_NAME}, @see {Document.ATTACH_FILE_TYPE}, @see {Document.ATTACH_FILE_SIZE} 가 key로 설정되어야함
+		 */
+		public void saveDocumentOnSend(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, Object>> files){
+			saveDocument(docHash, senderHash, title, content, createdTS, files, 1);
 		}
 		
 		/**
@@ -474,7 +478,7 @@ public class DBProcManager {
 				ArrayList<HashMap<String, Object>> files) {
 			
 			//기본정보저장
-			saveDocumentOnSend(docHash, senderHash, title, content, createdTS, files);
+			saveDocument(docHash, senderHash, title, content, createdTS, files, 0);
 			
 			//포워딩정보저장
 			for (int i=0; i<forwards.size(); i++) {
@@ -527,8 +531,15 @@ public class DBProcManager {
 		 * @return 
 		 */
 		public Cursor getDocumentList(int docCategory) {
-			Cursor cursor = null;
-			return cursor;
+			String sql ="select "+
+					DBSchema.DOCUMENT.COLUMN_HASH+COLUMN_DOC_HASH+", "+
+					DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
+					DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
+					DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
+					" from"+DBSchema.DOCUMENT.TABLE_NAME+
+					"where "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+String.valueOf(docCategory);
+			return db.rawQuery(sql, null);
 		}
 
 		/**
@@ -542,8 +553,17 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getDocumentContent(String docHash) {
-			Cursor cursor = null;
-			return cursor;			
+			
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			
+			String sql ="select "+
+					DBSchema.DOCUMENT.COLUMN_TITLE + COLUMN_DOC_TITLE +", "+
+					DBSchema.DOCUMENT.COLUMN_CONTENT + COLUMN_DOC_CONTENT +", "+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH + COLUMN_SENDER_HASH +", "+
+					DBSchema.DOCUMENT.COLUMN_CREATED_TS + COLUMN_DOC_TS +
+					" from"+DBSchema.DOCUMENT.TABLE_NAME+
+					"where _id = "+String.valueOf(docId);
+			return db.rawQuery(sql,null );
 		}
 		
 		/**
@@ -556,8 +576,15 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getDocumentForwardInfo(String docHash) {
-			Cursor cursor = null;
-			return cursor;
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+					
+			String sql ="select "+
+					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH + COLUMN_FORWARDER_HASH +", "+
+					DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT + COLUMN_FORWARD_COMMENT +", "+
+					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS + COLUMN_FORWARD_TS +
+					" from"+DBSchema.DOCUMENT_FORWARD.TABLE_NAME +
+					"where _id = "+String.valueOf(docId);
+			return db.rawQuery(sql,null);
 		}
 		
 		/**
@@ -566,16 +593,27 @@ public class DBProcManager {
 		 * @b COLUMN_FILE_NAME str 파일이름\n
 		 * @b COLUMN_FILE_TYPE int 파일종류\n
 		 * @b COLUMN_FILE_SIZE int 파일사이즈 in byte\n
+		 * @b COLUMN_FILE_URL str 파일URL\n
 		 * @param docHash
 		 * @return
 		 */
 		public Cursor getDocumentAttachment(String docHash) {
-			Cursor cursor = null;
-			return cursor;
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			
+			String sql ="select "+
+					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME + COLUMN_FILE_NAME +", "+
+					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE + COLUMN_FILE_TYPE +", "+
+					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE + COLUMN_FILE_SIZE +", "+
+					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_URL + COLUMN_FILE_URL +
+					" from"+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME +
+					"where _id = "+String.valueOf(docId);
+			return db.rawQuery(sql,null);
 		}
 		
 		public static final String COLUMN_DOC_HASH = "doc_hash";
 		public static final String COLUMN_DOC_TITLE = "doc_title";
+		public static final String COLUMN_DOC_CONTENT = "doc_content";
+		public static final String COLUMN_DOC_TS = "doc_ts";
 		public static final String COLUMN_IS_CHECKED = "is_checked";
 		public static final String COLUMN_SENDER_HASH = "sender_hash";
 		public static final String COLUMN_CREATED_TS = "created_ts";
@@ -585,6 +623,7 @@ public class DBProcManager {
 		public static final String COLUMN_FILE_NAME = "file_name";
 		public static final String COLUMN_FILE_TYPE = "file_type";
 		public static final String COLUMN_FILE_SIZE = "file_size";
+		public static final String COLUMN_FILE_URL = "file_url";
 	}
 
 	public class SurveyProcManager {
@@ -595,8 +634,9 @@ public class DBProcManager {
 		 * @param content 설문조사 설명
 		 * @param creatorHash 설문조사 만든사람 해쉬
 		 * @param createdTS 설문조사 만든 시간 TS
+		 * @param isChecked 확인했는지여부
 		 */
-		public void saveSurvey(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+		public void saveSurvey(String surveyHash,String title, String content, String creatorHash, long createdTS, int isChecked) {
 			
 		}
 		
