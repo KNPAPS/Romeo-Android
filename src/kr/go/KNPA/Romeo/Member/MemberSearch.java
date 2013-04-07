@@ -25,10 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MemberSearch extends Activity {
-
-	// Database
-	protected DBManager dbManager;
-	protected SQLiteDatabase db;
 	
 	public MemberListView memberListView;
 	public MemberFavoriteListView favoriteListView;
@@ -131,30 +127,13 @@ public class MemberSearch extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		if(dbManager == null)	dbManager = new DBManager(MemberSearch.this);
-		if(db == null) db = dbManager.getWritableDatabase();
-		
 		RomeoListView lv = getListView();
-		lv.setDatabase(db);
 		lv.refresh();
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-
-		if(db != null) {
-			db.close();
-			db = null;
-			
-			RomeoListView lv = getListView();
-			lv.unsetDatabase();
-		}
-		
-		if(dbManager != null) {
-			dbManager.close();
-			dbManager = null;
-		}
 	}
 	
 	@Override

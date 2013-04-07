@@ -19,6 +19,7 @@ import android.widget.TextView;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Appendix;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 
@@ -154,7 +155,7 @@ public class DocumentDetailFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// 정보를 업데이트하고 DB 에 등록한다.
-				document.setFavorite(!document.favorite, context);
+				document.toggleFavorite(context);
 				
 				// 버튼 모양을 바꾼다.
 				int _favoriteBackground = (document.favorite ? R.drawable.star_active : R.drawable.star_gray);

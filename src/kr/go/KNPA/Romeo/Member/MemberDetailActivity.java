@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -102,6 +103,9 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		background = (Button)findViewById(R.id.backgroundButton);
 		close = (Button)findViewById(R.id.close);
 		
+		
+		// TODO : 
+		DBProcManager.sharedManager(MemberDetailActivity.this).member().
 		
 		DBManager dbManager = new DBManager(MemberDetailActivity.this);
 		SQLiteDatabase db = dbManager.getReadableDatabase();	

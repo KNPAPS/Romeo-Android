@@ -17,10 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public abstract class RomeoFragment extends Fragment {
-
-	// Database
-	protected DBManager dbManager;
-	protected SQLiteDatabase db;
 	
 	// Variables
 	public int type = Message.NOT_SPECIFIED;
@@ -47,31 +43,13 @@ public abstract class RomeoFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		if(dbManager == null)	dbManager = new DBManager(getActivity());
-		if(db == null) db = dbManager.getWritableDatabase();
-		
 		RomeoListView lv = getListView();
-		lv.setDatabase(db);
 		lv.refresh();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-
-		if(db != null) {
-			db.close();
-			db = null;
-			
-			RomeoListView lv = getListView();
-			lv.unsetDatabase();
-		}
-		
-		if(dbManager != null) {
-			dbManager.close();
-			dbManager = null;
-		}
 	}
 
 	@Override

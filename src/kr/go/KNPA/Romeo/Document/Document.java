@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONArray;
@@ -31,12 +32,16 @@ public class Document extends Message implements Parcelable{
 	public	static final String FWD_ARRIVAL_DT 		= "TS";
 	public	static final String FWD_CONTENT 		= "content";
 	
-	
+	public	static final String ATTACH_FILE_URL = "file_url"; // (string)
+	public	static final String ATTACH_FILE_NAME = "file_name"; // (string)
+	public	static final String ATTACH_FILE_TYPE = "file_type"; // (int)
+	public	static final String ATTACH_FILE_SIZE = "file_size"; // (long)
+			
 	// Specific Variables not to be sent
 	public boolean favorite = false;
 	
 	public ArrayList<HashMap<String, String>> forwards;
-	public	ArrayList<HashMap<String, String>> files; 
+	public	ArrayList<HashMap<String, Object>> files; 
 	
 	// Constructor
 	public Document() {}
@@ -110,39 +115,6 @@ public class Document extends Message implements Parcelable{
 		return document;
 	}
 	
-	public void insertIntoDatabase(Context context) {
-		
-		String tableName = null;
-		switch(this.type%MESSAGE_TYPE_DIVIDER) {
-			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
-			case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
-			case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
-		}
-		
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getWritableDatabase();
-		
-		StringBuilder recs = new StringBuilder();
-		for(int i=0; i<this.receivers.size(); i++) {
-			recs.append( this.receivers.get(i).toJSON() );
-		}
-		
-		ContentValues vals = new ContentValues();
-		vals.put("title", this.title);
-		vals.put("content", this.content);
-		vals.put("sender", this.sender.idx);
-		vals.put("receivers", recs.toString() );
-		vals.put("received", (this.received?1:0));
-		vals.put("TS", System.currentTimeMillis());
-		vals.put("checked", (this.checked?1:0));							
-		vals.put("checkTS", this.checkTS);
-		vals.put("favorite", (this.favorite?1:0));
-		vals.put("idx", this.idx);
-		db.insert(tableName, null, vals);
-		db.close();
-		dbManager.close();
-	}
-	
 	public static class Builder extends Message.Builder {
 		protected boolean _favorite = false;
 		
@@ -201,22 +173,10 @@ public class Document extends Message implements Parcelable{
 
 	
 	// Manage if Favorite
-	public void setFavorite(boolean fav, Context context) {
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getWritableDatabase();
-		
-		int f = (fav? 1 : 0);
-		String sql = "UPDATE "+DBManager.TABLE_DOCUMENT+
-					 " SET favorite="+f+
-					 " WHERE idx="+this.idx+";";
-		
-		db.execSQL(sql);
-		
-		this.favorite = fav;
-	}
-	
 	public void toggleFavorite(Context context) {
-		setFavorite(!this.favorite, context);
+		// TODO : add / remove Favorite
+		
+		DBProcManager.sharedManager(context).document().addFavorite(this.idx);
 	}
 	
 	

@@ -27,8 +27,11 @@ public class DBProcManager {
 	private ChatProcManager chat = null;
 	private DocumentProcManager document = null;
 	private SurveyProcManager survey = null;
+	private MemberProcManager member = null;
+	
 	private DBManager dbm = null;
 	private SQLiteDatabase db;
+	
 	private DBProcManager(Context context) {
 		if ( this.dbm == null ) {
 			this.dbm = new DBManager(context);  
@@ -63,6 +66,13 @@ public class DBProcManager {
 			survey = new SurveyProcManager();
 		}
 		return survey; 
+	}
+	
+	public MemberProcManager member() {
+		if(member == null) {
+			member = new MemberProcManager();
+		}
+		return member;
 	}
 	/** @} */
 	
@@ -365,7 +375,6 @@ public class DBProcManager {
 		
 		public static final int CHAT_CONTENT_TYPE_TEXT = 1;
 		public static final int CHAT_CONTENT_TYPE_PICTURE = 2;
-		
 	}
 
 	public class DocumentProcManager {

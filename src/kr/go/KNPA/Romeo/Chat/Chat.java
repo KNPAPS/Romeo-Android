@@ -78,14 +78,6 @@ public class Chat extends Message {
 		return chat;
 	}
 
-	
-	
-	public void insertIntoDatabase(String tableName) {
-		DBProcManager proc = DBProcManager.sharedManager(context);
-		Cursor c = proc.chat.getChatList(roomHash);
-		proc.chat.CO
-	}
-	
 	public static class Builder extends Message.Builder {
 		
 		public Chat build() {

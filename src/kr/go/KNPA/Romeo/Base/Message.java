@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
@@ -375,8 +376,18 @@ public class Message implements Parcelable{
 		return User.getUsersWithIdxs(uncheckers);
 	}
 
-	public void setChecked(Context context) {
+	public static void setChecked(Context context, ArrayList<Message> messages) {
+		
 		if(this.checked == false) {
+			switch(this.type) {
+			case MESSAGE_TYPE_CHAT :
+				DBProcManager.sharedManager(context).chat().updateCheckedTS(this.idx, System.currentTimeMillis());
+			case MESSAGE_TYPE_DOCUMENT :
+				 break;
+			case MESSAGE_TYPE_SURVEY :
+				 break;
+			}
+			
 			
 			// TODO : make Async
 			boolean result = GCMMessageSender.setMessageChecked(this.type, this.idx, UserInfo.getUserIdx(context));
@@ -399,6 +410,16 @@ public class Message implements Parcelable{
 		} else {
 			return;
 		}
+	}
+	
+	public void setChecked(Context context) {
+		if(this.mainType() == MESSAGE_TYPE_DOCUMENT || this.mainType() == MESSAGE_TYPE_SURVEY) {
+			DBProcManager.sharedManager(context).document().updateCheckedTS(this.idx, System.currentTimeMillis());
+			DBProcManager.sharedManager(context).survey().updateCheckedTS(this.idx, System.currentTimeMillis());
+		}
+		ArrayList<Message> messages = new ArrayList<Message>(1);
+		messages.add(this);
+		Message.setChecked(context, messages);
 	}
 	
 	

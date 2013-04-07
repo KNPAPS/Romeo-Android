@@ -50,15 +50,7 @@ public abstract class RomeoListView extends ListView {
 		return this.context;
 	}
 	*/
-	// Database Managemant
-	public void setDatabase(SQLiteDatabase db) {
-		this.db = db;
-	}
-	
-	public void unsetDatabase() {
-		this.db = null;
-	}
-	
+
 	abstract public String getTableName();
 	
 	// DB에 쿼리를 날린다. 추상메소드.
