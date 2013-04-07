@@ -169,9 +169,8 @@ public class Document extends Message implements Parcelable{
 	
 	// Manage if Favorite
 	public void toggleFavorite(Context context) {
-		// TODO : add / remove Favorite
-		
-		DBProcManager.sharedManager(context).document().addFavorite(this.idx);
+		DBProcManager.sharedManager(context).document().setFavorite(this.idx, !this.favorite);
+		this.favorite = !this.favorite;
 	}
 	
 	
