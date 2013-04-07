@@ -8,6 +8,7 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.DB.DBManager.DBSchema;
 import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Survey.Survey;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -179,7 +180,7 @@ public class DBProcManager {
 		}
 		
 		/**
-		 * 채팅 메세지 내용 저장 
+		 * 채팅 보낼때 메세지 내용 저장 
 		 * @param roomHash 채팅방 해쉬
 		 * @param chatHash 서버에서 부여한 채팅의 hash
 		 * @param senderHash 보내는 사람 
@@ -187,7 +188,27 @@ public class DBProcManager {
 		 * @param contentType 채팅메세지의 콘텐츠타입 (채팅이면 1 사진이면 2) @see {DBProcManager.CHAT_CONTENT_TYPE_TEXT}, @see{DBProcManager.CHAT_CONTENT_TYPE_PICTURE}
 		 * @param createdTS 채팅을 보낸 타임스탬프
 		 */
-		public void saveChat(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
+		public void saveChatOnSend(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
+			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS);
+			ArrayList<String> ar = new ArrayList<String>();
+			ar.add(chatHash);
+			updateCheckedTS(ar, createdTS);
+		}
+		
+		/**
+		 * 채팅 받을때 메세지 내용 저장 
+		 * @param roomHash 채팅방 해쉬
+		 * @param chatHash 서버에서 부여한 채팅의 hash
+		 * @param senderHash 보내는 사람 
+		 * @param content 채팅 내용
+		 * @param contentType 채팅메세지의 콘텐츠타입 (채팅이면 1 사진이면 2) @see {DBProcManager.CHAT_CONTENT_TYPE_TEXT}, @see{DBProcManager.CHAT_CONTENT_TYPE_PICTURE}
+		 * @param createdTS 채팅을 보낸 타임스탬프
+		 */
+		public void saveChatOnReceived(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
+			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS);
+		}
+		
+		private void saveChat(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
 			//room hash가 유효한 방인지 검사
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
@@ -201,16 +222,14 @@ public class DBProcManager {
 						DBSchema.CHAT.COLUMN_SENDER_HASH+", "+
 						DBSchema.CHAT.COLUMN_CONTENT+", "+
 						DBSchema.CHAT.COLUMN_CONTENT_TYPE+", "+
-						DBSchema.CHAT.COLUMN_CREATED_TS+", "+
-						DBSchema.CHAT.COLUMN_IS_CHECKED+") " +
+						DBSchema.CHAT.COLUMN_CREATED_TS+") " +
 					"values(" +
 						String.valueOf(roomId)+","+
 						"?,"+
 						"?,"+
 						"?,"+
 						String.valueOf(contentType)+","+
-						String.valueOf(createdTS)+","+
-						"0)";
+						String.valueOf(createdTS)+")";
 			String[] val = { chatHash, senderHash, content };
 			db.rawQuery(sql, val);
 		}
@@ -378,27 +397,8 @@ public class DBProcManager {
 	}
 
 	public class DocumentProcManager {
-		private void saveDocument(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, Object>> files, int is_checked) {
-			
-			//document 테이블에 insert
-			String sql =
-					"insert into "+DBSchema.DOCUMENT.TABLE_NAME+
-					" ("+DBSchema.DOCUMENT.COLUMN_HASH+","+
-					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+","+
-					DBSchema.DOCUMENT.COLUMN_TITLE+","+
-					DBSchema.DOCUMENT.COLUMN_CONTENT+","+
-					DBSchema.DOCUMENT.COLUMN_CREATED_TS+","+
-					DBSchema.DOCUMENT.COLUMN_IS_CHECKED+","+
-					DBSchema.DOCUMENT.COLUMN_CHECKED_TS+","+
-					DBSchema.DOCUMENT.COLUMN_CATEGORY+") " +
-					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+", "+String.valueOf(is_checked)+" , "+String.valueOf(createdTS)+
-							", "+Document.TYPE_DEPARTED+")";
-			String[] val = { docHash, senderHash, title, content };
-			db.execSQL(sql,val);
-			
-			//doc rowid
-			long docId = lastInsertId();
-			
+		private void saveAttachmentInfo(long docId, ArrayList<HashMap<String, Object>> files) {
+						
 			db.beginTransaction();
 			try {
 				//첨부파일 정보 insert
@@ -410,7 +410,7 @@ public class DBProcManager {
 					long fileSize = (Long)hm.get("file_size");
 					int fileType = (Integer) hm.get("file_type") ;
 					
-					sql = "insert into "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
+					String sql = "insert into "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
 							"("+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_DOC_ID+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_URL+","+
@@ -440,7 +440,25 @@ public class DBProcManager {
 		 * @param files 첨부파일정보. \n @see {Document.ATTACH_FILE_URL}, @see {Document.ATTACH_FILE_NAME}, @see {Document.ATTACH_FILE_TYPE}, @see {Document.ATTACH_FILE_SIZE} 가 key로 설정되어야함
 		 */
 		public void saveDocumentOnSend(String docHash, String senderHash, String title, String content, long createdTS, ArrayList<HashMap<String, Object>> files){
-			saveDocument(docHash, senderHash, title, content, createdTS, files, 1);
+			//document 테이블에 insert
+			String sql =
+					"insert into "+DBSchema.DOCUMENT.TABLE_NAME+
+					" ("+DBSchema.DOCUMENT.COLUMN_HASH+","+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+","+
+					DBSchema.DOCUMENT.COLUMN_TITLE+","+
+					DBSchema.DOCUMENT.COLUMN_CONTENT+","+
+					DBSchema.DOCUMENT.COLUMN_CREATED_TS+","+
+					DBSchema.DOCUMENT.COLUMN_IS_CHECKED+","+
+					DBSchema.DOCUMENT.COLUMN_CHECKED_TS+","+
+					DBSchema.DOCUMENT.COLUMN_CATEGORY+") " +
+					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+", 1, "+String.valueOf(createdTS)+
+							", "+Document.TYPE_DEPARTED+")";
+			String[] val = { docHash, senderHash, title, content };
+			db.execSQL(sql,val);
+			
+			//doc rowid
+			long docId = lastInsertId();
+			saveAttachmentInfo(docId, files);
 		}
 		
 		/**
@@ -465,6 +483,7 @@ public class DBProcManager {
 					" values ("+String.valueOf(docId)+", ?, ?, "+String.valueOf(forwardTS)+")";
 			String[] val = { forwarderHash, forwardComment };
 			db.execSQL(sql, val);
+			
 		}
 		
 		/**
@@ -478,7 +497,7 @@ public class DBProcManager {
 		 * @param files 첨부파일정보. \n @see {Document.ATTACH_FILE_URL}, @see {Document.ATTACH_FILE_NAME}, @see {Document.ATTACH_FILE_TYPE}, @see {Document.ATTACH_FILE_SIZE} 가 key로 설정되어야함
 		 */
 		public void saveDocumentOnReceived
-		(String docHash, 
+				(String docHash, 
 				String senderHash, 
 				String title, 
 				String content, 
@@ -486,15 +505,29 @@ public class DBProcManager {
 				ArrayList<HashMap<String, Object>> forwards,
 				ArrayList<HashMap<String, Object>> files) {
 			
-			//기본정보저장
-			saveDocument(docHash, senderHash, title, content, createdTS, files, 0);
+			//document 테이블에 insert
+			String sql =
+					"insert into "+DBSchema.DOCUMENT.TABLE_NAME+
+					" ("+DBSchema.DOCUMENT.COLUMN_HASH+","+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+","+
+					DBSchema.DOCUMENT.COLUMN_TITLE+","+
+					DBSchema.DOCUMENT.COLUMN_CONTENT+","+
+					DBSchema.DOCUMENT.COLUMN_CREATED_TS+","+
+					DBSchema.DOCUMENT.COLUMN_IS_CHECKED+","+
+					DBSchema.DOCUMENT.COLUMN_CATEGORY+") " +
+					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+", 0 ,"+Document.TYPE_RECEIVED+")";
+			String[] val = { docHash, senderHash, title, content };
+			db.execSQL(sql,val);
 			
+			//doc rowid
+			long docId = lastInsertId();
 			//포워딩정보저장
 			for (int i=0; i<forwards.size(); i++) {
 				HashMap<String,Object> hm = forwards.get(i);
 				addForwardToDocument(docHash, hm.get(Document.FWD_FORWARDER_IDX).toString() , hm.get(Document.FWD_CONTENT).toString(), (Long)hm.get(Document.FWD_ARRIVAL_DT));
 			}
 			
+			saveAttachmentInfo(docId, files);
 		}
 		
 		/**
@@ -506,8 +539,19 @@ public class DBProcManager {
 			if ( docId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
-			int isFavorite_int = isFavorite == true ? 1 : 0;
-			String sql = "update "+DBSchema.DOCUMENT.TABLE_NAME+" SET "+DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = " +String.valueOf(isFavorite_int)+
+			
+			int isFavorite_int;
+			int category;
+			if ( isFavorite == true ) {
+				isFavorite_int=1;
+				category=Document.TYPE_FAVORITE;
+			} else {
+				isFavorite_int=0;
+				category=Document.TYPE_RECEIVED;				
+			}
+			String sql = "update "+DBSchema.DOCUMENT.TABLE_NAME+" SET "+
+						DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = " +String.valueOf(isFavorite_int)+", "+
+						DBSchema.DOCUMENT.COLUMN_CATEGORY+" = " +String.valueOf(category)+", "+
 						" where _id = "+String.valueOf(docId);
 			db.execSQL(sql);
 		}
@@ -638,34 +682,65 @@ public class DBProcManager {
 
 	public class SurveyProcManager {
 		/**
-		 * 설문조사를 보내거나 받았을 때 기본 정보 저장
+		 * 설문조사보낼때 정보저장
 		 * @param surveyHash 서버가 부여한 설문조사 해쉬
 		 * @param title 설문조사 제목
 		 * @param content 설문조사 설명
 		 * @param creatorHash 설문조사 만든사람 해쉬
 		 * @param createdTS 설문조사 만든 시간 TS
-		 * @param isChecked 확인했는지여부
 		 */
-		public void saveSurvey(String surveyHash,String title, String content, String creatorHash, long createdTS, int isChecked) {
+		public void saveSurveyOnSend(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+			String sql =
+					"insert into "+DBSchema.SURVEY.TABLE_NAME+
+					" ("+DBSchema.SURVEY.COLUMN_HASH+","+
+					DBSchema.SURVEY.COLUMN_TITLE+","+
+					DBSchema.SURVEY.COLUMN_CONTENT+","+
+					DBSchema.SURVEY.COLUMN_CREATOR_HASH+","+
+					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
+					DBSchema.SURVEY.COLUMN_CATEGORY+") " +
+					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+","+Survey.TYPE_DEPARTED+")";
+			String[] val = {surveyHash,title,content,creatorHash};
+			db.execSQL(sql,val);
 			
+			//자기가 만든건 확인시간을 지금으로
+			updateCheckedTS(surveyHash, createdTS);
 		}
 		
+		/**
+		 * 설문조사 받았을때 정보저장
+		 * @param surveyHash
+		 * @param title
+		 * @param content
+		 * @param creatorHash
+		 */
+		public void saveSurveyOnReceived(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+			String sql =
+					"insert into "+DBSchema.SURVEY.TABLE_NAME+
+					" ("+DBSchema.SURVEY.COLUMN_HASH+","+
+					DBSchema.SURVEY.COLUMN_TITLE+","+
+					DBSchema.SURVEY.COLUMN_CONTENT+","+
+					DBSchema.SURVEY.COLUMN_CREATOR_HASH+","+
+					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
+					DBSchema.SURVEY.COLUMN_CATEGORY+") " +
+					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+","+Survey.TYPE_RECEIVED+")";
+			String[] val = {surveyHash,title,content,creatorHash};
+			db.execSQL(sql,val);
+		}
 		/**
 		 * 설문조사를 확인했을 때
 		 * @param svyHash 채팅 해쉬
 		 * @param checkedTS 체크한 시간
 		 */
 		public void updateCheckedTS( String svyHash, long checkedTS ) {
-			
-		}
-		
-		/**
-		 * 설문조사 즐찾상태 바꾸기
-		 * @param hash
-		 * @param isFavorite 즐찾 여부
-		 */
-		public void setFavorite( String hash , boolean isFavorite) {
-			
+			long svyId = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_HASH, svyHash);
+			if ( svyId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			String sql = "update "+DBSchema.SURVEY.TABLE_NAME+
+					" SET "+DBSchema.SURVEY.COLUMN_IS_CHECKED+" = 1," +
+					DBSchema.SURVEY.COLUMN_CHECKED_TS+" = "+String.valueOf(checkedTS)+
+					" where _id = "+String.valueOf(svyId);
+			db.execSQL(sql);
 		}
 		
 		/**
@@ -673,16 +748,13 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_SURVEY_HASH str 해시\n
 		 * @b COLUMN_SURVEY_NAME str 설문제목\n
-		 * @b COLUMN_SURVEY_OPEN_TS int open ts\n
-		 * @b COLUMN_SURVEY_CLOSE_TS int close ts\n
 		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 대답여부\n
-		 * @param svyCategory 
+		 * @param svyCategory 내가받은거면 Survey.TYPE_RECEIVED, 내가보낸거면 Survey.TYPE_DEPARTED
 		 * @return
 		 */
 		public Cursor getSurveyList(int svyCategory) {
-			Cursor cursor = null;
-			return cursor;
+			return null;
 		}
 		
 		/**

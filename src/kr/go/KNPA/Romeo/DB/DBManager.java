@@ -128,7 +128,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.SURVEY.COLUMN_OPEN_TS	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CLOSE_TS	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_SENDER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.SURVEY.COLUMN_CREATOR_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CHECKED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_ANSWERED	+	INT	+	NOT_NULL	+	COMMA+
@@ -273,7 +273,7 @@ public class DBManager extends SQLiteOpenHelper {
 			public static final String COLUMN_OPEN_TS = " open_ts ";
 			public static final String COLUMN_CLOSE_TS = " close_ts ";
 			public static final String COLUMN_CREATED_TS = " created_ts ";
-			public static final String COLUMN_SENDER_HASH = " sender_hash ";
+			public static final String COLUMN_CREATOR_HASH = " creator_hash ";
 			public static final String COLUMN_IS_CHECKED = " is_checked ";
 			public static final String COLUMN_CHECKED_TS = " checked_ts ";
 			public static final String COLUMN_IS_ANSWERED = " is_answered ";
