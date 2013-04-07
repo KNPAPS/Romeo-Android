@@ -62,41 +62,6 @@ public class Chat extends Message {
 		return chat;
 	}
 
-	public static class Builder extends Message.Builder {
-		
-		public Chat build() {
-		/*
-			Message message = new Message.Builder()
-									   .idx(_idx)
-									   .title(_title)
-									   .type(_type)
-									   .content(_content)
-									   .appendix(_appendix)
-									   .sender(_sender)
-									   .receivers(_receivers)
-									   .TS(_TS)
-									   .received(_received)
-									   .checkTS(_checkTS)
-									   .checked(_checked)
-									   .buildMessage();
-			Chat chat = (Chat)message;
-			*/
-			Chat chat = new Chat();
-			chat.idx = this._idx;
-			chat.title = this._title;
-			chat.type = this._type;
-			chat.content = this._content;
-			chat.sender = this._sender;
-			chat.receivers = this._receivers;
-			chat.TS = this._TS;
-			chat.received = this._received;
-			chat.checkTS = this._checkTS;
-			chat.checked = this._checked;			
-			
-			return chat;
-		}
-	}
-	
 	@Override
 	public void afterSend(boolean succesful) {
 		// TODO :  Insert into DB

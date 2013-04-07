@@ -110,48 +110,6 @@ public class Document extends Message implements Parcelable{
 		return document;
 	}
 	
-	public static class Builder extends Message.Builder {
-		protected boolean _favorite = false;
-		
-		public Builder favorite(boolean favorite) {
-			_favorite = favorite;
-			return this;
-		}
-		
-		public Document build() {
-			/*
-			Document document = (Document) new Document.Builder()
-													   .idx(_idx)
-													   .title(_title)
-													   .type(_type)
-													   .content(_content)
-													   .appendix(_appendix)
-													   .sender(_sender)
-													   .receivers(_receivers)
-													   .TS(_TS)
-													   .received(_received)
-													   .checkTS(_checkTS)
-													   .checked(_checked)
-													   .buildMessage();
-													   */
-			Document document = new Document();
-			
-			document.idx = this._idx;
-			document.title = this._title;
-			document.type = this._type;
-			document.content = this._content;
-			document.sender = this._sender;
-			document.receivers = this._receivers;
-			document.TS = this._TS;
-			document.received = this._received;
-			document.checkTS = this._checkTS;
-			document.checked = this._checked;			
-			
-			document.favorite = this._favorite;			
-			return document;
-		}
-	}
-	
 	// Manage if Favorite
 	public void toggleFavorite(Context context) {
 		DBProcManager.sharedManager(context).document().setFavorite(this.idx, !this.favorite);

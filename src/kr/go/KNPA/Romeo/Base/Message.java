@@ -189,63 +189,6 @@ public class Message implements Parcelable{
 	
 	public void afterSend(boolean successful) {}
 	
-	public static class Builder {
-		protected String 			_idx 		= null;
-		protected int 				_type		= NOT_SPECIFIED;
-		protected String 			_title		= null;
-		protected String 			_content	= null;
-		protected User 				_sender		= null;
-		protected ArrayList<User> 	_receivers 	= null;
-		protected long 				_TS			= NOT_SPECIFIED;
-		protected ArrayList<User>	_uncheckers = null;
-		protected boolean 			_checked 	= false;
-		protected long 				_checkTS	= NOT_SPECIFIED;
-		protected boolean 			_received 	= true;
-		
-		public Builder idx(String idx) 						{	_idx = idx;				return this;	}
-		public Builder type(int type) 						{	_type = type;			return this;	}
-		public Builder title(String title) 					{	_title = title;			return this;	}
-		public Builder content( String content) 			{	_content = content;		return this;	}
-		public Builder sender(User  sender) 				{	_sender = sender;		return this;	}
-		public Builder receivers(ArrayList<User> receivers) {	_receivers = receivers;	return this;	}
-		public Builder TS(long TS) 							{	_TS = TS;				return this;	}
-		public Builder received(boolean received) 			{	_received = received;	return this;	}
-		public Builder checked(boolean checked) 			{	_checked = checked;		return this;	}
-		public Builder checkTS(long checkTS) 				{	_checkTS = checkTS;		return this;	}
-		
-		public kr.go.KNPA.Romeo.Chat.Chat.Builder toChatBuilder() {
-			return (kr.go.KNPA.Romeo.Chat.Chat.Builder)this;
-		}
-		
-		public kr.go.KNPA.Romeo.Document.Document.Builder toDocumentBuilder() {
-			return (kr.go.KNPA.Romeo.Document.Document.Builder)this;
-		}
-		
-		public kr.go.KNPA.Romeo.Survey.Survey.Builder toSurveyBuilder() {
-			return (kr.go.KNPA.Romeo.Survey.Survey.Builder)this;
-		}
-		
-		
-		public Message buildMessage() {
-			Message message = new Message();
-			message.idx = this._idx;
-			message.title = this._title;
-			message.type = this._type;
-			message.content = this._content;
-			message.sender = this._sender;
-			message.receivers = this._receivers;
-			message.TS = this._TS;
-			message.received = this._received;
-			message.checkTS = this._checkTS;
-			message.checked = this._checked;			
-			message.uncheckers = new ArrayList<User>();
-			for(int i=0; i< _receivers.size(); i++) {
-				message.uncheckers.add(_receivers.get(i).clone());
-			}
-			return message;
-		}
-		
-	}
 	
 	// Implements Parcelable
 	@Override
