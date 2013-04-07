@@ -99,16 +99,34 @@ public class GCMMessageSender {
 					// TODO : 발신자 별 에러 컨트롤
 					
 					if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
-						((Chat)_message).afterSend();
+						((Chat)_message).afterSend(true);
 					} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
-						((Document)_message).afterSend();
+						((Document)_message).afterSend(true);
 					} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
-						((Survey)_message).afterSend();
+						((Survey)_message).afterSend(true);
 					}
 				} else {
 					// TODO : 실패했을때??
+					if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
+						((Chat)_message).afterSend(false);
+					} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
+						((Document)_message).afterSend(false);
+					} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
+						((Survey)_message).afterSend(false);
+					}
 				}
 				
+			}
+			
+			@Override
+			public void onError(String errorMsg, Exception e) {
+				if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
+					((Chat)_message).afterSend(false);
+				} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
+					((Document)_message).afterSend(false);
+				} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
+					((Survey)_message).afterSend(false);
+				}
 			}
 		};
 		

@@ -46,16 +46,6 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 	 */
 	@Override
 	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).chat().getRoomList(this.type);	}
-	
-	@Override
-	public String getTableName() {
-		String tableName = null;
-		switch(this.type) {
-			case Chat.TYPE_COMMAND : tableName =  DBManager.TABLE_COMMAND; break;
-			case Chat.TYPE_MEETING : tableName =  DBManager.TABLE_MEETING; break;
-		}
-		return tableName;
-	}
 	/** @} */
 	
 	/**

@@ -3,22 +3,14 @@ package kr.go.KNPA.Romeo.Survey;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.Encrypter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -51,7 +43,7 @@ public class Survey extends Message implements Parcelable{
 	public Survey(Cursor c) {
 		super(c);
 		
-		this.type = getType();
+		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + (received ? Survey.TYPE_RECEIVED : Survey.TYPE_DEPARTED);
 
 		long _openTS = c.getLong(c.getColumnIndex("openTS"));
 		long _closeTS = c.getLong(c.getColumnIndex("closeTS"));
@@ -93,25 +85,14 @@ public class Survey extends Message implements Parcelable{
 	*/
 	
 	public Survey clone() {
-		Survey survey = new Survey();
-		
-		survey.idx = this.idx;
-		survey.title = this.title;
-		survey.type = this.type;
-		survey.content = this.content;
-		survey.sender = this.sender;
-		survey.receivers = this.receivers;
-		survey.TS = this.TS;
-		survey.received = this.received;
-		survey.checkTS = this.checkTS;
-		survey.checked = this.checked;			
+		Survey survey = (Survey)this.clone(new Survey());
+
 		survey.answered = this.answered;
 		survey.openTS = this.openTS;
 		survey.closeTS = this.closeTS;
+		survey.survey_form = this.survey_form;
+		
 		return survey;
-	}
-	protected int getType() {
-		return Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + (received ? Survey.TYPE_RECEIVED : Survey.TYPE_DEPARTED);
 	}
 	
 	public long openTS() {
@@ -226,15 +207,8 @@ public class Survey extends Message implements Parcelable{
 		*/
 	}
 	
-
-	public void send(Context context) {
-		super.send();
-		
-		
-	}
-	
 	@Override
-	public void afterSend() {
+	public void afterSend(boolean successful) {
 		// TODO :  Insert into DB
 		/*
 		DBManager dbManager = new DBManager(context);

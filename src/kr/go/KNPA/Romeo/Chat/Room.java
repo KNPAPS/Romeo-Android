@@ -1,15 +1,13 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import android.content.Context;
-import android.database.Cursor;
-
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import android.content.Context;
+import android.database.Cursor;
 
 public class Room {
 	//ArrayList<Chat> chats;
@@ -69,19 +67,23 @@ public class Room {
 		return false;
 	}
 
-	public String getTableName() {
-		String tableName = null;
-		
-		if(this.type == Chat.TYPE_COMMAND) {
-			tableName = DBManager.TABLE_COMMAND;
-		} else if(this.type == Chat.TYPE_MEETING ){
-			tableName = DBManager.TABLE_MEETING;
-		}
-		
-		return tableName;
-	}
-
 	public static String makeRoomCode(Context context) {
 		return UserInfo.getUserIdx(context)+":"+System.currentTimeMillis();
+	}
+	
+	public ArrayList<User> getUsers(Context context) {
+		Cursor cursorRoomUsers = DBProcManager.sharedManager(context).chat().getReceiverList(this.roomCode);
+		ArrayList<User> roomUsers = new ArrayList<User>(cursorRoomUsers.getCount());
+		
+		cursorRoomUsers.moveToFirst();
+		while(!cursorRoomUsers.isAfterLast()) {
+			roomUsers.add( new User( cursorRoomUsers.getString(cursorRoomUsers.getColumnIndex(ChatProcManager.COLUMN_USER_HASH)) ) );
+			cursorRoomUsers.moveToNext();
+		}
+		
+		// TODO : 필요한가??
+		this.users = roomUsers;
+		
+		return roomUsers;
 	}
 }

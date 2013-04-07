@@ -75,6 +75,21 @@ public class Message implements Parcelable{
 	 */
 	public Message() {}
 	
+	public Object clone(Message message){
+		message.idx = this.idx;
+		message.type = this.type;
+		message.title = this.title;
+		message.content = this.content;
+		message.sender = this.sender;
+		message.receivers = this.receivers;
+		message.TS = this.TS;
+		message.uncheckers = this.uncheckers;
+		message.checked = this.checked;
+		message.checkTS = this.checkTS;
+		message.received = this.received;
+		return message;
+	}
+	
 	/**
 	 * 
 	 * @param json
@@ -131,31 +146,24 @@ public class Message implements Parcelable{
 	/** @} */
 	
 	public Message(Cursor c) {
-		String 			_idx 		= c.getString(c.getColumnIndex("idx"));
-		//type
-		String 			_title 		= c.getString(c.getColumnIndex("title"));
-		String 			_content 	= c.getString(c.getColumnIndex("content"));
-		Appendix		_appendix	= Appendix.fromBlob(c.getBlob(c.getColumnIndex("appendix")));
-		User 			_sender		= User.getUserWithIdx(c.getString(c.getColumnIndex("sender")));
-		ArrayList<User> _receivers 	= User.getUsersWithIdxs(c.getString(c.getColumnIndex("receivers")));
-		long 			_TS			= c.getLong(c.getColumnIndex("TS"));
-		boolean 		_checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
-		long 			_checkTS	= c.getLong(c.getColumnIndex("checkTS"));
-		boolean 		_received 	= (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);
-		ArrayList<User> _uncheckers = User.getUsersWithIdxs(c.getString(c.getColumnIndex("uncheckers")));
+		this.idx 		= c.getString(c.getColumnIndex("idx"));
+		// int type		:	Chat, Document, Survey 에서.
+		this.title 		= c.getString(c.getColumnIndex("title"));
+		this.content 	= c.getString(c.getColumnIndex("content"));
 		
-		this.idx 		= _idx;
-		this.title 		= _title;
-		this.content 	= _content;
-		this.sender		= _sender;
-		this.receivers 	= _receivers;
-		this.received 	= _received;
-		this.checkTS 	= _checkTS;
-		this.checked 	= _checked;
-		this.TS 		= _TS;
-		this.uncheckers = _uncheckers;
+		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex("sender")));
+		this.receivers 	= User.getUsersWithIdxs(c.getString(c.getColumnIndex("receivers")));
+		
+		this.TS			= c.getLong(c.getColumnIndex("TS"));
+		this.uncheckers = User.getUsersWithIdxs(c.getString(c.getColumnIndex("uncheckers")));
+		
+		this.checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
+		this.checkTS	= c.getLong(c.getColumnIndex("checkTS"));
+
+		this.received 	= (c.getInt(c.getColumnIndex("received")) == 1 ? true : false);
 	}
 	
+	/*
 	public String toJSON() {
 		final String q = "\"";
 		final String c = ":";
@@ -173,83 +181,37 @@ public class Message implements Parcelable{
 		return sb.toString();
 		
 	}
-	
+	*/
 
 	public void send() {
 		GCMMessageSender.sendMessage(this);
 	}
 	
-	public void afterSend() {}
+	public void afterSend(boolean successful) {}
 	
 	public static class Builder {
-		protected String 		_idx 		= null;
-		protected int 			_type		= NOT_SPECIFIED;
+		protected String 			_idx 		= null;
+		protected int 				_type		= NOT_SPECIFIED;
 		protected String 			_title		= null;
 		protected String 			_content	= null;
-		protected Appendix 		_appendix	= null;
-		protected User 			_sender		= null;
-		protected ArrayList<User> _receivers 	= null;
-		protected long 			_TS			= NOT_SPECIFIED;
+		protected User 				_sender		= null;
+		protected ArrayList<User> 	_receivers 	= null;
+		protected long 				_TS			= NOT_SPECIFIED;
+		protected ArrayList<User>	_uncheckers = null;
+		protected boolean 			_checked 	= false;
+		protected long 				_checkTS	= NOT_SPECIFIED;
+		protected boolean 			_received 	= true;
 		
-		protected boolean 		_received 	= true;
-		
-		protected boolean 		_checked 	= false;
-		protected long 			_checkTS	= NOT_SPECIFIED;
-		public Builder idx(String idx) {
-			_idx = idx;
-			return this;
-		}
-		
-		public Builder type(int type) {
-			_type = type;
-			return this;
-		}
-		
-		
-		public Builder title(String title) {
-			_title = title;
-			return this;
-		}
-		
-		public Builder content( String content) {
-			_content = content;
-			return this;
-		}
-		
-		public Builder appendix(Appendix appendix) {
-			_appendix = appendix;
-			return this;
-		}
-		
-		public Builder sender(User  sender) {
-			_sender = sender;
-			return this;
-		}
-		
-		public Builder receivers(ArrayList<User> receivers) {
-			_receivers = receivers;
-			return this;
-		}
-		
-		public Builder TS(long TS) {
-			_TS = TS;
-			return this;
-		}
-		
-		public Builder received(boolean received) {
-			_received = received;
-			return this;
-		}
-		
-		public Builder checked(boolean checked) {
-			_checked = checked;
-			return this;
-		}
-		
-		public Builder checkTS(long checkTS) {
-			_checkTS = checkTS;
-			return this;
-		}
+		public Builder idx(String idx) 						{	_idx = idx;				return this;	}
+		public Builder type(int type) 						{	_type = type;			return this;	}
+		public Builder title(String title) 					{	_title = title;			return this;	}
+		public Builder content( String content) 			{	_content = content;		return this;	}
+		public Builder sender(User  sender) 				{	_sender = sender;		return this;	}
+		public Builder receivers(ArrayList<User> receivers) {	_receivers = receivers;	return this;	}
+		public Builder TS(long TS) 							{	_TS = TS;				return this;	}
+		public Builder received(boolean received) 			{	_received = received;	return this;	}
+		public Builder checked(boolean checked) 			{	_checked = checked;		return this;	}
+		public Builder checkTS(long checkTS) 				{	_checkTS = checkTS;		return this;	}
 		
 		public kr.go.KNPA.Romeo.Chat.Chat.Builder toChatBuilder() {
 			return (kr.go.KNPA.Romeo.Chat.Chat.Builder)this;

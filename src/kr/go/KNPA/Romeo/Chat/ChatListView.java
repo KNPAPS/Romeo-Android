@@ -2,6 +2,7 @@ package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
 import android.database.Cursor;
@@ -56,28 +57,9 @@ public class ChatListView extends RomeoListView {
 	protected Cursor query() {
 		return query(currentNumberOfRecentItem);
 	}
-	
-	@Override
-	public String getTableName() {
-		return room.getTableName();
-	}
-	
+
 	public Cursor query(int nItems) {
-		Cursor c = null;
-		if(getTableName() != null && this.room.roomCode != null) {	// TODO
-
-			String subSql = "SELECT "+BaseColumns._ID+" FROM " + getTableName() +
-					 " WHERE roomCode=\""+this.room.roomCode+"\""+
-					 " ORDER BY TS DESC"+
-					 " LIMIT "+nItems;
-			String sql = "SELECT * FROM "+getTableName()+
-					 " WHERE "+BaseColumns._ID+" IN ("+subSql+")"+
-					 " ORDER BY TS ASC"+
-					 " LIMIT "+nItems+";";
-
-			c = db.rawQuery(sql, null);
-		}
-		return c;
+		return DBProcManager.sharedManager(getContext()).chat().getChatList(room.roomCode, 0, nItems);
 	}
 
 	// refresh()

@@ -13,7 +13,11 @@ public class Chat extends Message {
 	public static final int TYPE_MEETING = 0;
 	public static final int TYPE_COMMAND = 1;
 	
+	public static final int CONTENT_TYPE_TEXT = 1;
+	public static final int CONTENT_TYPE_PICTURE = 2;
+	
 	public String roomCode;
+	public int contentType = CONTENT_TYPE_TEXT;
 	
 	private static final String KEY_ROOMCODE = "room_hash";
 	
@@ -51,17 +55,9 @@ public class Chat extends Message {
 	*/
 	
 	public Chat clone() {
-		Chat chat = new Chat();
-		chat.idx = this.idx;
-		chat.title = this.title;
-		chat.type = this.type;
-		chat.content = this.content;
-		chat.sender = this.sender;
-		chat.receivers = this.receivers;
-		chat.TS = this.TS;
-		chat.received = this.received;
-		chat.checkTS = this.checkTS;
-		chat.checked = this.checked;			
+		Chat chat = (Chat)this.clone(new Chat());
+		chat.roomCode = this.roomCode;
+		chat.contentType = this.contentType;
 		
 		return chat;
 	}
@@ -101,12 +97,8 @@ public class Chat extends Message {
 		}
 	}
 	
-	public void send(Context context, Room room) {
-		super.send();
-	}
-
 	@Override
-	public void afterSend() {
+	public void afterSend(boolean succesful) {
 		// TODO :  Insert into DB
 		/*
 		DBManager dbManager = new DBManager(context);

@@ -3,21 +3,15 @@ package kr.go.KNPA.Romeo.Document;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -40,7 +34,7 @@ public class Document extends Message implements Parcelable{
 	// Specific Variables not to be sent
 	public boolean favorite = false;
 	
-	public ArrayList<HashMap<String, String>> forwards;
+	public ArrayList<HashMap<String, Object>> forwards;
 	public	ArrayList<HashMap<String, Object>> files; 
 	
 	// Constructor
@@ -108,19 +102,10 @@ public class Document extends Message implements Parcelable{
 	}
 	*/
 	public Document clone() {
-		Document document = new Document();
+		Document document = (Document)this.clone(new Document());
 		
-		document.idx = this.idx;
-		document.title = this.title;
-		document.type = this.type;
-		document.content = this.content;
-		document.sender = this.sender;
-		document.receivers = this.receivers;
-		document.TS = this.TS;
-		document.received = this.received;
-		document.checkTS = this.checkTS;
-		document.checked = this.checked;			
-		
+		document.forwards = this.forwards;
+		document.files = this.files;
 		document.favorite = this.favorite;			
 		return document;
 	}
@@ -202,16 +187,9 @@ public class Document extends Message implements Parcelable{
 		}
 		
 	};
-	
-	public void send(Context context) {
-		super.send();
-		
-		
 
-	}
-	
 	@Override
-	public void afterSend() {
+	public void afterSend(boolean successful) {
 		// TODO :  Insert into DB
 		/*
 		String tableName = null;

@@ -156,12 +156,12 @@ public class ChatFragment extends RomeoFragment {
 	public static void receive(Chat chat) {
 		// 현재 방에 대해서 작업을 한다.
 		// 현재 특정 방안에 입장해 있다면, 그 방의 인스턴스에도 메시지를 전달한다.
-		RoomFragment rf = getCurrentRoom();
-		if(	rf !=null && 
-			rf.room != null && 
-			rf.room.roomCode !=null &&
-			rf.room.roomCode.equals(chat.roomCode))
-			rf.receive(chat);
+		RoomFragment currentRoomFragment = getCurrentRoom();
+		if(	currentRoomFragment !=null && 
+			currentRoomFragment.room != null && 
+			currentRoomFragment.room.roomCode !=null &&
+			currentRoomFragment.room.roomCode.equals(chat.roomCode))
+			currentRoomFragment.receive(chat);
 		
 		// 현재 Fragment의 ListView에도 메시지를 전달하여 refresh할 수 있도록 한다.
 		ChatFragment f = null;

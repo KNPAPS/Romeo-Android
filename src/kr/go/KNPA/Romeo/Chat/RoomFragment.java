@@ -5,27 +5,22 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.location.Address;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -69,8 +64,9 @@ public class RoomFragment extends RomeoFragment {
 		ChatFragment.setCurrentRoom(this);
 		super.onResume();
 		getListView().scrollToBottom();
-		//DBProcManager.sharedManager(getActivity()).chat().
-		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로.. TODO
+		
+		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
+		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
 	}
 
 	@Override
@@ -141,32 +137,25 @@ public class RoomFragment extends RomeoFragment {
 			public void onClick(View v) {
 				EditText et = inputET;
 				
-				DBProcManager.sharedManager(getActivity()).chat().
-				String senderIdx = UserInfo.getUserIdx(getActivity());
+				User sender = User.getUserWithIdx( UserInfo.getUserIdx(getActivity()) );
+				ArrayList<User> roomUsers = room.getUsers(getActivity());
 				
-				User sender = User.getUserWithIdx(senderIdx);
-				
-				ArrayList<User> roomUsers = room.users;
-				ArrayList<User> receivers = User.removeUserHavingIndex(roomUsers, senderIdx);
-				
-				
-				Appendix adx = new Appendix();
 				String roomCode = room.roomCode;
-				if(roomCode ==null) roomCode = senderIdx+":"+System.currentTimeMillis(); // TODO 같은방 채팅, 새 방 채팅.
-				Appendix.Attachment att = new Appendix.Attachment("roomCode", Appendix.makeType(Appendix.TYPE_1_PRIMITIVE, Appendix.TYPE_2_STRING), null, roomCode);
-				adx.add(att);
-				
+				if(roomCode ==null) // 만약 roomCode가 없다면 새로 만들어진 방이다.
+					roomCode = room.makeRoomCode(context); 
 				
 				Chat chat = new Chat.Builder()
 									//.idx()
 									.type(room.type)
+									//.title(title)
 									.content(et.getText().toString())
-									.appendix(adx)
+									
 									.sender(sender)
 									.receivers(receivers)
 									.TS(System.currentTimeMillis())
+									//.uncheckers()
 									.checked(true)
-									//.checkTS()
+									.checkTS(System.currentTimeMillis())
 									.toChatBuilder()
 									.build();
 				
@@ -198,6 +187,7 @@ public class RoomFragment extends RomeoFragment {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				// 로드할 메시지 갯수를 하나 증가시킨만큼 다시 모두 불러오는 식으로 Refresh를 진행한다.
 				lv.increaseNumberOfItemsBy(1);
 				lv.refresh();	
 			}
