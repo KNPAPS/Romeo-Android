@@ -498,15 +498,16 @@ public class DBProcManager {
 		}
 		
 		/**
-		 * 문서를 즐겨찾기에 추가
+		 * 문서의 즐겨찾기 상태 toggle
 		 * @param hash 문서 해쉬
 		 */
-		public void addFavorite( String hash ) {
+		public void setFavorite( String hash, boolean isFavorite) {
 			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, hash);
 			if ( docId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
-			String sql = "update "+DBSchema.DOCUMENT.TABLE_NAME+" SET "+DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = 1" +
+			int isFavorite_int = isFavorite == true ? 1 : 0;
+			String sql = "update "+DBSchema.DOCUMENT.TABLE_NAME+" SET "+DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = " +String.valueOf(isFavorite_int)+
 						" where _id = "+String.valueOf(docId);
 			db.execSQL(sql);
 		}
@@ -659,10 +660,11 @@ public class DBProcManager {
 		}
 		
 		/**
-		 * 설문조사를 즐겨찾기에 추가
+		 * 설문조사 즐찾상태 바꾸기
 		 * @param hash
+		 * @param isFavorite 즐찾 여부
 		 */
-		public void addFavorite( String hash ) {
+		public void setFavorite( String hash , boolean isFavorite) {
 			
 		}
 		
@@ -740,6 +742,18 @@ public class DBProcManager {
 		}
 		
 		/**
+		 * 해당 유저가 즐겨찾기에 있는지
+		 * @b 커서구조
+		 * @b COLUMN_IS_FAVORITE 즐겨찾기인지 아닌지  
+		 * @param hash
+		 * @return
+		 */
+		public boolean isUserFavorite(String hash) {
+			
+			return false;
+		}
+		
+		/**
 		 * 즐겨찾기 목록 가져옴
 		 * @b 커서구조
 		 * @b COLUMN_FAVORITE_HASH str 즐겨찾기 해쉬(유저면 유저해쉬 그룹이면 즐찾그룹해쉬)\n
@@ -763,10 +777,12 @@ public class DBProcManager {
 			Cursor cursor = null;
 			return cursor;
 		}
+		
 		public static final String COLUMN_FAVORITE_HASH = "";
 		public static final String COLUMN_FAVORITE_NAME = "";
 		public static final String COLUMN_FAVORITE_IS_GROUP = "";
 		public static final String COLUMN_USER_HASH = "";
+		public static final String COLUMN_IS_FAVORITE = "";
 		
 	}
 }
