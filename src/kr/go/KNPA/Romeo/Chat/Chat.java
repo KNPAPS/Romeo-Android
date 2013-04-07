@@ -1,11 +1,13 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Context;
 
 public class Chat extends Message {
 	
@@ -29,6 +31,37 @@ public class Chat extends Message {
 		this.roomCode = jo.getString(KEY_ROOMCODE);
 	}
 
+	public Chat(
+			String			idx, 
+			int				type, 
+//			String			title, 
+			String			content, 
+			User 			sender, 
+			ArrayList<User>	receivers, 
+			boolean			received,
+			long			TS,
+			boolean			checked, 
+			long 			checkTS,
+			String 			roomCode, 
+			int 			contentType) {
+		this.idx = idx;
+		this.type = type;
+//		this.title = title;
+		this.content = content;
+		this.sender = sender;
+		this.receivers = receivers;
+		this.received = received;
+		this.TS = TS;
+		this.checked = checked;
+		this.checkTS = checkTS;
+		this.roomCode = roomCode;
+		this.contentType = contentType;
+	}
+	
+	public static Chat chatOnSend(int type, String content, User sender, ArrayList<User> receivers, long TS, String roomCode, int contentType) {
+		return new Chat(null, type, content, sender, receivers, false, TS, true, TS, roomCode, contentType);
+		// TODO Chat checked == true?? => 서버
+	}
 	/*
 	public Chat(Payload payload, boolean received, long checkTS) {
 		

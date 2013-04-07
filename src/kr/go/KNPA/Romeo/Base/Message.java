@@ -61,7 +61,6 @@ public class Message implements Parcelable{
 	public ArrayList<User> 	receivers 	= null;
 	
 	public long 			TS			= NOT_SPECIFIED;
-	public ArrayList<User>	uncheckers 	= null;
 	
 	public boolean 			checked 	= false;
 	public long 			checkTS		= NOT_SPECIFIED;
@@ -83,7 +82,6 @@ public class Message implements Parcelable{
 		message.sender = this.sender;
 		message.receivers = this.receivers;
 		message.TS = this.TS;
-		message.uncheckers = this.uncheckers;
 		message.checked = this.checked;
 		message.checkTS = this.checkTS;
 		message.received = this.received;
@@ -155,7 +153,6 @@ public class Message implements Parcelable{
 		this.receivers 	= User.getUsersWithIdxs(c.getString(c.getColumnIndex("receivers")));
 		
 		this.TS			= c.getLong(c.getColumnIndex("TS"));
-		this.uncheckers = User.getUsersWithIdxs(c.getString(c.getColumnIndex("uncheckers")));
 		
 		this.checked 	= (c.getInt(c.getColumnIndex("checked")) == 1 ? true : false);
 		this.checkTS	= c.getLong(c.getColumnIndex("checkTS"));

@@ -137,34 +137,23 @@ public class RoomFragment extends RomeoFragment {
 			public void onClick(View v) {
 				EditText et = inputET;
 				
+				if(room.roomCode ==null) {
+					// 만약 roomCode가 없다면 새로 만들어진 방이다.
+					ArrayList<String> userIdxs = new ArrayList<String>(room.users.size());
+					for(int i=0; i<userIdxs.size(); i++) {
+						userIdxs.add(room.users.get(i).idx);
+					}
+					room.roomCode = DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type);
+				}
+				
 				User sender = User.getUserWithIdx( UserInfo.getUserIdx(getActivity()) );
-				ArrayList<User> roomUsers = room.getUsers(getActivity());
-				
-				String roomCode = room.roomCode;
-				if(roomCode ==null) // 만약 roomCode가 없다면 새로 만들어진 방이다.
-					roomCode = room.makeRoomCode(context); 
-				
-				Chat chat = new Chat.Builder()
-									//.idx()
-									.type(room.type)
-									//.title(title)
-									.content(et.getText().toString())
-									
-									.sender(sender)
-									.receivers(receivers)
-									.TS(System.currentTimeMillis())
-									//.uncheckers()
-									.checked(true)
-									.checkTS(System.currentTimeMillis())
-									.toChatBuilder()
-									.build();
+				ArrayList<User> receivers = room.getUsers(getActivity());	
+					
+				Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT).send();
 				
 				// 마무리
 				et.setText("");
-				
-				// sending
-				chat.send(getActivity(), room);
-				
+			
 				// 뷰에 추가 (refresh)?
 				getListView().refresh();
 				getListView().scrollToBottom();

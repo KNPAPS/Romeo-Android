@@ -26,37 +26,20 @@ public class Room {
 	}
 	
 
-	public Room(Cursor c, int type) {
-		this.roomCode = c.getString(c.getColumnIndex("roomCode"));
+	public Room(Context context, int type, String roomCode) {
+		DBProcManager.sharedManager(context);
+		
+		this.roomCode = roomCode;
 		this.type = type;
 		
-		String _rec = c.getString(c.getColumnIndex("receivers"));
-		ArrayList<User> receivers;
-		if(_rec != null && _rec.trim().length() > 0) {
-			receivers = User.getUsersWithIdxs(_rec);
-		} else {
-			receivers = new ArrayList<User>();
-		}
-		
-		Chat chat = new Chat.Builder()
-							.idx(c.getString(c.getColumnIndex("idx")))
-							.type(this.type)
-							.content(c.getString(c.getColumnIndex("content")))
-							.sender(User.getUserWithIdx(c.getString(c.getColumnIndex("sender"))))
-							.receivers(receivers)
-							.TS(c.getLong(c.getColumnIndex("TS")))
-							.checked(c.getInt(c.getColumnIndex("checked")) == 1 ? true : false)
-							.checkTS(c.getLong(c.getColumnIndex("checkTS")))
-							.received(c.getInt(c.getColumnIndex("received")) == 1 ? true : false)
-							.toChatBuilder()
-							.build();
-		
-		users = (ArrayList<User>) chat.receivers.clone();
-		if(isUserInRoom(chat.sender.idx) == false) { // 보낸 사람과 받는 사람이 같으면, 두번 등록된다. 따라서 검사해서 있으면 넣지 않도록 한다.
+		this.users = Room.getUsers(context, this.roomCode);
+		/*
+		// TODO 보낸 사람과 받는 사람이 같으면, 두번 등록된다. 따라서 검사해서 있으면 넣지 않도록 한다.
+		if(isUserInRoom(chat.sender.idx) == false) { 
 			users.add(chat.sender);
 		}
 		// TODO new DB 와 연동
-		
+		*/
 	}
 
 	public boolean isUserInRoom(String userIdx) {
@@ -72,7 +55,15 @@ public class Room {
 	}
 	
 	public ArrayList<User> getUsers(Context context) {
-		Cursor cursorRoomUsers = DBProcManager.sharedManager(context).chat().getReceiverList(this.roomCode);
+		ArrayList<User> roomUsers = Room.getUsers(context, roomCode);
+		
+		// TODO : 필요한가??
+		this.users = roomUsers;
+		return roomUsers;
+	}
+	
+	public static ArrayList<User> getUsers(Context context, String roomCode) {
+		Cursor cursorRoomUsers = DBProcManager.sharedManager(context).chat().getReceiverList(roomCode);
 		ArrayList<User> roomUsers = new ArrayList<User>(cursorRoomUsers.getCount());
 		
 		cursorRoomUsers.moveToFirst();
@@ -80,9 +71,6 @@ public class Room {
 			roomUsers.add( new User( cursorRoomUsers.getString(cursorRoomUsers.getColumnIndex(ChatProcManager.COLUMN_USER_HASH)) ) );
 			cursorRoomUsers.moveToNext();
 		}
-		
-		// TODO : 필요한가??
-		this.users = roomUsers;
 		
 		return roomUsers;
 	}

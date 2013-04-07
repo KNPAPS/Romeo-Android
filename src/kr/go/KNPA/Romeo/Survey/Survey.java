@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
+import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +56,36 @@ public class Survey extends Message implements Parcelable{
 		readRomParcel(source);
 	}
 
+	public Survey(
+			String			idx, 
+			int				type, 
+			String			title, 
+			String			content, 
+			User 			sender, 
+			ArrayList<User>	receivers, 
+			boolean			received,
+			long			TS,
+			boolean			checked, 
+			long 			checkTS,
+			long			openTS,
+			long			closeTS,
+			boolean			answered
+			) {
+		this.idx = idx;
+		this.type = type;
+		this.title = title;
+		this.content = content;
+		this.sender = sender;
+		this.receivers = receivers;
+		this.received = received;
+		this.TS = TS;
+		this.checked = checked;
+		this.checkTS = checkTS;
+		this.openTS = openTS;
+		this.closeTS = closeTS;
+		this.answered = answered;
+	}
+	
 	/*
 	public Survey(Payload payload, boolean received, long checkTS) {
 		this.type = payload.message.type;

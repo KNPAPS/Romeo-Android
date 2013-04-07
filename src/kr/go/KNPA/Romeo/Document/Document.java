@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +53,36 @@ public class Document extends Message implements Parcelable{
 			hmap.put(FWD_ARRIVAL_DT, fwd.getString(FWD_ARRIVAL_DT));
 			hmap.put(FWD_CONTENT, fwd.getString(FWD_CONTENT));
 		}
+	}
+	
+	public Document(
+			String			idx, 
+			int				type, 
+			String			title, 
+			String			content, 
+			User 			sender, 
+			ArrayList<User>	receivers, 
+			boolean			received,
+			long			TS,
+			boolean			checked, 
+			long 			checkTS,
+			ArrayList<HashMap<String, Object>> forwards,
+			ArrayList<HashMap<String, Object>> files,
+			boolean			favorite
+			) {
+		this.idx = idx;
+		this.type = type;
+		this.title = title;
+		this.content = content;
+		this.sender = sender;
+		this.receivers = receivers;
+		this.received = received;
+		this.TS = TS;
+		this.checked = checked;
+		this.checkTS = checkTS;
+		this.forwards = forwards;
+		this.files = files;
+		this.favorite = favorite;
 	}
 	
 	public Document(Cursor c) {

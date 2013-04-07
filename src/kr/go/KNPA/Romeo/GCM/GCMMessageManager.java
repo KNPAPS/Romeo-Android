@@ -103,35 +103,33 @@ public class GCMMessageManager {
 	
 	// on Message in cases
 	private void onChat (Chat chat) {
+		DBProcManager.sharedManager(context)
+		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
+		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
 		
-        DBProcManager.sharedManager(context)
-        		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
-        
 		notifyMessage(chat);
 	}
 	
 	private void onDocument(Document document) {
-
+		DBProcManager.sharedManager(context)
+		.document()
+		.saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, 
+								document.TS, document.forwards, document.files);
+		
 		if(isRunningProcess(context))
 			DocumentFragment.receive(document);		//리스트뷰에 notify
-
-		DBProcManager.sharedManager(context)
-			.document()
-			.saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, 
-									document.TS, document.forwards, document.files);
-		     
+		
 		notifyMessage(document);
 	}
 	
 	private void onSurvey(Survey survey) {
+		DBProcManager.sharedManager(context)
+			.survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
 		
 		if(isRunningProcess(context))
 			SurveyFragment.receive(survey);		//리스트뷰에 notify
-
-		DBProcManager.sharedManager(context)
-			.survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
 		
 		notifyMessage(survey);
 	}
