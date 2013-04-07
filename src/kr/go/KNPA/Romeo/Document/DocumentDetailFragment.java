@@ -93,7 +93,7 @@ public class DocumentDetailFragment extends Fragment {
 		// TODO
 		LinearLayout forwardsLL = (LinearLayout)view.findViewById(R.id.forwards);
 		
-		ArrayList<HashMap<String, String>> forwards = this.document.getForwards();
+		ArrayList<HashMap<String, String>> forwards = this.document.forwards;
 		
 		if(forwards != null) {
 			HashMap<String, String> forward = null;

@@ -63,7 +63,17 @@ public class Document extends Message implements Parcelable{
 	public Document(Cursor c) {
 		super(c);
 		
-		this.type = getType();
+		int subType = Document.NOT_SPECIFIED;
+		
+		if( received == true ) 
+			subType = Document.TYPE_RECEIVED;
+		else 
+			subType = Document.TYPE_DEPARTED;
+
+		if(favorite == true) 
+			subType = Document.TYPE_FAVORITE;
+		
+		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
 		
 		boolean _favorite = (c.getInt(c.getColumnIndex("favorite")) == 1? true : false);
 		this.favorite = _favorite;
@@ -157,26 +167,10 @@ public class Document extends Message implements Parcelable{
 		}
 	}
 	
-	protected int getType() {
-		int subType = Document.NOT_SPECIFIED;
-		if( received == true ) {
-			subType = Document.TYPE_RECEIVED ;
-		} else {
-			subType = Document.TYPE_DEPARTED;
-		}
-		if(favorite == true) {// && received == ture)
-			subType = Document.TYPE_FAVORITE;
-		}
-		
-		return Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
-	}
-
-	
 	// Manage if Favorite
 	public void toggleFavorite(Context context) {
-		// TODO : add / remove Favorite
-		
-		DBProcManager.sharedManager(context).document().addFavorite(this.idx);
+		DBProcManager.sharedManager(context).document().setFavorite(this.idx, !this.favorite);
+		this.favorite = !this.favorite;
 	}
 	
 	
