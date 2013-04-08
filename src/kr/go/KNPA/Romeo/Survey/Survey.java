@@ -26,8 +26,8 @@ public class Survey extends Message implements Parcelable{
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
 
-	private long openTS = NOT_SPECIFIED;
-	private long closeTS = NOT_SPECIFIED;
+	public long openTS = NOT_SPECIFIED;
+	public long closeTS = NOT_SPECIFIED;
 	public boolean answered = false;
 	
 	private static final String KEY_OPEN_TS 		= KEY.SURVEY.OPEN_TS; 
@@ -108,36 +108,7 @@ public class Survey extends Message implements Parcelable{
 		this.closeTS = closeTS;
 		this.answered = answered;
 	}
-	
-	/*
-	public Survey(Payload payload, boolean received, long checkTS) {
-		this.type = payload.message.type;
-		this.idx = payload.message.idx;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.title = payload.message.title;
-		this.content = payload.message.content;
-		//this.received = true;
-		this.TS = System.currentTimeMillis();
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		this.appendix = payload.message.appendix;
-		this.openTS = payload.message.appendix.getOpenTS();
-		this.closeTS = payload.message.appendix.getCloseTS();
-		this.answered = payload.message.appendix.getAnswered();
-		
-		
-		this.received = received;
-		this.checkTS = checkTS;
-		if(this.checkTS == Message.NOT_SPECIFIED) {
-			this.checked = false;
-		} else {
-			this.checked = true;
-		}
-		// answered TODO
-	}
-	*/
-	
+
 	public Survey clone() {
 		Survey survey = (Survey)this.clone(new Survey());
 
@@ -148,18 +119,6 @@ public class Survey extends Message implements Parcelable{
 		
 		return survey;
 	}
-	
-	public long openTS() {
-		return this.openTS;
-	}
-	public long closeTS() {
-		return this.closeTS;
-	}
-	
-	public boolean answered() {
-		return false; // TODO
-	}
-	
 	
 	public void sendAnswerSheet(String json, Context context) {
 		GCMMessageSender.sendSurveyAnswerSheet(json);
@@ -270,6 +229,9 @@ public class Survey extends Message implements Parcelable{
 		
 	}
 	
+	public class AnswerSheet extends ArrayList<ArrayList<Integer>> {
+		
+	}
 	
 
 	// Implements Parcelable

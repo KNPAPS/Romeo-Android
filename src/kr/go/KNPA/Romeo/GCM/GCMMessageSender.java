@@ -13,6 +13,7 @@ import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 
 public class GCMMessageSender {
@@ -129,9 +130,9 @@ public class GCMMessageSender {
 		conn.request();
 	}
 	
-	public static void sendSurveyAnswerSheet(String json) {
+	public static void sendSurveyAnswerSheet(Context context, String surveyIdx, String json) {
 		
-		Data reqData = new Data().add(0, KEY.USER.IDX, "").add(0, KEY.SURVEY.IDX, "");
+		Data reqData = new Data().add(0, KEY.USER.IDX, UserInfo.getUserIdx(context)).add(0, KEY.SURVEY.IDX, surveyIdx);
 		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 		
 		CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload, Integer, Payload>(){

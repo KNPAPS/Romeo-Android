@@ -147,4 +147,9 @@ class SurveyListAdapter extends CursorAdapter {
 			MainActivity.sharedActivity().pushContent(f);
 		}
 	};
+	
+	@Override
+	public boolean areAllItemsEnabled() {
+		return true;
+	};
 }
