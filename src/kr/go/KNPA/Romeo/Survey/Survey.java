@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
@@ -26,12 +27,10 @@ public class Survey extends Message implements Parcelable{
 	private long closeTS = NOT_SPECIFIED;
 	public boolean answered = false;
 	
-	private static final String KEY_OPEN_TS 		= "openTS"; 
-	private static final String KEY_CLOSE_TS 		= "closeTS";
-	private static final String KEY_QUESTION_SHEET 	= "survey_form";
-	private static final String KEY_ANSWER_SHEET	= "answersheet";
+	private static final String KEY_OPEN_TS 		= KEY.SURVEY.OPEN_TS; 
+	private static final String KEY_CLOSE_TS 		= KEY.SURVEY.CLOSE_TS;
 	
-	private Form survey_form;
+	private Form form;
 	
 	// Constructor
 	public Survey() {}
@@ -122,7 +121,7 @@ public class Survey extends Message implements Parcelable{
 		survey.answered = this.answered;
 		survey.openTS = this.openTS;
 		survey.closeTS = this.closeTS;
-		survey.survey_form = this.survey_form;
+		survey.form = this.form;
 		
 		return survey;
 	}

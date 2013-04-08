@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Chat;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 
@@ -23,7 +24,7 @@ public class Chat extends Message {
 	public String roomCode;
 	public int contentType = CONTENT_TYPE_TEXT;
 	
-	private static final String KEY_ROOMCODE = "room_hash";
+	private static final String KEY_ROOMCODE = KEY.CHAT.ROOM_CODE;
 	
 	// Constructor
 	public Chat() {}

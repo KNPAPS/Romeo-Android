@@ -909,6 +909,9 @@ public class DBProcManager {
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
 		 * @b COLUMN_SURVEY_ANSWERED_TS long 응답한시간\n
 		 * @b COLUMN_SURVEY_SENDER_HASH str 보낸사람 해쉬\n
+		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
+		 * @b COLUMN_SURVEY_CHECKED_TS long 확인한시간\n
+		 * @b COLUMN_SURVEY_TYPE int 서베이타입\n
 		 * @param hash
 		 * @return
 		 */
@@ -919,6 +922,9 @@ public class DBProcManager {
 					DBSchema.SURVEY.COLUMN_CREATED_TS+COLUMN_SURVEY_CREATED_TS+", "+
 					DBSchema.SURVEY.COLUMN_ANSWERED_TS+COLUMN_SURVEY_ANSWERED_TS+", "+
 					DBSchema.SURVEY.COLUMN_CREATOR_HASH+COLUMN_SURVEY_SENDER_HASH+", "+
+					DBSchema.SURVEY.COLUMN_CATEGORY+COLUMN_SURVEY_TYPE+", "+
+					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
+					DBSchema.SURVEY.COLUMN_CHECKED_TS+COLUMN_SURVEY_CHECKED_TS+", "+
 					DBSchema.SURVEY.COLUMN_IS_ANSWERED+COLUMN_SURVEY_IS_ANSWERED+
 					" from"+DBSchema.SURVEY.TABLE_NAME+
 					"where "+DBSchema.SURVEY.COLUMN_HASH+" = ?";
@@ -947,10 +953,12 @@ public class DBProcManager {
 		public static final String COLUMN_USER_HASH = "user_hash";
 		public static final String COLUMN_SURVEY_SENDER_HASH = "sender_hash";
 		public static final String COLUMN_SURVEY_IS_CHECKED = "is_checked";
+		public static final String COLUMN_SURVEY_CHECKED_TS = "checked_ts";
 		public static final String COLUMN_SURVEY_IS_ANSWERED = "is_answered";
 		public static final String COLUMN_SURVEY_ANSWERED_TS = "answered_ts";
 		public static final String COLUMN_SURVEY_CONTENT = "survey_content";
 		public static final String COLUMN_SURVEY_CREATED_TS = "created_ts";
+		public static final String COLUMN_SURVEY_TYPE = "survey_type";
 	}
 	
 	public class MemberProcManager {
