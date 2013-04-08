@@ -26,8 +26,8 @@ public class Survey extends Message implements Parcelable{
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
 
-	private long openTS = NOT_SPECIFIED;
-	private long closeTS = NOT_SPECIFIED;
+	public long openTS = NOT_SPECIFIED;
+	public long closeTS = NOT_SPECIFIED;
 	public boolean answered = false;
 	
 	private static final String KEY_OPEN_TS 		= KEY.SURVEY.OPEN_TS; 
@@ -49,7 +49,7 @@ public class Survey extends Message implements Parcelable{
 		
 		this.idx 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
 		this.title 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
-		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX)));
+		this.senderIdx		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));
 		//this.receivers 	= 
 		
 		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
@@ -80,26 +80,26 @@ public class Survey extends Message implements Parcelable{
 	}
 
 	public Survey(
-			String			idx, 
-			int				type, 
-			String			title, 
-			String			content, 
-			User 			sender, 
-			ArrayList<User>	receivers, 
-			boolean			received,
-			long			TS,
-			boolean			checked, 
-			long 			checkTS,
-			long			openTS,
-			long			closeTS,
-			boolean			answered
+			String				idx, 
+			int					type, 
+			String				title, 
+			String				content, 
+			String 				senderIdx, 
+			ArrayList<String>	receivers, 
+			boolean				received,
+			long				TS,
+			boolean				checked, 
+			long 				checkTS,
+			long				openTS,
+			long				closeTS,
+			boolean				answered
 			) {
 		this.idx = idx;
 		this.type = type;
 		this.title = title;
 		this.content = content;
-		this.sender = sender;
-		this.receivers = receivers;
+		this.senderIdx = senderIdx;
+		this.receiversIdx = receivers;
 		this.received = received;
 		this.TS = TS;
 		this.checked = checked;
@@ -108,36 +108,7 @@ public class Survey extends Message implements Parcelable{
 		this.closeTS = closeTS;
 		this.answered = answered;
 	}
-	
-	/*
-	public Survey(Payload payload, boolean received, long checkTS) {
-		this.type = payload.message.type;
-		this.idx = payload.message.idx;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.title = payload.message.title;
-		this.content = payload.message.content;
-		//this.received = true;
-		this.TS = System.currentTimeMillis();
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		this.appendix = payload.message.appendix;
-		this.openTS = payload.message.appendix.getOpenTS();
-		this.closeTS = payload.message.appendix.getCloseTS();
-		this.answered = payload.message.appendix.getAnswered();
-		
-		
-		this.received = received;
-		this.checkTS = checkTS;
-		if(this.checkTS == Message.NOT_SPECIFIED) {
-			this.checked = false;
-		} else {
-			this.checked = true;
-		}
-		// answered TODO
-	}
-	*/
-	
+
 	public Survey clone() {
 		Survey survey = (Survey)this.clone(new Survey());
 
@@ -149,57 +120,27 @@ public class Survey extends Message implements Parcelable{
 		return survey;
 	}
 	
-	public long openTS() {
-		return this.openTS;
-	}
-	public long closeTS() {
-		return this.closeTS;
-	}
-	
-	public boolean answered() {
-		return false; // TODO
-	}
-	
-	
-	public void sendAnswerSheet(String json, Context context) {
-		GCMMessageSender.sendSurveyAnswerSheet(json);
+	public void sendAnswerSheet(Context context, AnswerSheet answerSheet) {
+		GCMMessageSender.sendSurveyAnswerSheet(context, this, answerSheet);
 		
-		// TODO : make Async
-		
-			setAnswered(json, context);
 		
 	}
 	
-	public static void afterSendAnswerSheet() {
-		
+	public void afterSendAnswerSheet(Context context, AnswerSheet answerSheet, boolean status) {
+		// TODO : DBProcManager.sharedManager(context).document().
+		// TODO : animation
 	}
 	
-	public void setAnswered(String json, Context context) {
-		// TODO :  Insert into DB
-		/*
-		if(this.checked != false) {
+	
+	public class AnswerSheet extends ArrayList<ArrayList<Integer>> {
+		
+	}
 
-			DBManager dbManager = new DBManager(context);
-			SQLiteDatabase db = dbManager.getWritableDatabase();
-			
-			String tableName =  Message.getTableNameWithMessageType(this.type);
-			
-			ContentValues vals = new ContentValues();
-			vals.put("answered", 1);
-			vals.put("answersheet", Encrypter.objectToBytes(json));
-			db.update(tableName, vals, "idx=?", new String[] {this.idx+""});
-			
-			this.checked = true;
-			this.answered = true;
-		}
-		*/
-	}
-	
 	@Override
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx, this.title, this.content, this.sender.idx, this.TS);
+			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx, this.title, this.content, this.senderIdx, this.TS);
 		}  else {
 			// Failure
 		}
@@ -269,8 +210,7 @@ public class Survey extends Message implements Parcelable{
 		}
 		
 	}
-	
-	
+
 
 	// Implements Parcelable
 	@Override

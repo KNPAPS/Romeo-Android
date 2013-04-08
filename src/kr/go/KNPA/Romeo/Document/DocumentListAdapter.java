@@ -85,4 +85,9 @@ class DocumentListAdapter extends CursorAdapter {
 		
 		return v;
 	}
+	
+	@Override
+	public boolean areAllItemsEnabled() {
+		return true;
+	}
 }

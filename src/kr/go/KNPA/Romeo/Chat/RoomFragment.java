@@ -134,9 +134,9 @@ public class RoomFragment extends RomeoFragment {
 				
 				if(room.roomCode ==null) {
 					// 만약 roomCode가 없다면 새로 만들어진 방이다.
-					ArrayList<String> userIdxs = new ArrayList<String>(room.users.size());
+					ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
 					for(int i=0; i<userIdxs.size(); i++) {
-						userIdxs.add(room.users.get(i).idx);
+						userIdxs.add(room.usersIdx.get(i));
 					}
 					
 					// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
@@ -144,8 +144,8 @@ public class RoomFragment extends RomeoFragment {
 					DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type, room.roomCode);
 				}
 				
-				User sender = User.getUserWithIdx( UserInfo.getUserIdx(getActivity()) );
-				ArrayList<User> receivers = room.getUsers(getActivity());	
+				String sender = UserInfo.getUserIdx(getActivity());
+				ArrayList<String> receivers = room.getUsersIdx(getActivity());	
 					
 				Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT).send(getActivity());
 				// local DB에 대한 저장은, async로 전송 후 afterSend에서 처리한다.

@@ -72,7 +72,7 @@ public class SurveyResultFragment extends Fragment {
 		arrivalDTTV.setText(arrivalDT);
 		
 		TextView senderTV = (TextView)view.findViewById(R.id.sender);
-		User user = this.survey.sender;
+		User user = this.survey.senderIdx;
 		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		

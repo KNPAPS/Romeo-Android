@@ -39,6 +39,9 @@ public class User implements Parcelable{
 		readFromPalcel(in);
 	}
 
+	public User(String idx, String name, int rank, String role, Department department) {
+		
+	}
 	public static class Builder {
 		public	String		_idx 		= 	null;
 		public	String		_name 		= 	null;

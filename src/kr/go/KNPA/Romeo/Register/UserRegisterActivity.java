@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
@@ -205,10 +206,10 @@ public class UserRegisterActivity extends Activity {
 	 * @return
 	 */
 	public boolean registerUser() {
-		Data reqData = new Data().add(0, Data.KEY_USER_NAME, name)
-								 .add(0, Data.KEY_USER_ROLE, role)
-								 .add(0, Data.KEY_USER_RANK, rank)
-								 .add(0, Data.KEY_DEPT_HASH, department.idx);
+		Data reqData = new Data().add(0, KEY.USER.NAME, name)
+								 .add(0, KEY.USER.ROLE, role)
+								 .add(0, KEY.USER.RANK, rank)
+								 .add(0, KEY.DEPT.IDX, department.idx);
 		// TODO : 사진 업로드
 		
 		Payload request = new Payload().setEvent(Event.User.register()).setData(reqData);
@@ -216,7 +217,7 @@ public class UserRegisterActivity extends Activity {
 		Payload response = conn.getResponsePayload();
 		
 		if(response.getStatusCode() == StatusCode.SUCCESS) {
-			userIdx = (String)response.getData().get(0, Data.KEY_USER_HASH);
+			userIdx = (String)response.getData().get(0, KEY.USER.IDX);
 			return true;
 		} else {
 			return false;

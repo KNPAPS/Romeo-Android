@@ -116,4 +116,8 @@ public class ChatListAdapter extends CursorAdapter {
 		return v;
 	}
 
+	@Override
+	public boolean areAllItemsEnabled() {
+		return true;
+	}
 }

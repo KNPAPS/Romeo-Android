@@ -110,4 +110,9 @@ class RoomListAdapter extends CursorAdapter {
 		return v;
 	}
 	/** @} */
+	
+	@Override
+	public boolean areAllItemsEnabled() {
+		return true;
+	}
 }

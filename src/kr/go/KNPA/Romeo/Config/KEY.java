@@ -13,6 +13,7 @@ public class KEY {
 	public static class MESSAGE {
 		public static final String IDX = "idx";
 		public static final String TYPE = "type";
+		public static final String TITLE = "title";
 		public static final String CONTENT = "content";
 		public static final String SENDER = "sender";
 		public static final String RECEIVERS = "receivers";
@@ -100,7 +101,7 @@ public class KEY {
 	}
 	
 	public static class USER {
-		public static final String IDX = "idx";
+		public static final String IDX = "userIdx";
 		public static final String NAME = "name";
 		public static final String ROLE = "role";
 		public static final String RANK = "rank";

@@ -129,7 +129,7 @@ public class DocumentDetailFragment extends Fragment {
 		receivedDTTV.setText(receivedDT);
 		
 		TextView senderTV = (TextView)metaData.findViewById(R.id.sender);
-		User user = this.document.sender;
+		User user = User.getUserWithIdx(this.document.senderIdx);
 		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		
