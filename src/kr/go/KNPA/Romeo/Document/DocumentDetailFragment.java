@@ -14,12 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DocumentDetailFragment extends Fragment {
 	private Document document;
@@ -133,24 +134,41 @@ public class DocumentDetailFragment extends Fragment {
 		senderTV.setText(sender);
 		
 		ExpandableListView filesELV = (ExpandableListView)metaData.findViewById(R.id.fileList);
-		final ArrayList<HashMap<String, String>> fileListCover = new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> title = new HashMap<String, String>();
+		
+		ArrayList<HashMap<String, Object>> fileListCover = new ArrayList<HashMap<String, Object>>();
+		HashMap<String, Object> title = new HashMap<String, Object>();
 		title.put("key", "파일 목록");
 		fileListCover.add(title);
 		
-		final ArrayList<HashMap<String, String>> fileListContent = new ArrayList<HashMap<String, String>>());
-		
-		final ArrayList<HashMap<String, Object>> fileList = document.files;
+		ArrayList<ArrayList<HashMap<String, Object>>> fileList = new ArrayList<ArrayList<HashMap<String, Object>>>(1);
+		fileList.add(document.files);
 		
 		filesELV.setAdapter(
-				new SimpleExpandableListAdapter(
+				new SimpleExpandableListAdapter
+					(
 						getActivity(), 
-						fileCover, 
-						android.R.layout.simple_expandable_list_item_2, 
-						groupFrom, groupTo, childData, childLayout, childFrom, childTo) BaseExpandableListAdapter(getActivity(), fileCover, fileCover));
+						
+						fileListCover, 
+						android.R.layout.simple_expandable_list_item_1, 
+						new String[] { "key" }, 
+						new int[] { android.R.id.text1 }, 
+						
+						fileList, 
+						android.R.layout.simple_list_item_1, 
+						new String[] { Document.ATTACH_FILE_NAME }, 
+						new int[] { android.R.id.text1}
+					)); 
 		
 		
-		// TODO
+		 // 차일드 클릭 했을 경우 이벤트
+        filesELV.setOnChildClickListener(new OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Toast.makeText(getActivity(), (String)document.files.get(childPosition).get(Document.ATTACH_FILE_NAME), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        
 		TextView contentTV = (TextView)view.findViewById(R.id.content);
 		String content = this.document.content;
 		contentTV.setText(content);
