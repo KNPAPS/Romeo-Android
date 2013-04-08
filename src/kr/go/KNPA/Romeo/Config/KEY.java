@@ -15,8 +15,7 @@ public class KEY {
 		public static final String TYPE = "type";
 		public static final String TITLE = "title";
 		public static final String CONTENT = "content";
-		public static final String SENDER = "sender";
-		public static final String RECEIVERS = "receivers";
+		public static final String SENDER_IDX = "senderIdx";
 		public static final String CREATED_TS = "TS";
 		public static final String IS_CHECKED = "checked";
 		public static final String CHECK_TS = "checkTS";
@@ -42,8 +41,8 @@ public class KEY {
 		public static final String IDX = "idx";
 		public static final String TYPE = "type";
 		public static final String CONTENT = "content";
-		public static final String SENDER = "sender";
-		public static final String RECEIVERS = "receivers";
+		public static final String SENDER_IDX = "senderIdx";
+		public static final String RECEIVERS_IDX = "receiversIdx";
 		public static final String CREATED_TS = "TS";
 		public static final String IS_CHECKED = "checked";
 		public static final String CHECK_TS = "checkTS";
@@ -56,8 +55,8 @@ public class KEY {
 		public static final String TYPE = "type";
 		public static final String TITLE = "title";
 		public static final String CONTENT = "content";
-		public static final String SENDER = "sender";
-		public static final String RECEIVERS = "receivers";
+		public static final String SENDER_IDX = "senderIdx";
+		public static final String RECEIVERS_IDX = "receiversIdx";
 		public static final String CREATED_TS = "TS";
 		public static final String IS_CHECKED = "checked";
 		public static final String CHECK_TS = "checkTS";
@@ -81,8 +80,8 @@ public class KEY {
 		public static final String TYPE = "type";
 		public static final String CONTENT = "content";
 		public static final String TITLE = "title";
-		public static final String SENDER = "sender";
-		public static final String RECEIVERS = "receivers";
+		public static final String SENDER_IDX = "senderIdx";
+		public static final String RECEIVERS_IDX = "receiversIdx";
 		public static final String CREATED_TS = "TS";
 		public static final String IS_CHECKED = "checked";
 		public static final String CHECK_TS = "checkTS";

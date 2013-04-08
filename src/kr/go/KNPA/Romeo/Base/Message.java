@@ -110,9 +110,9 @@ public class Message implements Parcelable{
 			message.type = jo.getInt(KEY.MESSAGE.TYPE);
 			message.title = jo.getString(KEY.MESSAGE.TITLE);
 			message.content = jo.getString(KEY.MESSAGE.CONTENT);
-			message.senderIdx = jo.getString(KEY.MESSAGE.SENDER);
+			message.senderIdx = jo.getString(KEY.MESSAGE.SENDER_IDX);
 			
-			JSONArray __receivers = jo.getJSONArray(KEY.MESSAGE.RECEIVERS);
+			JSONArray __receivers = jo.getJSONArray(KEY.MESSAGE.RECEIVERS_IDX);
 			ArrayList<String> _receivers = new ArrayList<String>(__receivers.length()); 
 			for(int i=0; i<__receivers.length(); i++) {
 				_receivers.add(__receivers.getString(i));
@@ -145,7 +145,7 @@ public class Message implements Parcelable{
 		this.content 	= c.getString(c.getColumnIndex("content"));
 		
 		this.senderIdx		= c.getString(c.getColumnIndex("sender"));
-		this.receiversIdx 	= c.getString(c.getColumnIndex("receivers"));
+		//TODO this.receiversIdx 	= c.getString(c.getColumnIndex("receivers"));
 		
 		this.TS			= c.getLong(c.getColumnIndex("TS"));
 		
