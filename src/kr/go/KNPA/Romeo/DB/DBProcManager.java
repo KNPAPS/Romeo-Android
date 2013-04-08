@@ -878,6 +878,23 @@ public class DBProcManager {
 		}
 		
 		/**
+		 * 설문조사를 응답했을 때
+		 * @param svyHash 해쉬
+		 * @param checkedTS 체크한 시간
+		 */
+		public void updateAnsweredTS( String svyHash, long answeredTS ) {
+			long svyId = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_IDX, svyHash);
+			if ( svyId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			String sql = "update "+DBSchema.SURVEY.TABLE_NAME+
+					" SET "+DBSchema.SURVEY.COLUMN_IS_ANSWERED+" = 1," +
+					DBSchema.SURVEY.COLUMN_ANSWERED_TS+" = "+String.valueOf(answeredTS)+
+					" where _id = "+String.valueOf(svyId);
+			db.execSQL(sql);
+		}
+		
+		/**
 		 * 설문조사 목록 가져오기
 		 * @b 커서구조
 		 * @b COLUMN_SURVEY_IDX str 해시\n
