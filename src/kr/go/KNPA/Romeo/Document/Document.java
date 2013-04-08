@@ -110,7 +110,7 @@ public class Document extends Message implements Parcelable{
 		this.favorite = ( cursor_documentInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
 		
 		this.checked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
-		this.checkTS =;
+		this.checkTS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CHECKED_TS));
 		
 				
 		// this.receivers = receivers;

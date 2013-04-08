@@ -709,7 +709,7 @@ public class DBProcManager {
 		 * @b COLUMN_DOC_TYPE int 문서카테고리 Document.TYPE_DEPARTED, Document.TYPE_RECEIVED, Document.TYPE_FAVORITE\n
 		 * @b COLUMN_IS_FAVORITE int 즐겨찾기여부
 		 * @b COLUMN_IS_CHECKED int 자기가확인했는지\n
-		 * @b COLUMN_DOC_CHECKED_TS long 확인한시간
+		 * @b COLUMN_CHECKED_TS long 확인한시간
 		 * @param docHash 문서 해시
 		 * @return
 		 */
@@ -722,7 +722,7 @@ public class DBProcManager {
 					DBSchema.DOCUMENT.COLUMN_CONTENT + COLUMN_DOC_CONTENT +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH + COLUMN_SENDER_HASH +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATED_TS + COLUMN_DOC_TS +", "+
-					DBSchema.DOCUMENT.COLUMN_CHECKED_TS + COLUMN_DOC_CHECKED_TS +", "+
+					DBSchema.DOCUMENT.COLUMN_CHECKED_TS + COLUMN_CHECKED_TS +", "+
 					DBSchema.DOCUMENT.COLUMN_CATEGORY + COLUMN_DOC_TYPE +", "+
 					DBSchema.DOCUMENT.COLUMN_IS_CHECKED + COLUMN_IS_CHECKED +", "+
 					DBSchema.DOCUMENT.COLUMN_IS_FAVORITE + COLUMN_IS_FAVORITE +
@@ -797,7 +797,6 @@ public class DBProcManager {
 		public static final String COLUMN_DOC_TITLE = "doc_title";
 		public static final String COLUMN_DOC_CONTENT = "doc_content";
 		public static final String COLUMN_DOC_TS = "doc_ts";
-		public static final String COLUMN_DOC_CHECKED_TS = "doc_ts";
 		public static final String COLUMN_CHECKED_TS = "checked_TS";
 		public static final String COLUMN_DOC_TYPE = "doc_type";
 		public static final String COLUMN_IS_FAVORITE = "is_favorite";
