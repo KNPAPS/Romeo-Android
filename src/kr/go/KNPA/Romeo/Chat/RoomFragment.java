@@ -55,11 +55,6 @@ public class RoomFragment extends RomeoFragment {
 	 * @{
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
 	public void onResume() {
 		ChatFragment.setCurrentRoom(this);
 		super.onResume();
@@ -187,11 +182,10 @@ public class RoomFragment extends RomeoFragment {
 		});
 			
 	}
-	
-	
+	/*
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
+	// TODO : 대화방에 사용자 추가	
 		if(requestCode == MemberSearch.REQUEST_CODE) {
 			if(resultCode == Activity.RESULT_OK) {
 				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
@@ -210,7 +204,7 @@ public class RoomFragment extends RomeoFragment {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
-	
+	*/
 	
 	
 	
