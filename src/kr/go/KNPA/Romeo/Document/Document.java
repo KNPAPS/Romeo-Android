@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.Member.User;
@@ -24,14 +25,14 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
 	
-	public	static final String FWD_FORWARDER_IDX 	= DocumentProcManager.COLUMN_FORWARDER_IDX;
-	public	static final String FWD_ARRIVAL_TS 		= DocumentProcManager.COLUMN_FORWARD_TS;
-	public	static final String FWD_CONTENT 		= DocumentProcManager.COLUMN_FORWARD_COMMENT;
+	public	static final String FWD_FORWARDER_IDX 	= KEY.DOCUMENT.FORWARDER_IDX;
+	public	static final String FWD_ARRIVAL_TS 		= KEY.DOCUMENT.FORWARD_TS;
+	public	static final String FWD_CONTENT 		= KEY.DOCUMENT.FORWARD_CONTENT;
 	
-	public	static final String ATTACH_FILE_IDX 	= DocumentProcManager.COLUMN_FILE_IDX; // (string)
-	public	static final String ATTACH_FILE_NAME 	= DocumentProcManager.COLUMN_FILE_NAME; // (string)
-	public	static final String ATTACH_FILE_TYPE 	= DocumentProcManager.COLUMN_FILE_TYPE; // (int)
-	public	static final String ATTACH_FILE_SIZE 	= DocumentProcManager.COLUMN_FILE_SIZE; // (long)
+	public	static final String ATTACH_FILE_IDX 	= KEY.DOCUMENT.FILE_IDX; // (string)
+	public	static final String ATTACH_FILE_NAME 	= KEY.DOCUMENT.FILE_NAME; // (string)
+	public	static final String ATTACH_FILE_TYPE 	= KEY.DOCUMENT.FILE_TYPE; // (int)
+	public	static final String ATTACH_FILE_SIZE 	= KEY.DOCUMENT.FILE_SIZE; // (long)
 			
 	// Specific Variables not to be sent
 	public boolean favorite = false;

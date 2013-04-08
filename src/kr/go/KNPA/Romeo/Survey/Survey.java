@@ -207,15 +207,15 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	public static class Form extends HashMap<String, Object>{
-		public static final String TITLE = "title";
-		public static final String CONTENT = "content";
-		public static final String OPEN_TS = "openTS";
-		public static final String CLOSE_TS = "closeTS";
+		public static final String TITLE = KEY.SURVEY.QUESTION_TITLE;
+		public static final String CONTENT = KEY.SURVEY.QUESTION_CONTENT;
+		public static final String OPEN_TS = KEY.SURVEY.OPEN_TS;
+		public static final String CLOSE_TS = KEY.SURVEY.CLOSE_TS;
 		
-		public static final String QUESTIONS = "questions";
-		public static final String OPTIONS = "options";
+		public static final String QUESTIONS = KEY.SURVEY.QUESTIONS;
+		public static final String OPTIONS = KEY.SURVEY.OPTIONS;
 		
-		public static final String IS_MULTIPLE = "isMultiple";
+		public static final String IS_MULTIPLE = KEY.SURVEY.IS_MULTIPLE;
 		
 		public Form() {}
 		
