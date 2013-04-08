@@ -364,7 +364,7 @@ public class DBProcManager {
 		 * @b COLUMN_ROOM_HASH 채팅방 해시\n
 		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
 		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
-		 * @b COLUMN_ROOM_NUM_UNCHECKED_CHAT 읽지 않은 채팅 수\n
+		 * @b COLUMN_ROOM_NUM_NEW_CHAT 읽지 않은 채팅 수\n
 		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
 		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
 		 * @param roomType 
