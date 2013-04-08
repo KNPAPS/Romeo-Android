@@ -130,35 +130,27 @@ public class DBProcManager {
 		 * 새 채팅방 생성
 		 * @param userHashes 자기 자신을 포함한 방에 참여하고 있는 사람들의 유저해쉬
 		 * @param chatType 채팅방 타입. @see {Chat.TYPE_MEETING}, @see {Chat.TYPE_COMMAND}
+		 * @param roomHash 룸해쉬
 		 * @return 채팅방 해쉬
 		 */
-		public String createRoom(ArrayList<String> userHashes, int chatType ) {
+		public void createRoom(ArrayList<String> userHashes, int chatType, String roomHash ) {
 
 			if ( userHashes.size() == 0 ) {
 				Log.w(TAG,"유저해쉬 어레이가 비어있음 at createRoom(ArrayList<String> userHashes, int chatType )");
-				return null;
+				return;
 			}
         	
 			// 새 방 레코드 생성
 			String sql =
 					"insert into "+DBSchema.ROOM.TABLE_NAME+
-					"("+DBSchema.ROOM.COLUMN_TYPE+","+DBSchema.ROOM.COLUMN_IS_FAVORITE+
-					") values ("+String.valueOf(chatType)+",0)";
-			db.execSQL(sql);
+					"("+DBSchema.ROOM.COLUMN_TYPE+","+
+						DBSchema.ROOM.COLUMN_IS_FAVORITE+","+
+						DBSchema.ROOM.COLUMN_HASH+
+					") values ("+String.valueOf(chatType)+",0,?)";
+			String[] value = {roomHash};
+			db.execSQL(sql,value);
 			long roomId = lastInsertId();
 
-			//roomhash 발급
-			String roomHash = md5(DBSchema.ROOM.TABLE_NAME+String.valueOf(roomId));
-			
-			//room table에 roomhash 업데이트
-			sql = 
-					"update "+DBSchema.ROOM.TABLE_NAME+
-					"set "+DBSchema.ROOM.COLUMN_HASH+" = ?" +
-					" where "+ DBSchema.ROOM._ID + " = "+String.valueOf(roomId);
-			String[] values = {roomHash};
-			db.execSQL(sql, values);
-			
-			
 			//채팅방에 참여하고 있는 유저들의 해쉬를 room_chatter 테이블에 추가			
 			db.beginTransaction();
 			try {
@@ -176,7 +168,6 @@ public class DBProcManager {
 			} finally {
 				db.endTransaction();
 			}
-			return roomHash;
 		}
 		
 		/**
