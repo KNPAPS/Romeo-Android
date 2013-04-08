@@ -535,28 +535,45 @@ public class DBProcManager {
 			saveAttachmentInfo(docId, files);
 		}
 		
-		/**
-		 * 문서를 포워딩했을 때 정보 추가
-		 * @param docHash
-		 * @param forwarderHash
-		 * @param forwardComment
-		 * @param forwardTS
-		 */
-		public void addForwardToDocument(String docHash, String forwarderHash, String forwardComment, long forwardTS) {
+		public void saveDocumentOnForward
+						(String docHash, 
+							String senderHash, 
+							String title, 
+							String content, 
+							long createdTS, 
+							ArrayList<HashMap<String, Object>> files,
+							ArrayList<HashMap<String,Object>> forwards){
+			saveDocumentOnSend(docHash, senderHash, title, content, createdTS, files);
+			addForwardInfo(docHash, forwards);
+		}
+		
+		private void addForwardInfo(String docHash, ArrayList<HashMap<String,Object>> forwards) {
+			
 			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
 			if ( docId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
 			
-			String sql = "insert into "+DBSchema.DOCUMENT_FORWARD.TABLE_NAME+
-					" ("+
-					DBSchema.DOCUMENT_FORWARD.COLUMN_DOC_ID+","+
-					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH+","+
-					DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT+","+
-					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS+")"+
-					" values ("+String.valueOf(docId)+", ?, ?, "+String.valueOf(forwardTS)+")";
-			String[] val = { forwarderHash, forwardComment };
-			db.execSQL(sql, val);
+			db.beginTransaction();
+			try {
+
+				
+				for ( int i=0; i<forwards.size(); i++ ) {
+					String sql = "insert into "+DBSchema.DOCUMENT_FORWARD.TABLE_NAME+
+							" ("+
+							DBSchema.DOCUMENT_FORWARD.COLUMN_DOC_ID+","+
+							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH+","+
+							DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT+","+
+							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS+")"+
+							" values ("+String.valueOf(docId)+", ?, ?, "+String.valueOf( forwards.get(i).get(Document.FWD_FORWARDER_IDX) )+")";
+					String[] val = { forwards.get(i).get(Document.FWD_FORWARDER_IDX).toString(), forwards.get(i).get(Document.FWD_CONTENT).toString()};
+					db.execSQL(sql, val);
+				}
+				
+				db.setTransactionSuccessful();
+			} finally {
+				db.endTransaction();
+			}
 			
 		}
 		
