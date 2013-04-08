@@ -171,6 +171,89 @@ public class DBProcManager {
 		}
 		
 		/**
+		 * 방이 존재하는지
+		 * @param roomHash
+		 * @return
+		 */
+		public boolean roomExists(String roomHash) {
+			String sql = "select count(_id)>0 is_exists from "+DBSchema.ROOM.TABLE_NAME+
+					" where "+DBSchema.ROOM.COLUMN_HASH+" = ?";
+			String[] val = {roomHash};
+			Cursor cursor = db.rawQuery(sql, val);
+			cursor.moveToNext();
+			return cursor.getInt(0)==1?true:false;
+		}
+		
+		/**
+		 * 유저 여러명이 대화에 참가
+		 * @param users
+		 * @param roomHash
+		 */
+		public void addUsersToRoom(ArrayList<String> users, String roomHash ) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			String sql = 
+					"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+" ("+
+							DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+
+							DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+
+					") values( "+String.valueOf(roomId)+" , ? )";
+			db.beginTransaction();
+			try {
+				
+				for ( int i=0; i<users.size(); i++ ) {
+					String[] val = {users.get(i)};
+					db.execSQL(sql,val);
+				}
+				
+				db.setTransactionSuccessful();
+			}finally{
+				db.endTransaction();
+			}
+		}
+		
+		/**
+		 * 유저 한명이 대화에 참가
+		 */
+		public void addUserToRoom(String user, String roomHash ) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			String sql = 
+					"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+" ("+
+							DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+
+							DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+
+					") values( "+String.valueOf(roomId)+" , ? )";
+
+			String[] val = {user};
+			db.execSQL(sql,val);
+		}
+		
+		/**
+		 * 유저 하나가 대화에서 나감
+		 * @param user
+		 * @param roomHash
+		 */
+		public void removeUserFromRoom(String user, String roomHash) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			String sql = 
+					"delete from"+DBSchema.ROOM_CHATTER.TABLE_NAME+
+					" where "+
+						DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId)+
+						" and "+DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+" = ?";
+
+			String[] val = {user};
+			db.execSQL(sql,val);
+		}
+		/**
 		 * 채팅 보낼때 메세지 내용 저장 
 		 * @param roomHash 채팅방 해쉬
 		 * @param chatHash 서버에서 부여한 채팅의 hash
@@ -236,7 +319,7 @@ public class DBProcManager {
 				return;
 			}
 			
-			String sql = "update "+DBSchema.CHAT.TABLE_NAME+" " +
+			String sql = "update "+DBSchema.CHAT.TABLE_NAME+" "+
 					"set "+
 					DBSchema.CHAT.COLUMN_IS_CHECKED + " = 1,"+
 					DBSchema.CHAT.COLUMN_CHECKED_TS + " = " + String.valueOf(checkedTS)+
@@ -247,7 +330,7 @@ public class DBProcManager {
 			sql = sql.replaceAll("/,$/", ")");
 			db.execSQL(sql, (String[])chatHash.toArray());
 		}
-		
+
 		/**
 		 * 유저가 채팅방에 들어가 메세지들을 확인했을 때의 시간을 기록함 
 		 * @param roomHash 채팅방 해쉬
