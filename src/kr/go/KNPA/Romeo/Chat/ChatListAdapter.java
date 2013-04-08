@@ -1,6 +1,8 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
@@ -26,30 +28,51 @@ public class ChatListAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View v, Context context, Cursor c) {
+		
+		DBProcManager.sharedManager(context);
+		
+		// 센더해쉬
+		String 	senderIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_HASH));
+		// 채팅TS
+		long 	arrivalTS	= c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_TS));
+		// 내용
+		String 	content 	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
+		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
+		int 	contentType	= c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+		// 챗 해쉬값
+		int		messageIdx	= c.getInt(c.getColumnIndex(ChatProcManager.))
+		
 		ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
 		TextView 	departmentTV	= (TextView) 	v.findViewById(R.id.department);
 		TextView 	rankNameTV		= (TextView) 	v.findViewById(R.id.rankName);
-		TextView 	contentTV		= (TextView) 	v.findViewById(R.id.content);
+		TextView 	contentTV	= (TextView) 	v.findViewById(R.id.content);
+		ImageView	contentIV	= (ImageView)	v.findViewById(R.id.contentImage);
 		TextView 	arrivalDTTV		= (TextView) 	v.findViewById(R.id.arrivalDT);
 		Button 		goUncheckedBT	= (Button) 		v.findViewById(R.id.goUnchecked);
 		
-		//TODO userPic
-		String senderIdx = c.getString(c.getColumnIndex("sender"));
+		
+		
 		User sender = User.getUserWithIdx(senderIdx);
 		
-		String department = sender.department.nameFull;
-		departmentTV.setText(department);
+		departmentTV.setText( sender.department.nameFull );
+		rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
+		// TODO userPic		
+		//
+		//userPicIV.setImageBitmap(bm);
 		
-		String rank = User.RANK[sender.rank];
-		String name = sender.name;
-		rankNameTV.setText(rank+" "+name);
-		
-		String content = c.getString(c.getColumnIndex("content"));
-		contentTV.setText(content);
-		
-		long arrivalTS = c.getLong(c.getColumnIndex("TS"));
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 		arrivalDTTV.setText(arrivalDT);
+		
+		if(contentType == Chat.CONTENT_TYPE_TEXT) {
+			contentTV.setText(content);
+			contentIV.setVisibility(View.GONE);
+		} else if(contentType == Chat.CONTENT_TYPE_PICTURE) {
+			// TODO image
+			// contentIV.setImageBitmap(bm);
+			contentTV.setVisibility(View.GONE);
+		}
+		
+		Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.type, )
 		
 		final Context ctx = context;
 		goUncheckedBT.setOnClickListener(new OnClickListener() {

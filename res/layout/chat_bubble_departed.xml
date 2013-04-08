@@ -72,6 +72,17 @@
             android:padding="@dimen/gapSmall"
             android:background="@drawable/chat_bubble_departed"
             android:text="@string/loremIpsumShort" />
+        
+        <ImageView
+            android:id="@+id/contentImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="150dp"
+            android:maxHeight="200dp"
+            android:padding="@dimen/gapSmall"
+            android:background="@drawable/chat_bubble_departed"
+            android:scaleType="fitCenter"
+            />
 
     </LinearLayout>
 

@@ -47,7 +47,7 @@ class RoomListAdapter extends CursorAdapter {
 		// 채팅방에 있는 사람 수
 		int nUsers = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_CHATTER ) );
 		// 읽지 않은 채팅 수
-		int nUnchecked = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_UNCHECKED_CHAT ));
+		int nUnchecked = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_NEW_CHAT ));
 		// 마지막 채팅이 도착한 시간 TS
 		long lastTS = c.getLong( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_LAST_CHAT_TS ) );
 		// 마지막 채팅의 내용

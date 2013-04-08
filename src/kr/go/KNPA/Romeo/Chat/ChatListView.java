@@ -67,7 +67,7 @@ public class ChatListView extends RomeoListView {
 
 	@Override
 	public ChatListView initWithType(int type) {
-		// DO NOthing
+		// Do Nothing
 		return null;
 	}
 

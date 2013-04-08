@@ -99,7 +99,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		Room room = new Room(getContext(), this.type, roomCode);
 		RoomFragment fragment = new RoomFragment(room);
 		
-		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.roomCode, UserInfo.getUserIdx(getContext()), System.currentTimeMillis());
+		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.roomCode, System.currentTimeMillis());
 		
 		MainActivity.sharedActivity().pushContent(fragment);
 	}
