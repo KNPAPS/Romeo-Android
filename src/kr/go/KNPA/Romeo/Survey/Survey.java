@@ -120,40 +120,22 @@ public class Survey extends Message implements Parcelable{
 		return survey;
 	}
 	
-	public void sendAnswerSheet(String json, Context context) {
-		GCMMessageSender.sendSurveyAnswerSheet(json);
+	public void sendAnswerSheet(Context context, AnswerSheet answerSheet) {
+		GCMMessageSender.sendSurveyAnswerSheet(context, this, answerSheet);
 		
-		// TODO : make Async
-		
-			setAnswered(json, context);
 		
 	}
 	
-	public static void afterSendAnswerSheet() {
-		
+	public void afterSendAnswerSheet(Context context, AnswerSheet answerSheet, boolean status) {
+		// TODO : DBProcManager.sharedManager(context).document().
+		// TODO : animation
 	}
 	
-	public void setAnswered(String json, Context context) {
-		// TODO :  Insert into DB
-		/*
-		if(this.checked != false) {
+	
+	public class AnswerSheet extends ArrayList<ArrayList<Integer>> {
+		
+	}
 
-			DBManager dbManager = new DBManager(context);
-			SQLiteDatabase db = dbManager.getWritableDatabase();
-			
-			String tableName =  Message.getTableNameWithMessageType(this.type);
-			
-			ContentValues vals = new ContentValues();
-			vals.put("answered", 1);
-			vals.put("answersheet", Encrypter.objectToBytes(json));
-			db.update(tableName, vals, "idx=?", new String[] {this.idx+""});
-			
-			this.checked = true;
-			this.answered = true;
-		}
-		*/
-	}
-	
 	@Override
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
@@ -228,11 +210,7 @@ public class Survey extends Message implements Parcelable{
 		}
 		
 	}
-	
-	public class AnswerSheet extends ArrayList<ArrayList<Integer>> {
-		
-	}
-	
+
 
 	// Implements Parcelable
 	@Override
