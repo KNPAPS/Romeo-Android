@@ -631,17 +631,13 @@ public class DBProcManager {
 			}
 			
 			int isFavorite_int;
-			int category;
 			if ( isFavorite == true ) {
 				isFavorite_int=1;
-				category=Document.TYPE_FAVORITE;
 			} else {
-				isFavorite_int=0;
-				category=Document.TYPE_RECEIVED;				
+				isFavorite_int=0;	
 			}
 			String sql = "update "+DBSchema.DOCUMENT.TABLE_NAME+" SET "+
-						DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = " +String.valueOf(isFavorite_int)+", "+
-						DBSchema.DOCUMENT.COLUMN_CATEGORY+" = " +String.valueOf(category)+", "+
+						DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = " +String.valueOf(isFavorite_int)+
 						" where _id = "+String.valueOf(docId);
 			db.execSQL(sql);
 		}
@@ -675,16 +671,32 @@ public class DBProcManager {
 		 * @return 
 		 */
 		public Cursor getDocumentList(int docCategory) {
-			String sql ="select "+
-					DBSchema.DOCUMENT.COLUMN_HASH+COLUMN_DOC_HASH+", "+
-					DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
-					DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
-					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
-					DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
-					" from"+DBSchema.DOCUMENT.TABLE_NAME+
-					"where "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+String.valueOf(docCategory)+
-					" order by "+DBSchema.DOCUMENT.COLUMN_CREATED_TS+" desc ";
-			return db.rawQuery(sql, null);
+			
+			if ( docCategory == Document.TYPE_FAVORITE ) {
+				String sql ="select "+
+						DBSchema.DOCUMENT.COLUMN_HASH+COLUMN_DOC_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
+						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
+						" from"+DBSchema.DOCUMENT.TABLE_NAME+
+						"where "+DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = 1 "+
+						" order by "+DBSchema.DOCUMENT.COLUMN_CREATED_TS+" desc ";
+				return db.rawQuery(sql, null);
+			} else {
+				String sql ="select "+
+						DBSchema.DOCUMENT.COLUMN_HASH+COLUMN_DOC_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
+						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
+						" from"+DBSchema.DOCUMENT.TABLE_NAME+
+						"where "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+String.valueOf(docCategory)+
+						" order by "+DBSchema.DOCUMENT.COLUMN_CREATED_TS+" desc ";
+				return db.rawQuery(sql, null);
+			}
+			
+			
 		}
 
 		/**
@@ -696,6 +708,8 @@ public class DBProcManager {
 		 * @b COLUMN_DOC_TS long 발신일시\n
 		 * @b COLUMN_DOC_TYPE int 문서카테고리 Document.TYPE_DEPARTED, Document.TYPE_RECEIVED, Document.TYPE_FAVORITE\n
 		 * @b COLUMN_IS_FAVORITE int 즐겨찾기여부
+		 * @b COLUMN_IS_CHECKED int 자기가확인했는지\n
+		 * @b COLUMN_DOC_CHECKED_TS long 확인한시간
 		 * @param docHash 문서 해시
 		 * @return
 		 */
@@ -708,7 +722,9 @@ public class DBProcManager {
 					DBSchema.DOCUMENT.COLUMN_CONTENT + COLUMN_DOC_CONTENT +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH + COLUMN_SENDER_HASH +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATED_TS + COLUMN_DOC_TS +", "+
+					DBSchema.DOCUMENT.COLUMN_CHECKED_TS + COLUMN_DOC_CHECKED_TS +", "+
 					DBSchema.DOCUMENT.COLUMN_CATEGORY + COLUMN_DOC_TYPE +", "+
+					DBSchema.DOCUMENT.COLUMN_IS_CHECKED + COLUMN_IS_CHECKED +", "+
 					DBSchema.DOCUMENT.COLUMN_IS_FAVORITE + COLUMN_IS_FAVORITE +
 					" from"+DBSchema.DOCUMENT.TABLE_NAME+
 					"where _id = "+String.valueOf(docId);
@@ -759,11 +775,30 @@ public class DBProcManager {
 					"where _id = "+String.valueOf(docId);
 			return db.rawQuery(sql,null);
 		}
+
+		/**
+		 * 문서 수신자 정보 가져오기
+		 * @b 커서구조
+		 * @b COLUMN_USER_HASH 수신자해쉬\n
+		 * @param hash 문서 해쉬
+		 * @return
+		 */
+		public Cursor getReceivers(String hash) {
+			long id = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, hash);
+			
+			String sql = 
+					"select "+DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_HASH+
+					" from"+DBSchema.DOCUMENT_RECEIVER.TABLE_NAME+
+					" where "+DBSchema.DOCUMENT_RECEIVER.COLUMN_DOC_ID+" = "+String.valueOf(id);
+			return db.rawQuery(sql,null);
+		}
 		
 		public static final String COLUMN_DOC_HASH = "doc_hash";
 		public static final String COLUMN_DOC_TITLE = "doc_title";
 		public static final String COLUMN_DOC_CONTENT = "doc_content";
 		public static final String COLUMN_DOC_TS = "doc_ts";
+		public static final String COLUMN_DOC_CHECKED_TS = "doc_ts";
+		public static final String COLUMN_CHECKED_TS = "checked_TS";
 		public static final String COLUMN_DOC_TYPE = "doc_type";
 		public static final String COLUMN_IS_FAVORITE = "is_favorite";
 		public static final String COLUMN_IS_CHECKED = "is_checked";
@@ -776,6 +811,8 @@ public class DBProcManager {
 		public static final String COLUMN_FILE_TYPE = "file_type";
 		public static final String COLUMN_FILE_SIZE = "file_size";
 		public static final String COLUMN_FILE_HASH = "file_hash";
+		public static final String COLUMN_USER_HASH = "user_hash";
+		
 	}
 
 	public class SurveyProcManager {
@@ -890,14 +927,31 @@ public class DBProcManager {
 			return db.rawQuery(sql, val);		
 		}
 		
-		public static final String COLUMN_SURVEY_NAME = "";
-		public static final String COLUMN_SURVEY_HASH = "";
-		public static final String COLUMN_SURVEY_SENDER_HASH = "";
-		public static final String COLUMN_SURVEY_IS_CHECKED = "";
-		public static final String COLUMN_SURVEY_IS_ANSWERED = "";
-		public static final String COLUMN_SURVEY_ANSWERED_TS = "";
-		public static final String COLUMN_SURVEY_CONTENT = "";
-		public static final String COLUMN_SURVEY_CREATED_TS = "";
+		/**
+		 * 설문조사 수신자 정보 가져오기
+		 * @b 커서구조
+		 * @b COLUMN_USER_HASH 수신자해쉬\n
+		 * @param hash 설문조사 해쉬
+		 * @return
+		 */
+		public Cursor getReceivers(String hash) {
+			long id = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_HASH, hash);
+			
+			String sql = 
+					"select "+DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_HASH+
+					" from"+DBSchema.SURVEY_RECEIVER.TABLE_NAME+
+					" where "+DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID+" = "+String.valueOf(id);
+			return db.rawQuery(sql,null);		
+		}
+		public static final String COLUMN_SURVEY_NAME = "survey_name";
+		public static final String COLUMN_SURVEY_HASH = "survey_hash";
+		public static final String COLUMN_USER_HASH = "user_hash";
+		public static final String COLUMN_SURVEY_SENDER_HASH = "sender_hash";
+		public static final String COLUMN_SURVEY_IS_CHECKED = "is_checked";
+		public static final String COLUMN_SURVEY_IS_ANSWERED = "is_answered";
+		public static final String COLUMN_SURVEY_ANSWERED_TS = "answered_ts";
+		public static final String COLUMN_SURVEY_CONTENT = "survey_content";
+		public static final String COLUMN_SURVEY_CREATED_TS = "created_ts";
 	}
 	
 	public class MemberProcManager {

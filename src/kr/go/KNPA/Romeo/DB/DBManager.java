@@ -59,6 +59,19 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final String SQL_CREATE_INDEX_DOC = 
 			"CREATE INDEX DOC_IDX ON "+
 					DBSchema.DOCUMENT.TABLE_NAME+" ("+DBSchema.DOCUMENT.COLUMN_CATEGORY+" ASC, "+DBSchema.DOCUMENT.COLUMN_CREATED_TS+" DESC)";
+
+	private static final String SQL_CREATE_TABLE_DOCUMENT_RECEIVER = 
+			"CREATE TABLE "+DBSchema.DOCUMENT_RECEIVER.TABLE_NAME+
+			" ("+
+			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_RECEIVER.COLUMN_DOC_ID +	INT	+	COMMA+
+			DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_HASH  +	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_RECEIVER.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_RECEIVER.COLUMN_CHECKED_TS	+	INT+
+			")";
+	private static final String SQL_CREATE_INDEX_DOC_RECV = 
+			"CREATE INDEX DOC_RECV_IDX ON "+
+					DBSchema.DOCUMENT_RECEIVER.TABLE_NAME+" ("+DBSchema.DOCUMENT_RECEIVER.COLUMN_DOC_ID+" ASC)";
 	
 	private static final String SQL_CREATE_TABLE_DOCUMENT_ATTACHMENT = 
 			"CREATE TABLE "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
@@ -140,6 +153,20 @@ public class DBManager extends SQLiteOpenHelper {
 			"CREATE INDEX SURVEY_IDX ON "+
 					DBSchema.SURVEY.TABLE_NAME+" ("+
 					DBSchema.SURVEY.COLUMN_CATEGORY+" ASC,"+DBSchema.SURVEY.COLUMN_CREATED_TS+" DESC)";
+
+	private static final String SQL_CREATE_TABLE_SURVEY_RECEIVER = 
+			"CREATE TABLE "+DBSchema.SURVEY_RECEIVER.TABLE_NAME+
+			" ("+
+			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	COMMA+
+			DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID +	INT	+	COMMA+
+			DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_HASH  +	TEXT	+	COMMA+
+			DBSchema.SURVEY_RECEIVER.COLUMN_IS_CHECKED	+	INT	+	COMMA+
+			DBSchema.SURVEY_RECEIVER.COLUMN_CHECKED_TS	+	INT+
+			")";
+	private static final String SQL_CREATE_INDEX_SURVEY_RECV = 
+			"CREATE INDEX SURVEY_RECV_IDX ON "+
+					DBSchema.SURVEY_RECEIVER.TABLE_NAME+" ("+DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID+" ASC)";
+	
 	
 	private static final String SQL_CREATE_TABLE_USER_FAVORITE = 
 			"CREATE TABLE "+DBSchema.USER_FAVORITE.TABLE_NAME+
@@ -182,6 +209,9 @@ public class DBManager extends SQLiteOpenHelper {
 			db.execSQL(SQL_CREATE_TABLE_SURVEY);
 			db.execSQL(SQL_CREATE_TABLE_USER_FAVORITE);
 			db.execSQL(SQL_CREATE_TABLE_USER_FAVORITE_GROUP);
+			db.execSQL(SQL_CREATE_TABLE_SURVEY_RECEIVER);
+			db.execSQL(SQL_CREATE_TABLE_DOCUMENT_RECEIVER);
+			
 			db.execSQL(SQL_CREATE_INDEX_CHAT);
 			db.execSQL(SQL_CREATE_INDEX_CHAT_TS);
 			db.execSQL(SQL_CREATE_INDEX_DOC);
@@ -191,6 +221,8 @@ public class DBManager extends SQLiteOpenHelper {
 			db.execSQL(SQL_CREATE_INDEX_ROOM_CHATTER);
 			db.execSQL(SQL_CREATE_INDEX_SURVEY);
 			db.execSQL(SQL_CREATE_INDEX_USER_FAV);
+			db.execSQL(SQL_CREATE_INDEX_SURVEY_RECV);
+			db.execSQL(SQL_CREATE_INDEX_DOC_RECV);
 		} catch (SQLException e ) {
 			Log.wtf(TAG, e.getMessage());
 		}
@@ -233,6 +265,14 @@ public class DBManager extends SQLiteOpenHelper {
 		    public static final String COLUMN_FORWARDER_HASH = " fwder_hash ";
 		    public static final String COLUMN_COMMENT = " fwd_comment ";
 		    public static final String COLUMN_FORWARD_TS = " fwd_ts ";
+		}
+		
+		public static abstract class DOCUMENT_RECEIVER implements BaseColumns {
+		    public static final String TABLE_NAME = " rs_document_receiver ";
+		    public static final String COLUMN_DOC_ID = " doc_id ";
+		    public static final String COLUMN_RECEIVER_HASH = " receiver_hash ";
+		    public static final String COLUMN_IS_CHECKED = " is_checked ";
+		    public static final String COLUMN_CHECKED_TS = " checked_ts ";
 		}
 		
 		public static abstract class CHAT implements BaseColumns {
@@ -279,7 +319,15 @@ public class DBManager extends SQLiteOpenHelper {
 			public static final String COLUMN_IS_ANSWERED = " is_answered ";
 			public static final String COLUMN_ANSWERED_TS = " answered_ts ";
 			public static final String COLUMN_IS_FAVORITE = " is_favorite ";
-		}	
+		}
+		
+		public static abstract class SURVEY_RECEIVER implements BaseColumns {
+		    public static final String TABLE_NAME = " rs_survey_receiver ";
+		    public static final String COLUMN_SURVEY_ID = " survey_id ";
+		    public static final String COLUMN_RECEIVER_HASH = " receiver_hash ";
+		    public static final String COLUMN_IS_CHECKED = " is_checked ";
+		    public static final String COLUMN_CHECKED_TS = " checked_ts ";
+		}
 		
 		public static abstract class USER_FAVORITE implements BaseColumns {
 			public static final String TABLE_NAME = " rs_user_favorite ";
