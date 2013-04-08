@@ -1,6 +1,8 @@
 package kr.go.KNPA.Romeo.Document;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -16,23 +18,70 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 class DocumentListAdapter extends CursorAdapter {
 	public int type = Document.NOT_SPECIFIED;
-	public DocumentListAdapter(Context context, Cursor c, boolean autoRequery) {
-		super(context, c, autoRequery);
-	}
-	
-	public DocumentListAdapter(Context context, Cursor c, boolean autoRequery, int type) {
-		super(context, c, autoRequery);
-		this.type = type;
-	}
-
-	public DocumentListAdapter(Context context, Cursor c, int flags) {
-		super(context, c, flags);
-	}
+	public DocumentListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);						}
+	public DocumentListAdapter(Context context, Cursor c, boolean autoRequery, int type) 	{	super(context, c, autoRequery);	this.type = type;	}
+	public DocumentListAdapter(Context context, Cursor c, int flags) 						{	super(context, c, flags);							}
 
 	@Override
 	public void bindView(View v, Context ctx, Cursor c) {
+		
+		DBProcManager.sharedManager(ctx);
+		// 문서해쉬 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_HASH));
+		// 문서제목 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
+		// 자기가확인했는지 (int)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED));
+		// 문서보낸사람 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH));
+		// 문서생성일(보낸시간) (int)
+		c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
+		
+		
+		/**getDocumentContent(String docHash)
+		 * 한 문서의 기본 정보 조회(포워딩,파일빼고)
+		 * @b 커서구조
+		 * @b  str \n
+		 * @b  str \n
+		 * @b  str \n
+		 * @b  int \n
+		 * @param docHash 문서 해시
+		 * @return
+		 */
+		
+		// 제목 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
+		// 내용 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
+		// 발신자 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_SENDER_HASH));
+		// 발신일시 (int)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		
+		/**getDocumentForwardInfo(String docHash)
+		 * 문서의 포워딩 정보
+		 * @b 커서구조
+		 * @b COLUMN_FORWARDER_HASH str 포워더\n
+		 * @b COLUMN_FORWARD_COMMENT str 코멘트\n
+		 * @b COLUMN_FORWARD_TS int 포워딩한 시간\n
+		 * @param docHash
+		 * @return
+		 */
+		
+		/**getDocumentAttachment(String docHash)
+		 * 문서의 첨부파일 정보
+		 * @b 커서구조
+		 * @b COLUMN_FILE_NAME str 파일이름\n
+		 * @b COLUMN_FILE_TYPE int 파일종류\n
+		 * @b COLUMN_FILE_SIZE int 파일사이즈 in byte\n
+		 * @b COLUMN_FILE_URL str 파일URL\n
+		 * @param docHash
+		 * @return
+		 */
 		//TODO
 		if(this.type == Document.TYPE_DEPARTED) {
+			
+			DBProcManager
 			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
 			TextView titleTV = (TextView)v.findViewById(R.id.title);
 			TextView senderTV = (TextView)v.findViewById(R.id.sender);
@@ -105,11 +154,11 @@ class DocumentListAdapter extends CursorAdapter {
 		LayoutInflater inflater = LayoutInflater.from(ctx);
 		View v = null;
 		switch(this.type) {
-		case Document.TYPE_DEPARTED : v = inflater.inflate(R.layout.document_list_cell_departed, parent,false);		break;
-		case Document.TYPE_RECEIVED : v = inflater.inflate(R.layout.document_list_cell_received, parent,false);		break;
-		case Document.TYPE_FAVORITE : v = inflater.inflate(R.layout.document_list_cell_favorite, parent,false);		break;
-		default :
-		case Document.NOT_SPECIFIED : break;
+			case Document.TYPE_DEPARTED : v = inflater.inflate(R.layout.document_list_cell_departed, parent,false);		break;
+			case Document.TYPE_RECEIVED : v = inflater.inflate(R.layout.document_list_cell_received, parent,false);		break;
+			case Document.TYPE_FAVORITE : v = inflater.inflate(R.layout.document_list_cell_favorite, parent,false);		break;
+			default :
+			case Document.NOT_SPECIFIED : break;
 			// ListView에서 tableName이 정해저야만 Adapter를 호출할 수 있는데,
 			//이가 정해지기 위해서는 type이 정해진 상태이어야 하므로, 
 			//이 지점에 도달 할 수가 없다. 불가능!!
@@ -117,11 +166,4 @@ class DocumentListAdapter extends CursorAdapter {
 		
 		return v;
 	}
-	
-	/*
-	public Document getDocument(int position) {
-		Cursor c = (Cursor) getItem(position);
-		return new Document(c);
-	}*/
-
 }

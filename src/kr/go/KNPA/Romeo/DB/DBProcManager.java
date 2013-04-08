@@ -691,7 +691,7 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_DOC_TITLE str 제목\n
 		 * @b COLUMN_DOC_CONTENT str 내용\n
-		 * @b COLUMN_DOC_SENDER_HASH str 발신자\n
+		 * @b COLUMN_SENDER_HASH str 발신자\n
 		 * @b COLUMN_DOC_TS int 발신일시\n
 		 * @param docHash 문서 해시
 		 * @return

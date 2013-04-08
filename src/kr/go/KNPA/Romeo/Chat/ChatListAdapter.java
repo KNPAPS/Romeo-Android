@@ -1,12 +1,17 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ChatListAdapter extends CursorAdapter {
 
@@ -27,7 +31,7 @@ public class ChatListAdapter extends CursorAdapter {
 	}
 
 	@Override
-	public void bindView(View v, Context context, Cursor c) {
+	public void bindView(View v, final Context context, Cursor c) {
 		
 		DBProcManager.sharedManager(context);
 		
@@ -40,7 +44,8 @@ public class ChatListAdapter extends CursorAdapter {
 		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
 		int 	contentType	= c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
 		// 챗 해쉬값
-		int		messageIdx	= c.getInt(c.getColumnIndex(ChatProcManager.))
+		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_HASH));
+		
 		
 		ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
 		TextView 	departmentTV	= (TextView) 	v.findViewById(R.id.department);
@@ -72,15 +77,19 @@ public class ChatListAdapter extends CursorAdapter {
 			contentTV.setVisibility(View.GONE);
 		}
 		
-		Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.type, )
+		final ArrayList<String> uncheckersIdxs = Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.type, messageIdx);
 		
-		final Context ctx = context;
 		goUncheckedBT.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO
-				Toast.makeText(ctx, "goUncheck", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent(context, UserListActivity.class);
+				
+				Bundle b = new Bundle();
+				b.putStringArrayList("idxs", uncheckersIdxs);
+				intent.putExtras(b);		
+				
+				context.startActivity(intent);
 				
 			}
 		});

@@ -7,7 +7,6 @@
     <string name="unCheckedDocument">확인하지 않은 업무연락</string>
     <string name="openedSurvey">진행중인 설문</string>
     <string name="closedSurvey">지난 설문</string>
-    
     <string name="menu">메뉴</string>
     <string name="add">추가</string>
     <string name="back">뒤로</string>
@@ -39,10 +38,9 @@
     <string name="subTitle">부제목</string>
     <string name="none">해당 없음</string>
     <string name="letSelect">선택해주세요</string>
-    
     <string name="sender">발신자</string>
     <string name="receiver">수신자</string>
-    
+
     <!-- <string name="memberTitle">조직도</string> -->
     <string name="memberListTitle">조직도</string>
     <string name="commandTitle">지시와 보고</string>
@@ -65,7 +63,6 @@
     <string name="condition_department">소속</string>
     <string name="condition_rank">계급</string>
     <string name="condition_role">직책</string>
-    
     <string name="statusChecked">확인</string>
     <string name="statusUnchecked">미확인</string>
     <string name="statusAnswered">참여</string>
@@ -88,27 +85,20 @@
     <string name="survey_close_day_placehold">일</string>
     <string name="document_receivers_placehold">수신자를 선택하세요.</string>
     <string name="receivers_placehold">수신자를 선택하세요</string>
-    
-    
     <string name="notification_command_ticker">지시∙보고가 도착했습니다.</string>
     <string name="notification_command_title"></string>
     <string name="notification_command_content"></string>
-    
     <string name="notification_meeting_ticker">회의 내용이 도착했습니다.</string>
     <string name="notification_meeting_title"></string>
     <string name="notification_meeting_content"></string>
-    
     <string name="notification_document_ticker">업무연락이 도착했습니다.</string>
     <string name="notification_document_title"></string>
     <string name="notification_document_content"></string>
-    
     <string name="notification_survey_ticker">설문이 도착했습니다.</string>
     <string name="notification_survey_title"></string>
     <string name="notification_survey_content"></string>
-    
-    
     <string name="fromTo">~</string>
-    <string name="dummy"> </string>
+    <string name="dummy"></string>
     <string name="sampleListIndex">1.</string>
     <string name="sampleDT">2012.02.22 오후 07:13:40</string>
     <string name="sampleSender">경찰청 경비국 경비3계 이영철</string>
@@ -123,8 +113,6 @@
     <string name="loremIpsumShort">국회의원은 청렴의 의무가 있다. 국회의원은 국회에서 ...e</string>
     <string name="loremIpsum">모든 국민은 자기의 행위가 아닌 친족의 행위로 인하여 불이익한 처우를 받지 아니한다. 모든 국민은 그 보호하는 자녀에게 적어도 초등교육과 법률이 정하는 교육을 받게 할 의무를 진다. 국가는 법률...e</string>
     <string name="loremIpsumLong">모든 국민은 근로의 권리를 가진다. 국가는 개인이 가지는 불가침의 기본적 인권을 확인하고 이를 보장할 의무를 진다. 모든 국민은 근로의 권리를 가진다. 모든 국민은 능력에 따라 균등하게 교육을 받을 권리를 가진다. 연소자의 근로는 특별한 보호를 받는다. 대통령이 임시회의 집회를 요구할 때에는 기간과 집회요구의 이유를 명시하여야 한다. 정당의 목적이나 활동이 민주적 기본질서에 위배될 때에는 정부는 헌법재판소에 그 해산을 제소할 수 있고, 정당은 헌법재판소의 심판에 의하여 해산된다. 의무교육은 무상으로 한다. 타인의 범죄행위로 인하여 생명·신체에 대한 피해를 받은 국민은 법률이 정하는 바에 의하여 국가로부터 구조를 받을 수 있다.e</string>
-        
-        
     <string name="formatString_openDT">yyyy.MM.dd</string>
     <string name="formatString_closeDT">yyyy.MM.dd</string>
     <string name="formatString_regular">yyyy.MM.dd HH:mm:ss</string>
@@ -132,7 +120,6 @@
     <string name="app_name">다On</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-
     <string name="properties">SlidingMenu Properties</string>
     <string name="general">General</string>
     <string name="viewpager">ViewPager</string>
@@ -184,10 +171,9 @@
 		either express or implied. See the License for the specific 
 		language governing permissions and limitations under the License.</string>
     <string name="no_email">Sorry, I couldn\'t find any e-mail apps on your phone</string>
-    
-    
-    
     <string name="placehold_search">Search</string>
     <string name="ok">&quot;확인&quot;</string>
-    
+    <string name="title_activity_user_list">UserListActivity</string>
+    <string name="action_settings">Settings</string>
+
 </resources>

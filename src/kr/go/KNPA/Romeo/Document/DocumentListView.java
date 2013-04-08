@@ -4,6 +4,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
@@ -25,17 +26,9 @@ import android.widget.AdapterView.OnItemClickListener;;
 public class DocumentListView extends RomeoListView implements android.widget.AdapterView.OnItemClickListener{
 
 	// Constructor
-	public DocumentListView(Context context) {
-		this(context, null);
-	}
-
-	public DocumentListView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
-	public DocumentListView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+	public DocumentListView(Context context) 									{	this(context, null);				}
+	public DocumentListView(Context context, AttributeSet attrs) 				{	this(context, attrs, 0);			}
+	public DocumentListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle);	}
 
 	
 	// initializer
@@ -49,7 +42,9 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 			Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 				@Override
 				public String getSectionTitleForItem(Cursor c) {
-					boolean checked = (c.getLong(c.getColumnIndex("checked")) >0 ? true : false);
+					boolean checked = (c.getInt(c.getColumnIndex(
+										DBProcManager.sharedManager(getContext()).document().COLUMN_IS_CHECKED
+										)) >0 ? true : false);
 					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 				}
 			};
@@ -73,21 +68,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 
 	
 	@Override
-	protected Cursor query() {
-		String sql = null;
-		switch(type) {
-		case Document.TYPE_DEPARTED :
-			sql = "SELECT * FROM "+getTableName()+" WHERE received="+0+" ORDER BY TS DESC;"; break;
-		case Document.TYPE_FAVORITE :
-			sql = "SELECT * FROM "+getTableName()+" WHERE favorite="+1+" ORDER BY TS DESC"; break;
-		case Document.TYPE_RECEIVED :
-			sql = "SELECT * FROM "+getTableName()+" WHERE received="+1+" ORDER BY checked DESC;"; break;
-		}
-
-		Cursor c = db.rawQuery(sql, null);
-		
-		return c;
-	}	
+	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).document().getDocumentList(this.type);	}	
 
 	// Click Listener
 	@Override
@@ -99,17 +80,8 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 		Cursor c = (Cursor)adapter.getItem(position);
 		Document document = new Document(c);
 		
-		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);// 추가 정보
-		MainActivity a = MainActivity.sharedActivity();
-		a.pushContent(fragment);
+		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);
+		MainActivity.sharedActivity().pushContent(fragment);
 	}
 
-
-
-	@Override
-	public String getTableName() {
-		if(this.type == Document.NOT_SPECIFIED)
-			return null;
-		return DBManager.TABLE_DOCUMENT;
-	}
 }

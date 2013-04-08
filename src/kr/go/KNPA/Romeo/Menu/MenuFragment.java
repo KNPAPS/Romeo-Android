@@ -1,7 +1,6 @@
 package kr.go.KNPA.Romeo.Menu;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.R.layout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;

@@ -1,5 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
@@ -45,17 +47,13 @@ class RoomListAdapter extends CursorAdapter {
 		// 채팅방 제목
 		String title = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_TITLE ) );
 		// 채팅방에 있는 사람 수
-		int nUsers = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_CHATTER ) );
+		//int nUsers = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_CHATTER ) );
 		// 읽지 않은 채팅 수
-		int nUnchecked = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_NEW_CHAT ));
+		//int nUnchecked = c.getInt( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_NUM_NEW_CHAT ));
 		// 마지막 채팅이 도착한 시간 TS
-		long lastTS = c.getLong( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_LAST_CHAT_TS ) );
+		long arrivalTS = c.getLong( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_LAST_CHAT_TS ) );
 		// 마지막 채팅의 내용
 		String lastContent = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_LAST_CHAT_CONTENT ) );
-
-		
-		
-		
 		
 		ImageView userPicIV = (ImageView)v.findViewById(R.id.userPic);
 		TextView departmentTV = (TextView)v.findViewById(R.id.department);
@@ -63,29 +61,41 @@ class RoomListAdapter extends CursorAdapter {
 		TextView contentTV = (TextView)v.findViewById(R.id.content);
 		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
 
-		// About User Info
-		String userIdx = c.getString(c.getColumnIndex("sender"));
-		User user = User.getUserWithIdx(userIdx);
+		ArrayList<User> roomUsers = Room.getUsers(ctx, roomIdx); 
 		
-		// rank and name
-		String rank = User.RANK[user.rank];
-		String name = user.name;
-		String rankName = rank+" "+name;
-		rankNameTV.setText(rankName);
-		
-		// department
-		String department = user.department.nameFull;
-		departmentTV.setText(department);
+		if(roomUsers.size() > 1) {
+			if(title == null || title.trim().length() == 0) { 
+				String rankName = ""; 
+				for(int i=0; i<roomUsers.size(); i++) {
+					if(i!=0) rankName += ", ";
+					rankName += User.RANK[roomUsers.get(i).rank] + " " + roomUsers.get(i).name;
+				}
+				final int MAX_LENGTH = 25;
+				if(rankName.length() > MAX_LENGTH)
+					rankName = rankName.substring(0, MAX_LENGTH) + "...";
+				rankNameTV.setText(rankName);
+			} else {
+				rankNameTV.setText(title);
+			}
+			// TODO : departmentTV
+		} else {
+			User user = roomUsers.get(0);
+			// rank and name
+			String rankName = User.RANK[user.rank]+" "+user.name;
+			rankNameTV.setText(rankName);
+			
+			// department
+			String department = user.department.nameFull;
+			departmentTV.setText(department);
+		}
 		
 		
 		// About Message
 		// Content Summary
 		final int CONTENT_SUMMARY_LENGTH = 10;
-		String _content = c.getString(c.getColumnIndex("content"));
-		String content = _content.substring(0, Math.min(CONTENT_SUMMARY_LENGTH, _content.length()));
+		String content = lastContent.substring(0, Math.min(CONTENT_SUMMARY_LENGTH, lastContent.length()));
 		contentTV.setText(content);
-
-		long arrivalTS = c.getLong(c.getColumnIndex("TS"));		
+		
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 		arrivalDTTV.setText(arrivalDT);
 		

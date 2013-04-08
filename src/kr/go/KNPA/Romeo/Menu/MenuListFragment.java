@@ -8,6 +8,12 @@ import java.util.Map;
 import kr.go.KNPA.Romeo.ContentFragment;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Member.MemberFragment;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
@@ -24,15 +30,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.SimpleExpandableListAdapter;
-import com.google.gson.*;
-
-import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.ChatFragment;
-import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Document.DocumentFragment;
-
-
-import kr.go.KNPA.Romeo.Member.*;
 
 
 
