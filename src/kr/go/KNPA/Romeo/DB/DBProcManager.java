@@ -429,6 +429,7 @@ public class DBProcManager {
 		/**
 		 * 채팅방 내의 채팅 목록 불러오기
 		 * @b 커서구조
+		 * @b COLUMN_CHAT_HASH 채팅해쉬\n
 		 * @b COLUMN_CHAT_SENDER_HASH 센더해쉬\n
 		 * @b COLUMN_CHAT_TS 채팅TS\n
 		 * @b COLUMN_CHAT_CONTENT 내용 \n
@@ -443,6 +444,7 @@ public class DBProcManager {
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
 			String sql=
 					"select "+
+					DBSchema.CHAT.COLUMN_HASH+COLUMN_CHAT_HASH+", "+
 					DBSchema.CHAT.COLUMN_SENDER_HASH+COLUMN_CHAT_SENDER_HASH+", "+
 					DBSchema.CHAT.COLUMN_CREATED_TS+COLUMN_CHAT_TS+", "+
 					DBSchema.CHAT.COLUMN_CONTENT+COLUMN_CHAT_CONTENT+", "+
@@ -462,6 +464,7 @@ public class DBProcManager {
 		public static final String COLUMN_ROOM_LAST_CHAT_CONTENT = "last_chat_content";
 		public static final String COLUMN_USER_HASH = "user_hash";
 		public static final String COLUMN_CHAT_SENDER_HASH = "sender_hash";
+		public static final String COLUMN_CHAT_HASH = "chat_hash";
 		public static final String COLUMN_CHAT_TS = "created_ts";
 		public static final String COLUMN_CHAT_CONTENT = "chat_content";
 		public static final String COLUMN_CHAT_CONTENT_TYPE = "chat_content_type";
