@@ -25,7 +25,7 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_FAVORITE = 2;
 	
 	public	static final String FWD_FORWARDER_IDX 	= DocumentProcManager.COLUMN_FORWARDER_HASH;
-	public	static final String FWD_ARRIVAL_DT 		= DocumentProcManager.COLUMN_FORWARD_TS;
+	public	static final String FWD_ARRIVAL_TS 		= DocumentProcManager.COLUMN_FORWARD_TS;
 	public	static final String FWD_CONTENT 		= DocumentProcManager.COLUMN_FORWARD_COMMENT;
 	
 	public	static final String ATTACH_FILE_IDX 	= DocumentProcManager.COLUMN_FILE_HASH; // (string)
@@ -51,7 +51,7 @@ public class Document extends Message implements Parcelable{
 			
 			JSONObject fwd = ja.getJSONObject(i);
 			hmap.put(FWD_FORWARDER_IDX,fwd.getString(FWD_FORWARDER_IDX));
-			hmap.put(FWD_ARRIVAL_DT, fwd.getString(FWD_ARRIVAL_DT));
+			hmap.put(FWD_ARRIVAL_TS, fwd.getString(FWD_ARRIVAL_TS));
 			hmap.put(FWD_CONTENT, fwd.getString(FWD_CONTENT));
 		}
 	}
@@ -105,17 +105,22 @@ public class Document extends Message implements Parcelable{
 		// 발신일시 (long)
 		this.TS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
 		// 문서카테고리 (int) Document.TYPE_DEPARTED, Document.TYPE_RECEIVED
-		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + cursor_documentInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE));
+		int subType = cursor_documentInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE));
+		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
+		if(subType == Document.TYPE_DEPARTED) {
+			this.received = false; 
+		} else if (subType == Document.TYPE_RECEIVED) {
+			this.received = true;
+		} else {
+			this.received = false;
+		}
+		
 		// 즐겨찾기여부 (int)
 		this.favorite = ( cursor_documentInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
 		
 		this.checked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
 		this.checkTS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CHECKED_TS));
-		
-				
-		// this.receivers = receivers;
-		// this.received = received;
-				
+						
 		/* getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 */
 		Cursor cursor_forwardInfo = dpm.getDocumentForwardInfo(this.idx);
 		if(cursor_forwardInfo.getCount() > 0) {
@@ -124,11 +129,11 @@ public class Document extends Message implements Parcelable{
 			while( !cursor_forwardInfo.isAfterLast() ) {
 				HashMap<String, Object> fwd = new HashMap<String, Object>();
 				// 포워더 (String)
-				cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+				fwd.put(FWD_FORWARDER_IDX,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH)) );
 				// 코멘트 (String)
-				cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT));
+				fwd.put(FWD_CONTENT,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT)) );
 				// 포워딩한 시간 (long)
-				cursor_forwardInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+				fwd.put(FWD_ARRIVAL_TS, cursor_forwardInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS)) );
 				
 				fwds.add(fwd);
 			}
@@ -144,19 +149,20 @@ public class Document extends Message implements Parcelable{
 				HashMap<String, Object> f = new HashMap<String, Object>();
 				
 				// 파일이름 (String)
-				cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME));
+				f.put( ATTACH_FILE_NAME , cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME)) );
 				// 파일종류 (int)
-				cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE));
+				f.put( ATTACH_FILE_TYPE, cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE)) );
 				// 파일사이즈 (long)
-				cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE));
+				f.put( ATTACH_FILE_SIZE, cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE)) );
 				// 파일 hash (String)
-				cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_HASH));
+				f.put( ATTACH_FILE_IDX, cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_HASH)) );
 				
 				fs.add(f);
 			}
 			this.files = fs;
 		}
-	
+		
+		this.receivers = null;	// TODO
 	}
 
 	public Document(Parcel source) {
@@ -213,7 +219,7 @@ public class Document extends Message implements Parcelable{
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).document().saveDocumentOnSend(this.idx, this.sender.idx, this.title, this.content, createdTS, files)
+			DBProcManager.sharedManager(context).document().saveDocumentOnSend(this.idx, this.sender.idx, this.title, this.content, this.TS, this.files);
 		}  else {
 			// Failure
 		}
