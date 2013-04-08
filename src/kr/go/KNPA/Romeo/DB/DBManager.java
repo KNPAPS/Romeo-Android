@@ -67,7 +67,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_DOC_ID  +	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_URL	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE	+	INT	+	NOT_NULL+
 			")";
 	private static final String SQL_CREATE_INDEX_DOC_ATTACH = 
@@ -210,7 +210,7 @@ public class DBManager extends SQLiteOpenHelper {
 		    public static final String COLUMN_DOC_ID = " doc_id ";
 		    public static final String COLUMN_FILE_TYPE = " file_type ";
 		    public static final String COLUMN_FILE_NAME = " file_name ";
-		    public static final String COLUMN_FILE_URL = " file_url ";
+		    public static final String COLUMN_FILE_HASH = " file_hash ";
 		    public static final String COLUMN_FILE_SIZE_IN_BYTE = " file_size ";
 		}
 		

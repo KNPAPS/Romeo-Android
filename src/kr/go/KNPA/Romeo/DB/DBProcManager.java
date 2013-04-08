@@ -483,14 +483,14 @@ public class DBProcManager {
 				for ( int i=0; i<files.size(); i++) {
 					HashMap<String,Object> hm = files.get(i);
 					
-					String[] binds = { hm.get(Document.ATTACH_FILE_URL).toString(), hm.get(Document.ATTACH_FILE_NAME).toString() } ;
+					String[] binds = { hm.get(Document.ATTACH_FILE_HASH).toString(), hm.get(Document.ATTACH_FILE_NAME).toString() } ;
 					long fileSize = (Long)hm.get(Document.ATTACH_FILE_SIZE);
 					int fileType = (Integer) hm.get(Document.ATTACH_FILE_TYPE) ;
 					
 					String sql = "insert into "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
 							"("+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_DOC_ID+","+
-							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_URL+","+
+							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_HASH+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE+
@@ -694,6 +694,8 @@ public class DBProcManager {
 		 * @b COLUMN_DOC_CONTENT str 내용\n
 		 * @b COLUMN_SENDER_HASH str 발신자\n
 		 * @b COLUMN_DOC_TS long 발신일시\n
+		 * @b COLUMN_DOC_TYPE int 문서카테고리 Document.TYPE_DEPARTED, Document.TYPE_RECEIVED, Document.TYPE_FAVORITE\n
+		 * @b COLUMN_IS_FAVORITE int 즐겨찾기여부
 		 * @param docHash 문서 해시
 		 * @return
 		 */
@@ -705,7 +707,9 @@ public class DBProcManager {
 					DBSchema.DOCUMENT.COLUMN_TITLE + COLUMN_DOC_TITLE +", "+
 					DBSchema.DOCUMENT.COLUMN_CONTENT + COLUMN_DOC_CONTENT +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH + COLUMN_SENDER_HASH +", "+
-					DBSchema.DOCUMENT.COLUMN_CREATED_TS + COLUMN_DOC_TS +
+					DBSchema.DOCUMENT.COLUMN_CREATED_TS + COLUMN_DOC_TS +", "+
+					DBSchema.DOCUMENT.COLUMN_CATEGORY + COLUMN_DOC_TYPE +", "+
+					DBSchema.DOCUMENT.COLUMN_IS_FAVORITE + COLUMN_IS_FAVORITE +
 					" from"+DBSchema.DOCUMENT.TABLE_NAME+
 					"where _id = "+String.valueOf(docId);
 			return db.rawQuery(sql,null );
@@ -739,7 +743,7 @@ public class DBProcManager {
 		 * @b COLUMN_FILE_NAME str 파일이름\n
 		 * @b COLUMN_FILE_TYPE int 파일종류\n
 		 * @b COLUMN_FILE_SIZE long 파일사이즈 in byte\n
-		 * @b COLUMN_FILE_URL str 파일URL\n
+		 * @b COLUMN_FILE_HASH str 파일URL\n
 		 * @param docHash
 		 * @return
 		 */
@@ -750,7 +754,7 @@ public class DBProcManager {
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME + COLUMN_FILE_NAME +", "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE + COLUMN_FILE_TYPE +", "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE + COLUMN_FILE_SIZE +", "+
-					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_URL + COLUMN_FILE_URL +
+					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_HASH + COLUMN_FILE_HASH +
 					" from"+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME +
 					"where _id = "+String.valueOf(docId);
 			return db.rawQuery(sql,null);
@@ -760,6 +764,8 @@ public class DBProcManager {
 		public static final String COLUMN_DOC_TITLE = "doc_title";
 		public static final String COLUMN_DOC_CONTENT = "doc_content";
 		public static final String COLUMN_DOC_TS = "doc_ts";
+		public static final String COLUMN_DOC_TYPE = "doc_type";
+		public static final String COLUMN_IS_FAVORITE = "is_favorite";
 		public static final String COLUMN_IS_CHECKED = "is_checked";
 		public static final String COLUMN_SENDER_HASH = "sender_hash";
 		public static final String COLUMN_CREATED_TS = "created_ts";
@@ -769,7 +775,7 @@ public class DBProcManager {
 		public static final String COLUMN_FILE_NAME = "file_name";
 		public static final String COLUMN_FILE_TYPE = "file_type";
 		public static final String COLUMN_FILE_SIZE = "file_size";
-		public static final String COLUMN_FILE_URL = "file_url";
+		public static final String COLUMN_FILE_HASH = "file_hash";
 	}
 
 	public class SurveyProcManager {
