@@ -6,6 +6,9 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
+import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
 
@@ -41,15 +44,35 @@ public class Survey extends Message implements Parcelable{
 		this.closeTS = jo.getLong(KEY_CLOSE_TS);
 	}
 	
-	public Survey(Cursor c) {
-		super(c);
+	public Survey(Context context, Cursor c) {
+		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
 		
-		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + (received ? Survey.TYPE_RECEIVED : Survey.TYPE_DEPARTED);
+		this.idx 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_HASH));
+		this.title 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
+		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_HASH)));
+		//this.receivers 	= 
+		
+		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
+		this.answered	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED)) == 1 ? true : false;
+		
+		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
+		
+		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
+		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
+		if(subType == Survey.TYPE_DEPARTED) {
+			this.received = false; 
+		} else if (subType == Survey.TYPE_RECEIVED) {
+			this.received = true;
+		}
+		 
+		this.content 	= cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CONTENT));
+		this.TS			= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS));
+		
+		
+		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
 
-		long _openTS = c.getLong(c.getColumnIndex("openTS"));
-		long _closeTS = c.getLong(c.getColumnIndex("closeTS"));
-		this.openTS = _openTS;		//???
-		this.closeTS = _closeTS;	//???
+		//this.openTS = _openTS;	// TODO
+		//this.closeTS = _closeTS;	// TODO
 	}
 
 	public Survey(Parcel source) {
