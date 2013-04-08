@@ -59,7 +59,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 			@Override
 			public String getSectionTitleForItem(Cursor c) {	// TODO
-				boolean checked = (c.getInt(c.getColumnIndex( DBProcManager.sharedManager(getContext()).chat().COLUMN_ROOM_NUM_UNCHECKED_CHAT )) > 0 ? false : true );
+				boolean checked = (c.getInt(c.getColumnIndex( DBProcManager.sharedManager(getContext()).chat().COLUMN_ROOM_NUM_NEW_CHAT )) > 0 ? false : true );
 				return (checked ? getContext().getString(R.string.checkedChat)  : getContext().getString(R.string.unCheckedChat));
 			}
 		};

@@ -3,11 +3,13 @@ package kr.go.KNPA.Romeo.Chat;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.content.Context;
 
 public class Chat extends Message {
 	
@@ -96,42 +98,14 @@ public class Chat extends Message {
 	}
 
 	@Override
-	public void afterSend(boolean succesful) {
-		// TODO :  Insert into DB
-		/*
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getWritableDatabase();
-		
-		// DB에 등록
-		String tableName = null;
-		switch(room.type) {
-			case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
-			case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
-			default : case Chat.NOT_SPECIFIED : tableName = null; 	break;
+	public void afterSend(Context context, boolean successful) {
+		if(successful) {
+			// Success
+			DBProcManager.sharedManager(context).chat().saveChatOnSend(this.roomCode, this.idx, this.sender.idx, this.content, this.contentType, this.TS);
+		}  else {
+			// Failure
 		}
-		
-		long currentTS = System.currentTimeMillis();
-		ContentValues vals = new ContentValues();
-		vals.put("content", this.content);
-		vals.put("sender", this.sender.idx);
-		
-		StringBuilder recs = new StringBuilder();
-		for(int i=0; i< this.receivers.size(); i++) {
-			if(i!=0) recs.append(":");
-			recs.append( this.receivers.get(i) );
-		}
-		vals.put("receivers", recs.toString() );
-		vals.put("received", 0); // 보낸 것이다.
-		vals.put("TS", currentTS);
-		vals.put("checked", 1);
-		vals.put("roomCode", this.roomCode);
-		vals.put("checkTS", currentTS);	// 지금 보내고 지금 확인한 것이므로, 현재 시간을 넣어준다.
-		vals.put("idx", idx);
-		db.insert(tableName, null, vals);
-		
-		db.close();
-		dbManager.close();
-		*/
+		// TODO : Animation 처리
 	}
 
 }

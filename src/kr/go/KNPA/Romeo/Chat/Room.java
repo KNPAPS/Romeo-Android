@@ -80,6 +80,19 @@ public class Room {
 		return roomUsers;
 	}
 	
+	public static ArrayList<String> getUsers(Context context, User sender, ArrayList<User> receivers) {
+		ArrayList<String> roomUsers = new ArrayList<String>();
+		roomUsers.add(sender.idx);
+		
+		for(int i=0; i<receivers.size(); i++) {
+			String receiverIdx = receivers.get(i).idx; 
+			if( roomUsers.contains(receiverIdx) == false )
+				roomUsers.add(receiverIdx);
+		}
+		
+		return roomUsers;
+	}
+	
 	public static ArrayList<User> getUsers(Context context, String roomCode) {
 		Cursor cursorRoomUsers = DBProcManager.sharedManager(context).chat().getReceiverList(roomCode);
 		ArrayList<User> roomUsers = new ArrayList<User>(cursorRoomUsers.getCount());

@@ -10,15 +10,9 @@ import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.util.Log;
+import android.content.Context;
 
 public class GCMMessageSender {
 
@@ -77,7 +71,7 @@ public class GCMMessageSender {
 		return uncheckers;
 	}
 	
-	public static void sendMessage(Message message) {
+	public static void sendMessage(final Context context, Message message) {
 		Data reqData = new Data().add(0, Data.KEY_MESSAGE, message);
 		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 		
@@ -99,20 +93,20 @@ public class GCMMessageSender {
 					// TODO : 발신자 별 에러 컨트롤
 					
 					if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
-						((Chat)_message).afterSend(true);
+						((Chat)_message).afterSend(context, true);
 					} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
-						((Document)_message).afterSend(true);
+						((Document)_message).afterSend(context, true);
 					} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
-						((Survey)_message).afterSend(true);
+						((Survey)_message).afterSend(context, true);
 					}
 				} else {
 					// TODO : 실패했을때??
 					if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
-						((Chat)_message).afterSend(false);
+						((Chat)_message).afterSend(context, false);
 					} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
-						((Document)_message).afterSend(false);
+						((Document)_message).afterSend(context, false);
 					} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
-						((Survey)_message).afterSend(false);
+						((Survey)_message).afterSend(context, false);
 					}
 				}
 				
@@ -121,11 +115,11 @@ public class GCMMessageSender {
 			@Override
 			public void onError(String errorMsg, Exception e) {
 				if(_message.mainType() == Message.MESSAGE_TYPE_CHAT) {
-					((Chat)_message).afterSend(false);
+					((Chat)_message).afterSend(context, false);
 				} else if(_message.mainType() == Message.MESSAGE_TYPE_DOCUMENT) {
-					((Document)_message).afterSend(false);
+					((Document)_message).afterSend(context, false);
 				} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
-					((Survey)_message).afterSend(false);
+					((Survey)_message).afterSend(context, false);
 				}
 			}
 		};

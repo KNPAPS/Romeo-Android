@@ -1,5 +1,6 @@
 package kr.go.KNPA.Romeo.GCM;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kr.go.KNPA.Romeo.GCMIntentService;
@@ -8,12 +9,11 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
-import kr.go.KNPA.Romeo.Config.DBManager;
+import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
@@ -25,7 +25,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 /**
@@ -103,10 +102,16 @@ public class GCMMessageManager {
 	
 	// on Message in cases
 	private void onChat (Chat chat) {
+		
+		// 방이 존재하지 않으면 DB상에 새로 만든다.
+		if(DBProcManager.sharedManager(context).chat().roomExists(chat.roomCode) == false) {
+			DBProcManager.sharedManager(context)
+				.chat().createRoom(Room.getUsers(context, chat.sender, chat.receivers), chat.type(), chat.roomCode);	// TODO chat.type
+		}
+		
+		// DB상 방에 Chat 저장
 		DBProcManager.sharedManager(context)
-		.chat().createRoom(userHashes, chatType)
-		DBProcManager.sharedManager(context)
-		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
+			.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
 		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
