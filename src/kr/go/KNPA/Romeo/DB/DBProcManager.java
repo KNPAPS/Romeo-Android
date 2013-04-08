@@ -670,7 +670,7 @@ public class DBProcManager {
 		 * @b COLUMN_DOC_TITLE str 문서제목\n
 		 * @b COLUMN_IS_CHECKED int 자기가확인했는지\n
 		 * @b COLUMN_SENDER_HASH str 문서보낸사람\n
-		 * @b COLUMN_CREATED_TS int 문서생성일(보낸시간)\n
+		 * @b COLUMN_CREATED_TS long 문서생성일(보낸시간)\n
 		 * @param docCategory 문서타입 @see {Document.TYPE_RECEIVED} @see {Document.TYPE_FAVORITE} @see {Document.TYPE_DEPARTED} 
 		 * @return 
 		 */
@@ -682,7 +682,8 @@ public class DBProcManager {
 					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
 					DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
 					" from"+DBSchema.DOCUMENT.TABLE_NAME+
-					"where "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+String.valueOf(docCategory);
+					"where "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+String.valueOf(docCategory)+
+					" order by "+DBSchema.DOCUMENT.COLUMN_CREATED_TS+" desc ";
 			return db.rawQuery(sql, null);
 		}
 
@@ -692,7 +693,7 @@ public class DBProcManager {
 		 * @b COLUMN_DOC_TITLE str 제목\n
 		 * @b COLUMN_DOC_CONTENT str 내용\n
 		 * @b COLUMN_SENDER_HASH str 발신자\n
-		 * @b COLUMN_DOC_TS int 발신일시\n
+		 * @b COLUMN_DOC_TS long 발신일시\n
 		 * @param docHash 문서 해시
 		 * @return
 		 */
@@ -715,7 +716,7 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_FORWARDER_HASH str 포워더\n
 		 * @b COLUMN_FORWARD_COMMENT str 코멘트\n
-		 * @b COLUMN_FORWARD_TS int 포워딩한 시간\n
+		 * @b COLUMN_FORWARD_TS long 포워딩한 시간\n
 		 * @param docHash
 		 * @return
 		 */
@@ -727,7 +728,8 @@ public class DBProcManager {
 					DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT + COLUMN_FORWARD_COMMENT +", "+
 					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS + COLUMN_FORWARD_TS +
 					" from"+DBSchema.DOCUMENT_FORWARD.TABLE_NAME +
-					"where _id = "+String.valueOf(docId);
+					" where "+DBSchema.DOCUMENT_FORWARD.COLUMN_DOC_ID+" = "+String.valueOf(docId)+
+					" order by "+DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS+" desc";
 			return db.rawQuery(sql,null);
 		}
 		
@@ -736,7 +738,7 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_FILE_NAME str 파일이름\n
 		 * @b COLUMN_FILE_TYPE int 파일종류\n
-		 * @b COLUMN_FILE_SIZE int 파일사이즈 in byte\n
+		 * @b COLUMN_FILE_SIZE long 파일사이즈 in byte\n
 		 * @b COLUMN_FILE_URL str 파일URL\n
 		 * @param docHash
 		 * @return
@@ -861,9 +863,9 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_SURVEY_NAME str 설문제목\n
 		 * @b COLUMN_SURVEY_CONTENT str 설문조사설명내용\n
-		 * @b COLUMN_SURVEY_CREATED_TS int 설문조사 만든시간\n
+		 * @b COLUMN_SURVEY_CREATED_TS long 설문조사 만든시간\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
-		 * @b COLUMN_SURVEY_ANSWERED_TS int 응답한시간\n
+		 * @b COLUMN_SURVEY_ANSWERED_TS long 응답한시간\n
 		 * @b COLUMN_SURVEY_SENDER_HASH str 보낸사람 해쉬\n
 		 * @param hash
 		 * @return
