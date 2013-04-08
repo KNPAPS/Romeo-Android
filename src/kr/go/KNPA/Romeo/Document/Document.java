@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONArray;
@@ -27,7 +28,7 @@ public class Document extends Message implements Parcelable{
 	public	static final String FWD_ARRIVAL_DT 		= "TS";
 	public	static final String FWD_CONTENT 		= "content";
 	
-	public	static final String ATTACH_FILE_URL = "file_url"; // (string)
+	public	static final String ATTACH_FILE_IDX = "file_hash"; // (string)
 	public	static final String ATTACH_FILE_NAME = "file_name"; // (string)
 	public	static final String ATTACH_FILE_TYPE = "file_type"; // (int)
 	public	static final String ATTACH_FILE_SIZE = "file_size"; // (long)
@@ -85,8 +86,65 @@ public class Document extends Message implements Parcelable{
 		this.favorite = favorite;
 	}
 	
-	public Document(Cursor c) {
-		super(c);
+	public Document(Context context, Cursor c) {
+		//super(c);
+		
+		this.idx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_HASH));
+		
+		DocumentProcManager dpm = DBProcManager.sharedManager(context).document();
+		
+		/*getDocumentContent(String docHash) 한 문서의 기본 정보 조회(포워딩,파일빼고) */
+		// 제목 (String)
+		Cursor cursor_documentInfo = dpm.getDocumentContent(this.idx);
+		cursor_documentInfo.moveToFirst();
+		this.title = cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
+		// 내용 (String)
+		this.content = cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
+		// 발신자 (String)
+		this.sender = User.getUserWithIdx( cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH)) );
+		// 발신일시 (long)
+		this.TS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		
+		
+		/* getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 */
+		Cursor cursor_forwardInfo = dpm.getDocumentForwardInfo(this.idx);
+		if(cursor_forwardInfo.getCount() > 0) {
+			cursor_forwardInfo.moveToFirst();
+			while( !cursor_forwardInfo.isAfterLast() ) {
+				// 포워더 (String)
+				cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+				// 코멘트 (String)
+				cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT));
+				// 포워딩한 시간 (long)
+				cursor_forwardInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+			}
+		}
+		
+		/* getDocumentAttachment(String docHash) : 문서의 첨부파일 정보	*/
+		Cursor cursor_attInfo = dpm.getDocumentAttachment(this.idx);
+		if(cursor_attInfo.getCount() > 0) {
+			cursor_attInfo.moveToFirst();
+			// 파일이름 (String)
+			cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+			// 파일종류 (int)
+			cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+			// 파일사이즈 (long)
+			cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+			// 파일URL (String)
+			cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+		}
+		
+		// this.receivers = receivers;
+		// this.received = received;
+		this.checked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
+		
+		this.checkTS = checkTS;
+		
+		this.forwards = forwards;
+		this.files = files;
+		//this.favorite = favorite;
+		
+		
 		
 		int subType = Document.NOT_SPECIFIED;
 		
@@ -99,9 +157,6 @@ public class Document extends Message implements Parcelable{
 			subType = Document.TYPE_FAVORITE;
 		
 		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
-		
-		boolean _favorite = (c.getInt(c.getColumnIndex("favorite")) == 1? true : false);
-		this.favorite = _favorite;
 	}
 
 	public Document(Parcel source) {

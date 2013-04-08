@@ -3,25 +3,15 @@ package kr.go.KNPA.Romeo.Document;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.Config;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;;
 
 public class DocumentListView extends RomeoListView implements android.widget.AdapterView.OnItemClickListener{
 
@@ -78,7 +68,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 			adapter= ((SimpleSectionAdapter)this.getAdapter());
 		
 		Cursor c = (Cursor)adapter.getItem(position);
-		Document document = new Document(c);
+		Document document = new Document(getContext(), c);
 		
 		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);
 		MainActivity.sharedActivity().pushContent(fragment);

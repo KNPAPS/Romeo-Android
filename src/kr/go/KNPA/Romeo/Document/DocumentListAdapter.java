@@ -4,17 +4,18 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 class DocumentListAdapter extends CursorAdapter {
 	public int type = Document.NOT_SPECIFIED;
@@ -23,115 +24,46 @@ class DocumentListAdapter extends CursorAdapter {
 	public DocumentListAdapter(Context context, Cursor c, int flags) 						{	super(context, c, flags);							}
 
 	@Override
-	public void bindView(View v, Context ctx, Cursor c) {
+	public void bindView(View v, final Context ctx, Cursor c) {
 		
-		DBProcManager.sharedManager(ctx);
+		DBProcManager.sharedManager(ctx).document();
 		// 문서해쉬 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_HASH));
+		final String docIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_HASH));
+		// 확인여부 (int)
+		
+		//boolean docChecked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
 		// 문서제목 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
-		// 자기가확인했는지 (int)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED));
-		// 문서보낸사람 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH));
-		// 문서생성일(보낸시간) (long)
-		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
+		String title = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
 		
-		
-		/*getDocumentContent(String docHash) 한 문서의 기본 정보 조회(포워딩,파일빼고) */
-		// 제목 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
-		// 내용 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
 		// 발신자 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH));
+		User sender = User.getUserWithIdx( c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH)) );
+		String senderInfo = sender.department.nameFull + " "+User.RANK[sender.rank] +" "+ sender.name;
 		// 발신일시 (long)
-		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		long TS =  c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
+		String DT = Formatter.timeStampToRecentString(TS);
 		
-		/* getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 */
-		// 포워더 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
-		// 코멘트 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT));
-		// 포워딩한 시간 (long)
-		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
 		
-		/* getDocumentAttachment(String docHash) : 문서의 첨부파일 정보	*/
-		// 파일이름 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
-		// 파일종류 (int)
-		c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
-		// 파일사이즈 (long)
-		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
-		// 파일URL (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+		TextView titleTV = (TextView)v.findViewById(R.id.title);
+		TextView senderTV = (TextView)v.findViewById(R.id.sender);
+		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
+	
+		titleTV.setText(title);
+		senderTV.setText(senderInfo);
+		arrivalDTTV.setText(DT);
 		
-		//TODO
 		if(this.type == Document.TYPE_DEPARTED) {
-			
-			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
-			TextView titleTV = (TextView)v.findViewById(R.id.title);
-			TextView senderTV = (TextView)v.findViewById(R.id.sender);
-			TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
 			Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
-			
-			String title = "";
-			title = c.getString(c.getColumnIndex("title"));
-			String senderIdx = c.getString(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.department.nameFull + " "+User.RANK[user.rank] +" "+ user.name;
-			
-			String arrivalDT = "";
-			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
-			arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
-			
-			
-			titleTV.setText(title);
-			senderTV.setText(sender);
-			arrivalDTTV.setText(arrivalDT);
-			
-		} else if(this.type == Document.TYPE_RECEIVED) {
-			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
-			TextView titleTV = (TextView)v.findViewById(R.id.title);
-			TextView senderTV = (TextView)v.findViewById(R.id.sender);
-			TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
-			
-			String title = "";
-			title = c.getString(c.getColumnIndex("title"));
-			String senderIdx = c.getString(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.department.nameFull + " "+User.RANK[user.rank] +" "+ user.name;
-			
-			String arrivalDT = "";
-			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
-			arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
-			
-			
-			titleTV.setText(title);
-			senderTV.setText(sender);
-			arrivalDTTV.setText(arrivalDT);
-			
-		} else if(this.type == Document.TYPE_FAVORITE) {
-			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
-			TextView titleTV = (TextView)v.findViewById(R.id.title);
-			TextView senderTV = (TextView)v.findViewById(R.id.sender);
-			TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
-			
-			String title = "";
-			title = c.getString(c.getColumnIndex("title"));
-			String senderIdx = c.getString(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.department.nameFull + " "+User.RANK[user.rank] +" "+ user.name;
-			
-			String arrivalDT = "";
-			long arrivalTS = c.getLong(c.getColumnIndex("TS"));
-			arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
-			
-			
-			titleTV.setText(title);
-			senderTV.setText(sender);
-			arrivalDTTV.setText(arrivalDT);
-			
+			goUnchecked.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View view) {
+					Intent intent = new Intent(ctx, UserListActivity.class);
+					Bundle b = new Bundle();
+					b.putStringArrayList("idxs", Document.getUncheckersIdxsWithMessageTypeAndIndex(type, docIdx));
+					intent.putExtras(b);
+					ctx.startActivity(intent);
+				}
+			});
 		}
 
 	}
