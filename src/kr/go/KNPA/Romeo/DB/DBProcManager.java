@@ -483,7 +483,7 @@ public class DBProcManager {
 				for ( int i=0; i<files.size(); i++) {
 					HashMap<String,Object> hm = files.get(i);
 					
-					String[] binds = { hm.get(Document.ATTACH_FILE_HASH).toString(), hm.get(Document.ATTACH_FILE_NAME).toString() } ;
+					String[] binds = { hm.get(Document.ATTACH_FILE_IDX).toString(), hm.get(Document.ATTACH_FILE_NAME).toString() } ;
 					long fileSize = (Long)hm.get(Document.ATTACH_FILE_SIZE);
 					int fileType = (Integer) hm.get(Document.ATTACH_FILE_TYPE) ;
 					
