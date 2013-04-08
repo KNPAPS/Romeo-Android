@@ -616,11 +616,7 @@ public class DBProcManager {
 			//doc rowid
 			long docId = lastInsertId();
 			//포워딩정보저장
-			for (int i=0; i<forwards.size(); i++) {
-				HashMap<String,Object> hm = forwards.get(i);
-				addForwardToDocument(docHash, hm.get(Document.FWD_FORWARDER_IDX).toString() , hm.get(Document.FWD_CONTENT).toString(), (Long)hm.get(Document.FWD_ARRIVAL_DT));
-			}
-			
+			addForwardInfo(docHash, forwards);
 			saveAttachmentInfo(docId, files);
 		}
 		
