@@ -95,6 +95,8 @@ public class KEY {
 		public static final String QUESTION_TITLE = "questionTitle";
 		public static final String QUESTION_CONTENT = "questionContent";
 		public static final String OPTIONS = "options";
+		
+		public static final String ANSWER_SHEET = "answerSheet";
 	}
 	
 	public static class USER {
