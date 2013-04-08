@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Register;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
@@ -49,7 +50,7 @@ public class StatusChecker {
 		
 		/** 데이터 가져오기 시작 */
 		HashMap<String,Object> hm = new HashMap<String,Object>();
-		hm.put(Data.KEY_USER_HASH, userIdx);
+		hm.put(KEY.USER.IDX, userIdx);
 		
 		Data data = new Data();
 		data.add(hm);
@@ -71,7 +72,7 @@ public class StatusChecker {
 		 * 서버에 등록조차 안되어 있는 상태임
 		 */
 		if ( responsePayload.getStatusCode() == StatusCode.SUCCESS ) {
-			int status = (Integer) responsePayload.getData().get(0).get(Data.KEY_IS_ENABLED);
+			int status = (Integer) responsePayload.getData().get(0).get(KEY.USER.IS_ENABLED);
 			return status == 1 ? USER_REGISTERED_ENABLED : USER_REGISTERED_NOT_ENABLED;
 		}else {
 			return USER_NOT_REGISTERED;
@@ -99,9 +100,9 @@ public class StatusChecker {
 		
 		/** 데이터 가져오기 시작 */
 		HashMap<String,Object> hm = new HashMap<String,Object>();
-		hm.put(Data.KEY_USER_HASH,userHash);
-		hm.put(Data.KEY_DEVICE_UUID, uuid);
-		hm.put(Data.KEY_DEVICE_REG_ID, regid);
+		hm.put(KEY.USER.IDX,userHash);
+		hm.put(KEY.DEVICE.UUID, uuid);
+		hm.put(KEY.DEVICE.GCM_REGISTRATION_ID, regid);
 		
 		Data data = new Data();
 		data.add(hm);
@@ -121,8 +122,8 @@ public class StatusChecker {
 		 * 만약 서버에서 리턴한 상태코드가 success가 아니라면
 		 * 서버에 등록조차 안되어 있는 상태임
 		 */
-		int isRegistered = (Integer) responsePayload.getData().get(0).get(Data.KEY_DEVICE_IS_REGISTERED);
-		int isEnabled = (Integer) responsePayload.getData().get(0).get(Data.KEY_DEVICE_IS_ENABLED);
+		int isRegistered = (Integer) responsePayload.getData().get(0).get(KEY.DEVICE.IS_REGISTERED);
+		int isEnabled = (Integer) responsePayload.getData().get(0).get(KEY.DEVICE.IS_ENABLED);
 
 		if ( isRegistered == 0 ) {
 			return DEVICE_NOT_REGISTERED;

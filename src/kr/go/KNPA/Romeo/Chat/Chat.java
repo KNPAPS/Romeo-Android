@@ -35,24 +35,24 @@ public class Chat extends Message {
 	}
 
 	public Chat(
-			String			idx, 
-			int				type, 
-//			String			title, 
-			String			content, 
-			User 			sender, 
-			ArrayList<User>	receivers, 
-			boolean			received,
-			long			TS,
-			boolean			checked, 
-			long 			checkTS,
-			String 			roomCode, 
-			int 			contentType) {
+			String				idx, 
+			int					type, 
+//			String				title, 
+			String				content, 
+			String 				sender, 
+			ArrayList<String>	receivers, 
+			boolean				received,
+			long				TS,
+			boolean				checked, 
+			long 				checkTS,
+			String 				roomCode, 
+			int 				contentType) {
 		this.idx = idx;
 		this.type = type;
 //		this.title = title;
 		this.content = content;
-		this.sender = sender;
-		this.receivers = receivers;
+		this.senderIdx = sender;
+		this.receiversIdx = receivers;
 		this.received = received;
 		this.TS = TS;
 		this.checked = checked;
@@ -61,34 +61,11 @@ public class Chat extends Message {
 		this.contentType = contentType;
 	}
 	
-	public static Chat chatOnSend(int type, String content, User sender, ArrayList<User> receivers, long TS, String roomCode, int contentType) {
+	public static Chat chatOnSend(int type, String content, String sender, ArrayList<String> receivers, long TS, String roomCode, int contentType) {
 		return new Chat(null, type, content, sender, receivers, false, TS, true, TS, roomCode, contentType);
 		// TODO Chat checked == true?? => 서버
 	}
-	/*
-	public Chat(Payload payload, boolean received, long checkTS) {
-		
-		this.idx = payload.message.idx;
-		this.type = payload.message.type;
-		this.title = payload.message.title;
-		this.content = payload.message.content;
-		this.appendix = payload.message.appendix;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.TS = System.currentTimeMillis();
-		//this.received = true;
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		
-		this.received = received;
-		this.checkTS = checkTS;
-		if(this.checkTS == Message.NOT_SPECIFIED) {
-			this.checked = false;
-		} else {
-			this.checked = true;
-		}
-	}
-	*/
+
 	
 	public Chat clone() {
 		Chat chat = (Chat)this.clone(new Chat());
@@ -102,7 +79,7 @@ public class Chat extends Message {
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).chat().saveChatOnSend(this.roomCode, this.idx, this.sender.idx, this.content, this.contentType, this.TS);
+			DBProcManager.sharedManager(context).chat().saveChatOnSend(this.roomCode, this.idx, this.senderIdx, this.content, this.contentType, this.TS);
 		}  else {
 			// Failure
 		}

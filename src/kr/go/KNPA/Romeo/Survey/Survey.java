@@ -49,7 +49,7 @@ public class Survey extends Message implements Parcelable{
 		
 		this.idx 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
 		this.title 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
-		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX)));
+		this.senderIdx		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));
 		//this.receivers 	= 
 		
 		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
@@ -80,26 +80,26 @@ public class Survey extends Message implements Parcelable{
 	}
 
 	public Survey(
-			String			idx, 
-			int				type, 
-			String			title, 
-			String			content, 
-			User 			sender, 
-			ArrayList<User>	receivers, 
-			boolean			received,
-			long			TS,
-			boolean			checked, 
-			long 			checkTS,
-			long			openTS,
-			long			closeTS,
-			boolean			answered
+			String				idx, 
+			int					type, 
+			String				title, 
+			String				content, 
+			String 				senderIdx, 
+			ArrayList<String>	receivers, 
+			boolean				received,
+			long				TS,
+			boolean				checked, 
+			long 				checkTS,
+			long				openTS,
+			long				closeTS,
+			boolean				answered
 			) {
 		this.idx = idx;
 		this.type = type;
 		this.title = title;
 		this.content = content;
-		this.sender = sender;
-		this.receivers = receivers;
+		this.senderIdx = senderIdx;
+		this.receiversIdx = receivers;
 		this.received = received;
 		this.TS = TS;
 		this.checked = checked;
@@ -140,7 +140,7 @@ public class Survey extends Message implements Parcelable{
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx, this.title, this.content, this.sender.idx, this.TS);
+			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx, this.title, this.content, this.senderIdx, this.TS);
 		}  else {
 			// Failure
 		}

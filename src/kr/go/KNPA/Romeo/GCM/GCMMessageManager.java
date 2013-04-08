@@ -107,12 +107,12 @@ public class GCMMessageManager {
 		// 방이 존재하지 않으면 DB상에 새로 만든다.
 		if(DBProcManager.sharedManager(context).chat().roomExists(chat.roomCode) == false) {
 			DBProcManager.sharedManager(context)
-				.chat().createRoom(Room.getUsers(context, chat.sender, chat.receivers), chat.type(), chat.roomCode);	// TODO chat.type
+				.chat().createRoom(Room.getUsersIdx(context, chat.senderIdx, chat.receiversIdx), chat.type(), chat.roomCode);	// TODO chat.type
 		}
 		
 		// DB상 방에 Chat 저장
 		DBProcManager.sharedManager(context)
-			.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
+			.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
 		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
@@ -123,7 +123,7 @@ public class GCMMessageManager {
 	private void onDocument(Document document) {
 		DBProcManager.sharedManager(context)
 		.document()
-		.saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, 
+		.saveDocumentOnReceived(document.idx, document.senderIdx, document.title, document.content, 
 								document.TS, document.forwards, document.files);
 		
 		if(isRunningProcess(context))
@@ -134,7 +134,7 @@ public class GCMMessageManager {
 	
 	private void onSurvey(Survey survey) {
 		DBProcManager.sharedManager(context)
-			.survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
+			.survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.senderIdx, survey.TS);
 		
 		if(isRunningProcess(context))
 			SurveyFragment.receive(survey);		//리스트뷰에 notify

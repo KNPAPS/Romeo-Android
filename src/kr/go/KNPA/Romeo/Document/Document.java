@@ -58,26 +58,26 @@ public class Document extends Message implements Parcelable{
 	}
 	
 	public Document(
-			String			idx, 
-			int				type, 
-			String			title, 
-			String			content, 
-			User 			sender, 
-			ArrayList<User>	receivers, 
-			boolean			received,
-			long			TS,
-			boolean			checked, 
-			long 			checkTS,
-			ArrayList<HashMap<String, Object>> forwards,
-			ArrayList<HashMap<String, Object>> files,
-			boolean			favorite
+			String								idx, 
+			int									type, 
+			String								title, 
+			String								content, 
+			String 								senderIdx, 
+			ArrayList<String>					receivers, 
+			boolean								received,
+			long								TS,
+			boolean								checked, 
+			long 								checkTS,
+			ArrayList<HashMap<String, Object>> 	forwards,
+			ArrayList<HashMap<String, Object>> 	files,
+			boolean								favorite
 			) {
 		this.idx = idx;
 		this.type = type;
 		this.title = title;
 		this.content = content;
-		this.sender = sender;
-		this.receivers = receivers;
+		this.senderIdx = senderIdx;
+		this.receiversIdx = receivers;
 		this.received = received;
 		this.TS = TS;
 		this.checked = checked;
@@ -102,7 +102,7 @@ public class Document extends Message implements Parcelable{
 		// 내용 (String)
 		this.content = cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
 		// 발신자 (String)
-		this.sender = User.getUserWithIdx( cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX)) );
+		this.senderIdx = cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX));
 		// 발신일시 (long)
 		this.TS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
 		// 문서카테고리 (int) Document.TYPE_DEPARTED, Document.TYPE_RECEIVED
@@ -163,7 +163,7 @@ public class Document extends Message implements Parcelable{
 			this.files = fs;
 		}
 		
-		this.receivers = null;	// TODO
+		this.receiversIdx = null;	// TODO
 	}
 
 	public Document(Parcel source) {
@@ -220,7 +220,7 @@ public class Document extends Message implements Parcelable{
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).document().saveDocumentOnSend(this.idx, this.sender.idx, this.title, this.content, this.TS, this.files);
+			DBProcManager.sharedManager(context).document().saveDocumentOnSend(this.idx, this.senderIdx, this.title, this.content, this.TS, this.files);
 		}  else {
 			// Failure
 		}

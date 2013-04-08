@@ -45,26 +45,20 @@ public class Message implements Parcelable{
 	public static final String MESSAGE_KEY_COMMAND = "COMMAND";
 	public static final String MESSAGE_KEY_DOCUMENT = "DOCUMENT";
 	public static final String MESSAGE_KEY_SURVEY = "SURVEY";
+		
+	public String 				idx 			= null;
+	protected int 				type			= NOT_SPECIFIED;
 	
-	protected static final String KEY_TYPE		=	"type";
-	protected static final String KEY_TITLE		=	"title";
-	protected static final String KEY_CONTENT	=	"content";
-	protected static final String KEY_SENDER	=	"sender";
-	protected static final String KEY_RECEIVERS	=	"receivers";
+	public String 				title			= null;
+	public String 				content			= null;
 	
-	public String 			idx 		= null;
-	protected int 			type		= NOT_SPECIFIED;
+	public String 				senderIdx		= null;
+	public ArrayList<String> 	receiversIdx 	= null;
 	
-	public String 			title		= null;
-	public String 			content		= null;
+	public long 				TS				= NOT_SPECIFIED;
 	
-	public User 			sender		= null;
-	public ArrayList<User> 	receivers 	= null;
-	
-	public long 			TS			= NOT_SPECIFIED;
-	
-	public boolean 			checked 	= false;
-	public long 			checkTS		= NOT_SPECIFIED;
+	public boolean 				checked 		= false;
+	public long 				checkTS			= NOT_SPECIFIED;
 	
 	
 	public boolean received;
@@ -80,8 +74,8 @@ public class Message implements Parcelable{
 		message.type = this.type;
 		message.title = this.title;
 		message.content = this.content;
-		message.sender = this.sender;
-		message.receivers = this.receivers;
+		message.senderIdx = this.senderIdx;
+		message.receiversIdx = this.receiversIdx;
 		message.TS = this.TS;
 		message.checked = this.checked;
 		message.checkTS = this.checkTS;
@@ -113,17 +107,17 @@ public class Message implements Parcelable{
 				case Message.MESSAGE_TYPE_SURVEY	:		message = new Survey(json);		break;
 			}
 			
-			message.type = jo.getInt(KEY_TYPE);
-			message.title = jo.getString(KEY_TITLE);
-			message.content = jo.getString(KEY_CONTENT);
-			message.sender = User.getUserWithIdx(jo.getString(KEY_SENDER));
+			message.type = jo.getInt(KEY.MESSAGE.TYPE);
+			message.title = jo.getString(KEY.MESSAGE.TITLE);
+			message.content = jo.getString(KEY.MESSAGE.CONTENT);
+			message.senderIdx = jo.getString(KEY.MESSAGE.SENDER);
 			
-			JSONArray __receivers = jo.getJSONArray(KEY_RECEIVERS);
+			JSONArray __receivers = jo.getJSONArray(KEY.MESSAGE.RECEIVERS);
 			ArrayList<String> _receivers = new ArrayList<String>(__receivers.length()); 
 			for(int i=0; i<__receivers.length(); i++) {
 				_receivers.add(__receivers.getString(i));
 			}
-			message.receivers = User.getUsersWithIdxs(_receivers);
+			message.receiversIdx = _receivers;
 		} catch (JSONException e) {
 			message = null;
 		}
@@ -150,8 +144,8 @@ public class Message implements Parcelable{
 		this.title 		= c.getString(c.getColumnIndex("title"));
 		this.content 	= c.getString(c.getColumnIndex("content"));
 		
-		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex("sender")));
-		this.receivers 	= User.getUsersWithIdxs(c.getString(c.getColumnIndex("receivers")));
+		this.senderIdx		= c.getString(c.getColumnIndex("sender"));
+		this.receiversIdx 	= c.getString(c.getColumnIndex("receivers"));
 		
 		this.TS			= c.getLong(c.getColumnIndex("TS"));
 		
@@ -200,8 +194,8 @@ public class Message implements Parcelable{
 		dest.writeString(title);
 		dest.writeInt(type);
 		dest.writeString(content);
-		dest.writeParcelable(sender, flags);
-		dest.writeTypedList(receivers);
+		dest.writeString(senderIdx);
+		dest.writeStringList(receiversIdx);
 		dest.writeLong(TS);
 		dest.writeLong(checkTS);
 		boolean[] ba = {received, checked};
@@ -213,8 +207,8 @@ public class Message implements Parcelable{
 		title = source.readString();
 		type = source.readInt();
 		content = source.readString();
-		sender = source.readParcelable(User.class.getClassLoader());
-		receivers = source.createTypedArrayList(User.CREATOR);
+		senderIdx = source.readString();
+		receiversIdx = source.createStringArrayList();
 		TS = source.readLong();
 		checkTS = source.readLong();
 		boolean[] ba = source.createBooleanArray();

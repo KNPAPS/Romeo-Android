@@ -27,7 +27,7 @@ public class DocumentForwardFragment extends Fragment {
 	private EditText receiversET;
 	private Button receiversSearchBT;
 	private EditText contentET;
-	private ArrayList<User> receivers;
+	private ArrayList<String> receiversIdx;
 	public DocumentForwardFragment() {
 		fragment = this;
 	}
@@ -42,7 +42,7 @@ public class DocumentForwardFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// initialize
-		receivers = new ArrayList<User>();
+		receiversIdx = new ArrayList<String>();
 		View view = inflater.inflate(R.layout.document_forward_compose, null, false);
 
 		// Navigation Bar
@@ -119,7 +119,7 @@ public class DocumentForwardFragment extends Fragment {
 			fwdDocument.forwards = new ArrayList<HashMap<String, Object>>();
 		fwdDocument.forwards.add(forward);
 		
-		fwdDocument.receivers = receivers;
+		fwdDocument.receiversIdx = receiversIdx;
 		
 		// Send
 		fwdDocument.send(getActivity());
@@ -140,21 +140,21 @@ public class DocumentForwardFragment extends Fragment {
 				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDXS);
 				// 선택한 사람들로 <대체>된다.
 				
-				ArrayList<User> newUsers = new ArrayList<User>();
+				ArrayList<String> newUsers = new ArrayList<String>();
 				for(int i=0; i< receiversIdxs.size(); i++ ){
-					User user = User.getUserWithIdx(receiversIdxs.get(i));
+					String userIdx = receiversIdxs.get(i);
 					//if(receivers.contains(user)) continue;
-					newUsers.add(user);
+					newUsers.add(userIdx);
 				}
 				//receivers.addAll(newUsers);
-				receivers = newUsers;
+				receiversIdx = newUsers;
 				
-				if(receivers.size() > 0) {
-					User fReceiver = receivers.get(0);
+				if(receiversIdx.size() > 0) {
+					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
 					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
-				} else if (receivers.size() > 1) {
-					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
+				} else if (receiversIdx.size() > 1) {
+					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
+					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receiversIdx.size()+"명");
 				} else {
 					receiversET.setText("선택된 사용자가 없습니다.");
 				}
