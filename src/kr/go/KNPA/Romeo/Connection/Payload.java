@@ -1,5 +1,7 @@
 package kr.go.KNPA.Romeo.Connection;
 
+import java.lang.reflect.Field;
+
 import kr.go.KNPA.Romeo.Config.Constants;
 
 import org.json.JSONException;
@@ -7,7 +9,9 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * 서버/클라이언트 간의 주고받는 데이터의 container\n
@@ -100,8 +104,24 @@ public class Payload {
 	 * @return json string
 	 */
 	public String toJSON() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
+		FieldNamingStrategy fieldNamingStrategy = new FieldNamingStrategy() {
+			
+			@Override
+			public String translateName(Field arg0) {
+				return arg0.getDeclaringClass().getSimpleName()+"_"+arg0.getName();
+				
+			}
+		};
+		
+		Gson gson = new GsonBuilder()
+	     .setFieldNamingStrategy(fieldNamingStrategy)
+	     .create();
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"event\":\"").append(this.getEvent())
+		.append("\",\"status\":").append(String.valueOf(this.getStatusCode()))
+		.append(",\"data\":").append(gson.toJson(this.getData())).append("}");
+		return sb.toString();
 	}
 	
 }
