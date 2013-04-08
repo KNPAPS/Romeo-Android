@@ -104,6 +104,8 @@ public class GCMMessageManager {
 	// on Message in cases
 	private void onChat (Chat chat) {
 		DBProcManager.sharedManager(context)
+		.chat().createRoom(userHashes, chatType)
+		DBProcManager.sharedManager(context)
 		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
 		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
