@@ -11,6 +11,7 @@ import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
@@ -83,7 +84,7 @@ public class GCMMessageManager {
         	if(events[1].equalsIgnoreCase("RECEIVED")) {	// RECEIVED
         		
         		// payload 속에 담겨있는 Message 객체
-        		Message message = (Message)payload.getData().get(0, Data.KEY_MESSAGE);
+        		Message message = (Message)payload.getData().get(0, KEY._MESSAGE);
        
 		        switch(message.mainType()) {
 			    	case Message.MESSAGE_TYPE_CHAT 		:	onChat((Chat)message);			break;

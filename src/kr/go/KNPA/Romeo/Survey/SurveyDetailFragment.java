@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;

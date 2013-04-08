@@ -8,6 +8,7 @@ package kr.go.KNPA.Romeo.Config;
 public class KEY {
 	
 	public static final String RESPONSE_TEXT = "responseText";
+	public static final String _MESSAGE = "message";
 	
 	public static class MESSAGE {
 		public static final String IDX = "idx";

@@ -40,7 +40,7 @@ public class ChatListAdapter extends CursorAdapter {
 		DBProcManager.sharedManager(context);
 		
 		// 센더해쉬
-		String 	senderIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_HASH));
+		String 	senderIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
 		// 채팅TS
 		long 	arrivalTS	= c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_TS));
 		// 내용
@@ -48,7 +48,7 @@ public class ChatListAdapter extends CursorAdapter {
 		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
 		int 	contentType	= c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
 		// 챗 해쉬값
-		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_HASH));
+		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
 		
 		
 		ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);

@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -47,7 +48,7 @@ public class ImageManager {
 	public ImageManager uploadProfileImg( String userHash, String fileName){//, CallbackEvent<Payload,Integer,Payload> callBack) {
 		Payload requestPayload = new Payload(Event.USER_UPLOAD_PROFILE_IMG);
 		Data reqData = new Data();
-		reqData.add(0,Data.KEY_USER_HASH,userHash);
+		reqData.add(0,KEY.USER.IDX,userHash);
 		
 		new Connection().requestPayloadJSON(requestPayload.toJSON()).attachFile(fileName).callBack(callBack).request();
 		return this;

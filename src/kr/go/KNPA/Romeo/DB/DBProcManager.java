@@ -145,7 +145,7 @@ public class DBProcManager {
 					"insert into "+DBSchema.ROOM.TABLE_NAME+
 					"("+DBSchema.ROOM.COLUMN_TYPE+","+
 						DBSchema.ROOM.COLUMN_IS_FAVORITE+","+
-						DBSchema.ROOM.COLUMN_HASH+
+						DBSchema.ROOM.COLUMN_IDX+
 					") values ("+String.valueOf(chatType)+",0,?)";
 			String[] value = {roomHash};
 			db.execSQL(sql,value);
@@ -158,7 +158,7 @@ public class DBProcManager {
 				for( i=0; i<n; i++ ) {
 					sql = 
 						"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+
-						"("+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+")" +
+						"("+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+")" +
 						"values ( "+String.valueOf( roomId )+", ? )";
 					String[] val = { userHashes.get(i) };
 					db.execSQL(sql, val);
@@ -177,7 +177,7 @@ public class DBProcManager {
 		 */
 		public boolean roomExists(String roomHash) {
 			String sql = "select count(_id)>0 is_exists from "+DBSchema.ROOM.TABLE_NAME+
-					" where "+DBSchema.ROOM.COLUMN_HASH+" = ?";
+					" where "+DBSchema.ROOM.COLUMN_IDX+" = ?";
 			String[] val = {roomHash};
 			Cursor cursor = db.rawQuery(sql, val);
 			cursor.moveToNext();
@@ -190,7 +190,7 @@ public class DBProcManager {
 		 * @param roomHash
 		 */
 		public void addUsersToRoom(ArrayList<String> users, String roomHash ) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -198,7 +198,7 @@ public class DBProcManager {
 			String sql = 
 					"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+" ("+
 							DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+
-							DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+
+							DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+
 					") values( "+String.valueOf(roomId)+" , ? )";
 			db.beginTransaction();
 			try {
@@ -218,7 +218,7 @@ public class DBProcManager {
 		 * 유저 한명이 대화에 참가
 		 */
 		public void addUserToRoom(String user, String roomHash ) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -226,7 +226,7 @@ public class DBProcManager {
 			String sql = 
 					"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+" ("+
 							DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+
-							DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+
+							DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+
 					") values( "+String.valueOf(roomId)+" , ? )";
 
 			String[] val = {user};
@@ -239,7 +239,7 @@ public class DBProcManager {
 		 * @param roomHash
 		 */
 		public void removeUserFromRoom(String user, String roomHash) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -248,7 +248,7 @@ public class DBProcManager {
 					"delete from"+DBSchema.ROOM_CHATTER.TABLE_NAME+
 					" where "+
 						DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId)+
-						" and "+DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+" = ?";
+						" and "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" = ?";
 
 			String[] val = {user};
 			db.execSQL(sql,val);
@@ -284,7 +284,7 @@ public class DBProcManager {
 		
 		private void saveChat(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
 			//room hash가 유효한 방인지 검사
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -292,8 +292,8 @@ public class DBProcManager {
 			String sql = 
 					"insert into "+DBSchema.CHAT.TABLE_NAME+
 					"("+DBSchema.CHAT.COLUMN_ROOM_ID+", "+
-						DBSchema.CHAT.COLUMN_HASH+", "+
-						DBSchema.CHAT.COLUMN_SENDER_HASH+", "+
+						DBSchema.CHAT.COLUMN_IDX+", "+
+						DBSchema.CHAT.COLUMN_SENDER_IDX+", "+
 						DBSchema.CHAT.COLUMN_CONTENT+", "+
 						DBSchema.CHAT.COLUMN_CONTENT_TYPE+", "+
 						DBSchema.CHAT.COLUMN_CREATED_TS+") " +
@@ -323,7 +323,7 @@ public class DBProcManager {
 					"set "+
 					DBSchema.CHAT.COLUMN_IS_CHECKED + " = 1,"+
 					DBSchema.CHAT.COLUMN_CHECKED_TS + " = " + String.valueOf(checkedTS)+
-					" where " + DBSchema.CHAT.COLUMN_HASH + " IN (";
+					" where " + DBSchema.CHAT.COLUMN_IDX + " IN (";
 			for( int i=0; i<chatHash.size(); i++) {
 				sql += "?,";
 			}
@@ -337,7 +337,7 @@ public class DBProcManager {
 		 * @param lastReadTS lastReadTS
 		 */
 		public void updateLastReadTS( String roomHash, long lastReadTS ) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
@@ -361,7 +361,7 @@ public class DBProcManager {
 		/**
 		 * 채팅방 목록에 대한 정보를 담고 있는 커서를 반환
 		 * @b 커서구조
-		 * @b COLUMN_ROOM_HASH 채팅방 해시\n
+		 * @b COLUMN_ROOM_IDX 채팅방 해시\n
 		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
 		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
 		 * @b COLUMN_ROOM_NUM_NEW_CHAT 읽지 않은 채팅 수\n
@@ -373,8 +373,8 @@ public class DBProcManager {
 		public Cursor getRoomList(int roomType) {
 			String sql = 
 					"select " +
-					" r."+DBSchema.ROOM.COLUMN_HASH+
-						COLUMN_ROOM_HASH+"," +
+					" r."+DBSchema.ROOM.COLUMN_IDX+
+						COLUMN_ROOM_IDX+"," +
 					
 					" r."+DBSchema.ROOM.COLUMN_TITLE+
 						COLUMN_ROOM_TITLE+"," +
@@ -411,16 +411,16 @@ public class DBProcManager {
 		/**
 		 * 채팅을 전송할 때 채팅방에 있는 사람들의 목록을 리턴
 		 * @b 커서구조
-		 * @b COLUMN_USER_HASH 리시버 해쉬
+		 * @b COLUMN_USER_IDX 리시버 해쉬
 		 * @param hash 채팅방 해쉬
 		 * @return
 		 */
 		public Cursor getReceiverList( String hash ) {
 			
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, hash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, hash);
 			
 			String sql = 
-					"select "+DBSchema.ROOM_CHATTER.COLUMN_USER_HASH+COLUMN_USER_HASH+
+					"select "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+COLUMN_USER_IDX+
 					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
 					" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"="+String.valueOf(roomId);
 			return db.rawQuery(sql,null);
@@ -429,8 +429,8 @@ public class DBProcManager {
 		/**
 		 * 채팅방 내의 채팅 목록 불러오기
 		 * @b 커서구조
-		 * @b COLUMN_CHAT_HASH 채팅해쉬\n
-		 * @b COLUMN_CHAT_SENDER_HASH 센더해쉬\n
+		 * @b COLUMN_CHAT_IDX 채팅해쉬\n
+		 * @b COLUMN_CHAT_SENDER_IDX 센더해쉬\n
 		 * @b COLUMN_CHAT_TS 채팅TS\n
 		 * @b COLUMN_CHAT_CONTENT 내용 \n
 		 * @b COLUMN_CHAT_CONTENT_TYPE 내용의 종류 @see{CHAT_CONTENT_TYPE_TEXT} @see{CHAT_CONTENT_TYPE_PICTURE}\n
@@ -441,11 +441,11 @@ public class DBProcManager {
 		 */
 		public Cursor getChatList(String roomHash, int start, int count) {
 		
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_HASH, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			String sql=
 					"select "+
-					DBSchema.CHAT.COLUMN_HASH+COLUMN_CHAT_HASH+", "+
-					DBSchema.CHAT.COLUMN_SENDER_HASH+COLUMN_CHAT_SENDER_HASH+", "+
+					DBSchema.CHAT.COLUMN_IDX+COLUMN_CHAT_IDX+", "+
+					DBSchema.CHAT.COLUMN_SENDER_IDX+COLUMN_CHAT_SENDER_IDX+", "+
 					DBSchema.CHAT.COLUMN_CREATED_TS+COLUMN_CHAT_TS+", "+
 					DBSchema.CHAT.COLUMN_CONTENT+COLUMN_CHAT_CONTENT+", "+
 					DBSchema.CHAT.COLUMN_CONTENT_TYPE+COLUMN_CHAT_CONTENT_TYPE+
@@ -456,15 +456,15 @@ public class DBProcManager {
 			return db.rawQuery(sql, null);
 		}
 		
-		public static final String COLUMN_ROOM_HASH = "room_hash";
-		public static final String COLUMN_ROOM_TITLE = "room_hash";
-		public static final String COLUMN_ROOM_NUM_CHATTER = "room_hash";
+		public static final String COLUMN_ROOM_IDX = "room_idx";
+		public static final String COLUMN_ROOM_TITLE = "room_idx";
+		public static final String COLUMN_ROOM_NUM_CHATTER = "room_idx";
 		public static final String COLUMN_ROOM_NUM_NEW_CHAT = "num_new_chat";
 		public static final String COLUMN_ROOM_LAST_CHAT_TS = "last_chat_ts";
 		public static final String COLUMN_ROOM_LAST_CHAT_CONTENT = "last_chat_content";
-		public static final String COLUMN_USER_HASH = "user_hash";
-		public static final String COLUMN_CHAT_SENDER_HASH = "sender_hash";
-		public static final String COLUMN_CHAT_HASH = "chat_hash";
+		public static final String COLUMN_USER_IDX = "user_idx";
+		public static final String COLUMN_CHAT_SENDER_IDX = "sender_idx";
+		public static final String COLUMN_CHAT_IDX = "chat_idx";
 		public static final String COLUMN_CHAT_TS = "created_ts";
 		public static final String COLUMN_CHAT_CONTENT = "chat_content";
 		public static final String COLUMN_CHAT_CONTENT_TYPE = "chat_content_type";
@@ -490,7 +490,7 @@ public class DBProcManager {
 					String sql = "insert into "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
 							"("+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_DOC_ID+","+
-							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_HASH+","+
+							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_IDX+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE+","+
 							DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE+
@@ -520,8 +520,8 @@ public class DBProcManager {
 			//document 테이블에 insert
 			String sql =
 					"insert into "+DBSchema.DOCUMENT.TABLE_NAME+
-					" ("+DBSchema.DOCUMENT.COLUMN_HASH+","+
-					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+","+
+					" ("+DBSchema.DOCUMENT.COLUMN_IDX+","+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_IDX+","+
 					DBSchema.DOCUMENT.COLUMN_TITLE+","+
 					DBSchema.DOCUMENT.COLUMN_CONTENT+","+
 					DBSchema.DOCUMENT.COLUMN_CREATED_TS+","+
@@ -552,7 +552,7 @@ public class DBProcManager {
 		
 		private void addForwardInfo(String docHash, ArrayList<HashMap<String,Object>> forwards) {
 			
-			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 			if ( docId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -565,7 +565,7 @@ public class DBProcManager {
 					String sql = "insert into "+DBSchema.DOCUMENT_FORWARD.TABLE_NAME+
 							" ("+
 							DBSchema.DOCUMENT_FORWARD.COLUMN_DOC_ID+","+
-							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH+","+
+							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_IDX+","+
 							DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT+","+
 							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS+")"+
 							" values ("+String.valueOf(docId)+", ?, ?, "+String.valueOf( forwards.get(i).get(Document.FWD_FORWARDER_IDX) )+")";
@@ -602,8 +602,8 @@ public class DBProcManager {
 			//document 테이블에 insert
 			String sql =
 					"insert into "+DBSchema.DOCUMENT.TABLE_NAME+
-					" ("+DBSchema.DOCUMENT.COLUMN_HASH+","+
-					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+","+
+					" ("+DBSchema.DOCUMENT.COLUMN_IDX+","+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_IDX+","+
 					DBSchema.DOCUMENT.COLUMN_TITLE+","+
 					DBSchema.DOCUMENT.COLUMN_CONTENT+","+
 					DBSchema.DOCUMENT.COLUMN_CREATED_TS+","+
@@ -625,7 +625,7 @@ public class DBProcManager {
 		 * @param hash 문서 해쉬
 		 */
 		public void setFavorite( String hash, boolean isFavorite) {
-			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, hash);
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, hash);
 			if ( docId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -648,7 +648,7 @@ public class DBProcManager {
 		 * @param checkedTS 체크한 시간
 		 */
 		public void updateCheckedTS( String docHash, long checkedTS ) {
-			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 			if ( docId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -662,10 +662,10 @@ public class DBProcManager {
 		/**
 		 * 문서 목록 가져오기
 		 * @b 커서구조
-		 * @b COLUMN_DOC_HASH str 문서해쉬\n
+		 * @b COLUMN_DOC_IDX str 문서해쉬\n
 		 * @b COLUMN_DOC_TITLE str 문서제목\n
 		 * @b COLUMN_IS_CHECKED int 자기가확인했는지\n
-		 * @b COLUMN_SENDER_HASH str 문서보낸사람\n
+		 * @b COLUMN_SENDER_IDX str 문서보낸사람\n
 		 * @b COLUMN_CREATED_TS long 문서생성일(보낸시간)\n
 		 * @param docCategory 문서타입 @see {Document.TYPE_RECEIVED} @see {Document.TYPE_FAVORITE} @see {Document.TYPE_DEPARTED} 
 		 * @return 
@@ -674,10 +674,10 @@ public class DBProcManager {
 			
 			if ( docCategory == Document.TYPE_FAVORITE ) {
 				String sql ="select "+
-						DBSchema.DOCUMENT.COLUMN_HASH+COLUMN_DOC_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_IDX+COLUMN_DOC_IDX+", "+
 						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
 						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
-						DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATOR_IDX+COLUMN_SENDER_IDX+", "+
 						DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
 						" from"+DBSchema.DOCUMENT.TABLE_NAME+
 						"where "+DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+" = 1 "+
@@ -685,10 +685,10 @@ public class DBProcManager {
 				return db.rawQuery(sql, null);
 			} else {
 				String sql ="select "+
-						DBSchema.DOCUMENT.COLUMN_HASH+COLUMN_DOC_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_IDX+COLUMN_DOC_IDX+", "+
 						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
 						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
-						DBSchema.DOCUMENT.COLUMN_CREATOR_HASH+COLUMN_SENDER_HASH+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATOR_IDX+COLUMN_SENDER_IDX+", "+
 						DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+
 						" from"+DBSchema.DOCUMENT.TABLE_NAME+
 						"where "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+String.valueOf(docCategory)+
@@ -704,7 +704,7 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_DOC_TITLE str 제목\n
 		 * @b COLUMN_DOC_CONTENT str 내용\n
-		 * @b COLUMN_SENDER_HASH str 발신자\n
+		 * @b COLUMN_SENDER_IDX str 발신자\n
 		 * @b COLUMN_DOC_TS long 발신일시\n
 		 * @b COLUMN_DOC_TYPE int 문서카테고리 Document.TYPE_DEPARTED, Document.TYPE_RECEIVED, Document.TYPE_FAVORITE\n
 		 * @b COLUMN_IS_FAVORITE int 즐겨찾기여부
@@ -715,12 +715,12 @@ public class DBProcManager {
 		 */
 		public Cursor getDocumentContent(String docHash) {
 			
-			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 			
 			String sql ="select "+
 					DBSchema.DOCUMENT.COLUMN_TITLE + COLUMN_DOC_TITLE +", "+
 					DBSchema.DOCUMENT.COLUMN_CONTENT + COLUMN_DOC_CONTENT +", "+
-					DBSchema.DOCUMENT.COLUMN_CREATOR_HASH + COLUMN_SENDER_HASH +", "+
+					DBSchema.DOCUMENT.COLUMN_CREATOR_IDX + COLUMN_SENDER_IDX +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATED_TS + COLUMN_DOC_TS +", "+
 					DBSchema.DOCUMENT.COLUMN_CHECKED_TS + COLUMN_CHECKED_TS +", "+
 					DBSchema.DOCUMENT.COLUMN_CATEGORY + COLUMN_DOC_TYPE +", "+
@@ -734,17 +734,17 @@ public class DBProcManager {
 		/**
 		 * 문서의 포워딩 정보
 		 * @b 커서구조
-		 * @b COLUMN_FORWARDER_HASH str 포워더\n
+		 * @b COLUMN_FORWARDER_IDX str 포워더\n
 		 * @b COLUMN_FORWARD_COMMENT str 코멘트\n
 		 * @b COLUMN_FORWARD_TS long 포워딩한 시간\n
 		 * @param docHash
 		 * @return
 		 */
 		public Cursor getDocumentForwardInfo(String docHash) {
-			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 					
 			String sql ="select "+
-					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH + COLUMN_FORWARDER_HASH +", "+
+					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_IDX + COLUMN_FORWARDER_IDX +", "+
 					DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT + COLUMN_FORWARD_COMMENT +", "+
 					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS + COLUMN_FORWARD_TS +
 					" from"+DBSchema.DOCUMENT_FORWARD.TABLE_NAME +
@@ -759,18 +759,18 @@ public class DBProcManager {
 		 * @b COLUMN_FILE_NAME str 파일이름\n
 		 * @b COLUMN_FILE_TYPE int 파일종류\n
 		 * @b COLUMN_FILE_SIZE long 파일사이즈 in byte\n
-		 * @b COLUMN_FILE_HASH str 파일URL\n
+		 * @b COLUMN_FILE_IDX str 파일URL\n
 		 * @param docHash
 		 * @return
 		 */
 		public Cursor getDocumentAttachment(String docHash) {
-			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, docHash);
+			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 			
 			String sql ="select "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME + COLUMN_FILE_NAME +", "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE + COLUMN_FILE_TYPE +", "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE + COLUMN_FILE_SIZE +", "+
-					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_HASH + COLUMN_FILE_HASH +
+					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_IDX + COLUMN_FILE_IDX +
 					" from"+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME +
 					"where _id = "+String.valueOf(docId);
 			return db.rawQuery(sql,null);
@@ -779,21 +779,21 @@ public class DBProcManager {
 		/**
 		 * 문서 수신자 정보 가져오기
 		 * @b 커서구조
-		 * @b COLUMN_USER_HASH 수신자해쉬\n
+		 * @b COLUMN_USER_IDX 수신자해쉬\n
 		 * @param hash 문서 해쉬
 		 * @return
 		 */
 		public Cursor getReceivers(String hash) {
-			long id = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_HASH, hash);
+			long id = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, hash);
 			
 			String sql = 
-					"select "+DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_HASH+
+					"select "+DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_IDX+
 					" from"+DBSchema.DOCUMENT_RECEIVER.TABLE_NAME+
 					" where "+DBSchema.DOCUMENT_RECEIVER.COLUMN_DOC_ID+" = "+String.valueOf(id);
 			return db.rawQuery(sql,null);
 		}
 		
-		public static final String COLUMN_DOC_HASH = "doc_hash";
+		public static final String COLUMN_DOC_IDX = "doc_idx";
 		public static final String COLUMN_DOC_TITLE = "doc_title";
 		public static final String COLUMN_DOC_CONTENT = "doc_content";
 		public static final String COLUMN_DOC_TS = "doc_ts";
@@ -801,16 +801,16 @@ public class DBProcManager {
 		public static final String COLUMN_DOC_TYPE = "doc_type";
 		public static final String COLUMN_IS_FAVORITE = "is_favorite";
 		public static final String COLUMN_IS_CHECKED = "is_checked";
-		public static final String COLUMN_SENDER_HASH = "sender_hash";
+		public static final String COLUMN_SENDER_IDX = "sender_idx";
 		public static final String COLUMN_CREATED_TS = "created_ts";
-		public static final String COLUMN_FORWARDER_HASH = "fwder_hash";
+		public static final String COLUMN_FORWARDER_IDX = "fwder_idx";
 		public static final String COLUMN_FORWARD_COMMENT = "fwd_comment";
 		public static final String COLUMN_FORWARD_TS = "fwd_ts";
 		public static final String COLUMN_FILE_NAME = "file_name";
 		public static final String COLUMN_FILE_TYPE = "file_type";
 		public static final String COLUMN_FILE_SIZE = "file_size";
-		public static final String COLUMN_FILE_HASH = "file_hash";
-		public static final String COLUMN_USER_HASH = "user_hash";
+		public static final String COLUMN_FILE_IDX = "file_idx";
+		public static final String COLUMN_USER_IDX = "user_idx";
 		
 	}
 
@@ -826,10 +826,10 @@ public class DBProcManager {
 		public void saveSurveyOnSend(String surveyHash,String title, String content, String creatorHash, long createdTS) {
 			String sql =
 					"insert into "+DBSchema.SURVEY.TABLE_NAME+
-					" ("+DBSchema.SURVEY.COLUMN_HASH+","+
+					" ("+DBSchema.SURVEY.COLUMN_IDX+","+
 					DBSchema.SURVEY.COLUMN_TITLE+","+
 					DBSchema.SURVEY.COLUMN_CONTENT+","+
-					DBSchema.SURVEY.COLUMN_CREATOR_HASH+","+
+					DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
 					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
 					DBSchema.SURVEY.COLUMN_CATEGORY+") " +
 					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+","+Survey.TYPE_DEPARTED+")";
@@ -850,10 +850,10 @@ public class DBProcManager {
 		public void saveSurveyOnReceived(String surveyHash,String title, String content, String creatorHash, long createdTS) {
 			String sql =
 					"insert into "+DBSchema.SURVEY.TABLE_NAME+
-					" ("+DBSchema.SURVEY.COLUMN_HASH+","+
+					" ("+DBSchema.SURVEY.COLUMN_IDX+","+
 					DBSchema.SURVEY.COLUMN_TITLE+","+
 					DBSchema.SURVEY.COLUMN_CONTENT+","+
-					DBSchema.SURVEY.COLUMN_CREATOR_HASH+","+
+					DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
 					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
 					DBSchema.SURVEY.COLUMN_CATEGORY+") " +
 					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+","+Survey.TYPE_RECEIVED+")";
@@ -866,7 +866,7 @@ public class DBProcManager {
 		 * @param checkedTS 체크한 시간
 		 */
 		public void updateCheckedTS( String svyHash, long checkedTS ) {
-			long svyId = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_HASH, svyHash);
+			long svyId = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_IDX, svyHash);
 			if ( svyId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -880,9 +880,9 @@ public class DBProcManager {
 		/**
 		 * 설문조사 목록 가져오기
 		 * @b 커서구조
-		 * @b COLUMN_SURVEY_HASH str 해시\n
+		 * @b COLUMN_SURVEY_IDX str 해시\n
 		 * @b COLUMN_SURVEY_NAME str 설문제목\n
-		 * @b COLUMN_SURVEY_SENDER_HASH str 보낸사람 해쉬\n
+		 * @b COLUMN_SURVEY_SENDER_IDX str 보낸사람 해쉬\n
 		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 대답여부\n
 		 * @param svyCategory 내가받은거면 Survey.TYPE_RECEIVED, 내가보낸거면 Survey.TYPE_DEPARTED
@@ -890,10 +890,10 @@ public class DBProcManager {
 		 */
 		public Cursor getSurveyList(int svyCategory) {
 			String sql ="select "+
-					DBSchema.SURVEY.COLUMN_HASH+COLUMN_SURVEY_HASH+", "+
+					DBSchema.SURVEY.COLUMN_IDX+COLUMN_SURVEY_IDX+", "+
 					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
 					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
-					DBSchema.SURVEY.COLUMN_CREATOR_HASH+COLUMN_SURVEY_SENDER_HASH+", "+
+					DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
 					DBSchema.SURVEY.COLUMN_IS_ANSWERED+COLUMN_SURVEY_IS_ANSWERED+
 					" from"+DBSchema.SURVEY.TABLE_NAME+
 					"where "+DBSchema.SURVEY.COLUMN_CATEGORY+" = "+String.valueOf(svyCategory);
@@ -908,7 +908,7 @@ public class DBProcManager {
 		 * @b COLUMN_SURVEY_CREATED_TS long 설문조사 만든시간\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
 		 * @b COLUMN_SURVEY_ANSWERED_TS long 응답한시간\n
-		 * @b COLUMN_SURVEY_SENDER_HASH str 보낸사람 해쉬\n
+		 * @b COLUMN_SURVEY_SENDER_IDX str 보낸사람 해쉬\n
 		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
 		 * @b COLUMN_SURVEY_CHECKED_TS long 확인한시간\n
 		 * @b COLUMN_SURVEY_TYPE int 서베이타입\n
@@ -921,13 +921,13 @@ public class DBProcManager {
 					DBSchema.SURVEY.COLUMN_CONTENT+COLUMN_SURVEY_CONTENT+", "+
 					DBSchema.SURVEY.COLUMN_CREATED_TS+COLUMN_SURVEY_CREATED_TS+", "+
 					DBSchema.SURVEY.COLUMN_ANSWERED_TS+COLUMN_SURVEY_ANSWERED_TS+", "+
-					DBSchema.SURVEY.COLUMN_CREATOR_HASH+COLUMN_SURVEY_SENDER_HASH+", "+
+					DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
 					DBSchema.SURVEY.COLUMN_CATEGORY+COLUMN_SURVEY_TYPE+", "+
 					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
 					DBSchema.SURVEY.COLUMN_CHECKED_TS+COLUMN_SURVEY_CHECKED_TS+", "+
 					DBSchema.SURVEY.COLUMN_IS_ANSWERED+COLUMN_SURVEY_IS_ANSWERED+
 					" from"+DBSchema.SURVEY.TABLE_NAME+
-					"where "+DBSchema.SURVEY.COLUMN_HASH+" = ?";
+					"where "+DBSchema.SURVEY.COLUMN_IDX+" = ?";
 			String[] val = {hash};
 			return db.rawQuery(sql, val);		
 		}
@@ -935,23 +935,23 @@ public class DBProcManager {
 		/**
 		 * 설문조사 수신자 정보 가져오기
 		 * @b 커서구조
-		 * @b COLUMN_USER_HASH 수신자해쉬\n
+		 * @b COLUMN_USER_IDX 수신자해쉬\n
 		 * @param hash 설문조사 해쉬
 		 * @return
 		 */
 		public Cursor getReceivers(String hash) {
-			long id = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_HASH, hash);
+			long id = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_IDX, hash);
 			
 			String sql = 
-					"select "+DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_HASH+
+					"select "+DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_IDX+
 					" from"+DBSchema.SURVEY_RECEIVER.TABLE_NAME+
 					" where "+DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID+" = "+String.valueOf(id);
 			return db.rawQuery(sql,null);		
 		}
 		public static final String COLUMN_SURVEY_NAME = "survey_name";
-		public static final String COLUMN_SURVEY_HASH = "survey_hash";
-		public static final String COLUMN_USER_HASH = "user_hash";
-		public static final String COLUMN_SURVEY_SENDER_HASH = "sender_hash";
+		public static final String COLUMN_SURVEY_IDX = "survey_idx";
+		public static final String COLUMN_USER_IDX = "user_idx";
+		public static final String COLUMN_SURVEY_SENDER_IDX = "sender_idx";
 		public static final String COLUMN_SURVEY_IS_CHECKED = "is_checked";
 		public static final String COLUMN_SURVEY_CHECKED_TS = "checked_ts";
 		public static final String COLUMN_SURVEY_IS_ANSWERED = "is_answered";
@@ -973,7 +973,7 @@ public class DBProcManager {
 				
 				sql = "insert or ignore into "+
 				DBSchema.USER_FAVORITE.TABLE_NAME+"("+
-				DBSchema.USER_FAVORITE.COLUMN_HASH+", "+
+				DBSchema.USER_FAVORITE.COLUMN_IDX+", "+
 				DBSchema.USER_FAVORITE.COLUMN_IS_GROUP+") "+
 				" values (?, 0)";
 				String[] val = {hash};
@@ -982,7 +982,7 @@ public class DBProcManager {
 				
 				sql = "delete from "+
 				DBSchema.USER_FAVORITE.TABLE_NAME+"" +
-				" where "+DBSchema.USER_FAVORITE.COLUMN_HASH+" = ? ";
+				" where "+DBSchema.USER_FAVORITE.COLUMN_IDX+" = ? ";
 				String[] val = {hash};
 				db.execSQL(sql,val);
 			}
@@ -1012,7 +1012,7 @@ public class DBProcManager {
 				for ( int i=0; i<hashArray.size(); i++ ) {
 					sql = "insert into "+DBSchema.USER_FAVORITE_GROUP.TABLE_NAME+" ("+
 							DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID+", "+
-							DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH+") " +
+							DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_IDX+") " +
 							"values ("+String.valueOf(gpId)+", ?)";
 					String[] val = { hashArray.get(i) };
 					db.execSQL(sql,val);
@@ -1029,7 +1029,7 @@ public class DBProcManager {
 		 * @param hash 즐겨찾기그룹hash
 		 */
 		public void removeFavoriteGroup( String groupHash ) {
-			long gpId = hashToId(DBSchema.USER_FAVORITE.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_HASH, groupHash);
+			long gpId = hashToId(DBSchema.USER_FAVORITE.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, groupHash);
 			if ( gpId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -1049,7 +1049,7 @@ public class DBProcManager {
 		 */
 		public void updateFavoriteTitle( String hash, String title ) {
 			String sql = "update "+DBSchema.USER_FAVORITE.TABLE_NAME+" set "+DBSchema.USER_FAVORITE.COLUMN_TITLE+" = ? " +
-					"where "+DBSchema.USER_FAVORITE.COLUMN_HASH+" = ?";
+					"where "+DBSchema.USER_FAVORITE.COLUMN_IDX+" = ?";
 			String[] val = { title, hash };
 			db.execSQL(sql,val);
 		}
@@ -1062,7 +1062,7 @@ public class DBProcManager {
 		 * @return
 		 */
 		public boolean isUserFavorite(String hash) {
-			String sql = "select count(_id) isFav from "+DBSchema.USER_FAVORITE.TABLE_NAME+" where "+DBSchema.USER_FAVORITE.COLUMN_HASH+"=?";
+			String sql = "select count(_id) isFav from "+DBSchema.USER_FAVORITE.TABLE_NAME+" where "+DBSchema.USER_FAVORITE.COLUMN_IDX+"=?";
 			String[] val = {hash};
 			Cursor c = db.rawQuery(sql, val);
 			c.moveToNext();
@@ -1072,14 +1072,14 @@ public class DBProcManager {
 		/**
 		 * 즐겨찾기 목록 가져옴
 		 * @b 커서구조
-		 * @b COLUMN_FAVORITE_HASH str 즐겨찾기 해쉬(유저면 유저해쉬 그룹이면 즐찾그룹해쉬)\n
+		 * @b COLUMN_FAVORITE_IDX str 즐겨찾기 해쉬(유저면 유저해쉬 그룹이면 즐찾그룹해쉬)\n
 		 * @b COLUMN_FAVORITE_NAME str 즐겨찾기 이름\n
 		 * @b COLUMN_FAVORITE_IS_GROUP int 그룹인지 아닌지\n
 		 * @return
 		 */
 		public Cursor getFavoriteList() {
 			String sql = "select "+
-					DBSchema.USER_FAVORITE.COLUMN_HASH+COLUMN_FAVORITE_HASH+", "+
+					DBSchema.USER_FAVORITE.COLUMN_IDX+COLUMN_FAVORITE_IDX+", "+
 					DBSchema.USER_FAVORITE.COLUMN_TITLE+COLUMN_FAVORITE_NAME+", "+
 					DBSchema.USER_FAVORITE.COLUMN_IS_GROUP+COLUMN_FAVORITE_IS_GROUP+
 					" from "+DBSchema.USER_FAVORITE.TABLE_NAME+
@@ -1090,25 +1090,25 @@ public class DBProcManager {
 		/**
 		 * 즐겨찾기 그룹에 소속된 멤버들의 hash를 array로 리턴
 		 * @b 커서구조
-		 * @b COLUMN_USER_HASH 유저해쉬\n
+		 * @b COLUMN_USER_IDX 유저해쉬\n
 		 * @param hash
 		 * @return
 		 */
 		public Cursor getFavoriteGroupMemberList(String hash){
 			
-			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_HASH, hash);
+			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
 			
 			String sql = "select "+
-					DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH+COLUMN_USER_HASH+
+					DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_IDX+COLUMN_USER_IDX+
 					" from "+DBSchema.USER_FAVORITE_GROUP.TABLE_NAME+
 					" where "+DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID+" = "+String.valueOf(gpId);
 			return db.rawQuery(sql, null);
 		}
 		
-		public static final String COLUMN_FAVORITE_HASH = "fav_hash";
+		public static final String COLUMN_FAVORITE_IDX = "fav_idx";
 		public static final String COLUMN_FAVORITE_NAME = "fav_name";
 		public static final String COLUMN_FAVORITE_IS_GROUP = "fav_is_group";
-		public static final String COLUMN_USER_HASH = "user_hash";
+		public static final String COLUMN_USER_IDX = "user_idx";
 		public static final String COLUMN_IS_FAVORITE = "is_fav";
 		
 	}

@@ -24,11 +24,11 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
 	
-	public	static final String FWD_FORWARDER_IDX 	= DocumentProcManager.COLUMN_FORWARDER_HASH;
+	public	static final String FWD_FORWARDER_IDX 	= DocumentProcManager.COLUMN_FORWARDER_IDX;
 	public	static final String FWD_ARRIVAL_TS 		= DocumentProcManager.COLUMN_FORWARD_TS;
 	public	static final String FWD_CONTENT 		= DocumentProcManager.COLUMN_FORWARD_COMMENT;
 	
-	public	static final String ATTACH_FILE_IDX 	= DocumentProcManager.COLUMN_FILE_HASH; // (string)
+	public	static final String ATTACH_FILE_IDX 	= DocumentProcManager.COLUMN_FILE_IDX; // (string)
 	public	static final String ATTACH_FILE_NAME 	= DocumentProcManager.COLUMN_FILE_NAME; // (string)
 	public	static final String ATTACH_FILE_TYPE 	= DocumentProcManager.COLUMN_FILE_TYPE; // (int)
 	public	static final String ATTACH_FILE_SIZE 	= DocumentProcManager.COLUMN_FILE_SIZE; // (long)
@@ -89,7 +89,7 @@ public class Document extends Message implements Parcelable{
 	public Document(Context context, Cursor c) {
 		//super(c);
 		
-		this.idx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_HASH));
+		this.idx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
 		
 		DocumentProcManager dpm = DBProcManager.sharedManager(context).document();
 		
@@ -101,7 +101,7 @@ public class Document extends Message implements Parcelable{
 		// 내용 (String)
 		this.content = cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
 		// 발신자 (String)
-		this.sender = User.getUserWithIdx( cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH)) );
+		this.sender = User.getUserWithIdx( cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX)) );
 		// 발신일시 (long)
 		this.TS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
 		// 문서카테고리 (int) Document.TYPE_DEPARTED, Document.TYPE_RECEIVED
@@ -129,7 +129,7 @@ public class Document extends Message implements Parcelable{
 			while( !cursor_forwardInfo.isAfterLast() ) {
 				HashMap<String, Object> fwd = new HashMap<String, Object>();
 				// 포워더 (String)
-				fwd.put(FWD_FORWARDER_IDX,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH)) );
+				fwd.put(FWD_FORWARDER_IDX,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_IDX)) );
 				// 코멘트 (String)
 				fwd.put(FWD_CONTENT,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT)) );
 				// 포워딩한 시간 (long)
@@ -155,7 +155,7 @@ public class Document extends Message implements Parcelable{
 				// 파일사이즈 (long)
 				f.put( ATTACH_FILE_SIZE, cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE)) );
 				// 파일 hash (String)
-				f.put( ATTACH_FILE_IDX, cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_HASH)) );
+				f.put( ATTACH_FILE_IDX, cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_IDX)) );
 				
 				fs.add(f);
 			}

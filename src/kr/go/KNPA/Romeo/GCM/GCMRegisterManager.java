@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
@@ -113,10 +114,10 @@ public class GCMRegisterManager {
         }
         String userIdx = UserInfo.getUserIdx(context);
         
-        Data reqData = new Data().add(0, Data.KEY_USER_HASH, userIdx)
-        						 .add(0, Data.KEY_DEVICE_UUID, uuid)
-        						 .add(0, Data.KEY_DEVICE_REG_ID, regId)
-        						 .add(0, Data.KEY_DEVICE_TYPE, "a");
+        Data reqData = new Data().add(0, KEY.USER.IDX, userIdx)
+        						 .add(0, KEY.DEVICE.UUID, uuid)
+        						 .add(0, KEY.DEVICE.GCM_REGISTRATION_ID, regId)
+        						 .add(0, KEY.DEVICE.TYPE, "a");
         
         Payload request = new Payload().setEvent(Event.Device.register()).setData(reqData);
         
@@ -162,7 +163,7 @@ public class GCMRegisterManager {
         
         String uuid = UserInfo.getUUID(context);
         String regid = UserInfo.getRegid(context);
-        Data reqData = new Data().add(0, Data.KEY_DEVICE_UUID, uuid).add(0, Data.KEY_DEVICE_REG_ID, regid);
+        Data reqData = new Data().add(0, KEY.DEVICE.UUID, uuid).add(0, KEY.DEVICE.GCM_REGISTRATION_ID, regid);
         Payload request = new Payload().setEvent(Event.Device.unRegister()).setData(reqData);
         Connection conn = new Connection().requestPayloadJSON(request.toJSON());
         conn.request();

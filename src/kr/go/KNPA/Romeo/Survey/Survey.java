@@ -47,9 +47,9 @@ public class Survey extends Message implements Parcelable{
 	public Survey(Context context, Cursor c) {
 		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
 		
-		this.idx 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_HASH));
+		this.idx 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
 		this.title 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
-		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_HASH)));
+		this.sender		= User.getUserWithIdx(c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX)));
 		//this.receivers 	= 
 		
 		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;

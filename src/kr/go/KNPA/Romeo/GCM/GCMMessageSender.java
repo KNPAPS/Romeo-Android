@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
@@ -38,15 +39,15 @@ public class GCMMessageSender {
 	public static boolean setMessageChecked(int type, String messageIdx, String userIdx) {
 		Payload request = new Payload().setData(
 				new Data()
-					.add(0, Data.KEY_MESSAGE_TYPE, type)
-					.add(0, Data.KEY_MESSAGE_HASH, messageIdx)
-					.add(0, Data.KEY_USER_HASH, userIdx)
+					.add(0, KEY.MESSAGE.TYPE, type)
+					.add(0, KEY.MESSAGE.IDX, messageIdx)
+					.add(0, KEY.USER.IDX, userIdx)
 				);
 		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
 		Payload response = conn.getResponsePayload();
 		
 		if ( response.getStatusCode() == StatusCode.SUCCESS ){
-			String result = (String)response.getData().get(0, Data.KEY_MESSAGE);
+			String result = (String)response.getData().get(0, KEY._MESSAGE);
 			return true;
 		} else {
 			return false;
@@ -54,7 +55,7 @@ public class GCMMessageSender {
 	}
 
 	public static ArrayList<String> getUncheckers(int type, String idx) {
-		Payload request = new Payload().setData(new Data().add(0, Data.KEY_MESSAGE_TYPE, type).add(0, Data.KEY_MESSAGE_HASH, idx));
+		Payload request = new Payload().setData(new Data().add(0, KEY.MESSAGE.TYPE, type).add(0, KEY.MESSAGE.IDX, idx));
 		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
 		Payload response = conn.getResponsePayload();
 		
@@ -63,7 +64,7 @@ public class GCMMessageSender {
 			Data respData = response.getData();
 			int nUncheckers = respData.size();
 			for(int i=0; i<nUncheckers; i++) {
-				uncheckers.add( (String)respData.get(i, Data.KEY_USER_HASH) );
+				uncheckers.add( (String)respData.get(i, KEY.USER.IDX) );
 			}
 			
 		}
@@ -72,7 +73,7 @@ public class GCMMessageSender {
 	}
 	
 	public static void sendMessage(final Context context, Message message) {
-		Data reqData = new Data().add(0, Data.KEY_MESSAGE, message);
+		Data reqData = new Data().add(0, KEY._MESSAGE, message);
 		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 		
 		CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload, Integer, Payload>(){
@@ -87,7 +88,7 @@ public class GCMMessageSender {
 				
 				if(response.getStatusCode() == StatusCode.SUCCESS) {
 				
-					String messageIdx = (String)response.getData().get(0, Data.KEY_MESSAGE_HASH);
+					String messageIdx = (String)response.getData().get(0, KEY.MESSAGE.IDX);
 					_message.idx = messageIdx;
 					// TODO :  실패한 발신자
 					// TODO : 발신자 별 에러 컨트롤
@@ -130,7 +131,7 @@ public class GCMMessageSender {
 	
 	public static void sendSurveyAnswerSheet(String json) {
 		
-		Data reqData = new Data().add(0, Data.KEY_USER_HASH, "").add(0, Data.KEY_MESSAGE_SURVEY_HASH, "");
+		Data reqData = new Data().add(0, KEY.USER.IDX, "").add(0, KEY.SURVEY.IDX, "");
 		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 		
 		CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload, Integer, Payload>(){

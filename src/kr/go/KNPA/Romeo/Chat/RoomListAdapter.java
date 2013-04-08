@@ -43,7 +43,7 @@ class RoomListAdapter extends CursorAdapter {
 		DBProcManager.sharedManager(ctx);
 		
 		// 채팅방 해시
-		String roomIdx = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_HASH ) );
+		String roomIdx = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_IDX ) );
 		// 채팅방 제목
 		String title = c.getString( c.getColumnIndex( ChatProcManager.COLUMN_ROOM_TITLE ) );
 		// 채팅방에 있는 사람 수

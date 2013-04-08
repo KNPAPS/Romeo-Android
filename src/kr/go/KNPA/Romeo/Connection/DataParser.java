@@ -7,6 +7,7 @@ import java.util.Iterator;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMSendResult;
 import kr.go.KNPA.Romeo.Survey.Survey;
@@ -82,27 +83,27 @@ public class DataParser {
 		
 		HashMap<String,Object> hm = new HashMap<String, Object>();
 		JSONObject jo = dataJSONArray.getJSONObject(0);
-		hm.put(Data.KEY_MESSAGE_HASH, jo.get(Data.KEY_MESSAGE_HASH));
-		hm.put(Data.KEY_REG_IDS, jo.get(Data.KEY_REG_IDS));
-		hm.put(Data.KEY_RECEIVER_HASH, jo.get(Data.KEY_RECEIVER_HASH));
+		hm.put(KEY.MESSAGE.IDX, jo.get(KEY.MESSAGE.IDX));
+		hm.put(KEY.MESSAGE.RECEIVERS_REGISTRATION_IDS, jo.get(KEY.MESSAGE.RECEIVERS_REGISTRATION_IDS));
+		hm.put(KEY.MESSAGE.RECEIVERS_IDX, jo.get(KEY.MESSAGE.RECEIVERS_IDX));
 		
 		GCMSendResult result = new GCMSendResult();
-		JSONObject gjo = jo.getJSONObject(Data.KEY_GCM_SEND_RESULT);
-		result.canonicalIds = gjo.getInt(Data.KEY_GCM_CANONICAL_IDS);
-		result.nSuccess = gjo.getInt(Data.KEY_GCM_SUCCESS);
-		result.nFailure = gjo.getInt(Data.KEY_GCM_FAILURE);
-		result.multicastId = gjo.getInt(Data.KEY_GCM_MULTICAST_ID);
+		JSONObject gjo = jo.getJSONObject(KEY.GCM.SEND_RESULT);
+		result.canonicalIds = gjo.getInt(KEY.GCM.CANONICAL_IDS);
+		result.nSuccess = gjo.getInt(KEY.GCM.SUCCESS);
+		result.nFailure = gjo.getInt(KEY.GCM.FAILURE);
+		result.multicastId = gjo.getInt(KEY.GCM.MULTICAST_ID);
 		
 		ArrayList<HashMap<String,String>> eachResultAr = new ArrayList<HashMap<String,String>>();
 		
-		JSONArray jar = gjo.getJSONArray(Data.KEY_GCM_RESULTS);
+		JSONArray jar = gjo.getJSONArray(KEY.GCM.RESULTS);
 		for ( int i=0; i<jar.length(); i++ ) {
 			JSONObject j = jar.getJSONObject(i);
 			eachResultAr.add( DataParser.<String>JSONObjectToHashMap(j) );
 		}
 		result.eachResult = eachResultAr;
 		
-		hm.put(Data.KEY_GCM_SEND_RESULT,result);
+		hm.put(KEY.GCM.SEND_RESULT,result);
 		
 		dataNative.add(hm);
 		return dataNative;
@@ -119,27 +120,27 @@ public class DataParser {
 		
 		JSONObject jo = dataJSONArray.getJSONObject(0);
 		
-		switch( jo.getInt(Data.KEY_MESSAGE_TYPE)/Message.MESSAGE_TYPE_DIVIDER ) {
+		switch( jo.getInt(KEY.MESSAGE.TYPE)/Message.MESSAGE_TYPE_DIVIDER ) {
 		case Message.MESSAGE_TYPE_CHAT:
 			//jsonobject를 다시 json으로 바꿔서 MessageParser를 통해 생성
-			Chat chat = (Chat) Message.parseMessage(jo.get(Data.KEY_MESSAGE).toString());
-			dataNative.add(0,Data.KEY_MESSAGE,chat);
+			Chat chat = (Chat) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
+			dataNative.add(0,KEY._MESSAGE,chat);
 			break;
 		case Message.MESSAGE_TYPE_DOCUMENT:
-			Document document = (Document) Message.parseMessage(jo.get(Data.KEY_MESSAGE).toString());
-			dataNative.add(0,Data.KEY_MESSAGE,document);
+			Document document = (Document) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
+			dataNative.add(0,KEY._MESSAGE,document);
 			
 			HashMap<String,String> af = new HashMap<String, String>();
 			
-			af.put(Data.KEY_FILE_HASH, jo.getString(Data.KEY_FILE_HASH) );
-			af.put(Data.KEY_FILE_TYPE, jo.getString(Data.KEY_FILE_TYPE) );
-			af.put(Data.KEY_FILE_SIZE, jo.getString(Data.KEY_FILE_SIZE) );
+			af.put(KEY.DOCUMENT.FILE_IDX, jo.getString(KEY.DOCUMENT.FILE_IDX) );
+			af.put(KEY.DOCUMENT.FILE_TYPE, jo.getString(KEY.DOCUMENT.FILE_TYPE) );
+			af.put(KEY.DOCUMENT.FILE_SIZE, jo.getString(KEY.DOCUMENT.FILE_SIZE) );
 			
-			dataNative.add(0,Data.KEY_ATTACHED_FILES,af);
+			dataNative.add(0,KEY.DOCUMENT.FILES,af);
 			break;
 		case Message.MESSAGE_TYPE_SURVEY:
-			Survey svy = (Survey) Message.parseMessage(jo.get(Data.KEY_MESSAGE).toString());
-			dataNative.add(0,Data.KEY_MESSAGE,svy);
+			Survey svy = (Survey) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
+			dataNative.add(0,KEY._MESSAGE,svy);
 			break;
 		default:
 			break;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -101,7 +102,7 @@ public class Message implements Parcelable{
 		
 		try {
 			jo = new JSONObject(json);
-			type = jo.getInt(Data.KEY_MESSAGE_TYPE);
+			type = jo.getInt(KEY.MESSAGE.TYPE);
 		} catch (JSONException e) {
 		}
 		
@@ -290,9 +291,9 @@ public class Message implements Parcelable{
 	}
 	
 	private static void setCheckedOnServer(final Context context, final Message message) {
-		Data reqData = new Data().add(0, Data.KEY_MESSAGE_TYPE, message.type)
-				 .add(0, Data.KEY_MESSAGE_HASH, message.idx)
-				 .add(0, Data.KEY_USER_HASH, UserInfo.getUserIdx(context));
+		Data reqData = new Data().add(0, KEY.MESSAGE.TYPE, message.type)
+				 .add(0, KEY.MESSAGE.IDX, message.idx)
+				 .add(0, KEY.USER.IDX, UserInfo.getUserIdx(context));
 		Payload request = new Payload().setEvent(Event.Message.setChecked()).setData(reqData);
 		
 		CallbackEvent<Payload, Integer, Payload> callback = new CallbackEvent<Payload, Integer, Payload>() {

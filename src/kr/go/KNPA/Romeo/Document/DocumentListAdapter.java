@@ -28,7 +28,7 @@ class DocumentListAdapter extends CursorAdapter {
 		
 		DBProcManager.sharedManager(ctx).document();
 		// 문서해쉬 (String)
-		final String docIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_HASH));
+		final String docIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
 		// 확인여부 (int)
 		
 		//boolean docChecked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
@@ -36,7 +36,7 @@ class DocumentListAdapter extends CursorAdapter {
 		String title = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
 		
 		// 발신자 (String)
-		User sender = User.getUserWithIdx( c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH)) );
+		User sender = User.getUserWithIdx( c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX)) );
 		String senderInfo = sender.department.nameFull + " "+User.RANK[sender.rank] +" "+ sender.name;
 		// 발신일시 (long)
 		long TS =  c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));

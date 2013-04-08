@@ -2,26 +2,16 @@ package kr.go.KNPA.Romeo.Survey;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SurveyResultFragment extends Fragment {

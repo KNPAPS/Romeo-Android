@@ -27,15 +27,15 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.CHAT.COLUMN_CONTENT	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.CHAT.COLUMN_CONTENT_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.CHAT.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.CHAT.COLUMN_HASH	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
+			DBSchema.CHAT.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.CHAT.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.CHAT.COLUMN_ROOM_ID	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.CHAT.COLUMN_SENDER_HASH	+	TEXT	+	NOT_NULL+	COMMA+
+			DBSchema.CHAT.COLUMN_SENDER_IDX	+	TEXT	+	NOT_NULL+	COMMA+
 			DBSchema.CHAT.COLUMN_CHECKED_TS	+	INT	+
 			")";
 	private static final String SQL_CREATE_INDEX_CHAT = 
 			"CREATE INDEX CHAT_IDX ON "+
-					DBSchema.CHAT.TABLE_NAME+" ("+DBSchema.CHAT.COLUMN_ROOM_ID+" ASC, "+DBSchema.CHAT.COLUMN_SENDER_HASH+" ASC)";
+					DBSchema.CHAT.TABLE_NAME+" ("+DBSchema.CHAT.COLUMN_ROOM_ID+" ASC, "+DBSchema.CHAT.COLUMN_SENDER_IDX+" ASC)";
 	
 	private static final String SQL_CREATE_INDEX_CHAT_TS = 
 			"CREATE INDEX CHAT_TS_IDX ON "+
@@ -46,8 +46,8 @@ public class DBManager extends SQLiteOpenHelper {
 			"CREATE TABLE "+DBSchema.DOCUMENT.TABLE_NAME+
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT.COLUMN_HASH	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
-			DBSchema.DOCUMENT.COLUMN_CREATOR_HASH  +	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
+			DBSchema.DOCUMENT.COLUMN_CREATOR_IDX  +	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
@@ -65,7 +65,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_RECEIVER.COLUMN_DOC_ID +	INT	+	COMMA+
-			DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_HASH  +	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_IDX  +	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_RECEIVER.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_RECEIVER.COLUMN_CHECKED_TS	+	INT+
 			")";
@@ -80,7 +80,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_DOC_ID  +	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE	+	INT	+	NOT_NULL+
 			")";
 	private static final String SQL_CREATE_INDEX_DOC_ATTACH = 
@@ -93,7 +93,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_FORWARD.COLUMN_DOC_ID  +	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS	+	INT	+	NOT_NULL+
 			")";
@@ -106,7 +106,7 @@ public class DBManager extends SQLiteOpenHelper {
 			"CREATE TABLE "+DBSchema.ROOM.TABLE_NAME+
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM.COLUMN_HASH  +	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
+			DBSchema.ROOM.COLUMN_IDX  +	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.ROOM.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_IS_FAVORITE	+	INT	+	NOT_NULL	+	COMMA+
@@ -123,7 +123,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM_CHATTER.COLUMN_USER_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.ROOM_CHATTER.COLUMN_USER_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM_CHATTER.COLUMN_LAST_READ_TS	+	INT+
 			")";
 	private static final String SQL_CREATE_INDEX_ROOM_CHATTER = 
@@ -135,13 +135,13 @@ public class DBManager extends SQLiteOpenHelper {
 			"CREATE TABLE "+DBSchema.SURVEY.TABLE_NAME+
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_HASH	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
+			DBSchema.SURVEY.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.SURVEY.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CONTENT	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_OPEN_TS	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CLOSE_TS	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_CREATOR_HASH	+	TEXT	+	NOT_NULL	+	COMMA+
+			DBSchema.SURVEY.COLUMN_CREATOR_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CHECKED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_ANSWERED	+	INT	+	NOT_NULL	+	COMMA+
@@ -159,7 +159,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	COMMA+
 			DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID +	INT	+	COMMA+
-			DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_HASH  +	TEXT	+	COMMA+
+			DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_IDX  +	TEXT	+	COMMA+
 			DBSchema.SURVEY_RECEIVER.COLUMN_IS_CHECKED	+	INT	+	COMMA+
 			DBSchema.SURVEY_RECEIVER.COLUMN_CHECKED_TS	+	INT+
 			")";
@@ -172,7 +172,7 @@ public class DBManager extends SQLiteOpenHelper {
 			"CREATE TABLE "+DBSchema.USER_FAVORITE.TABLE_NAME+
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
-			DBSchema.USER_FAVORITE.COLUMN_HASH	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
+			DBSchema.USER_FAVORITE.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.USER_FAVORITE.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.USER_FAVORITE.COLUMN_IS_GROUP	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.USER_FAVORITE.COLUMN_CREATED_TS	+	INT	+	NOT_NULL+
@@ -183,7 +183,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_HASH	+	TEXT	+	NOT_NULL	+	
+			DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_IDX	+	TEXT	+	NOT_NULL	+	
 			")";
 	
 	private static final String SQL_CREATE_INDEX_USER_FAV = 
@@ -242,14 +242,14 @@ public class DBManager extends SQLiteOpenHelper {
 		    public static final String COLUMN_DOC_ID = " doc_id ";
 		    public static final String COLUMN_FILE_TYPE = " file_type ";
 		    public static final String COLUMN_FILE_NAME = " file_name ";
-		    public static final String COLUMN_FILE_HASH = " file_hash ";
+		    public static final String COLUMN_FILE_IDX = " file_idx ";
 		    public static final String COLUMN_FILE_SIZE_IN_BYTE = " file_size ";
 		}
 		
 		public static abstract class DOCUMENT implements BaseColumns {
 		    public static final String TABLE_NAME = " rs_document ";
-		    public static final String COLUMN_HASH = " doc_hash ";
-		    public static final String COLUMN_CREATOR_HASH = " creator_hash ";
+		    public static final String COLUMN_IDX = " doc_idx ";
+		    public static final String COLUMN_CREATOR_IDX = " creator_idx ";
 		    public static final String COLUMN_CREATED_TS = " created_ts ";
 		    public static final String COLUMN_TITLE = " title ";
 		    public static final String COLUMN_CATEGORY = " doc_category ";
@@ -262,7 +262,7 @@ public class DBManager extends SQLiteOpenHelper {
 		public static abstract class DOCUMENT_FORWARD implements BaseColumns {
 		    public static final String TABLE_NAME = " rs_document_forward ";
 		    public static final String COLUMN_DOC_ID = " doc_id ";
-		    public static final String COLUMN_FORWARDER_HASH = " fwder_hash ";
+		    public static final String COLUMN_FORWARDER_IDX = " fwder_idx ";
 		    public static final String COLUMN_COMMENT = " fwd_comment ";
 		    public static final String COLUMN_FORWARD_TS = " fwd_ts ";
 		}
@@ -270,16 +270,16 @@ public class DBManager extends SQLiteOpenHelper {
 		public static abstract class DOCUMENT_RECEIVER implements BaseColumns {
 		    public static final String TABLE_NAME = " rs_document_receiver ";
 		    public static final String COLUMN_DOC_ID = " doc_id ";
-		    public static final String COLUMN_RECEIVER_HASH = " receiver_hash ";
+		    public static final String COLUMN_RECEIVER_IDX = " receiver_idx ";
 		    public static final String COLUMN_IS_CHECKED = " is_checked ";
 		    public static final String COLUMN_CHECKED_TS = " checked_ts ";
 		}
 		
 		public static abstract class CHAT implements BaseColumns {
 			public static final String TABLE_NAME = " rs_chat ";
-			public static final String COLUMN_HASH = " chat_hash ";
+			public static final String COLUMN_IDX = " chat_idx ";
 			public static final String COLUMN_ROOM_ID = " room_id ";
-			public static final String COLUMN_SENDER_HASH = " sender_hash ";
+			public static final String COLUMN_SENDER_IDX = " sender_idx ";
 			public static final String COLUMN_CONTENT = " chat_content ";
 			public static final String COLUMN_CREATED_TS = " created_ts ";
 			public static final String COLUMN_IS_CHECKED = " is_checked ";
@@ -289,7 +289,7 @@ public class DBManager extends SQLiteOpenHelper {
 		
 		public static abstract class ROOM implements BaseColumns {
 			public static final String TABLE_NAME = " rs_room ";
-			public static final String COLUMN_HASH = " room_hash ";
+			public static final String COLUMN_IDX = " room_idx ";
 			public static final String COLUMN_TITLE = " room_title ";
 			public static final String COLUMN_TYPE = " room_type ";
 			public static final String COLUMN_IS_FAVORITE = " is_favorite ";
@@ -300,20 +300,20 @@ public class DBManager extends SQLiteOpenHelper {
 		public static abstract class ROOM_CHATTER implements BaseColumns {
 			public static final String TABLE_NAME = " rs_room_chatter ";
 			public static final String COLUMN_ROOM_ID = " room_id ";
-			public static final String COLUMN_USER_HASH = " user_hash ";
+			public static final String COLUMN_USER_IDX = " user_idx ";
 			public static final String COLUMN_LAST_READ_TS = " last_read_ts ";
 		}
 		
 		public static abstract class SURVEY implements BaseColumns {
 			public static final String TABLE_NAME = " rs_survey ";
-			public static final String COLUMN_HASH = " survey_hash ";
+			public static final String COLUMN_IDX = " survey_idx ";
 			public static final String COLUMN_CATEGORY = " survey_category ";
 			public static final String COLUMN_TITLE = " survey_title ";
 			public static final String COLUMN_CONTENT = " survey_content ";
 			public static final String COLUMN_OPEN_TS = " open_ts ";
 			public static final String COLUMN_CLOSE_TS = " close_ts ";
 			public static final String COLUMN_CREATED_TS = " created_ts ";
-			public static final String COLUMN_CREATOR_HASH = " creator_hash ";
+			public static final String COLUMN_CREATOR_IDX = " creator_idx ";
 			public static final String COLUMN_IS_CHECKED = " is_checked ";
 			public static final String COLUMN_CHECKED_TS = " checked_ts ";
 			public static final String COLUMN_IS_ANSWERED = " is_answered ";
@@ -324,14 +324,14 @@ public class DBManager extends SQLiteOpenHelper {
 		public static abstract class SURVEY_RECEIVER implements BaseColumns {
 		    public static final String TABLE_NAME = " rs_survey_receiver ";
 		    public static final String COLUMN_SURVEY_ID = " survey_id ";
-		    public static final String COLUMN_RECEIVER_HASH = " receiver_hash ";
+		    public static final String COLUMN_RECEIVER_IDX = " receiver_idx ";
 		    public static final String COLUMN_IS_CHECKED = " is_checked ";
 		    public static final String COLUMN_CHECKED_TS = " checked_ts ";
 		}
 		
 		public static abstract class USER_FAVORITE implements BaseColumns {
 			public static final String TABLE_NAME = " rs_user_favorite ";
-			public static final String COLUMN_HASH = " hash ";
+			public static final String COLUMN_IDX = " hash ";
 			public static final String COLUMN_TITLE = " fav_title ";
 			public static final String COLUMN_IS_GROUP = " is_group ";
 			public static final String COLUMN_CREATED_TS = " created_ts ";
@@ -340,7 +340,7 @@ public class DBManager extends SQLiteOpenHelper {
 		public static abstract class USER_FAVORITE_GROUP implements BaseColumns {
 			public static final String TABLE_NAME = " rs_user_favorite_group ";
 			public static final String COLUMN_FAVORITE_ID = " favorite_id ";
-			public static final String COLUMN_MEMBER_HASH = " member_hash ";
+			public static final String COLUMN_MEMBER_IDX = " member_idx ";
 		}
 	}
 }
