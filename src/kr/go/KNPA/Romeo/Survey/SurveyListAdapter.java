@@ -4,115 +4,116 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 class SurveyListAdapter extends CursorAdapter {
 	// Variables
 	public int type = Survey.NOT_SPECIFIED;
 	
 	// Constructor
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) {
-		super(context, c, autoRequery);
-	}
-
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int type) {
-		super(context, c, autoRequery);
-		this.type = type;
-	}
-	
-	public SurveyListAdapter(Context context, Cursor c, int flags) {
-		super(context, c, flags);
-	}
+	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 			{	super(context, c, autoRequery);						}
+	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int type) 	{	super(context, c, autoRequery);	this.type = type;	}
+	public SurveyListAdapter(Context context, Cursor c, int flags) 						{	super(context, c, flags);							}
 
 	@Override
-	public void bindView(View v, Context ctx, Cursor c) {
+	public void bindView(View v, final Context ctx, Cursor c) {
 		// TODO
+		
+		 /* 설문조사 목록 가져오기 */
+		DBProcManager.sharedManager(ctx).survey();
+		// 설문제목 (String)
+		String title = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
+		// 설문 문서 해시 (String)
+		final String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));
+		// 보낸사람 해쉬 (String)
+		String senderIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+		// 확인여부 (int)
+		boolean isChecked = (c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0) ? true : false;
+		// 대답여부 (int)
+		boolean isAnswered = (c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED)) > 0)? true : false;
+		
+		
+		// Animation
+		Survey
+		String openDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_openDT));
+		String closeDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_closeDT));
+	
+		User user = User.getUserWithIdx(surveyIdx);
+		String senderInfo = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
+
+		
+		TextView titleTV = (TextView)v.findViewById(R.id.title);
+		titleTV.setText(title);
+		
+		TextView senderTV = (TextView)v.findViewById(R.id.sender);
+		senderTV.setText(senderInfo);
+		
+		TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
+		openDTTV.setText(openDT);
+		
+		TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
+		closeDTTV.setText(closeDT);
+		
 		if(this.type == Survey.TYPE_DEPARTED) {
-			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
-			TextView titleTV = (TextView)v.findViewById(R.id.title);
-			TextView senderTV = (TextView)v.findViewById(R.id.sender);
-			TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
-			TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
+			//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
 			Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
-			
-			String title = "";
-			title = c.getString(c.getColumnIndex("title"));
-			
-			String senderIdx = c.getString(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
-			
-			long openTS = c.getLong(c.getColumnIndex("openTS"));
-			long closeTS = c.getLong(c.getColumnIndex("closeTS"));
-			String openDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_openDT));
-			String closeDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_closeDT));
-			
-			titleTV.setText(title);
-			senderTV.setText(sender);
-			openDTTV.setText(openDT);
-			closeDTTV.setText(closeDT);
+			final ArrayList<String> idxs = 
+					Survey.getUncheckersIdxsWithMessageTypeAndIndex(IGNORE_ITEM_VIEW_TYPE, surveyIdx);
+			goUnchecked.setText(""+idxs.size());
+			goUnchecked.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {					
+					Intent intent = new Intent(ctx, UserListActivity.class);
+					Bundle b = new Bundle();
+					b.putStringArrayList(UserListActivity.KEY_USERS_IDX, idxs);
+					
+					intent.putExtras(b);
+					ctx.startActivity(intent);
+				}
+			});
 			
 		} else if(this.type == Survey.TYPE_RECEIVED) {
-			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
-			TextView titleTV = (TextView)v.findViewById(R.id.title);
-			TextView senderTV = (TextView)v.findViewById(R.id.sender);
-			TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
-			TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
+			//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
 			Button goResultBT = (Button)v.findViewById(R.id.goResult);
-
-			String title = "";
-			title = c.getString(c.getColumnIndex("title"));
 			
-			String senderIdx = c.getString(c.getColumnIndex("sender"));
-			User user = User.getUserWithIdx(senderIdx);
-			String sender = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
-			
-			long openTS = c.getLong(c.getColumnIndex("openTS"));
-			long closeTS = c.getLong(c.getColumnIndex("closeTS"));
-			String openDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_openDT));
-			String closeDT = Formatter.timeStampToStringWithFormat(closeTS, ctx.getString(R.string.formatString_closeDT));
-			
-			titleTV.setText(title);
-			senderTV.setText(sender);
-			openDTTV.setText(openDT);
-			closeDTTV.setText(closeDT);
-			
-			boolean answered = (c.getInt(c.getColumnIndex("answered")) == 1 ? true : false);
 			String answeredStatus = null;
 			int answeredColor = ctx.getResources().getColor(R.color.black);
-			if(answered) {
-				answeredStatus =ctx.getString(R.string.statusAnswered);
-				answeredColor = ctx.getResources().getColor(R.color.grayDark);
-				Survey survey = new Survey(c);
-				goResultBT.setOnClickListener(goResult);
-				goResultBT.setTag(survey);
+			if(isAnswered) {
+				answeredStatus 	= ctx.getString(R.string.statusAnswered);
+				answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
+				
+				goResultBT.setOnClickListener( new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO : 서버에서 정보 받기??
+						SurveyResultFragment f = new SurveyResultFragment(surveyIdx, type);
+						MainActivity.sharedActivity().pushContent(f);
+					}
+				});
+				
 			} else {
-				answeredStatus =ctx.getString(R.string.statusNotAnswered);
-				answeredColor = ctx.getResources().getColor(R.color.maroon);
+				answeredStatus 	= ctx.getString(R.string.statusNotAnswered);
+				answeredColor 	= ctx.getResources().getColor(R.color.maroon);
 			}
 			
 			goResultBT.setText(answeredStatus);
 			goResultBT.setTextColor(answeredColor);
 			
 		}
-		//department.setText(c.getString(c.getColumnIndex("department")));
-		//content.setText(c.getString(c.getColumnIndex("content")));
-
 	}
 
 	@Override
@@ -130,24 +131,7 @@ class SurveyListAdapter extends CursorAdapter {
 		
 		return v;
 	}
-	/*
-	public Survey getSurvey(int position) {
-		Cursor c = (Cursor)getItem(position);
-		return new Survey(c);  
-	}
-	*/
-	
-	private final OnClickListener goResult = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			Survey survey = (Survey)v.getTag();
-			SurveyResultFragment f = new SurveyResultFragment(survey, type);// 추가 정보
 
-			MainActivity.sharedActivity().pushContent(f);
-		}
-	};
-	
 	@Override
 	public boolean areAllItemsEnabled() {
 		return true;

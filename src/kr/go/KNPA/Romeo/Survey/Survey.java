@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
@@ -26,22 +28,35 @@ public class Survey extends Message implements Parcelable{
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
 
-	public long openTS = NOT_SPECIFIED;
-	public long closeTS = NOT_SPECIFIED;
 	public boolean answered = false;
 	
 	private static final String KEY_OPEN_TS 		= KEY.SURVEY.OPEN_TS; 
 	private static final String KEY_CLOSE_TS 		= KEY.SURVEY.CLOSE_TS;
 	
-	private Form form;
+	public Form form;
 	
 	// Constructor
 	public Survey() {}
 	
 	public Survey(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
-		this.openTS = jo.getLong(KEY_OPEN_TS);
-		this.closeTS = jo.getLong(KEY_CLOSE_TS);
+	}
+	
+	public static Survey surveyFromServer(String surveyIdx) {
+		Data reqData = new Data();
+		Payload request = new Payload().setEvent(Event.Message.Survey).setData(reqData);
+		Survey s = new Survey(
+				idx, 
+				type, 
+				title, 
+				content, 
+				senderIdx, 
+				receivers, 
+				received, 
+				TS, 
+				checked, 
+				checkTS, 
+				answered);
 	}
 	
 	public Survey(Context context, Cursor c) {
@@ -90,8 +105,6 @@ public class Survey extends Message implements Parcelable{
 			long				TS,
 			boolean				checked, 
 			long 				checkTS,
-			long				openTS,
-			long				closeTS,
 			boolean				answered
 			) {
 		this.idx = idx;
@@ -104,8 +117,6 @@ public class Survey extends Message implements Parcelable{
 		this.TS = TS;
 		this.checked = checked;
 		this.checkTS = checkTS;
-		this.openTS = openTS;
-		this.closeTS = closeTS;
 		this.answered = answered;
 	}
 
@@ -113,8 +124,6 @@ public class Survey extends Message implements Parcelable{
 		Survey survey = (Survey)this.clone(new Survey());
 
 		survey.answered = this.answered;
-		survey.openTS = this.openTS;
-		survey.closeTS = this.closeTS;
 		survey.form = this.form;
 		
 		return survey;
@@ -216,18 +225,14 @@ public class Survey extends Message implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
-		
-		dest.writeLong(openTS);
-		dest.writeLong(closeTS);
+
 		boolean[] ba = {answered}; 
 		dest.writeBooleanArray(ba);
 	}
 	
 	private void readRomParcel(Parcel source) {
 		super.readFromParcel(source);
-		
-		openTS = source.readLong();
-		closeTS = source.readLong();
+
 		boolean[] ba = source.createBooleanArray();
 		answered = ba[0];
 	}

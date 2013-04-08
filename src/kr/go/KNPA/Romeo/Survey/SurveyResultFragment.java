@@ -17,18 +17,12 @@ import android.widget.TextView;
 public class SurveyResultFragment extends Fragment {
 
 	private Context context;
-	public Survey survey;
+	public String surveyIdx;
 	public int type;
 	
 	
-	public SurveyResultFragment() {
-		
-	}
-	
-	public SurveyResultFragment(Survey survey, int type) {
-		this.survey = survey;
-		this.type = type;
-	}
+	public SurveyResultFragment() {}
+	public SurveyResultFragment(String surveyIdx, int type) {	this.surveyIdx = surveyIdx;	this.type = type;	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +33,7 @@ public class SurveyResultFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		
-		survey.setChecked(getActivity());
+		surveyIdx.setChecked(getActivity());
 		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView().refresh();
 	}
 	@Override
@@ -65,27 +59,27 @@ public class SurveyResultFragment extends Fragment {
 		
 
 		TextView titleTV = (TextView)view.findViewById(R.id.title);
-		titleTV.setText(this.survey.title);
+		titleTV.setText(this.surveyIdx.title);
 		
 		TextView  arrivalDTTV = (TextView)view.findViewById(R.id.arrivalDT);
-		String arrivalDT = Formatter.timeStampToStringInRegularFormat(this.survey.TS, getActivity());
+		String arrivalDT = Formatter.timeStampToStringInRegularFormat(this.surveyIdx.TS, getActivity());
 		arrivalDTTV.setText(arrivalDT);
 		
 		TextView senderTV = (TextView)view.findViewById(R.id.sender);
-		User user = this.survey.senderIdx;
+		User user = this.surveyIdx.senderIdx;
 		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS(), getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat(this.surveyIdx.openTS(), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 		
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat(this.survey.closeTS(), getString(R.string.formatString_closeDT));
+		String closeDT = Formatter.timeStampToStringWithFormat(this.surveyIdx.closeTS(), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 		
 		TextView contentTV = (TextView)view.findViewById(R.id.content);
-		String content = this.survey.content;
+		String content = this.surveyIdx.content;
 		contentTV.setText(content);
 		
 		

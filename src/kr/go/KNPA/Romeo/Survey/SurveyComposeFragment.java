@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
@@ -45,7 +46,7 @@ public class SurveyComposeFragment extends Fragment {
 	LinearLayout questionsLL;
 	Button addQuestionBT;
 	
-	private ArrayList<User> receivers;
+	private ArrayList<String> receiversIdx;
 
 	public SurveyComposeFragment() {
 	}
@@ -53,17 +54,15 @@ public class SurveyComposeFragment extends Fragment {
 
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = init(inflater, container, savedInstanceState);
-		receivers = new ArrayList<User>();
-
+		receiversIdx = new ArrayList<String>();
 		return view;
 	}
 	
-	public View init(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		// Bar Button 리스너
 		OnClickListener lbbOnClickListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -105,6 +104,7 @@ public class SurveyComposeFragment extends Fragment {
 		contentET = (EditText)rootLayout.findViewById(R.id.content);
 		ImageView hrIV = (ImageView)rootLayout.findViewById(R.id.hr);
 		hrIV.setVisibility(View.INVISIBLE);
+		// TODO  엔터치면 자동으로 넘어가도록.
 		
 		addQuestionBT = (Button)rootLayout.findViewById(R.id.add_question);
 		addQuestionBT.setOnClickListener(addNewQuestion);
@@ -112,7 +112,7 @@ public class SurveyComposeFragment extends Fragment {
 		receiversSearchBT.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				callMemberSearchActivity(); // TODO
+				callMemberSearchActivity(); 
 			}
 		});
 		
@@ -267,132 +267,78 @@ public class SurveyComposeFragment extends Fragment {
 		control.setTag(tag);
 	}
 	
+	private long getTSFrom(EditText[] ets) { 
+		return getTSFrom(ets[YEAR], ets[MONTH], ets[DAY]); 
+	}
+	
+	private long getTSFrom(EditText yearET, EditText monthET, EditText dayET) {
+		GregorianCalendar openGC = new GregorianCalendar(
+				Integer.parseInt(yearET.getText().toString()), 
+				Integer.parseInt(monthET.getText().toString()), 
+				Integer.parseInt(dayET.getText().toString()));
+		return openGC.getTimeInMillis();
+	}
+	
 	public void sendSurvey() {
-		// 돌면서 양식을 취합.
-		int count = questionsLL.getChildCount();
-		View question = null;
-		
-		ViewGroup rootLayout = (ViewGroup)getView().findViewById(R.id.rootLayout);
-		
-		StringBuilder sb = new StringBuilder();
-		
-		final String q = "\"";
-		final String c = ":";
-		final String lo = "{";
-		final String ro = "}";
-		final String la = "[";
-		final String ra = "]";
+		// Form
+		Form form = new Form();
 
-		int openYearInt = Integer.parseInt((openETs[YEAR]).getText().toString());
-		int openMonthInt = Integer.parseInt((openETs[MONTH]).getText().toString());
-		int openDayInt = Integer.parseInt((openETs[DAY]).getText().toString());
-		GregorianCalendar openGC = new GregorianCalendar(openYearInt, openMonthInt, openDayInt);
-		long openTS = openGC.getTimeInMillis();
-		
-		int closeYearInt = Integer.parseInt((closeETs[YEAR]).getText().toString());
-		int closeMonthInt = Integer.parseInt((closeETs[MONTH]).getText().toString());
-		int closeDayInt = Integer.parseInt((closeETs[DAY]).getText().toString());
-		GregorianCalendar closeGC = new GregorianCalendar(closeYearInt, closeMonthInt, closeDayInt);
-		long closeTS = closeGC.getTimeInMillis();
-		
-		
-		
-		
-		sb.append(lo);
-
+		// TODO : title, content
 		String title = titleET.getText().toString();
 		String content = contentET.getText().toString();
-		User sender = User.getUserWithIdx(UserInfo.getUserIdx(getActivity()));
+		form.put(Form.TITLE, 	title);
+		form.put(Form.CONTENT, 	content);
+		form.put(Form.OPEN_TS, getTSFrom(openETs));
+		form.put(Form.CLOSE_TS, getTSFrom(closeETs));
+		//form.put(Form.IS_MULTIPLE, value);
 		
-		// receivers.add(); TODO : register Receivers
+		// 돌면서 양식을 취합.
+		ArrayList<Form.Question> questions = new ArrayList<Form.Question>();
 		
-		// receivers TODO
-		String recs = "";
-		for(int i=0; i<receivers.size(); i++) {
-			if(i!=0) recs+=":";
-			recs += receivers.get(i).toJSON();
+		for( int qi=0; qi< questionsLL.getChildCount(); qi++) {
+			Form.Question question = new Form.Question();
+			View qView = questionsLL.getChildAt(qi);
+			ViewGroup oViews = (ViewGroup)qView.findViewById(R.id.options);
+			
+			// options
+			for( int oi=0; oi<oViews.getChildCount(); oi++) {
+				View oView = oViews.getChildAt(oi);
+				String option = ((EditText)oView.findViewById(R.id.title)).getText().toString();
+				question.addOption(option);
+			}
+			
+			// title
+			String questionTitle = ((EditText)qView.findViewById(R.id.title)).getText().toString();
+			question.title(questionTitle);
+			
+			// isMultiple
+			boolean isMultiple = ((CheckBox)qView.findViewById(R.id.isMultiple)).isChecked() == true;
+			question.isMultiple(isMultiple);
+			
 		}
-		
-		sb.append(q).append("title").append(q).append(c).append(q).append(title).append(q).append(",");
-		sb.append(q).append("content").append(q).append(c).append(q).append(content).append(q).append(",");
-		sb.append(q).append("openTS").append(q).append(c).append(openTS).append(",");
-		sb.append(q).append("closeTS").append(q).append(c).append(closeTS).append(",");
-		sb.append(q).append("receivers").append(q).append(c).append(q).append(recs).append(q).append(",");
-		
-		//		EditText receiversET;
-		sb.append(q).append("questions").append(q).append(c);
-		sb.append("[");
-		for(int i=0; i<count; i++) {
-			question = questionsLL.getChildAt(i);
-			sb.append(questionToJSON(question));
-			if(i != (count-1)) sb.append(",");
-		}
-		sb.append("]");
-		
-		sb.append(ro);
-		
-		Appendix appendix = new Appendix();
-		appendix.addAttachmentWithKeyAndAttachment(Message.MESSAGE_KEY_SURVEY, new Appendix.Attachment(Appendix.makeType(Appendix.TYPE_1_JSON, Appendix.TYPE_2_SURVEY), "Survey", sb.toString()));
+		 
+		form.put(Form.QUESTIONS, questions);
 		
 		long currentTS = System.currentTimeMillis();
+		Survey survey = new Survey(
+				null, 
+				Message.makeType(Message.MESSAGE_TYPE_SURVEY, Survey.TYPE_DEPARTED) , // TODO 
+				title, 
+				content, 
+				UserInfo.getUserIdx(getActivity()), 
+				receiversIdx, 
+				false, 
+				currentTS, 
+				true, 
+				currentTS,
+				false
+				);
 		
-		//받은 사람 입장에서.
-		Survey survey = new Survey.Builder()
-								  .type(Message.makeType(Message.MESSAGE_TYPE_SURVEY, Survey.TYPE_DEPARTED))
-								  .TS(currentTS)
-								  .title(title)
-								  .content(content)
-								  .sender(sender)
-								  .receivers(receivers)
-								  .received(true)							//
-								  //.idx(idx)
-								  .checkTS(Message.NOT_SPECIFIED)			//
-								  .checked(false)							//
-								  .appendix(appendix)
-								  .toSurveyBuilder()
-								  .build();
-								  // TODO : php에서 튜닝 여기서는 그냥 보내고.
 		survey.send(getActivity());	  
 		
 		MainActivity.sharedActivity().popContent(this);
 	}
 
-	public String optionToJSON(View option) {
-		return "\""+((EditText)option.findViewById(R.id.title)).getText().toString()+"\"";
-	}
-	
-	public String questionToJSON(View question) {
-		StringBuilder sb = new StringBuilder();
-		
-		final String q = "\"";
-		final String c = ":";
-		final String lo = "{";
-		final String ro = "}";
-		final String la = "[";
-		final String ra = "]";
-		
-		StringBuilder optionsJSON = new StringBuilder();
-		ViewGroup options = (ViewGroup) question.findViewById(R.id.options);
-		View option = null;
-		optionsJSON.append(la);
-		
-		int count = options.getChildCount();
-		for(int i=0; i<count; i++) {
-			option = options.getChildAt(i);
-			optionsJSON.append(optionToJSON(option));
-			if(i != (count-1)) optionsJSON.append(",");
-		}
-		optionsJSON.append(ra);
-		
-		String title = ((EditText)question.findViewById(R.id.title)).getText().toString();
-		int isMultiple = ((CheckBox)question.findViewById(R.id.isMultiple)).isChecked() == true ? 1 : 0;
-		sb.append(lo);
-		sb.append(q).append("title").append(q).append(c).append(q).append(title).append(q).append(",");
-		sb.append(q).append("isMultiple").append(q).append(c).append(isMultiple).append(",");
-		sb.append(q).append("options").append(q).append(c).append(optionsJSON);
-		sb.append(ro);
-		return sb.toString();
-	}
 	
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
 		
@@ -417,9 +363,7 @@ public class SurveyComposeFragment extends Fragment {
 	}
 
 	private void callMemberSearchActivity() {
-		
 		Intent intent = new Intent(getActivity(), MemberSearch.class);
-		
 		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
 	}
 	
@@ -433,22 +377,14 @@ public class SurveyComposeFragment extends Fragment {
 				//data.getExtras().get;
 				Toast.makeText(getActivity(), "Activity Result Success", Toast.LENGTH_SHORT).show();
 				
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
+				// 대체
+				receiversIdx = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
-				ArrayList<User> newUsers = new ArrayList<User>();
-				for(int i=0; i< receiversIdxs.size(); i++ ){
-					User user = User.getUserWithIdx( receiversIdxs.get(i) );
-					// TODO 이미 선택되어 잇는 사람은 ..
-					if(receivers.contains(user)) continue;
-					newUsers.add(user);
-				}
-				receivers.addAll(newUsers);
-				
-				if (receivers.size() > 1) {
-					User fReceiver = receivers.get(0);
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receivers.size()+"명");
-				} else if(receivers.size() > 0) {
-					User fReceiver = receivers.get(0);
+				if (receiversIdx.size() > 1) {
+					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
+					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receiversIdx.size()+"명");
+				} else if(receiversIdx.size() > 0) {
+					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
 					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
 				} else {
 					receiversET.setText("선택된 사용자가 없습니다.");

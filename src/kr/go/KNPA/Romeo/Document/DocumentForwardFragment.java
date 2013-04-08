@@ -137,7 +137,7 @@ public class DocumentForwardFragment extends Fragment {
 			if(resultCode != MemberSearch.RESULT_OK) {
 				// onError
 			} else {
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDXS);
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				// 선택한 사람들로 <대체>된다.
 				
 				ArrayList<String> newUsers = new ArrayList<String>();

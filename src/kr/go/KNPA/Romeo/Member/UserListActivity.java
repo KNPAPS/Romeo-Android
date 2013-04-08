@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 public class UserListActivity extends Activity {
 
+	public static final String KEY_USERS_IDX = "idxs";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,7 +26,7 @@ public class UserListActivity extends Activity {
 		
 		
 		ListView lv = (ListView)view.findViewById(R.id.listView);
-		ArrayList<String> userIdxs = getIntent().getExtras().getStringArrayList("idxs");
+		ArrayList<String> userIdxs = getIntent().getExtras().getStringArrayList(KEY_USERS_IDX);
 	}
 
 	@Override

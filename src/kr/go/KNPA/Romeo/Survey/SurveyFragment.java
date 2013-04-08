@@ -76,17 +76,16 @@ public class SurveyFragment extends RomeoFragment {
 			}
 		};
 		
+		/*
 		OnClickListener rbbOnClickListener = new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				//Intent intent = new Intent(getActivity(), SurveyComposeFragment.class);
-				//TODO
-				//startActivity(intent);
 				SurveyComposeFragment f = new SurveyComposeFragment();
 				MainActivity.sharedActivity().pushContent(f);
 			}
 		};
+		*/
 		
 		switch(this.type) {
 		case Survey.TYPE_RECEIVED :
@@ -95,10 +94,10 @@ public class SurveyFragment extends RomeoFragment {
 							view, 
 							R.string.surveyReceivedTitle, 
 							true, 
-							true, 
+							false, 
 							R.string.menu, 
 							R.string.compose, 
-							lbbOnClickListener, rbbOnClickListener);
+							lbbOnClickListener, null);
 
 			break;
 		case Survey.TYPE_DEPARTED :
@@ -107,10 +106,10 @@ public class SurveyFragment extends RomeoFragment {
 					view, 
 					R.string.surveyDepartedTitle, 
 					true, 
-					true, 
+					false, 
 					R.string.menu, 
 					R.string.compose, 
-					lbbOnClickListener, rbbOnClickListener);
+					lbbOnClickListener, null);
 			break;
 		}
 		
@@ -133,7 +132,7 @@ public class SurveyFragment extends RomeoFragment {
 				_receivedFragment.getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						lv.refresh();	
+						lv.refresh();	// SurveyListView
 					}
 				});
 			}

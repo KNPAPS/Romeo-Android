@@ -256,7 +256,20 @@ public class Message implements Parcelable{
 			}
 		}
 	}
-
+	/*
+	public static void setChecked(Context context, String messageIdx, int mainType, int subType) {
+		Message message = new Message();
+		message.idx = messageIdx;
+		message.type = Message.makeType(mainType, subType);
+		// TODO
+		message.checked = false;
+		
+		ArrayList<Message> messages = new ArrayList<Message>();
+		messages.add(message);
+		
+		Message.setChecked(context, messages);
+	}
+*/
 	public void setChecked(Context context) {
 		if(this.mainType() == MESSAGE_TYPE_DOCUMENT)  {
 			Message.setCheckedOnServer(context, this);

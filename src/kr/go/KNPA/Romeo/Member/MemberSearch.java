@@ -33,7 +33,7 @@ public class MemberSearch extends Activity {
 	public static final String TYPE_DEPARTMENT = "TYPE_DEPARTMENT";
 	public static final String TYPE_USER = "TYPE_USER";
 	public static final int REQUEST_CODE = 100;
-	public static final String KEY_RESULT_USERS_IDXS = "receivers";
+	public static final String KEY_RESULT_USERS_IDX = "receivers";
 	
 	public String searchResult = ""; 
 	
