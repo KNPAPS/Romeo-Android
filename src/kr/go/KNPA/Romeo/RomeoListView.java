@@ -51,14 +51,12 @@ public abstract class RomeoListView extends ListView {
 	}
 	*/
 
-	abstract public String getTableName();
-	
 	// DB에 쿼리를 날린다. 추상메소드.
 	abstract protected Cursor query();
 	
 	// 리스트를 다시 불러온다.
 	public void refresh() {
-		if(listAdapter == null || getTableName() == null) return;
+		if(listAdapter == null) return;
  
 		if(listAdapter instanceof CursorAdapter) {
 			Cursor c = query();

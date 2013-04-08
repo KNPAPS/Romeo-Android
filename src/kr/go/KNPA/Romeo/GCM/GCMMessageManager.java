@@ -13,6 +13,7 @@ import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
@@ -49,10 +50,6 @@ public class GCMMessageManager {
 	/** @} */
 	
 	//// On Process Variables
-	// Class Variables associated with DB
-	private DBManager 		dbManager 		= null;
-	private SQLiteDatabase 	db 				= null;
-	private String 			tableName 		= null;
 	//
 	private Context			context			= null;
 	private Payload 		payload 		= null;
@@ -71,10 +68,7 @@ public class GCMMessageManager {
 		
 		// Context Setting
 		this.context = context;
-		
-		// DB Open & Setting
-		dbManager = new DBManager(context);
-		db = dbManager.getWritableDatabase();
+
         
 		// Payload 
 		Bundle b = intent.getExtras();        
@@ -103,57 +97,41 @@ public class GCMMessageManager {
         
         
         // Destroy
-        db.close();				db = null;
-        dbManager.close();		dbManager = null;
         payload = null;			events = null;
      
     }
 	
 	// on Message in cases
 	private void onChat (Chat chat) {
-
-		switch(chat.subType()) {
-			case Chat.TYPE_COMMAND : tableName = DBManager.TABLE_COMMAND; break;
-			case Chat.TYPE_MEETING : tableName = DBManager.TABLE_MEETING; break;
-		}
-
+		DBProcManager.sharedManager(context)
+		.chat().createRoom(userHashes, chatType)
+		DBProcManager.sharedManager(context)
+		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.contentType, chat.TS);
+		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
-		
-        DBProcManager.sharedManager(context)
-        		.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.sender.idx, chat.content, chat.TS);
 		
 		notifyMessage(chat);
 	}
 	
 	private void onDocument(Document document) {
+		DBProcManager.sharedManager(context)
+		.document()
+		.saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, 
+								document.TS, document.forwards, document.files);
 		
-		switch(document.subType()) {
-			case Document.TYPE_DEPARTED : 
-			case Document.TYPE_RECEIVED : 
-			case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
-		}
-
 		if(isRunningProcess(context))
 			DocumentFragment.receive(document);		//리스트뷰에 notify
-
-		DBProcManager.sharedManager(context)
-			.document().saveDocumentOnReceived(document.idx, document.sender.idx, document.title, document.content, document.TS, document.files);
-		     
+		
 		notifyMessage(document);
 	}
 	
 	private void onSurvey(Survey survey) {
-		
-		switch(survey.subType()) {
-			case Survey.TYPE_DEPARTED :
-			case Survey.TYPE_RECEIVED :	tableName = DBManager.TABLE_SURVEY; break;
-		}
+		DBProcManager.sharedManager(context)
+			.survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
 		
 		if(isRunningProcess(context))
 			SurveyFragment.receive(survey);		//리스트뷰에 notify
-
-		DBProcManager.sharedManager(context).survey().saveSurvey(survey.idx, survey.title, survey.content, survey.sender.idx, survey.TS);
 		
 		notifyMessage(survey);
 	}

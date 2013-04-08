@@ -3,10 +3,7 @@ package kr.go.KNPA.Romeo.Document;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.go.KNPA.Romeo.Base.Appendix;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 
@@ -14,10 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -40,7 +35,7 @@ public class Document extends Message implements Parcelable{
 	// Specific Variables not to be sent
 	public boolean favorite = false;
 	
-	public ArrayList<HashMap<String, String>> forwards;
+	public ArrayList<HashMap<String, Object>> forwards;
 	public	ArrayList<HashMap<String, Object>> files; 
 	
 	// Constructor
@@ -58,6 +53,36 @@ public class Document extends Message implements Parcelable{
 			hmap.put(FWD_ARRIVAL_DT, fwd.getString(FWD_ARRIVAL_DT));
 			hmap.put(FWD_CONTENT, fwd.getString(FWD_CONTENT));
 		}
+	}
+	
+	public Document(
+			String			idx, 
+			int				type, 
+			String			title, 
+			String			content, 
+			User 			sender, 
+			ArrayList<User>	receivers, 
+			boolean			received,
+			long			TS,
+			boolean			checked, 
+			long 			checkTS,
+			ArrayList<HashMap<String, Object>> forwards,
+			ArrayList<HashMap<String, Object>> files,
+			boolean			favorite
+			) {
+		this.idx = idx;
+		this.type = type;
+		this.title = title;
+		this.content = content;
+		this.sender = sender;
+		this.receivers = receivers;
+		this.received = received;
+		this.TS = TS;
+		this.checked = checked;
+		this.checkTS = checkTS;
+		this.forwards = forwards;
+		this.files = files;
+		this.favorite = favorite;
 	}
 	
 	public Document(Cursor c) {
@@ -108,63 +133,12 @@ public class Document extends Message implements Parcelable{
 	}
 	*/
 	public Document clone() {
-		Document document = new Document();
+		Document document = (Document)this.clone(new Document());
 		
-		document.idx = this.idx;
-		document.title = this.title;
-		document.type = this.type;
-		document.content = this.content;
-		document.sender = this.sender;
-		document.receivers = this.receivers;
-		document.TS = this.TS;
-		document.received = this.received;
-		document.checkTS = this.checkTS;
-		document.checked = this.checked;			
-		
+		document.forwards = this.forwards;
+		document.files = this.files;
 		document.favorite = this.favorite;			
 		return document;
-	}
-	
-	public static class Builder extends Message.Builder {
-		protected boolean _favorite = false;
-		
-		public Builder favorite(boolean favorite) {
-			_favorite = favorite;
-			return this;
-		}
-		
-		public Document build() {
-			/*
-			Document document = (Document) new Document.Builder()
-													   .idx(_idx)
-													   .title(_title)
-													   .type(_type)
-													   .content(_content)
-													   .appendix(_appendix)
-													   .sender(_sender)
-													   .receivers(_receivers)
-													   .TS(_TS)
-													   .received(_received)
-													   .checkTS(_checkTS)
-													   .checked(_checked)
-													   .buildMessage();
-													   */
-			Document document = new Document();
-			
-			document.idx = this._idx;
-			document.title = this._title;
-			document.type = this._type;
-			document.content = this._content;
-			document.sender = this._sender;
-			document.receivers = this._receivers;
-			document.TS = this._TS;
-			document.received = this._received;
-			document.checkTS = this._checkTS;
-			document.checked = this._checked;			
-			
-			document.favorite = this._favorite;			
-			return document;
-		}
 	}
 	
 	// Manage if Favorite
@@ -202,16 +176,9 @@ public class Document extends Message implements Parcelable{
 		}
 		
 	};
-	
-	public void send(Context context) {
-		super.send();
-		
-		
 
-	}
-	
 	@Override
-	public void afterSend() {
+	public void afterSend(boolean successful) {
 		// TODO :  Insert into DB
 		/*
 		String tableName = null;

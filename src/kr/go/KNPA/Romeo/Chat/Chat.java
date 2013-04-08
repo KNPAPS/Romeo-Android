@@ -1,11 +1,13 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Context;
 
 public class Chat extends Message {
 	
@@ -13,7 +15,11 @@ public class Chat extends Message {
 	public static final int TYPE_MEETING = 0;
 	public static final int TYPE_COMMAND = 1;
 	
+	public static final int CONTENT_TYPE_TEXT = 1;
+	public static final int CONTENT_TYPE_PICTURE = 2;
+	
 	public String roomCode;
+	public int contentType = CONTENT_TYPE_TEXT;
 	
 	private static final String KEY_ROOMCODE = "room_hash";
 	
@@ -25,6 +31,37 @@ public class Chat extends Message {
 		this.roomCode = jo.getString(KEY_ROOMCODE);
 	}
 
+	public Chat(
+			String			idx, 
+			int				type, 
+//			String			title, 
+			String			content, 
+			User 			sender, 
+			ArrayList<User>	receivers, 
+			boolean			received,
+			long			TS,
+			boolean			checked, 
+			long 			checkTS,
+			String 			roomCode, 
+			int 			contentType) {
+		this.idx = idx;
+		this.type = type;
+//		this.title = title;
+		this.content = content;
+		this.sender = sender;
+		this.receivers = receivers;
+		this.received = received;
+		this.TS = TS;
+		this.checked = checked;
+		this.checkTS = checkTS;
+		this.roomCode = roomCode;
+		this.contentType = contentType;
+	}
+	
+	public static Chat chatOnSend(int type, String content, User sender, ArrayList<User> receivers, long TS, String roomCode, int contentType) {
+		return new Chat(null, type, content, sender, receivers, false, TS, true, TS, roomCode, contentType);
+		// TODO Chat checked == true?? => 서버
+	}
 	/*
 	public Chat(Payload payload, boolean received, long checkTS) {
 		
@@ -51,62 +88,15 @@ public class Chat extends Message {
 	*/
 	
 	public Chat clone() {
-		Chat chat = new Chat();
-		chat.idx = this.idx;
-		chat.title = this.title;
-		chat.type = this.type;
-		chat.content = this.content;
-		chat.sender = this.sender;
-		chat.receivers = this.receivers;
-		chat.TS = this.TS;
-		chat.received = this.received;
-		chat.checkTS = this.checkTS;
-		chat.checked = this.checked;			
+		Chat chat = (Chat)this.clone(new Chat());
+		chat.roomCode = this.roomCode;
+		chat.contentType = this.contentType;
 		
 		return chat;
 	}
 
-	public static class Builder extends Message.Builder {
-		
-		public Chat build() {
-		/*
-			Message message = new Message.Builder()
-									   .idx(_idx)
-									   .title(_title)
-									   .type(_type)
-									   .content(_content)
-									   .appendix(_appendix)
-									   .sender(_sender)
-									   .receivers(_receivers)
-									   .TS(_TS)
-									   .received(_received)
-									   .checkTS(_checkTS)
-									   .checked(_checked)
-									   .buildMessage();
-			Chat chat = (Chat)message;
-			*/
-			Chat chat = new Chat();
-			chat.idx = this._idx;
-			chat.title = this._title;
-			chat.type = this._type;
-			chat.content = this._content;
-			chat.sender = this._sender;
-			chat.receivers = this._receivers;
-			chat.TS = this._TS;
-			chat.received = this._received;
-			chat.checkTS = this._checkTS;
-			chat.checked = this._checked;			
-			
-			return chat;
-		}
-	}
-	
-	public void send(Context context, Room room) {
-		super.send();
-	}
-
 	@Override
-	public void afterSend() {
+	public void afterSend(boolean succesful) {
 		// TODO :  Insert into DB
 		/*
 		DBManager dbManager = new DBManager(context);

@@ -46,16 +46,6 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 	 */
 	@Override
 	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).chat().getRoomList(this.type);	}
-	
-	@Override
-	public String getTableName() {
-		String tableName = null;
-		switch(this.type) {
-			case Chat.TYPE_COMMAND : tableName =  DBManager.TABLE_COMMAND; break;
-			case Chat.TYPE_MEETING : tableName =  DBManager.TABLE_MEETING; break;
-		}
-		return tableName;
-	}
 	/** @} */
 	
 	/**
@@ -95,9 +85,18 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		if(this.getAdapter() instanceof SimpleSectionAdapter)
 			adapter= ((SimpleSectionAdapter)this.getAdapter());
 		
+		/*
+		 * @b COLUMN_ROOM_HASH 채팅방 해시\n
+		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
+		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
+		 * @b COLUMN_ROOM_NUM_UNCHECKED_CHAT 읽지 않은 채팅 수\n
+		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
+		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
+		 */
 		Cursor c = (Cursor)adapter.getItem(position);
 		
-		Room room = new Room(c, this.type);
+		String roomCode = c.getString(c.getColumnIndex(DBProcManager.sharedManager(getContext()).chat().COLUMN_ROOM_HASH));
+		Room room = new Room(getContext(), this.type, roomCode);
 		RoomFragment fragment = new RoomFragment(room);
 		
 		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.roomCode, UserInfo.getUserIdx(getContext()), System.currentTimeMillis());
