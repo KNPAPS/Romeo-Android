@@ -29,6 +29,7 @@ import android.widget.TextView;
 public class MemberDetailActivity extends Activity implements OnClickListener {
 
 	static final int NOT_SPECIFIED = -777;
+	static final String KEY_RESULT_KEY_USER_IDXS = "idxs";
 	Button background;
 	Button  close;
 	Button favorite;

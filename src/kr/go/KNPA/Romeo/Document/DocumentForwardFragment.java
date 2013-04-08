@@ -5,25 +5,19 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Base.Appendix;
-import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DocumentForwardFragment extends Fragment {
 
@@ -45,15 +39,14 @@ public class DocumentForwardFragment extends Fragment {
 
 	}
 
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// initialize
 		receivers = new ArrayList<User>();
-
 		View view = inflater.inflate(R.layout.document_forward_compose, null, false);
 
-		String navBarTitle = null; // TODO //b.getString("title");
+		// Navigation Bar
+		String navBarTitle = document.title;
 		if(navBarTitle == null) navBarTitle = getString(R.string.documentForwardTitle);
 		
 		ViewGroup navBar = (ViewGroup)view.findViewById(R.id.navigationBar);
@@ -81,11 +74,14 @@ public class DocumentForwardFragment extends Fragment {
 				
 				@Override
 				public void onClick(View v) {
+					// Forward!!
 					forwardDocument(v);
 					MainActivity.sharedActivity().popContent(fragment);
 				}
 			});
 		}
+		
+		// Receivers
 		OnClickListener callSearchActivity = new OnClickListener() {
 			
 			@Override
@@ -95,10 +91,15 @@ public class DocumentForwardFragment extends Fragment {
 				
 			}
 		};
+		
+		// 사용자 입력을 누르면
 		receiversET = (EditText)view.findViewById(R.id.receivers);
 		receiversET.setOnClickListener(callSearchActivity);
+		
+		// 사용자 찾기 버튼을 누르면
 		receiversSearchBT = (Button)view.findViewById(R.id.receivers_search);
 		receiversSearchBT.setOnClickListener(callSearchActivity);
+		
 		contentET = (EditText)view.findViewById(R.id.content);
 		
 		return view;
@@ -109,11 +110,14 @@ public class DocumentForwardFragment extends Fragment {
 		// Appdix에 att 추가
 		Document fwdDocument = document.clone();
 		
-		HashMap<String,String> forward = new HashMap<String,String>();
-		forward.put("forwarder", ""+UserInfo.getUserIdx(getActivity()));
-		forward.put("TS", ""+System.currentTimeMillis());
-		forward.put("content", contentET.getText().toString());
-		fwdDocument.getForwards().add(forward);
+		HashMap<String,Object> forward = new HashMap<String,Object>();
+		forward.put(Document.FWD_FORWARDER_IDX, UserInfo.getUserIdx( getActivity() ));
+		forward.put(Document.FWD_ARRIVAL_DT, 	(Long)System.currentTimeMillis());
+		forward.put(Document.FWD_FORWARDER_IDX, contentET.getText().toString());
+		
+		if(fwdDocument.forwards == null)
+			fwdDocument.forwards = new ArrayList<HashMap<String, Object>>();
+		fwdDocument.forwards.add(forward);
 		
 		fwdDocument.receivers = receivers;
 		
@@ -123,9 +127,7 @@ public class DocumentForwardFragment extends Fragment {
 	}
 	
 	private void callMemberSearchActivity() {
-		
 		Intent intent = new Intent(getActivity(), MemberSearch.class);
-		
 		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
 	}
 	
@@ -134,21 +136,18 @@ public class DocumentForwardFragment extends Fragment {
 		if(requestCode == MemberSearch.REQUEST_CODE) {
 			if(resultCode != MemberSearch.RESULT_OK) {
 				// onError
-				Toast.makeText(getActivity(), "Activity Result Error", Toast.LENGTH_SHORT).show();
 			} else {
-				//data.getExtras().get;
-				Toast.makeText(getActivity(), "Activity Result Success", Toast.LENGTH_SHORT).show();
-				
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDXS);
+				// 선택한 사람들로 <대체>된다.
 				
 				ArrayList<User> newUsers = new ArrayList<User>();
 				for(int i=0; i< receiversIdxs.size(); i++ ){
 					User user = User.getUserWithIdx(receiversIdxs.get(i));
-					// TODO 이미 선택되어 잇는 사람은 ..
-					if(receivers.contains(user)) continue;
+					//if(receivers.contains(user)) continue;
 					newUsers.add(user);
 				}
-				receivers.addAll(newUsers);
+				//receivers.addAll(newUsers);
+				receivers = newUsers;
 				
 				if(receivers.size() > 0) {
 					User fReceiver = receivers.get(0);

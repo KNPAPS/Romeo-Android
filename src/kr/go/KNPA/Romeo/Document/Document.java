@@ -24,14 +24,14 @@ public class Document extends Message implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
 	
-	public	static final String FWD_FORWARDER_IDX 	= "forwarder";
-	public	static final String FWD_ARRIVAL_DT 		= "TS";
-	public	static final String FWD_CONTENT 		= "content";
+	public	static final String FWD_FORWARDER_IDX 	= DocumentProcManager.COLUMN_FORWARDER_HASH;
+	public	static final String FWD_ARRIVAL_DT 		= DocumentProcManager.COLUMN_FORWARD_TS;
+	public	static final String FWD_CONTENT 		= DocumentProcManager.COLUMN_FORWARD_COMMENT;
 	
-	public	static final String ATTACH_FILE_IDX = "file_hash"; // (string)
-	public	static final String ATTACH_FILE_NAME = "file_name"; // (string)
-	public	static final String ATTACH_FILE_TYPE = "file_type"; // (int)
-	public	static final String ATTACH_FILE_SIZE = "file_size"; // (long)
+	public	static final String ATTACH_FILE_IDX 	= DocumentProcManager.COLUMN_FILE_HASH; // (string)
+	public	static final String ATTACH_FILE_NAME 	= DocumentProcManager.COLUMN_FILE_NAME; // (string)
+	public	static final String ATTACH_FILE_TYPE 	= DocumentProcManager.COLUMN_FILE_TYPE; // (int)
+	public	static final String ATTACH_FILE_SIZE 	= DocumentProcManager.COLUMN_FILE_SIZE; // (long)
 			
 	// Specific Variables not to be sent
 	public boolean favorite = false;
@@ -104,89 +104,66 @@ public class Document extends Message implements Parcelable{
 		this.sender = User.getUserWithIdx( cursor_documentInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH)) );
 		// 발신일시 (long)
 		this.TS = cursor_documentInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		// 문서카테고리 (int) Document.TYPE_DEPARTED, Document.TYPE_RECEIVED
+		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + cursor_documentInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE));
+		// 즐겨찾기여부 (int)
+		this.favorite = ( cursor_documentInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
 		
+		this.checked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
+		this.checkTS =;
 		
+				
+		// this.receivers = receivers;
+		// this.received = received;
+				
 		/* getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 */
 		Cursor cursor_forwardInfo = dpm.getDocumentForwardInfo(this.idx);
 		if(cursor_forwardInfo.getCount() > 0) {
+			ArrayList<HashMap<String, Object>> fwds = new ArrayList<HashMap<String, Object>>();
 			cursor_forwardInfo.moveToFirst();
 			while( !cursor_forwardInfo.isAfterLast() ) {
+				HashMap<String, Object> fwd = new HashMap<String, Object>();
 				// 포워더 (String)
 				cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
 				// 코멘트 (String)
 				cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT));
 				// 포워딩한 시간 (long)
 				cursor_forwardInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+				
+				fwds.add(fwd);
 			}
+			this.forwards = fwds;
 		}
 		
 		/* getDocumentAttachment(String docHash) : 문서의 첨부파일 정보	*/
 		Cursor cursor_attInfo = dpm.getDocumentAttachment(this.idx);
 		if(cursor_attInfo.getCount() > 0) {
+			ArrayList<HashMap<String, Object>> fs = new ArrayList<HashMap<String, Object>>();
 			cursor_attInfo.moveToFirst();
-			// 파일이름 (String)
-			cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
-			// 파일종류 (int)
-			cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
-			// 파일사이즈 (long)
-			cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
-			// 파일URL (String)
-			cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+			while( !cursor_attInfo.isAfterLast() ) {
+				HashMap<String, Object> f = new HashMap<String, Object>();
+				
+				// 파일이름 (String)
+				cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME));
+				// 파일종류 (int)
+				cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE));
+				// 파일사이즈 (long)
+				cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE));
+				// 파일 hash (String)
+				cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_HASH));
+				
+				fs.add(f);
+			}
+			this.files = fs;
 		}
-		
-		// this.receivers = receivers;
-		// this.received = received;
-		this.checked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
-		
-		this.checkTS = checkTS;
-		
-		this.forwards = forwards;
-		this.files = files;
-		//this.favorite = favorite;
-		
-		
-		
-		int subType = Document.NOT_SPECIFIED;
-		
-		if( received == true ) 
-			subType = Document.TYPE_RECEIVED;
-		else 
-			subType = Document.TYPE_DEPARTED;
-
-		if(favorite == true) 
-			subType = Document.TYPE_FAVORITE;
-		
-		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
+	
 	}
 
 	public Document(Parcel source) {
 		readFromParcel(source);
 	}
 
-	/*
-	public Document(Payload payload, boolean received, long checkTS, boolean favorite) {
-		this.idx = payload.message.idx;
-		this.title = payload.message.title;
-		this.type = payload.message.type;
-		this.content = payload.message.content;
-		this.sender = payload.sender;
-		this.receivers = payload.receivers;
-		this.TS = System.currentTimeMillis();
-		//this.received = true;
-		//this.checkTS = NOT_SPECIFIED;
-		//this.checked = false;
-		this.appendix = payload.message.appendix;
-		//this.favorite = false;
-		
-		
-		this.received = received;
-		this.checkTS = checkTS;
-		this.favorite = favorite;
-		if(this.checkTS == Message.NOT_SPECIFIED) {
-			this.checked = false;
-		}
-	}
-	*/
+	
 	public Document clone() {
 		Document document = (Document)this.clone(new Document());
 		

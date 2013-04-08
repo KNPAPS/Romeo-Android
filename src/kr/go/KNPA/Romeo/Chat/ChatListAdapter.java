@@ -7,12 +7,16 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
+import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,9 +65,11 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		departmentTV.setText( sender.department.nameFull );
 		rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
-		// TODO userPic		
-		//
-		//userPicIV.setImageBitmap(bm);
+		
+		// TODO
+		//new ImageManager().loadProfileImgToImageView(userHash, sizeType)
+		
+		userPicIV.setImageBitmap(bm);
 		
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 		arrivalDTTV.setText(arrivalDT);
