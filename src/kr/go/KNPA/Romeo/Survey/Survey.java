@@ -195,17 +195,28 @@ public class Survey extends Message implements Parcelable{
 		
 		public static final String IS_MULTIPLE = "isMultiple";
 		
-		private ArrayList<Question> _questions;
-		
 		public Form() {}
 		
-		public ArrayList<Question> questions() { return _questions;}
-		
-		public Form addQuestion(Question q) {
-			if(_questions == null)
+		public ArrayList<Question> questions() {
+			ArrayList<Question> _questions = null;
+			if(this.containsKey(QUESTIONS) == false) {
 				_questions = new ArrayList<Question>();
-			_questions.add(q);
+				this.put(QUESTIONS, _questions);
+			}
 			
+			_questions = (ArrayList<Question>)this.get(QUESTIONS);
+			
+			if(_questions == null) {
+				_questions = new ArrayList<Question>();
+				this.remove(QUESTIONS);
+				this.put(QUESTIONS, _questions);
+			}
+			
+			return _questions;	
+		}
+		
+		public Form addQuestion(Question q) {	
+			questions().add(q);
 			return this;
 		}
 		

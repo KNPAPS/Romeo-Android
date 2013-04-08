@@ -34,54 +34,41 @@ class DocumentListAdapter extends CursorAdapter {
 		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED));
 		// 문서보낸사람 (String)
 		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH));
-		// 문서생성일(보낸시간) (int)
-		c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
+		// 문서생성일(보낸시간) (long)
+		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
 		
 		
-		/**getDocumentContent(String docHash)
-		 * 한 문서의 기본 정보 조회(포워딩,파일빼고)
-		 * @b 커서구조
-		 * @b  str \n
-		 * @b  str \n
-		 * @b  str \n
-		 * @b  int \n
-		 * @param docHash 문서 해시
-		 * @return
-		 */
-		
+		/*getDocumentContent(String docHash) 한 문서의 기본 정보 조회(포워딩,파일빼고) */
 		// 제목 (String)
 		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
 		// 내용 (String)
 		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
 		// 발신자 (String)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_SENDER_HASH));
-		// 발신일시 (int)
-		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_HASH));
+		// 발신일시 (long)
+		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
 		
-		/**getDocumentForwardInfo(String docHash)
-		 * 문서의 포워딩 정보
-		 * @b 커서구조
-		 * @b COLUMN_FORWARDER_HASH str 포워더\n
-		 * @b COLUMN_FORWARD_COMMENT str 코멘트\n
-		 * @b COLUMN_FORWARD_TS int 포워딩한 시간\n
-		 * @param docHash
-		 * @return
-		 */
+		/* getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 */
+		// 포워더 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+		// 코멘트 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT));
+		// 포워딩한 시간 (long)
+		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
 		
-		/**getDocumentAttachment(String docHash)
-		 * 문서의 첨부파일 정보
-		 * @b 커서구조
-		 * @b COLUMN_FILE_NAME str 파일이름\n
-		 * @b COLUMN_FILE_TYPE int 파일종류\n
-		 * @b COLUMN_FILE_SIZE int 파일사이즈 in byte\n
-		 * @b COLUMN_FILE_URL str 파일URL\n
-		 * @param docHash
-		 * @return
-		 */
+		/* getDocumentAttachment(String docHash) : 문서의 첨부파일 정보	*/
+		// 파일이름 (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+		// 파일종류 (int)
+		c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+		// 파일사이즈 (long)
+		c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS));
+		// 파일URL (String)
+		c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_HASH));
+		
 		//TODO
 		if(this.type == Document.TYPE_DEPARTED) {
 			
-			DBProcManager
 			LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
 			TextView titleTV = (TextView)v.findViewById(R.id.title);
 			TextView senderTV = (TextView)v.findViewById(R.id.sender);
