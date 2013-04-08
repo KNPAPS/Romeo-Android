@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
 
@@ -173,37 +174,14 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	@Override
-	public void afterSend(boolean successful) {
-		// TODO :  Insert into DB
-		/*
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getWritableDatabase();
-		
-		StringBuilder recs = new StringBuilder();
-		for(int i=0; i<this.receivers.size(); i++) {
-			recs.append( this.receivers.get(i).toJSON() );
+	public void afterSend(Context context, boolean successful) {
+		if(successful) {
+			// Success
+			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx, this.title, this.content, this.sender.idx, this.TS);
+		}  else {
+			// Failure
 		}
-		
-		// DB에 등록
-		long currentTS = System.currentTimeMillis();
-		ContentValues vals = new ContentValues();
-		vals.put("title", this.title);
-		vals.put("content", this.content);
-		vals.put("sender", this.sender.idx);
-		vals.put("receivers", recs.toString());
-		vals.put("received", 0);
-		vals.put("TS", currentTS);
-		vals.put("checked", 1);
-		vals.put("openTS", this.openTS());
-		vals.put("closeTS", this.closeTS());
-		vals.put("checkTS", this.checkTS);
-		vals.put("answered", 0);
-		vals.put("idx", idx);
-		db.insert(DBManager.TABLE_SURVEY, null, vals);
-		
-		db.close();
-		dbManager.close();
-		*/
+		// TODO : Animation 처리
 	}
 	
 	public static class Form extends HashMap<String, Object>{

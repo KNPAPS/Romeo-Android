@@ -180,11 +180,11 @@ public class Message implements Parcelable{
 	}
 	*/
 
-	public void send() {
-		GCMMessageSender.sendMessage(this);
+	public void send(Context context) {
+		GCMMessageSender.sendMessage(context, this);
 	}
 	
-	public void afterSend(boolean successful) {}
+	public void afterSend(Context context, boolean successful) {}
 	
 	
 	// Implements Parcelable

@@ -177,7 +177,7 @@ public class ChatFragment extends RomeoFragment {
 		f.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				lv.refresh();	
+				lv.refresh();	// RoomListView
 			}
 		});
 	}

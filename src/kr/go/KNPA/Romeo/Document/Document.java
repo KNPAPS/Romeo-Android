@@ -178,40 +178,13 @@ public class Document extends Message implements Parcelable{
 	};
 
 	@Override
-	public void afterSend(boolean successful) {
-		// TODO :  Insert into DB
-		/*
-		String tableName = null;
-		switch(this.type%MESSAGE_TYPE_DIVIDER) {
-			case Document.TYPE_DEPARTED : tableName = DBManager.TABLE_DOCUMENT; break;
-			case Document.TYPE_FAVORITE : tableName = DBManager.TABLE_DOCUMENT; break;
-			case Document.TYPE_RECEIVED : tableName = DBManager.TABLE_DOCUMENT; break;
+	public void afterSend(Context context, boolean successful) {
+		if(successful) {
+			// Success
+			DBProcManager.sharedManager(context).document().saveDocumentOnSend(this.idx, this.sender.idx, this.title, this.content, createdTS, files)
+		}  else {
+			// Failure
 		}
-		
-		DBManager dbManager = new DBManager(context);
-		SQLiteDatabase db = dbManager.getWritableDatabase();
-		long currentTS = System.currentTimeMillis();
-		
-		StringBuilder recs = new StringBuilder();
-		for(int i=0; i<this.receivers.size(); i++) {
-			recs.append( this.receivers.get(i).toJSON() );
-		}
-		
-		ContentValues vals = new ContentValues();
-		vals.put("title", this.title);
-		vals.put("content", this.content);
-		vals.put("sender", this.sender.idx);
-		vals.put("receivers", recs.toString());
-		vals.put("received", false);
-		vals.put("TS", currentTS);
-		vals.put("checked", true);							
-		vals.put("checkTS", this.checkTS);
-		vals.put("favorite", 0); //(this.favorite?1:0)
-		vals.put("idx", idx);
-		db.insert(tableName, null, vals);
-
-		db.close();
-		dbManager.close();
-		*/
+		// TODO : Animation 처리
 	}
 }
