@@ -80,6 +80,16 @@ public class ImageManager {
 	}
 	
 	/**
+	 * 로컬 캐시나 서버로부터 사진을 불러와서 imageview에 설정 
+	 * @param imageIdx
+	 * @param sizeType
+	 * @param img
+	 */
+	public void loadImage( String imageIdx, int sizeType, ImageView img ) { 
+		
+	}
+	
+	/**
 	 * LruCache를 이용해 메모리에 캐싱할 때의 key값을 만듬\n
 	 * 키 규칙 : 유저해시+사이즈타입
 	 * @param userHash

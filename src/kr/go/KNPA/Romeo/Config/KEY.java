@@ -123,6 +123,7 @@ public class KEY {
 		public static final String RANK = User.class.getSimpleName()+"_rank";
 		
 		public static final String IS_ENABLED = "isUserEnabled";
+		public static final String PROFILE_IMAGE_SIZE = "profileImgSize";
 	}
 	
 	public static class DEPT {

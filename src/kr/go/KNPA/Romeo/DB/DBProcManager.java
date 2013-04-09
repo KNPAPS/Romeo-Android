@@ -945,6 +945,7 @@ public class DBProcManager {
 		 * @b COLUMN_USER_IDX 수신자해쉬\n
 		 * @param hash 설문조사 해쉬
 		 * @return
+		 * @deprecated 필요없어짐 
 		 */
 		public Cursor getReceivers(String hash) {
 			long id = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_IDX, hash);
