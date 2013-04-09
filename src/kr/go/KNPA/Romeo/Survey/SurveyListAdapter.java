@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
+import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
 import android.content.Intent;
@@ -22,12 +23,12 @@ import android.widget.Button;
 import android.widget.TextView;
 class SurveyListAdapter extends CursorAdapter {
 	// Variables
-	public int type = Survey.NOT_SPECIFIED;
+	public int subType = Survey.NOT_SPECIFIED;
 	
 	// Constructor
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 			{	super(context, c, autoRequery);						}
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int type) 	{	super(context, c, autoRequery);	this.type = type;	}
-	public SurveyListAdapter(Context context, Cursor c, int flags) 						{	super(context, c, flags);							}
+	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);						}
+	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int subType) 	{	super(context, c, autoRequery);	this.subType = subType;	}
+	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);							}
 
 	@Override
 	public void bindView(View v, final Context ctx, Cursor c) {
@@ -48,9 +49,10 @@ class SurveyListAdapter extends CursorAdapter {
 		
 		
 		// Animation
-		Survey
-		String openDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_openDT));
-		String closeDT = Formatter.timeStampToStringWithFormat(openTS, ctx.getString(R.string.formatString_closeDT));
+		// TODO :  더 빠르게..
+		Survey survey = Survey.surveyFromServer(ctx, surveyIdx, subType);
+		String openDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(Form.OPEN_TS), ctx.getString(R.string.formatString_openDT));
+		String closeDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(Form.CLOSE_TS), ctx.getString(R.string.formatString_closeDT));
 	
 		User user = User.getUserWithIdx(surveyIdx);
 		String senderInfo = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
@@ -68,7 +70,7 @@ class SurveyListAdapter extends CursorAdapter {
 		TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
 		closeDTTV.setText(closeDT);
 		
-		if(this.type == Survey.TYPE_DEPARTED) {
+		if(this.subType == Survey.TYPE_DEPARTED) {
 			//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
 			Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
 			final ArrayList<String> idxs = 
@@ -86,7 +88,7 @@ class SurveyListAdapter extends CursorAdapter {
 				}
 			});
 			
-		} else if(this.type == Survey.TYPE_RECEIVED) {
+		} else if(this.subType == Survey.TYPE_RECEIVED) {
 			//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
 			Button goResultBT = (Button)v.findViewById(R.id.goResult);
 			
@@ -100,7 +102,7 @@ class SurveyListAdapter extends CursorAdapter {
 					@Override
 					public void onClick(View v) {
 						// TODO : 서버에서 정보 받기??
-						SurveyResultFragment f = new SurveyResultFragment(surveyIdx, type);
+						SurveyResultFragment f = new SurveyResultFragment(surveyIdx, subType);
 						MainActivity.sharedActivity().pushContent(f);
 					}
 				});
@@ -120,7 +122,7 @@ class SurveyListAdapter extends CursorAdapter {
 	public View newView(Context ctx, Cursor c, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(ctx);
 		View v = null;
-		switch(this.type) {
+		switch(this.subType) {
 		case Survey.TYPE_DEPARTED :	v = inflater.inflate(R.layout.survey_list_cell_departed, parent,false);		break;
 		case Survey.TYPE_RECEIVED :	v = inflater.inflate(R.layout.survey_list_cell_received, parent,false);		break;
 			

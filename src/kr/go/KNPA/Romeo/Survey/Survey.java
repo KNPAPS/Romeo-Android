@@ -6,13 +6,12 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
-import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
-import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,23 +39,35 @@ public class Survey extends Message implements Parcelable{
 	
 	public Survey(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
+		
+		// TODO
 	}
 	
-	public static Survey surveyFromServer(String surveyIdx) {
+	public static Survey surveyFromServer(Context context, String surveyIdx, int subType) {
+		Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
+		cursor_surveyInfo.moveToFirst();
+		
+		
 		Data reqData = new Data();
-		Payload request = new Payload().setEvent(Event.Message.Survey).setData(reqData);
+		Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
+		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
+		Payload response = conn.getResponsePayload();
+		Data respData = response.getData();
 		Survey s = new Survey(
-				idx, 
-				type, 
-				title, 
-				content, 
-				senderIdx, 
-				receivers, 
-				received, 
-				TS, 
-				checked, 
-				checkTS, 
-				answered);
+				(String)respData.get(0, KEY.SURVEY.IDX), 
+				Message.makeType(Message.MESSAGE_TYPE_SURVEY, subType), 
+				(String)respData.get(0, KEY.SURVEY.TITLE), 
+				(String)respData.get(0, KEY.SURVEY.CONTENT), 
+				(String)respData.get(0, KEY.SURVEY.SENDER_IDX), 
+				null, 
+				(subType == Survey.TYPE_RECEIVED ? true : false), 
+				(Long)respData.get(0, KEY.SURVEY.CREATED_TS), 
+				cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(
+						SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0 ? true : false, 
+				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS)), 
+				(cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false));
+		s.form = Form.parseForm(respData);
+		return s;
 	}
 	
 	public Survey(Context context, Cursor c) {
@@ -168,6 +179,18 @@ public class Survey extends Message implements Parcelable{
 		public static final String IS_MULTIPLE = KEY.SURVEY.IS_MULTIPLE;
 		
 		public Form() {}
+		
+		public static Form parseForm(String json) {
+			// TODO
+			Form form = new Form();
+			return form;
+		}
+		
+		public static Form parseForm(Data data) {
+			// TODO
+			Form form = new Form();
+			return form;
+		}
 		
 		public ArrayList<Question> questions() {
 			ArrayList<Question> _questions = null;
