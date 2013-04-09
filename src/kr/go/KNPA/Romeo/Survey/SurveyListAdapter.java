@@ -34,49 +34,32 @@ class SurveyListAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View v, final Context ctx, final Cursor c) {
-		// TODO
 		
-		 /* 설문조사 목록 가져오기 */
-		DBProcManager.sharedManager(ctx).survey();
-		// 설문제목 (String)
-		String title = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
-		// 설문 문서 해시 (String)
-		final String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));
-		// 보낸사람 해쉬 (String)
-		String senderIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
-		// 확인여부 (int)
-		boolean isChecked = (c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0) ? true : false;
-		// 대답여부 (int)
-		boolean isAnswered = (c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED)) > 0)? true : false;
+		// Animation	// TODO
+		Survey survey = new Survey(ctx, c);
 		
-		
-		// Animation
-		// TODO :  더 빠르게..
-		Survey survey = Survey.surveyFromServer(ctx, surveyIdx, subType);
-		String openDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.OPEN_TS), ctx.getString(R.string.formatString_openDT));
-		String closeDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.CLOSE_TS), ctx.getString(R.string.formatString_closeDT));
-	
-		User user = User.getUserWithIdx(surveyIdx);
+		User user = User.getUserWithIdx(survey.senderIdx);
 		String senderInfo = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
-
-		
-		TextView titleTV = (TextView)v.findViewById(R.id.title);
-		titleTV.setText(title);
-		
 		TextView senderTV = (TextView)v.findViewById(R.id.sender);
 		senderTV.setText(senderInfo);
 		
+		TextView titleTV = (TextView)v.findViewById(R.id.title);
+		titleTV.setText(survey.title);
+		
+		String openDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.OPEN_TS), ctx.getString(R.string.formatString_openDT));
 		TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
 		openDTTV.setText(openDT);
 		
+		String closeDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.CLOSE_TS), ctx.getString(R.string.formatString_closeDT));
 		TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
 		closeDTTV.setText(closeDT);
+		
 		
 		if(this.subType == Survey.TYPE_DEPARTED) {
 			//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
 			Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
 			final ArrayList<String> idxs = 
-					Survey.getUncheckersIdxsWithMessageTypeAndIndex(IGNORE_ITEM_VIEW_TYPE, surveyIdx);
+					Survey.getUncheckersIdxsWithMessageTypeAndIndex(IGNORE_ITEM_VIEW_TYPE, survey.idx);
 			goUnchecked.setText(""+idxs.size());
 			goUnchecked.setOnClickListener(new OnClickListener() {
 				@Override
@@ -96,15 +79,13 @@ class SurveyListAdapter extends CursorAdapter {
 			
 			String answeredStatus = null;
 			int answeredColor = ctx.getResources().getColor(R.color.black);
-			if(isAnswered) {
+			if(survey.isAnswered(ctx)) {	// TODO
 				answeredStatus 	= ctx.getString(R.string.statusAnswered);
 				answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
 				
 				goResultBT.setOnClickListener( new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// TODO : 서버에서 정보 받기??
-						
 						Survey survey = new Survey(ctx, c);
 						
 						SurveyResultFragment f = new SurveyResultFragment(survey, subType);

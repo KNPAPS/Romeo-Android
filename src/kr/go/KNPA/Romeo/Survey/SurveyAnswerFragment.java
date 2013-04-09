@@ -1,13 +1,14 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey.AnswerSheet;
+import kr.go.KNPA.Romeo.Survey.Survey.Form.Question;
 import kr.go.KNPA.Romeo.Util.Formatter;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,40 +16,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class SurveyDetailFragment extends Fragment  {
+public class SurveyAnswerFragment extends Fragment  {
 	private Survey survey;
 	public int subType;
+	private LinearLayout questionsLL; 
 	
-	public SurveyDetailFragment() {}
-	public SurveyDetailFragment(Survey survey, int subType)) {	this.survey = survey; this.subType = subType;}
+	
+	public SurveyAnswerFragment() {}
+	public SurveyAnswerFragment(Survey survey, int subType) {	this.survey = survey; this.subType = subType;}
 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		Cursor cursor_surveyInfo = DBProcManager.sharedManager(getActivity()).survey().getSurveyInfo(survey.idx);
-		
-		this.subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
-		
-		this.survey = Survey.surveyFromServer(getActivity(), surveyIdx, subType);
-		/*
-		this.survey = new Survey(
-				surveyIdx, 
-				Message.makeType(Message.MESSAGE_TYPE_SURVEY, subType),	// 서베이타입 
-				cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME)),	// 설문제목 
-				cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CONTENT)), // 설문조사설명내용
-				cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX)), // 보낸사람 해쉬
-				null, 
-				(this.subType == Survey.TYPE_RECEIVED ? true : false ), 
-				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS)), // 설문조사 받은시간
-				(cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0 ) ? true : false, // 확인 여부 
-				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS)), // 확인한시간 
-				(cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED)) > 0 ) ? true : false);
-				*/
-		
 	}
 	@Override
 	public void onResume() {
@@ -58,13 +41,8 @@ public class SurveyDetailFragment extends Fragment  {
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		
-		
-		
-		View view = inflater.inflate(R.layout.survey_detail, null, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.survey_answer, null, false);
 
 		initNavigationBar(
 				view, 
@@ -97,7 +75,67 @@ public class SurveyDetailFragment extends Fragment  {
 		String content = this.survey.content;
 		contentTV.setText(content);
 
-		// TODO 응답한 내용
+		
+		
+		questionsLL = (LinearLayout)view.findViewById(R.id.questions);
+		ArrayList<Question> questions = survey.form.questions();
+		
+		for(int qi=0; qi<questions.size(); qi++ ) {
+			Question question = questions.get(qi);
+			View questionView = inflater.inflate(R.layout.survey_question_answer, questionsLL, false);
+			
+			if( question.isMultiple() ) {
+				TextView qIsMultipleTV = (TextView)questionView.findViewById(R.id.isMultiple);
+				qIsMultipleTV.setVisibility(View.VISIBLE);
+			} else {
+				TextView qIsMultipleTV = (TextView)questionView.findViewById(R.id.isMultiple);
+				qIsMultipleTV.setVisibility(View.INVISIBLE);
+			}
+			
+			TextView qIndexTV = (TextView)questionView.findViewById(R.id.index);
+			qIndexTV.setText(qi+".");
+			
+			TextView qTitleTV = (TextView)questionView.findViewById(R.id.title);
+			qTitleTV.setText(question.title());
+			
+			final LinearLayout optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
+			for(int oi=0; oi<question.options().size(); oi++) {
+				String option = question.options().get(oi);
+				View optionView = inflater.inflate(R.layout.survey_option_result, questionsLL, false);
+				Button oControlBT = (Button)optionView.findViewById(R.id.control);
+				
+				final boolean _qIsMultiple = question.isMultiple(); 
+				oControlBT.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View button) {
+						
+						if(_qIsMultiple) {
+							// TODO : 배경 그림으로 boolean 판별을 하고 있음....
+							if( button.getBackground().equals(getActivity().getResources().getDrawable(R.drawable.circle_check_active)) )
+								button.setBackgroundResource(R.drawable.circle_check_gray);
+							else if( button.getBackground().equals(getActivity().getResources().getDrawable(R.drawable.circle_check_gray)) ) 
+								button.setBackgroundResource(R.drawable.circle_check_active);
+							
+						} else {
+							for(int i = 0; i<optionsLL.getChildCount(); i++) {
+								Button sib = (Button)optionsLL.getChildAt(i).findViewById(R.id.control);
+								sib.setBackgroundResource(R.drawable.circle_check_gray);
+							}
+							button.setBackgroundResource(R.drawable.circle_check_active);
+						}
+					}
+				});
+
+				TextView oTitleTV = (TextView)optionView.findViewById(R.id.title);
+				oTitleTV.setText(option);
+				
+				optionsLL.addView(optionView);
+			}
+			
+			questionsLL.addView(questionView);
+			
+		}
 		
 		return view; 
 	}
@@ -118,15 +156,27 @@ public class SurveyDetailFragment extends Fragment  {
 	};
 
 	private void submit() {
-		// TODO
-		/*
-		String qJson = qm.toJSON();
-		String json = "{\"idx\":"+survey.idx+",\"answersheet\":"+qJson+",\"userIdx\":"+UserInfo.getUserIdx(context)+"}";
-		boolean result = survey.sendAnswerSheet(json, getActivity());
-
-		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).listView.refresh();
-		if(result == true) MainActivity.sharedActivity().popContent(this);
-*/
+		AnswerSheet answerSheet = new AnswerSheet();
+		
+		for( int qi = 0; qi< questionsLL.getChildCount(); qi++) {
+			View questionView = questionsLL.getChildAt(qi);
+			
+			ArrayList<Integer> selected = new ArrayList<Integer>();
+			
+			LinearLayout optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
+			for(int oi = 0; oi<optionsLL.getChildCount(); oi++) {
+				View optionView = optionsLL.getChildAt(oi);
+				Button control = (Button)optionView.findViewById(R.id.control);
+				
+				if(control.getBackground().equals(getActivity().getResources().getDrawable(R.drawable.circle_check_active)))
+					selected.add(oi);
+			}
+			
+			answerSheet.add(selected);
+			
+		}
+		
+		survey.sendAnswerSheet(getActivity(), answerSheet);
 	}
 
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {

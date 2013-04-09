@@ -57,14 +57,20 @@ public class Survey extends Message {// implements Parcelable{
 		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
 		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
 		
-		this.idx 			= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
-		
+		String idx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
 		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
+		
+		Survey fromServer = surveyFromServer(
+				context, 
+				idx, 
+				subType);
+		
+		this.idx 			= idx;
 		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
 		
-		this.title 			= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
-		this.content 	= cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CONTENT));
-		this.senderIdx		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));		
+		this.title 			= fromServer.title;
+		this.content 		= fromServer.content;
+		this.senderIdx		= fromServer.senderIdx;		
 		// X : receiversIdx 
 		
 		if(subType == Survey.TYPE_DEPARTED) {
@@ -73,7 +79,7 @@ public class Survey extends Message {// implements Parcelable{
 			this.received = true;
 		}
 
-		this.TS			= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS));
+		this.TS			= fromServer.TS;
 		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
 		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
 	}
@@ -108,11 +114,15 @@ public class Survey extends Message {// implements Parcelable{
 		this.checkTS = checkTS;
 	}
 
-	public boolean isAnswered(Context context, String surveyIdx) {
+	public static boolean isAnswered(Context context, String surveyIdx) {
 		Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
 		cursor_surveyInfo.moveToFirst();
 		
 		return (cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false);
+	}
+	
+	public boolean isAnswered(Context context) {
+		return Survey.isAnswered(context, this.idx);
 	}
 	
 	public Survey clone() {
@@ -123,17 +133,15 @@ public class Survey extends Message {// implements Parcelable{
 	
 	public void sendAnswerSheet(Context context, AnswerSheet answerSheet) {
 		GCMMessageSender.sendSurveyAnswerSheet(context, this, answerSheet);
-		
-		
 	}
 	
 	public void afterSendAnswerSheet(Context context, AnswerSheet answerSheet, boolean status) {
-		// TODO : DBProcManager.sharedManager(context).document().
+		DBProcManager.sharedManager(context).survey().updateAnsweredTS(this.idx, System.currentTimeMillis());
 		// TODO : animation
 	}
 	
 	
-	public class AnswerSheet extends ArrayList<ArrayList<Integer>> {
+	public static class AnswerSheet extends ArrayList<ArrayList<Integer>> {
 		
 	}
 
@@ -141,7 +149,7 @@ public class Survey extends Message {// implements Parcelable{
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx, this.title, this.content, this.senderIdx, this.TS);
+			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx);
 		}  else {
 			// Failure
 		}
