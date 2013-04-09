@@ -34,6 +34,7 @@ public class MemberSearch extends Activity {
 	public static final String TYPE_USER = "TYPE_USER";
 	public static final int REQUEST_CODE = 100;
 	public static final String KEY_RESULT_USERS_IDX = "receivers";
+	// return ArrayList<String> idxs
 	
 	public String searchResult = ""; 
 	
@@ -155,10 +156,14 @@ public class MemberSearch extends Activity {
 		
 		ArrayList<String> result = new ArrayList<String>(fromMemberList.size()+fromFavoriteList.size());
 		result.addAll(fromMemberList);
-		result.addAll(fromFavoriteList);
+		for(int i=0; i<fromFavoriteList.size(); i++) {
+			if(result.contains(fromFavoriteList.get(i)));
+				result.add(fromFavoriteList.get(i));
+		}
+		//result.addAll(fromFavoriteList);
 		
 		Bundle b = new Bundle();
-		b.putStringArrayList("receivers", result);
+		b.putStringArrayList(KEY_RESULT_USERS_IDX, result);
 		
 		Intent intent = new Intent();
 		intent.putExtras(b);
@@ -184,23 +189,5 @@ public class MemberSearch extends Activity {
 		if(container == null) return null;
 		return container.findViewById(viewId);
 	}
-	
-	
-	// 호출 측에서
-	/*
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == //SOME PRE DEFINED VALUE) {
-			if(resultCode != RESULT_OK) {
-				
-			} else {
-				data.getExtras().get;
-			}
-		} else {
-			super.onActivityResult(requestCode, resultCode, data);
-		}
-	}
-	*/
-	
 
 }

@@ -14,7 +14,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="11dp"
-        android:background="@drawable/arrow_right_gray">
+        android:background="@drawable/circle_arrow_right_gray">
 
     </Button>
     

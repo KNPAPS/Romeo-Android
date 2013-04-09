@@ -3,11 +3,14 @@
  */
 package kr.go.KNPA.Romeo.Member;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,15 +20,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
-/**
- * @author pong0923
- *
- */
 public class MemberFragment extends RomeoFragment {
 	
 	// preDefined Constants
@@ -38,13 +34,8 @@ public class MemberFragment extends RomeoFragment {
 	public static boolean showIntroView = false;
 	
 	// Constructor
-	public MemberFragment() {
-		this(TYPE_MEMBERLIST);
-	}
-	
-	public MemberFragment(int type) {
-		super(type);
-	}
+	public MemberFragment() 			{	this(TYPE_MEMBERLIST);	}
+	public MemberFragment(int type) 	{	super(type);			}
 	
 	// Manage List View
 	public RomeoListView getListView() {
@@ -62,19 +53,8 @@ public class MemberFragment extends RomeoFragment {
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		// BarButton Click Listners
-		OnClickListener lbbOnClickListener = new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				MainActivity.sharedActivity().toggle();
-			}
-		};
-		
-		OnClickListener rbbOnClickListener = new OnClickListener() {		
-			@Override
-			public void onClick(View v) {
-				startMemberSearchActivity();
-			}
-		};
+		OnClickListener lbbOnClickListener = new OnClickListener() {		@Override	public void onClick(View v) {	MainActivity.sharedActivity().toggle();	}	};
+		OnClickListener rbbOnClickListener = new OnClickListener() {		@Override	public void onClick(View v) {	startMemberSearchActivity();			}	};
 		
 		
 		View view = null;
@@ -99,6 +79,7 @@ public class MemberFragment extends RomeoFragment {
 		case TYPE_MEMBERLIST_SEARCH :	
 			view = inflater.inflate(R.layout.member_fragment, container, false);
 			
+			/*
 			// IntroView
 			if(showIntroView == true ) {
 				ImageView introView = new ImageView(getActivity());
@@ -108,7 +89,7 @@ public class MemberFragment extends RomeoFragment {
 				introView.setLayoutParams(lp);
 				introView.setImageResource(R.drawable.intro);
 				((LinearLayout)view).addView(introView, 0);
-			}
+			}*/
 			
 			
 			initNavigationBar(
@@ -132,9 +113,7 @@ public class MemberFragment extends RomeoFragment {
 
 
 	private void startMemberSearchActivity() {
-		
 		Intent intent = new Intent(getActivity(), MemberSearch.class);
-		
 		startActivityForResult(intent, MainActivity.MEMBER_SEARCH_ACTIVITY);
 	}
 	
@@ -143,42 +122,23 @@ public class MemberFragment extends RomeoFragment {
 		if(requestCode == MainActivity.MEMBER_SEARCH_ACTIVITY) {
 			if(resultCode != MemberSearch.RESULT_OK) {
 				// onError
-				Toast.makeText(getActivity(), "Activity Result Error", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), "선택되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			} else {
 				//data.getExtras().get;
 				Bundle b = data.getExtras();
-				long[] _users = b.getLongArray("users");
-				StringBuilder sb = new StringBuilder();
+				ArrayList<String> usersIdx = b.getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
-				for(int i=0; i<_users.length; i++) {
-					sb.append(_users[i]);
-					if(i!=(_users.length-1)) {
-						sb.append(":");
-					}
+				if(usersIdx == null || usersIdx.size() < 1) {
+					Toast.makeText(getActivity(), "선택되지 않았습니다.", Toast.LENGTH_SHORT).show();
+					return;
 				}
-				String users = sb.toString();
-				
-				DBManager dbManager = new DBManager(getActivity());
-				SQLiteDatabase db = dbManager.getWritableDatabase();	
-				Cursor c = null;
-				// 정렬을 했다면, 무결성. TODO 
-				String sql = "SELECT * FROM "+DBManager.TABLE_MEMBER_FAVORITE+" WHERE idxs=\""+users+"\";";
-				c = db.rawQuery(sql, null);
-				
-				int isGroup = (_users.length > 1 ? 1 : 0);
-				if(!(c.getCount() > 0)) {
-					ContentValues cv = new ContentValues();
-					cv.put("idxs", users);
-					cv.put("isGroup", isGroup);
-					cv.put("TS", System.currentTimeMillis());
-					db.insert(DBManager.TABLE_MEMBER_FAVORITE, null, cv);
+					
+				if(usersIdx.size() == 1 && DBProcManager.sharedManager(getActivity()).member().isUserFavorite(usersIdx.get(0))) {
+					DBProcManager.sharedManager(getActivity()).member().setFavorite(usersIdx.get(0), true);
+				} else {
+					DBProcManager.sharedManager(getActivity()).member().addFavoriteGroup(usersIdx);
 				}
-				
-				if(c != null) c.close();
-				db.close();
-				dbManager.close();
-				
-				Toast.makeText(getActivity(), "Activity Result Success", Toast.LENGTH_SHORT).show();
+							
 			}
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);

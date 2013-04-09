@@ -47,19 +47,11 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		
 	}
 	
-	public CellNode rootNode() {
-		return _rootNode;
-	}
-	
-	public void refresh() {
-
-		//this.notifyDataSetChanged();
-	}
+	public CellNode rootNode() 	{	return _rootNode;						}
+	public void refresh() 		{		/* this.notifyDataSetChanged(); */	}
 	
 	@Override
-	public int getCount() {
-		return this.rootNode().count();
-	}
+	public int getCount() 		{	return this.rootNode().count();			}
 
 	@Override
 	public Object getItem(int position) {

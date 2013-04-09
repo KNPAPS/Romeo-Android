@@ -1,19 +1,12 @@
 package kr.go.KNPA.Romeo.Member;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -26,20 +19,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MemberDetailActivity extends Activity implements OnClickListener {
+public class MemberDetailActivity extends Activity {
 
 	static final int NOT_SPECIFIED = -777;
 	static final String KEY_IDX = "idx";
 	static final String KEY_IDX_TYPE = "idx_type";
 	static final int IDX_TYPE_USER = 0; 
 	static final int IDX_TYPE_GROUP = 1;
-	Button background;
-	Button  close;
-	Button favorite;
-	Button goDocument;
-	Button goSurvey;
-	Button goCommand;
-	Button goMeeting;
+	
+	private Button background;
+	private Button  close;
+	private Button favorite;
+	private Button goDocument;
+	private Button goSurvey;
+	private Button goCommand;
+	private Button goMeeting;
+	
+	private String idx;
+	private int idxType;
 	
 	public MemberDetailActivity() {
 	}
@@ -50,26 +47,19 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		
+		// Intent로부터 정보를 얻자
 		Intent intent = getIntent();
 		Bundle b = intent.getExtras();
 		
-		String idx = b.getString(KEY_IDX);
-		int idxType = b.getInt(KEY_IDX_TYPE);
+		idx = b.getString(KEY_IDX);
+		idxType = b.getInt(KEY_IDX_TYPE);
 		
+		// 전달된 idx값이 없으면 돌아간다.
 		if(idx == null|| idx.trim().length() < 1) {
 			finish();
 		}
 
-		if(idxType == IDX_TYPE_USER) {
-			
-		} else if(idxType == IDX_TYPE_GROUP) {
-			
-		}
-		
-		// User 정보를 얻어온다.
-		ArrayList<User> users = User.getUsersWithIdxs(idx);
-
-
+		// 모양을 잡는다.
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         
@@ -87,14 +77,7 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		lp.height = getWindowManager().getDefaultDisplay().getHeight() - statusBarHeight;
 		vg.setLayoutParams(lp);
 
-		
-		// Bind Click Events
-		background = (Button)findViewById(R.id.backgroundButton);
-		close = (Button)findViewById(R.id.close);
-		
-		String title = null;
-
-		// TODO : 
+		// 주어진 idx가 즐겨찾기 되어있는지 판단한다.
 		MemberProcManager mpm = DBProcManager.sharedManager(MemberDetailActivity.this).member(); 
 		boolean isFavorite = mpm.isUserFavorite(idx);
 		
@@ -104,6 +87,53 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		} else {
 			favorite.setBackgroundResource(R.drawable.star_gray);
 		}
+
+		// 주어진 정보를 토대로 채워넣는다.
+		TextView departmentTV = (TextView)findViewById(R.id.department);
+		TextView rankTV = (TextView)findViewById(R.id.rank);
+		TextView nameTV = (TextView)findViewById(R.id.name);
+				
+		Cursor cursor_favoriteInfo = mpm.getFavoriteInfo(idx);
+		cursor_favoriteInfo.moveToFirst();
+		String title = cursor_favoriteInfo.getString(cursor_favoriteInfo.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_NAME));
+		
+		if(idxType == IDX_TYPE_USER) {
+			// User 정보를 얻어온다.
+			User user = User.getUserWithIdx(idx); 
+			
+			departmentTV.setText(user.department.nameFull);
+			rankTV.setText(User.RANK[user.rank]);
+			nameTV.setText(user.name);
+			
+			ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
+			new ImageManager().loadProfileImgToImageView(idx, ImageManager.PROFILE_IMG_SIZE_MEDIUM, userPicIV);
+		} else if(idxType == IDX_TYPE_GROUP) {
+			
+			if( title == null || title.trim().length() == 0) {
+				title = "";
+				Cursor cursor_favoriteUsers = mpm.getFavoriteGroupMemberList(idx);
+				cursor_favoriteUsers.moveToFirst();
+				while(!cursor_favoriteUsers.isAfterLast()) {
+					User user = User.getUserWithIdx(cursor_favoriteUsers.getString(cursor_favoriteUsers.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));  
+					title += user.rank + " " + user.name;
+					if(title.length() > 20 ) {
+						title = title.substring(0, 20) + "...";
+						break;
+					}
+				}
+			}
+			departmentTV.setText("");
+			rankTV.setText("");
+			nameTV.setText(title);
+			ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
+			userPicIV.setImageResource(R.drawable.user_pic_default);	
+		}
+		
+		
+
+		// Bind Click Events
+		background = (Button)findViewById(R.id.backgroundButton);
+		close = (Button)findViewById(R.id.close);
 		
 		goMeeting = (Button)findViewById(R.id.goMeeting);
 		goCommand = (Button)findViewById(R.id.goCommand);
@@ -111,126 +141,45 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		goSurvey = (Button)findViewById(R.id.goSurvey);
 		
 		// TODO
-		background.setOnClickListener(this);
-		close.setOnClickListener(this);
-		favorite.setOnClickListener(this);
-		goMeeting.setOnClickListener(this);
-		goCommand.setOnClickListener(this);
-		goDocument.setOnClickListener(this);
-		goSurvey.setOnClickListener(this);
+		background.setOnClickListener(finish);
+		close.setOnClickListener(finish);
 		
+		favorite.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MemberProcManager mpm = DBProcManager.sharedManager(MemberDetailActivity.this).member();
+				boolean isFavorite = mpm.isUserFavorite(idx);
+				mpm.setFavorite(idx, !isFavorite);
+			}
+		});
 		
-		
-		ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
-		new ImageManager().loadProfileImgToImageView(idx, ImageManager.PROFILE_IMG_SIZE_MEDIUM, userPicIV);
-		
-		TextView departmentTV = (TextView)findViewById(R.id.department);
-		TextView rankTV = (TextView)findViewById(R.id.rank);
-		TextView nameTV = (TextView)findViewById(R.id.name);
-		
-		boolean isGroup = (_idxs.length > 1)? true : false;
-		if(isGroup) {
-			nameTV.setText(title);
-		} else {
-			User user = users.get(0); 
-			departmentTV.setText(user.department.nameFull);
-			rankTV.setText(User.RANK[user.rank]);
-			nameTV.setText(user.name);
-			// TODO : userPic Setting
-		}
-
+		goMeeting.setOnClickListener(goMessage);
+		goCommand.setOnClickListener(goMessage);
+		goDocument.setOnClickListener(goMessage);
+		goSurvey.setOnClickListener(goMessage);
 	}
 
-	@Override
-	public void onClick(View view) {
+ 	private final OnClickListener finish = new OnClickListener() {
+		@Override
+		public void onClick(View v) {	finish();	}
+	};
+	
+	private final OnClickListener goMessage = new OnClickListener() {
 		
-		
-		
-		final long TD = 300;
-		Button btn = (Button)view;
-		if(background == btn) {
-			finish();
-		} else if (close == btn) {
-			finish();
-		} else if (favorite == btn) {
-			DBManager dbManager = new DBManager(MemberDetailActivity.this);
-			SQLiteDatabase db = dbManager.getReadableDatabase();
-			
-			Bundle b = (Bundle)view.getTag();
-			String idxs = b.getString("idxs");
-			String _idxs[] = idxs.split(":");
-			boolean isGroup = (_idxs.length > 1)? true : false;
-			
-			Cursor c = null;
-			String sql = "SELECT * FROM "+DBManager.TABLE_MEMBER_FAVORITE+" WHERE idxs=\""+idxs+"\";";
-			c = db.rawQuery(sql, null);
-			
-			boolean isFavorite = (c.getCount() >0 ? true :false );
-			
-			if(isFavorite) {
-				db.delete(DBManager.TABLE_MEMBER_FAVORITE, "idxs=?", new String[]{idxs});
-				btn.setBackgroundResource(R.drawable.star_gray);
-			} else {
-				long currentTS = System.currentTimeMillis();
-				ContentValues vals = new ContentValues();
-				vals.put("TS", currentTS);
-				vals.put("isGroup", isGroup);
-				vals.put("idxs", idxs);
-				db.insert(DBManager.TABLE_MEMBER_FAVORITE, null, vals);
-				btn.setBackgroundResource(R.drawable.star_active);
+		@Override
+		public void onClick(View btn) {
+			if (goDocument == btn) {
+				android.widget.Toast.makeText(MemberDetailActivity.this, "goDocument", android.widget.Toast.LENGTH_SHORT).show();
+			} else if (goSurvey == btn) {
+				android.widget.Toast.makeText(MemberDetailActivity.this, "goSurvey", android.widget.Toast.LENGTH_SHORT).show();
+			} else if (goMeeting == btn) {
+				android.widget.Toast.makeText(MemberDetailActivity.this, "goMeeting", android.widget.Toast.LENGTH_SHORT).show();
+			} else if (goCommand == btn) {
+				android.widget.Toast.makeText(MemberDetailActivity.this, "goCommand", android.widget.Toast.LENGTH_SHORT).show();
 			}
 			
-			if(c != null) c.close();
-			db.close();
-			dbManager.close();
-			
-		} else if (goDocument == btn) {
-			final android.widget.Toast t = android.widget.Toast.makeText(this, "goDocument", android.widget.Toast.LENGTH_SHORT);
-			t.show();
-			Timer timer = new Timer();
-			TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					t.cancel();
-				}
-			};
-			timer.schedule(task, TD);
-		} else if (goSurvey == btn) {
-			final android.widget.Toast t = android.widget.Toast.makeText(this, "goSurvey", android.widget.Toast.LENGTH_SHORT);
-			t.show();
-			Timer timer = new Timer();
-			TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					t.cancel();
-				}
-			};
-			timer.schedule(task, TD);
-		} else if (goMeeting == btn) {
-			final android.widget.Toast t = android.widget.Toast.makeText(this, "goMeeting", android.widget.Toast.LENGTH_SHORT);
-			t.show();
-			Timer timer = new Timer();
-			TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					t.cancel();
-				}
-			};
-			timer.schedule(task, TD);
-		} else if (goCommand == btn) {
-			final android.widget.Toast t = android.widget.Toast.makeText(this, "goCommand", android.widget.Toast.LENGTH_SHORT);
-			t.show();
-			Timer timer = new Timer();
-			TimerTask task = new TimerTask() {
-				@Override
-				public void run() {
-					t.cancel();
-				}
-			};
-			timer.schedule(task, TD);
 		}
-		
-		
-	}
+	};
  
 }

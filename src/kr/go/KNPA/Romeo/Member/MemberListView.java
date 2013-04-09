@@ -1,15 +1,10 @@
 package kr.go.KNPA.Romeo.Member;
 
-import kr.go.KNPA.Romeo.IntroActivity;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 
 
 /**
@@ -22,30 +17,12 @@ public class MemberListView extends RomeoListView {
 	public MemberListAdapter listAdapter;
 	
 	// Constructor
-	public MemberListView(Context context) {
-		this(context, null);
-	}
-
-	public MemberListView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
-	public MemberListView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+	public MemberListView(Context context) 										{	this(context, null);				}
+	public MemberListView(Context context, AttributeSet attrs) 					{	this(context, attrs, 0);			}
+	public MemberListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle);	}
 
 	// Database management
-	protected Cursor query() {
-		String sql = "SELECT * FROM "+getTableName()+";"; // sectionizer 를 위해 정렬을 한다.
-		
-		Cursor c = db.rawQuery(sql, null);
-		return c;
-	}
-	
-	@Override
-	public String getTableName() {
-		return null;
-	}
+	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).member().getFavoriteList();	}
 	
 	// View management
 	@Override
