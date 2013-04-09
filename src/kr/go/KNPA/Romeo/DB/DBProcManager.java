@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.DB;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Config.Constants;
@@ -816,48 +817,41 @@ public class DBProcManager {
 
 	public class SurveyProcManager {
 		/**
-		 * 설문조사보낼때 정보저장
+		 * 설문조사보낼때 해쉬 저장
 		 * @param surveyHash 서버가 부여한 설문조사 해쉬
-		 * @param title 설문조사 제목
-		 * @param content 설문조사 설명
-		 * @param creatorHash 설문조사 만든사람 해쉬
-		 * @param createdTS 설문조사 만든 시간 TS
 		 */
-		public void saveSurveyOnSend(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+		public void saveSurveyOnSend(String surveyHash) {
 			String sql =
 					"insert into "+DBSchema.SURVEY.TABLE_NAME+
 					" ("+DBSchema.SURVEY.COLUMN_IDX+","+
-					DBSchema.SURVEY.COLUMN_TITLE+","+
-					DBSchema.SURVEY.COLUMN_CONTENT+","+
-					DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
-					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
+//					DBSchema.SURVEY.COLUMN_TITLE+","+
+//					DBSchema.SURVEY.COLUMN_CONTENT+","+
+//					DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
+//					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
 					DBSchema.SURVEY.COLUMN_CATEGORY+") " +
-					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+","+Survey.TYPE_DEPARTED+")";
-			String[] val = {surveyHash,title,content,creatorHash};
+					"values(?, "+Survey.TYPE_DEPARTED+")";
+			String[] val = {surveyHash };
 			db.execSQL(sql,val);
 			
 			//자기가 만든건 확인시간을 지금으로
-			updateCheckedTS(surveyHash, createdTS);
+			updateCheckedTS(surveyHash, new Date().getTime());
 		}
 		
 		/**
-		 * 설문조사 받았을때 정보저장
+		 * 설문조사 받았을때 해쉬저장
 		 * @param surveyHash
-		 * @param title
-		 * @param content
-		 * @param creatorHash
 		 */
-		public void saveSurveyOnReceived(String surveyHash,String title, String content, String creatorHash, long createdTS) {
+		public void saveSurveyOnReceived(String surveyHash) {
 			String sql =
 					"insert into "+DBSchema.SURVEY.TABLE_NAME+
 					" ("+DBSchema.SURVEY.COLUMN_IDX+","+
-					DBSchema.SURVEY.COLUMN_TITLE+","+
-					DBSchema.SURVEY.COLUMN_CONTENT+","+
-					DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
-					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
+//					DBSchema.SURVEY.COLUMN_TITLE+","+
+//					DBSchema.SURVEY.COLUMN_CONTENT+","+
+//					DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
+//					DBSchema.SURVEY.COLUMN_CREATED_TS+","+
 					DBSchema.SURVEY.COLUMN_CATEGORY+") " +
-					"values(?, ?, ?, ?, "+String.valueOf(createdTS)+","+Survey.TYPE_RECEIVED+")";
-			String[] val = {surveyHash,title,content,creatorHash};
+					"values(?,"+Survey.TYPE_RECEIVED+")";
+			String[] val = {surveyHash};
 			db.execSQL(sql,val);
 		}
 		/**
@@ -898,19 +892,19 @@ public class DBProcManager {
 		 * 설문조사 목록 가져오기
 		 * @b 커서구조
 		 * @b COLUMN_SURVEY_IDX str 해시\n
-		 * @b COLUMN_SURVEY_NAME str 설문제목\n
-		 * @b COLUMN_SURVEY_SENDER_IDX str 보낸사람 해쉬\n
+		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
+		 * @b COLUMN_SURVEY_ANSWERED_TS long 응답한시간\n
 		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
-		 * @b COLUMN_SURVEY_IS_ANSWERED int 대답여부\n
+		 * @b COLUMN_SURVEY_CHECKED_TS long 확인한시간\n
 		 * @param svyCategory 내가받은거면 Survey.TYPE_RECEIVED, 내가보낸거면 Survey.TYPE_DEPARTED
 		 * @return
 		 */
 		public Cursor getSurveyList(int svyCategory) {
 			String sql ="select "+
 					DBSchema.SURVEY.COLUMN_IDX+COLUMN_SURVEY_IDX+", "+
-					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
+//					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
 					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
-					DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
+//					DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
 					DBSchema.SURVEY.COLUMN_IS_ANSWERED+COLUMN_SURVEY_IS_ANSWERED+
 					" from"+DBSchema.SURVEY.TABLE_NAME+
 					"where "+DBSchema.SURVEY.COLUMN_CATEGORY+" = "+String.valueOf(svyCategory);
@@ -920,12 +914,8 @@ public class DBProcManager {
 		/**
 		 * 설문조사 기본 정보 가져오기
 		 * @b 커서구조
-		 * @b COLUMN_SURVEY_NAME str 설문제목\n
-		 * @b COLUMN_SURVEY_CONTENT str 설문조사설명내용\n
-		 * @b COLUMN_SURVEY_CREATED_TS long 설문조사 만든시간\n
 		 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
 		 * @b COLUMN_SURVEY_ANSWERED_TS long 응답한시간\n
-		 * @b COLUMN_SURVEY_SENDER_IDX str 보낸사람 해쉬\n
 		 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
 		 * @b COLUMN_SURVEY_CHECKED_TS long 확인한시간\n
 		 * @b COLUMN_SURVEY_TYPE int 서베이타입\n
@@ -934,11 +924,11 @@ public class DBProcManager {
 		 */
 		public Cursor getSurveyInfo(String hash) {
 			String sql ="select "+
-					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
-					DBSchema.SURVEY.COLUMN_CONTENT+COLUMN_SURVEY_CONTENT+", "+
-					DBSchema.SURVEY.COLUMN_CREATED_TS+COLUMN_SURVEY_CREATED_TS+", "+
+//					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
+//					DBSchema.SURVEY.COLUMN_CONTENT+COLUMN_SURVEY_CONTENT+", "+
+//					DBSchema.SURVEY.COLUMN_CREATED_TS+COLUMN_SURVEY_CREATED_TS+", "+
 					DBSchema.SURVEY.COLUMN_ANSWERED_TS+COLUMN_SURVEY_ANSWERED_TS+", "+
-					DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
+//					DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
 					DBSchema.SURVEY.COLUMN_CATEGORY+COLUMN_SURVEY_TYPE+", "+
 					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
 					DBSchema.SURVEY.COLUMN_CHECKED_TS+COLUMN_SURVEY_CHECKED_TS+", "+
@@ -965,16 +955,16 @@ public class DBProcManager {
 					" where "+DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID+" = "+String.valueOf(id);
 			return db.rawQuery(sql,null);		
 		}
-		public static final String COLUMN_SURVEY_NAME = "survey_name";
+//		public static final String COLUMN_SURVEY_NAME = "survey_name";
 		public static final String COLUMN_SURVEY_IDX = "survey_idx";
 		public static final String COLUMN_USER_IDX = "user_idx";
-		public static final String COLUMN_SURVEY_SENDER_IDX = "sender_idx";
+//		public static final String COLUMN_SURVEY_SENDER_IDX = "sender_idx";
 		public static final String COLUMN_SURVEY_IS_CHECKED = "is_checked";
 		public static final String COLUMN_SURVEY_CHECKED_TS = "checked_ts";
 		public static final String COLUMN_SURVEY_IS_ANSWERED = "is_answered";
 		public static final String COLUMN_SURVEY_ANSWERED_TS = "answered_ts";
-		public static final String COLUMN_SURVEY_CONTENT = "survey_content";
-		public static final String COLUMN_SURVEY_CREATED_TS = "created_ts";
+//		public static final String COLUMN_SURVEY_CONTENT = "survey_content";
+//		public static final String COLUMN_SURVEY_CREATED_TS = "created_ts";
 		public static final String COLUMN_SURVEY_TYPE = "survey_type";
 	}
 	

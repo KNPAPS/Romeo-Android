@@ -136,12 +136,12 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
-			DBSchema.SURVEY.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_CONTENT	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_OPEN_TS	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_CLOSE_TS	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.SURVEY.COLUMN_CREATOR_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
+//			DBSchema.SURVEY.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
+//			DBSchema.SURVEY.COLUMN_CONTENT	+	TEXT	+	NOT_NULL	+	COMMA+
+//			DBSchema.SURVEY.COLUMN_OPEN_TS	+	INT	+	NOT_NULL	+	COMMA+
+//			DBSchema.SURVEY.COLUMN_CLOSE_TS	+	INT	+	NOT_NULL	+	COMMA+
+//			DBSchema.SURVEY.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
+//			DBSchema.SURVEY.COLUMN_CREATOR_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CHECKED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_ANSWERED	+	INT	+	NOT_NULL	+	COMMA+
@@ -149,10 +149,10 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.SURVEY.COLUMN_ANSWERED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CATEGORY	+	INT	+	NOT_NULL	+
 			")";
-	private static final String SQL_CREATE_INDEX_SURVEY = 
-			"CREATE INDEX SURVEY_IDX ON "+
-					DBSchema.SURVEY.TABLE_NAME+" ("+
-					DBSchema.SURVEY.COLUMN_CATEGORY+" ASC,"+DBSchema.SURVEY.COLUMN_CREATED_TS+" DESC)";
+//	private static final String SQL_CREATE_INDEX_SURVEY = 
+//			"CREATE INDEX SURVEY_IDX ON "+
+//					DBSchema.SURVEY.TABLE_NAME+" ("+
+//					DBSchema.SURVEY.COLUMN_CATEGORY+" ASC,"+DBSchema.SURVEY.COLUMN_CREATED_TS+" DESC)";
 
 	private static final String SQL_CREATE_TABLE_SURVEY_RECEIVER = 
 			"CREATE TABLE "+DBSchema.SURVEY_RECEIVER.TABLE_NAME+
@@ -219,7 +219,7 @@ public class DBManager extends SQLiteOpenHelper {
 			db.execSQL(SQL_CREATE_INDEX_DOC_FORWARD);
 			db.execSQL(SQL_CREATE_INDEX_ROOM);
 			db.execSQL(SQL_CREATE_INDEX_ROOM_CHATTER);
-			db.execSQL(SQL_CREATE_INDEX_SURVEY);
+//			db.execSQL(SQL_CREATE_INDEX_SURVEY);
 			db.execSQL(SQL_CREATE_INDEX_USER_FAV);
 			db.execSQL(SQL_CREATE_INDEX_SURVEY_RECV);
 			db.execSQL(SQL_CREATE_INDEX_DOC_RECV);
@@ -308,12 +308,12 @@ public class DBManager extends SQLiteOpenHelper {
 			public static final String TABLE_NAME = " rs_survey ";
 			public static final String COLUMN_IDX = " survey_idx ";
 			public static final String COLUMN_CATEGORY = " survey_category ";
-			public static final String COLUMN_TITLE = " survey_title ";
-			public static final String COLUMN_CONTENT = " survey_content ";
-			public static final String COLUMN_OPEN_TS = " open_ts ";
-			public static final String COLUMN_CLOSE_TS = " close_ts ";
-			public static final String COLUMN_CREATED_TS = " created_ts ";
-			public static final String COLUMN_CREATOR_IDX = " creator_idx ";
+//			public static final String COLUMN_TITLE = " survey_title ";
+//			public static final String COLUMN_CONTENT = " survey_content ";
+//			public static final String COLUMN_OPEN_TS = " open_ts ";
+//			public static final String COLUMN_CLOSE_TS = " close_ts ";
+//			public static final String COLUMN_CREATED_TS = " created_ts ";
+//			public static final String COLUMN_CREATOR_IDX = " creator_idx ";
 			public static final String COLUMN_IS_CHECKED = " is_checked ";
 			public static final String COLUMN_CHECKED_TS = " checked_ts ";
 			public static final String COLUMN_IS_ANSWERED = " is_answered ";
