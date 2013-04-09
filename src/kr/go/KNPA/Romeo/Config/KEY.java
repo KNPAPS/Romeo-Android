@@ -106,6 +106,14 @@ public class KEY {
 		public static final String OPTIONS = Question.class.getSimpleName()+"_options";
 		
 		public static final String ANSWER_SHEET = "answerSheet";
+		
+		public static final String NUM_RECEIVERS = "numReceivers";
+		public static final String NUM_UNCHECKERS = "numUnCheckers";
+		public static final String NUM_CHECKERS = "numCheckers";
+		public static final String NUM_RESPONDERS = "numResponders";
+		public static final String NUM_GIVE_UP = "numGiveUp";
+		public static final String RESULT = "result";
+		
 	}
 	
 	public static class USER {

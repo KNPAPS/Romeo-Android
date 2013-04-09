@@ -75,7 +75,7 @@ public class ImageManager {
 	    }
 	}
 
-	public void loadProfileImgToImageView( String userHash, int sizeType ) {
+	public void loadProfileImgToImageView( String userHash, int sizeType, ImageView img ) {
 		
 	}
 	
