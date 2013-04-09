@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -38,6 +39,9 @@ public class SurveyDetailFragment extends Fragment  {
 		Cursor cursor_surveyInfo = DBProcManager.sharedManager(getActivity()).survey().getSurveyInfo(survey.idx);
 		
 		this.subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
+		
+		this.survey = Survey.surveyFromServer(getActivity(), surveyIdx, subType);
+		/*
 		this.survey = new Survey(
 				surveyIdx, 
 				Message.makeType(Message.MESSAGE_TYPE_SURVEY, subType),	// 서베이타입 
@@ -46,12 +50,11 @@ public class SurveyDetailFragment extends Fragment  {
 				cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX)), // 보낸사람 해쉬
 				null, 
 				(this.subType == Survey.TYPE_RECEIVED ? true : false ), 
-				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS));, // 설문조사 받은시간
+				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS)), // 설문조사 받은시간
 				(cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0 ) ? true : false, // 확인 여부 
 				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS)), // 확인한시간 
-				openTS, 
-				closeTS, 
 				(cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED)) > 0 ) ? true : false);
+				*/
 		
 	}
 	@Override
@@ -90,11 +93,11 @@ public class SurveyDetailFragment extends Fragment  {
 		senderTV.setText(sender);
 
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat(this.survey.openTS, getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(Form.CLOSE_TS), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat(this.survey.closeTS, getString(R.string.formatString_closeDT));
+		String closeDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(Form.CLOSE_TS), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 
 		TextView contentTV = (TextView)view.findViewById(R.id.content);

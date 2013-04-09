@@ -68,7 +68,7 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		// TODO
 		//new ImageManager().loadProfileImgToImageView(userHash, sizeType)
-		
+		new ImageManager().loadProfileImgToImageView(userHash, sizeType)
 		userPicIV.setImageBitmap(bm);
 		
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
