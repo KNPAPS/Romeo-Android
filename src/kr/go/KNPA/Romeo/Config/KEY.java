@@ -57,6 +57,7 @@ public class KEY {
 		public static final String CHECK_TS = Chat.class.getSimpleName()+"_checkTS";
 		public static final String ROOM_CODE = Chat.class.getSimpleName()+"_roomCode";
 		public static final String CONTENT_TYPE = Chat.class.getSimpleName()+"_contentType";
+		public static final String IMAGE_SIZE = "imageSize";
 	}
 
 	public static class DOCUMENT {

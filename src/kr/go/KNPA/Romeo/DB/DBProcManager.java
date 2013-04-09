@@ -1114,6 +1114,24 @@ public class DBProcManager {
 			return db.rawQuery(sql, null);
 		}
 		
+		/**
+		 * 즐겨찾기에 등록된 유저나 그룹의 정보 가져옴
+		 * @b 커서구조
+		 * @b COLUMN_FAVORITE_NAME str 제목. 따로 설정안되었을 시에는 null
+		 * @param hash favorite hash
+		 * @return
+		 */
+		public Cursor getFavoriteInfo( String hash ) {
+			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
+			
+			String sql =
+					"select "+
+					DBSchema.USER_FAVORITE.COLUMN_TITLE+COLUMN_FAVORITE_NAME+
+					" from "+DBSchema.USER_FAVORITE.TABLE_NAME+
+					" where _id = "+String.valueOf(gpId);
+			return db.rawQuery(sql, null);
+		}
+		
 		public static final String COLUMN_FAVORITE_IDX = "fav_idx";
 		public static final String COLUMN_FAVORITE_NAME = "fav_name";
 		public static final String COLUMN_FAVORITE_IS_GROUP = "fav_is_group";
