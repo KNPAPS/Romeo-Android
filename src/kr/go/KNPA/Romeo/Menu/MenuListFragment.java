@@ -179,7 +179,6 @@ public class MenuListFragment extends ListFragment {
 				return false;
 			}
 			
-			
 		}
 		
 		@Override
