@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +25,14 @@ public class MainActivity extends BaseActivity {
 	
 	public static MainActivity sharedActivity() {
 		return _sharedActivity;
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		Bundle b = intent.getExtras();
+		long mil = 0;
+		if(b!= null && b.containsKey("TEST"))
+			mil = b.getLong("TEST");
 	}
 	
 	@Override

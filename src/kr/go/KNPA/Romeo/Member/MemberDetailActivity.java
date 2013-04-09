@@ -7,7 +7,8 @@ import java.util.TimerTask;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -16,7 +17,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -29,7 +29,10 @@ import android.widget.TextView;
 public class MemberDetailActivity extends Activity implements OnClickListener {
 
 	static final int NOT_SPECIFIED = -777;
-	static final String KEY_RESULT_KEY_USER_IDXS = "idxs";
+	static final String KEY_IDX = "idx";
+	static final String KEY_IDX_TYPE = "idx_type";
+	static final int IDX_TYPE_USER = 0; 
+	static final int IDX_TYPE_GROUP = 1;
 	Button background;
 	Button  close;
 	Button favorite;
@@ -37,6 +40,7 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 	Button goSurvey;
 	Button goCommand;
 	Button goMeeting;
+	
 	public MemberDetailActivity() {
 	}
 
@@ -44,85 +48,55 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		
 		requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		
 		Intent intent = getIntent();
 		Bundle b = intent.getExtras();
-		String idxs = b.getString("idxs");
-		String title = null;
-		if(idxs == null|| idxs.trim().length() < 1) {
+		
+		String idx = b.getString(KEY_IDX);
+		int idxType = b.getInt(KEY_IDX_TYPE);
+		
+		if(idx == null|| idx.trim().length() < 1) {
 			finish();
 		}
-		
 
-		String[] _idxs = idxs.split(":");
-		ArrayList<String> __idxs = new ArrayList<String>(_idxs.length);
-		
-		for(int i=0; i<_idxs.length; i++) {
-			__idxs.add( _idxs[i] );
+		if(idxType == IDX_TYPE_USER) {
+			
+		} else if(idxType == IDX_TYPE_GROUP) {
+			
 		}
 		
 		// User 정보를 얻어온다.
-		ArrayList<User> users = User.getUsersWithIdxs(__idxs);
-		
-        //배경투명처리
-		/*
-		 getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
-				WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-		 */
+		ArrayList<User> users = User.getUsersWithIdxs(idx);
+
 
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        
         
 		WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
 		layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 		layoutParams.dimAmount = 0.7f;
 
 		getWindow().setAttributes(layoutParams);
-		
 		setContentView(R.layout.member_detail_activity);
 
-		/*
-		 *  VERSION > 13
-		 *  Point bound = new Point();
-		 *  getWindowManager().getDefaultDisplay().getSize(bound);
-		 *  width = bound.x;
-		 *  height = bound.y;
-		 */
 		int statusBarHeight = (int) Math.ceil(25 * this.getResources().getDisplayMetrics().density);
 		ViewGroup vg = (ViewGroup) findViewById(R.id.memberDetailActivityLayout);
 		ViewGroup.LayoutParams lp = vg.getLayoutParams();
 		lp.width = getWindowManager().getDefaultDisplay().getWidth();
 		lp.height = getWindowManager().getDefaultDisplay().getHeight() - statusBarHeight;
 		vg.setLayoutParams(lp);
-//		getWindow().setAttributes(layoutParams);
 
 		
 		// Bind Click Events
 		background = (Button)findViewById(R.id.backgroundButton);
 		close = (Button)findViewById(R.id.close);
 		
-		
+		String title = null;
+
 		// TODO : 
-		DBProcManager.sharedManager(MemberDetailActivity.this).member().
-		
-		DBManager dbManager = new DBManager(MemberDetailActivity.this);
-		SQLiteDatabase db = dbManager.getReadableDatabase();	
-		Cursor c = null;
-		String sql = "SELECT * FROM "+DBManager.TABLE_MEMBER_FAVORITE+" WHERE idxs=\""+idxs+"\";";
-		c = db.rawQuery(sql, null);
-		boolean isFavorite = (c.getCount() > 0) ? true : false;
-		if(isFavorite) {
-			c.moveToFirst();
-			title = c.getString(c.getColumnIndex("title"));
-		} else {
-			title = "";
-		}
-		if(c != null) c.close();
-		db.close();
-		dbManager.close();
+		MemberProcManager mpm = DBProcManager.sharedManager(MemberDetailActivity.this).member(); 
+		boolean isFavorite = mpm.isUserFavorite(idx);
 		
 		favorite = (Button)findViewById(R.id.favorite);
 		if(isFavorite) {
@@ -130,18 +104,13 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		} else {
 			favorite.setBackgroundResource(R.drawable.star_gray);
 		}
-		Bundle b2 = new Bundle();
-		b2.putString("idxs", idxs);
-		favorite.setTag(b);
-		
-		
-		
 		
 		goMeeting = (Button)findViewById(R.id.goMeeting);
 		goCommand = (Button)findViewById(R.id.goCommand);
 		goDocument = (Button)findViewById(R.id.goDocument);
 		goSurvey = (Button)findViewById(R.id.goSurvey);
 		
+		// TODO
 		background.setOnClickListener(this);
 		close.setOnClickListener(this);
 		favorite.setOnClickListener(this);
@@ -153,6 +122,8 @@ public class MemberDetailActivity extends Activity implements OnClickListener {
 		
 		
 		ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
+		new ImageManager().loadProfileImgToImageView(idx, ImageManager.PROFILE_IMG_SIZE_MEDIUM, userPicIV);
+		
 		TextView departmentTV = (TextView)findViewById(R.id.department);
 		TextView rankTV = (TextView)findViewById(R.id.rank);
 		TextView nameTV = (TextView)findViewById(R.id.name);

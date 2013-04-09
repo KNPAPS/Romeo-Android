@@ -2,6 +2,7 @@ package kr.go.KNPA.Romeo.Survey;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 
 public class SurveyResultFragment extends Fragment {
 
-	private Context context;
 	private Survey survey;
 	public int subType;
 	
@@ -33,7 +33,7 @@ public class SurveyResultFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		
-		surveyIdx.setChecked(getActivity());
+		survey.setChecked(getActivity());
 		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView().refresh();
 	}
 	@Override
@@ -46,9 +46,6 @@ public class SurveyResultFragment extends Fragment {
 		//this.survey = b.getParcelable("survey");
 		//this.context = SurveyDetailFragment.this;
 
-		
-		this.context = getActivity();
-		
 		View view = inflater.inflate(R.layout.survey_result, null, false);
 		
 		initNavigationBar(
@@ -59,27 +56,27 @@ public class SurveyResultFragment extends Fragment {
 		
 
 		TextView titleTV = (TextView)view.findViewById(R.id.title);
-		titleTV.setText(this.surveyIdx.title);
+		titleTV.setText(this.survey.title);
 		
 		TextView  arrivalDTTV = (TextView)view.findViewById(R.id.arrivalDT);
-		String arrivalDT = Formatter.timeStampToStringInRegularFormat(this.surveyIdx.TS, getActivity());
+		String arrivalDT = Formatter.timeStampToStringInRegularFormat(this.survey.TS, getActivity());
 		arrivalDTTV.setText(arrivalDT);
 		
 		TextView senderTV = (TextView)view.findViewById(R.id.sender);
-		User user = this.surveyIdx.senderIdx;
+		User user = User.getUserWithIdx(this.survey.senderIdx);
 		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
 		senderTV.setText(sender);
 		
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat(this.surveyIdx.openTS(), getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.OPEN_TS), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 		
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat(this.surveyIdx.closeTS(), getString(R.string.formatString_closeDT));
+		String closeDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 		
 		TextView contentTV = (TextView)view.findViewById(R.id.content);
-		String content = this.surveyIdx.content;
+		String content = this.survey.content;
 		contentTV.setText(content);
 		
 		

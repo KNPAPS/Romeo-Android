@@ -340,12 +340,12 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		if(nodeClicked.type() == CellNode.CN_USER) {	
 		// node의 type이 USER이면 상세안내창 띄우기
 			Intent intent = new Intent(this.context, MemberDetailActivity.class);
-			
+
 			Bundle b = new Bundle();
-			User user = (User)getItem(position);
-			b.putString("idxs", ""+user.idx);
+			b.putString(MemberDetailActivity.KEY_IDX, ((User)getItem(position)).idx );
+			b.putInt(MemberDetailActivity.KEY_IDX_TYPE, MemberDetailActivity.IDX_TYPE_USER);
+			intent.putExtras(b);	
 			
-			intent.putExtras(b);
 			this.context.startActivity(intent);
 			
 		} else if(nodeClicked.type() == CellNode.CN_DEPARTMENT) {

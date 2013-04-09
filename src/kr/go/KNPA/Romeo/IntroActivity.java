@@ -6,7 +6,6 @@ import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,6 +17,14 @@ public class IntroActivity extends Activity{
 	
 	public static IntroActivity sharedActivity() {
 		return _sharedActivity;
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		Bundle b = intent.getExtras();
+		long mil = 0;
+		if(b!= null && b.containsKey("TEST"))
+			mil = b.getLong("TEST");
 	}
 	
 	@Override	

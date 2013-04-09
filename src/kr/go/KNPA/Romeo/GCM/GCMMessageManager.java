@@ -27,6 +27,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 
 /**
  * GCMIntentService 의 {@link GCMIntentService#onMessage(Context, Intent) onMessage(Context, Intent)} 메서드를 처리하기 좋도록 따로 불리해 놓은 클래스이다.
@@ -134,7 +135,7 @@ public class GCMMessageManager {
 	
 	private void onSurvey(Survey survey) {
 		DBProcManager.sharedManager(context)
-			.survey().saveSurveyOnReceived(survey.idx, survey.title, survey.content, survey.senderIdx, survey.TS);
+			.survey().saveSurveyOnReceived(survey.idx);
 		
 		if(isRunningProcess(context))
 			SurveyFragment.receive(survey);		//리스트뷰에 notify
@@ -153,13 +154,22 @@ public class GCMMessageManager {
 		title = title.substring(0, Math.min(title.length(), 15));
 		content = content.substring(0, Math.min(content.length(),30));
 	
+		Intent intent = new Intent(context, MainActivity.class);
+		Bundle b = new Bundle();
+		b.putLong("TEST", System.currentTimeMillis());
+		intent.putExtras(b);
+		
 		PendingIntent contentIntent = PendingIntent.getActivity(
-				context, type, new Intent(context, MainActivity.class), 
+				context, type, intent, 
 				0);
 		
 		Notification nt = new Notification(R.drawable.icon, ticker, System.currentTimeMillis());
 		nt.setLatestEventInfo(context, title, content, contentIntent);
+		nt.defaults = Notification.DEFAULT_SOUND;
 		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
+		
+		Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+		vibrator.vibrate(1000);
 		
 		return nt;
 	}

@@ -153,8 +153,10 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		long TS = c.getLong(c.getColumnIndex("TS"));
 		boolean isGroup = (c.getInt(c.getColumnIndex("isGroup")) == 1 ? true : false);
 		*/
+		// TODO : IDX : STRING
 		Bundle b = new Bundle();
-		b.putString("idxs", idxs);
+		b.putString(MemberDetailActivity.KEY_IDX, idxs);
+		b.putInt(MemberDetailActivity.KEY_IDX_TYPE, MemberDetailActivity.)
 		intent.putExtras(b);		
 		
 		context.startActivity(intent);
