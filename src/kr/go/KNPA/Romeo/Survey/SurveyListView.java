@@ -6,6 +6,8 @@ import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Document.DocumentDetailFragment;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
@@ -69,9 +71,8 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 			adapter= ((SimpleSectionAdapter)this.getAdapter());
 		
 		Cursor c = (Cursor)adapter.getItem(position);
-		String surveyIdx = c.getString(c.getColumnIndex(DBProcManager.sharedManager(getContext()).survey().COLUMN_SURVEY_IDX));
-			
-		SurveyDetailFragment f = new SurveyDetailFragment(surveyIdx);
+		Survey survey = new Survey(getContext(), c);
+		SurveyDetailFragment f = new SurveyDetailFragment(survey, type);
 		MainActivity.sharedActivity().pushContent(f);
 	}
 

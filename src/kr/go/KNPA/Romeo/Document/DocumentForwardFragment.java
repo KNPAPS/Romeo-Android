@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
@@ -111,9 +112,9 @@ public class DocumentForwardFragment extends Fragment {
 		Document fwdDocument = document.clone();
 		
 		HashMap<String,Object> forward = new HashMap<String,Object>();
-		forward.put(Document.FWD_FORWARDER_IDX, UserInfo.getUserIdx( getActivity() ));
-		forward.put(Document.FWD_ARRIVAL_TS, 	(Long)System.currentTimeMillis());
-		forward.put(Document.FWD_FORWARDER_IDX, contentET.getText().toString());
+		forward.put(KEY.DOCUMENT.FORWARDER_IDX, UserInfo.getUserIdx( getActivity() ));
+		forward.put(KEY.DOCUMENT.FORWARD_TS, 	(Long)System.currentTimeMillis());
+		forward.put(KEY.DOCUMENT.FORWARDER_IDX, contentET.getText().toString());
 		
 		if(fwdDocument.forwards == null)
 			fwdDocument.forwards = new ArrayList<HashMap<String, Object>>();

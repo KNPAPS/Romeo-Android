@@ -1,15 +1,11 @@
 package kr.go.KNPA.Romeo.Survey;
 
-import java.util.ArrayList;
-
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,14 +18,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class SurveyDetailFragment extends Fragment  {
-	private String surveyIdx;
-	
 	private Survey survey;
-	
 	public int subType;
 	
 	public SurveyDetailFragment() {}
-	public SurveyDetailFragment(String surveyIdx) {	this.surveyIdx = surveyIdx;}
+	public SurveyDetailFragment(Survey survey, int subType)) {	this.survey = survey; this.subType = subType;}
 
 	
 	@Override
@@ -93,11 +86,11 @@ public class SurveyDetailFragment extends Fragment  {
 		senderTV.setText(sender);
 
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(Form.CLOSE_TS), getString(R.string.formatString_openDT));
+		String openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);
 
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(Form.CLOSE_TS), getString(R.string.formatString_closeDT));
+		String closeDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 
 		TextView contentTV = (TextView)view.findViewById(R.id.content);

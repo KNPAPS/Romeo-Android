@@ -13,24 +13,18 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-public class Survey extends Message implements Parcelable{
+public class Survey extends Message {// implements Parcelable{
 	
 	// Message Sub Type Constants
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
-
-	public boolean answered = false;
-	
-	private static final String KEY_OPEN_TS 		= KEY.SURVEY.OPEN_TS; 
-	private static final String KEY_CLOSE_TS 		= KEY.SURVEY.CLOSE_TS;
 	
 	public Form form;
 	
@@ -39,8 +33,8 @@ public class Survey extends Message implements Parcelable{
 	
 	public Survey(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
-		
-		// TODO
+		if(jo.has(KEY.SURVEY.FORM))
+			this.form = Form.parseForm(jo.toString());
 	}
 	
 	public static Survey surveyFromServer(Context context, String surveyIdx, int subType) {
@@ -48,63 +42,48 @@ public class Survey extends Message implements Parcelable{
 		cursor_surveyInfo.moveToFirst();
 		
 		
-		Data reqData = new Data();
+		Data reqData = new Data().add(0, KEY.SURVEY.IDX, surveyIdx);
 		Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
 		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
 		Payload response = conn.getResponsePayload();
 		Data respData = response.getData();
-		Survey s = new Survey(
-				(String)respData.get(0, KEY.SURVEY.IDX), 
-				Message.makeType(Message.MESSAGE_TYPE_SURVEY, subType), 
-				(String)respData.get(0, KEY.SURVEY.TITLE), 
-				(String)respData.get(0, KEY.SURVEY.CONTENT), 
-				(String)respData.get(0, KEY.SURVEY.SENDER_IDX), 
-				null, 
-				(subType == Survey.TYPE_RECEIVED ? true : false), 
-				(Long)respData.get(0, KEY.SURVEY.CREATED_TS), 
-				cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(
-						SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0 ? true : false, 
-				cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS)), 
-				(cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false));
-		s.form = Form.parseForm(respData);
+		
+		Survey s = (Survey)respData.get(0, KEY._MESSAGE);
+		
 		return s;
 	}
 	
 	public Survey(Context context, Cursor c) {
 		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
-		
-		this.idx 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
-		this.title 		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
-		this.senderIdx		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));
-		//this.receivers 	= 
-		
-		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
-		this.answered	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED)) == 1 ? true : false;
-		
 		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
+		
+		this.idx 			= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
 		
 		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
 		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
+		
+		this.title 			= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_NAME));
+		this.content 	= cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CONTENT));
+		this.senderIdx		= c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_SENDER_IDX));		
+		// X : receiversIdx 
+		
 		if(subType == Survey.TYPE_DEPARTED) {
 			this.received = false; 
 		} else if (subType == Survey.TYPE_RECEIVED) {
 			this.received = true;
 		}
-		 
-		this.content 	= cursor_surveyInfo.getString(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CONTENT));
-		this.TS			= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS));
-		
-		
-		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
 
-		//this.openTS = _openTS;	// TODO
-		//this.closeTS = _closeTS;	// TODO
+		this.TS			= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CREATED_TS));
+		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
+		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
 	}
 
+	/*
 	public Survey(Parcel source) {
 		readRomParcel(source);
 	}
-
+	 */
+	
 	public Survey(
 			String				idx, 
 			int					type, 
@@ -115,8 +94,7 @@ public class Survey extends Message implements Parcelable{
 			boolean				received,
 			long				TS,
 			boolean				checked, 
-			long 				checkTS,
-			boolean				answered
+			long 				checkTS
 			) {
 		this.idx = idx;
 		this.type = type;
@@ -128,15 +106,18 @@ public class Survey extends Message implements Parcelable{
 		this.TS = TS;
 		this.checked = checked;
 		this.checkTS = checkTS;
-		this.answered = answered;
 	}
 
+	public boolean isAnswered(Context context, String surveyIdx) {
+		Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
+		cursor_surveyInfo.moveToFirst();
+		
+		return (cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false);
+	}
+	
 	public Survey clone() {
 		Survey survey = (Survey)this.clone(new Survey());
-
-		survey.answered = this.answered;
 		survey.form = this.form;
-		
 		return survey;
 	}
 	
@@ -168,8 +149,9 @@ public class Survey extends Message implements Parcelable{
 	}
 	
 	public static class Form extends HashMap<String, Object>{
-		public static final String TITLE = KEY.SURVEY.QUESTION_TITLE;
-		public static final String CONTENT = KEY.SURVEY.QUESTION_CONTENT;
+		/*
+		X public static final String TITLE = KEY.SURVEY.QUESTION_TITLE;
+		X public static final String CONTENT = KEY.SURVEY.QUESTION_CONTENT;
 		public static final String OPEN_TS = KEY.SURVEY.OPEN_TS;
 		public static final String CLOSE_TS = KEY.SURVEY.CLOSE_TS;
 		
@@ -177,34 +159,57 @@ public class Survey extends Message implements Parcelable{
 		public static final String OPTIONS = KEY.SURVEY.OPTIONS;
 		
 		public static final String IS_MULTIPLE = KEY.SURVEY.IS_MULTIPLE;
-		
+		*/
 		public Form() {}
 		
 		public static Form parseForm(String json) {
-			// TODO
+			try {
+			JSONObject jo = new JSONObject(json);
+			
 			Form form = new Form();
-			return form;
-		}
-		
-		public static Form parseForm(Data data) {
-			// TODO
-			Form form = new Form();
-			return form;
-		}
-		
-		public ArrayList<Question> questions() {
-			ArrayList<Question> _questions = null;
-			if(this.containsKey(QUESTIONS) == false) {
-				_questions = new ArrayList<Question>();
-				this.put(QUESTIONS, _questions);
+			
+			form.put( KEY.SURVEY.OPEN_TS ,  jo.getLong(KEY.SURVEY.OPEN_TS) );
+			form.put( KEY.SURVEY.CLOSE_TS,  jo.getLong(KEY.SURVEY.CLOSE_TS) );
+			
+			
+			JSONArray jQuestions = jo.getJSONArray(KEY.SURVEY.QUESTIONS);
+			
+			for(int qi=0; qi<jQuestions.length(); qi++) {
+				JSONObject jQuestion = jQuestions.getJSONObject(qi);
+				Question question = new Question();
+				if(jQuestion.has(KEY.SURVEY.QUESTION_TITLE))
+					question.title(jQuestion.getString(KEY.SURVEY.QUESTION_TITLE));
+				if(jQuestion.has(KEY.SURVEY.QUESTION_CONTENT))
+					question.content(jQuestion.getString(KEY.SURVEY.QUESTION_CONTENT));
+				if(jQuestion.has(KEY.SURVEY.IS_MULTIPLE))
+					question.isMultiple( ( jQuestion.getInt(KEY.SURVEY.IS_MULTIPLE) > 0 ? true : false ) );
+				JSONArray jOptions = jQuestion.getJSONArray(KEY.SURVEY.OPTIONS);
+				for(int oi=0; oi<jOptions.length(); oi++){
+					question.addOption(jOptions.getString(oi));
+				}
+				
+				form.addQuestion(question);
 			}
 			
-			_questions = (ArrayList<Question>)this.get(QUESTIONS);
+			return form;
+			} catch (JSONException e) {
+				return null;
+			}
+		}
+
+		public ArrayList<Question> questions() {
+			ArrayList<Question> _questions = null;
+			if(this.containsKey(KEY.SURVEY.QUESTIONS) == false) {
+				_questions = new ArrayList<Question>();
+				this.put(KEY.SURVEY.QUESTIONS, _questions);
+			}
+			
+			_questions = (ArrayList<Question>)this.get(KEY.SURVEY.QUESTIONS);
 			
 			if(_questions == null) {
 				_questions = new ArrayList<Question>();
-				this.remove(QUESTIONS);
-				this.put(QUESTIONS, _questions);
+				this.remove(KEY.SURVEY.QUESTIONS);
+				this.put(KEY.SURVEY.QUESTIONS, _questions);
 			}
 			
 			return _questions;	
@@ -243,21 +248,19 @@ public class Survey extends Message implements Parcelable{
 		
 	}
 
-
+/*
 	// Implements Parcelable
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
 
-		boolean[] ba = {answered}; 
-		dest.writeBooleanArray(ba);
+		// Form
 	}
 	
 	private void readRomParcel(Parcel source) {
 		super.readFromParcel(source);
 
-		boolean[] ba = source.createBooleanArray();
-		answered = ba[0];
+		// Form
 	}
 	
 	public static final Parcelable.Creator<Survey> CREATOR = new Parcelable.Creator<Survey>() {
@@ -273,5 +276,5 @@ public class Survey extends Message implements Parcelable{
 		}
 		
 	};
-	
+	*/
 }

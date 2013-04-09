@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBManager.DBSchema;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Survey.Survey;
@@ -484,9 +485,9 @@ public class DBProcManager {
 				for ( int i=0; i<files.size(); i++) {
 					HashMap<String,Object> hm = files.get(i);
 					
-					String[] binds = { hm.get(Document.ATTACH_FILE_IDX).toString(), hm.get(Document.ATTACH_FILE_NAME).toString() } ;
-					long fileSize = (Long)hm.get(Document.ATTACH_FILE_SIZE);
-					int fileType = (Integer) hm.get(Document.ATTACH_FILE_TYPE) ;
+					String[] binds = { hm.get(KEY.DOCUMENT.FILE_IDX).toString(), hm.get(KEY.DOCUMENT.FILE_NAME).toString() } ;
+					long fileSize = (Long)hm.get(KEY.DOCUMENT.FILE_SIZE);
+					int fileType = (Integer) hm.get(KEY.DOCUMENT.FILE_TYPE) ;
 					
 					String sql = "insert into "+DBSchema.DOCUMENT_ATTACHMENT.TABLE_NAME+
 							"("+
@@ -569,8 +570,8 @@ public class DBProcManager {
 							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_IDX+","+
 							DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT+","+
 							DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS+")"+
-							" values ("+String.valueOf(docId)+", ?, ?, "+String.valueOf( forwards.get(i).get(Document.FWD_FORWARDER_IDX) )+")";
-					String[] val = { forwards.get(i).get(Document.FWD_FORWARDER_IDX).toString(), forwards.get(i).get(Document.FWD_CONTENT).toString()};
+							" values ("+String.valueOf(docId)+", ?, ?, "+String.valueOf( forwards.get(i).get(KEY.DOCUMENT.FORWARDER_IDX) )+")";
+					String[] val = { forwards.get(i).get(KEY.DOCUMENT.FORWARDER_IDX).toString(), forwards.get(i).get(KEY.DOCUMENT.FORWARD_CONTENT).toString()};
 					db.execSQL(sql, val);
 				}
 				

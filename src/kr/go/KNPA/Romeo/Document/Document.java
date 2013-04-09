@@ -7,7 +7,6 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
-import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,21 +17,12 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Document extends Message implements Parcelable{
+public class Document extends Message {// implements Parcelable{
 	
 	// Message Sub Type Constants
 	public static final int TYPE_RECEIVED = 0;
 	public static final int TYPE_DEPARTED = 1;
 	public static final int TYPE_FAVORITE = 2;
-	
-	public	static final String FWD_FORWARDER_IDX 	= KEY.DOCUMENT.FORWARDER_IDX;
-	public	static final String FWD_ARRIVAL_TS 		= KEY.DOCUMENT.FORWARD_TS;
-	public	static final String FWD_CONTENT 		= KEY.DOCUMENT.FORWARD_CONTENT;
-	
-	public	static final String ATTACH_FILE_IDX 	= KEY.DOCUMENT.FILE_IDX; // (string)
-	public	static final String ATTACH_FILE_NAME 	= KEY.DOCUMENT.FILE_NAME; // (string)
-	public	static final String ATTACH_FILE_TYPE 	= KEY.DOCUMENT.FILE_TYPE; // (int)
-	public	static final String ATTACH_FILE_SIZE 	= KEY.DOCUMENT.FILE_SIZE; // (long)
 			
 	// Specific Variables not to be sent
 	public boolean favorite = false;
@@ -45,15 +35,34 @@ public class Document extends Message implements Parcelable{
 	
 	public Document(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
-		
-		JSONArray ja = jo.getJSONArray("forwards");
-		for(int i=0; i<ja.length(); i++) {
-			HashMap<String, String> hmap = new HashMap<String, String>();
+		if(jo.has(KEY.DOCUMENT.FORWARDS)) {
 			
-			JSONObject fwd = ja.getJSONObject(i);
-			hmap.put(FWD_FORWARDER_IDX,fwd.getString(FWD_FORWARDER_IDX));
-			hmap.put(FWD_ARRIVAL_TS, fwd.getString(FWD_ARRIVAL_TS));
-			hmap.put(FWD_CONTENT, fwd.getString(FWD_CONTENT));
+			JSONArray jForwards = jo.getJSONArray(KEY.DOCUMENT.FORWARDS);
+			
+			ArrayList<HashMap<String, Object>> forwards = new ArrayList<HashMap<String, Object>>();
+			for(int i=0; i<jForwards.length(); i++) {
+				JSONObject jFwd = jForwards.getJSONObject(i);
+				HashMap<String, Object> hmap = new HashMap<String, Object>();
+				hmap.put(KEY.DOCUMENT.FORWARDER_IDX,	jFwd.getString(KEY.DOCUMENT.FORWARDER_IDX));
+				hmap.put(KEY.DOCUMENT.FORWARD_TS, 		jFwd.getLong(KEY.DOCUMENT.FORWARD_TS));
+				hmap.put(KEY.DOCUMENT.FORWARD_TS, 		jFwd.getLong(KEY.DOCUMENT.FORWARD_TS));
+			}
+			this.forwards = forwards;
+		}
+		
+		if(jo.has(KEY.DOCUMENT.FILES)) {
+			JSONArray jFiles = jo.getJSONArray(KEY.DOCUMENT.FILES);
+			ArrayList<HashMap<String,Object>> files = new ArrayList<HashMap<String, Object>>();
+			
+			for(int i=0; i<jFiles.length(); i++) {
+				JSONObject jFile = jFiles.getJSONObject(i);
+				HashMap<String, Object> hmap = new HashMap<String, Object>();
+				hmap.put(KEY.DOCUMENT.FILE_IDX, jFile.getString(KEY.DOCUMENT.FILE_IDX));
+				hmap.put(KEY.DOCUMENT.FILE_NAME, jFile.getString(KEY.DOCUMENT.FILE_NAME));
+				hmap.put(KEY.DOCUMENT.FILE_SIZE, jFile.getLong(KEY.DOCUMENT.FILE_SIZE));
+				hmap.put(KEY.DOCUMENT.FILE_TYPE, jFile.getInt(KEY.DOCUMENT.FILE_TYPE));
+			}
+			this.files = files;
 		}
 	}
 	
@@ -130,11 +139,11 @@ public class Document extends Message implements Parcelable{
 			while( !cursor_forwardInfo.isAfterLast() ) {
 				HashMap<String, Object> fwd = new HashMap<String, Object>();
 				// 포워더 (String)
-				fwd.put(FWD_FORWARDER_IDX,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_IDX)) );
+				fwd.put(KEY.DOCUMENT.FORWARDER_IDX,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_IDX)) );
 				// 코멘트 (String)
-				fwd.put(FWD_CONTENT,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT)) );
+				fwd.put(KEY.DOCUMENT.FORWARD_TS,  cursor_forwardInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT)) );
 				// 포워딩한 시간 (long)
-				fwd.put(FWD_ARRIVAL_TS, cursor_forwardInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS)) );
+				fwd.put(KEY.DOCUMENT.FORWARD_TS, cursor_forwardInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS)) );
 				
 				fwds.add(fwd);
 			}
@@ -150,13 +159,13 @@ public class Document extends Message implements Parcelable{
 				HashMap<String, Object> f = new HashMap<String, Object>();
 				
 				// 파일이름 (String)
-				f.put( ATTACH_FILE_NAME , cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME)) );
+				f.put( KEY.DOCUMENT.FILE_NAME , cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME)) );
 				// 파일종류 (int)
-				f.put( ATTACH_FILE_TYPE, cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE)) );
+				f.put( KEY.DOCUMENT.FILE_TYPE, cursor_attInfo.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE)) );
 				// 파일사이즈 (long)
-				f.put( ATTACH_FILE_SIZE, cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE)) );
+				f.put( KEY.DOCUMENT.FILE_SIZE, cursor_attInfo.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE)) );
 				// 파일 hash (String)
-				f.put( ATTACH_FILE_IDX, cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_IDX)) );
+				f.put( KEY.DOCUMENT.FILE_IDX, cursor_attInfo.getString(c.getColumnIndex(DocumentProcManager.COLUMN_FILE_IDX)) );
 				
 				fs.add(f);
 			}
@@ -186,7 +195,7 @@ public class Document extends Message implements Parcelable{
 		this.favorite = !this.favorite;
 	}
 	
-	
+	/*
 	// Implements Parcelable
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -215,6 +224,7 @@ public class Document extends Message implements Parcelable{
 		}
 		
 	};
+	*/
 
 	@Override
 	public void afterSend(Context context, boolean successful) {

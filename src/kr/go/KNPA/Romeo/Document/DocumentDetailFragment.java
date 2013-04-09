@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
@@ -101,18 +102,18 @@ public class DocumentDetailFragment extends Fragment {
 				forward = forwards.get(i);
 				
 				// 전달자 정보
-				User u = User.getUserWithIdx( (String)forward.get(Document.FWD_FORWARDER_IDX) );
+				User u = User.getUserWithIdx( (String)forward.get(KEY.DOCUMENT.FORWARDER_IDX) );
 				String fForwarder = u.department.nameFull + " " + User.RANK[u.rank] + " " + u.name;
 				TextView fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
 				fForwarderTV.setText(fForwarder);
 				
 				// 수신 시간 정보
-				String fArrivalDT = Formatter.timeStampToStringInRegularFormat( (Long)forward.get(Document.FWD_ARRIVAL_TS) , context);
+				String fArrivalDT = Formatter.timeStampToStringInRegularFormat( (Long)forward.get(KEY.DOCUMENT.FORWARD_TS) , context);
 				TextView fArrivalDTTV = (TextView)forwardView.findViewById(R.id.arrivalDT);
 				fArrivalDTTV.setText(fArrivalDT);
 				
 				// 코멘트
-				String fContent = (String)forward.get(Document.FWD_CONTENT);
+				String fContent = (String)forward.get(KEY.DOCUMENT.FORWARD_CONTENT);
 				TextView fContentTV = (TextView)forwardView.findViewById(R.id.content);
 				fContentTV.setText(fContent);
 				
@@ -155,7 +156,7 @@ public class DocumentDetailFragment extends Fragment {
 						
 						fileList, 
 						android.R.layout.simple_list_item_1, 
-						new String[] { Document.ATTACH_FILE_NAME }, 
+						new String[] { KEY.DOCUMENT.FILE_NAME}, 
 						new int[] { android.R.id.text1}
 					)); 
 		
@@ -164,7 +165,7 @@ public class DocumentDetailFragment extends Fragment {
         filesELV.setOnChildClickListener(new OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Toast.makeText(getActivity(), (String)document.files.get(childPosition).get(Document.ATTACH_FILE_NAME), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), (String)document.files.get(childPosition).get(KEY.DOCUMENT.FILE_NAME), Toast.LENGTH_SHORT).show();
                 return true;
             }
         });

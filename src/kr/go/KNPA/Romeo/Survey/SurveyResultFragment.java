@@ -17,12 +17,12 @@ import android.widget.TextView;
 public class SurveyResultFragment extends Fragment {
 
 	private Context context;
-	public String surveyIdx;
-	public int type;
+	private Survey survey;
+	public int subType;
 	
 	
 	public SurveyResultFragment() {}
-	public SurveyResultFragment(String surveyIdx, int type) {	this.surveyIdx = surveyIdx;	this.type = type;	}
+	public SurveyResultFragment(Survey survey, int subType) {	this.survey = survey;	this.subType = subType;	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
