@@ -55,7 +55,7 @@ public class StatusChecker {
 		Data data = new Data();
 		data.add(hm);
 		
-		Payload request = new Payload(Event.User.getUserInfo());
+		Payload request = new Payload().setEvent(Event.User.getUserInfo());
 		request.setData(data);
 		
 		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();

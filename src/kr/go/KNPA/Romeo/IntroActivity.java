@@ -59,10 +59,12 @@ public class IntroActivity extends Activity{
 			return false;
 		}
 
-		boolean isUserRegisterd = checkUserRegistered();
-		boolean isDeviceRegistered = checkDeviceRegistered();
+		boolean isUserRegistered = checkUserRegistered();
 		
-		return isUserRegisterd && isDeviceRegistered;
+		if ( isUserRegistered == true ) {
+			return checkDeviceRegistered();
+		}
+		return false;
 	}
 	
 	private boolean checkUserRegistered() {		

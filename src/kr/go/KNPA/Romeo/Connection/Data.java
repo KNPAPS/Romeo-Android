@@ -17,13 +17,9 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	 */
 	public Data add( int index, String key, Object value ) {
 		
-		if ( this.get(index) != null ) {
-			this.get(index).put(key, value);
-		} else {
-			HashMap<String,Object> hm = new HashMap<String,Object>();
-			hm.put(key,value);
-			this.add(index,hm);
-		}
+		HashMap<String,Object> hm = new HashMap<String,Object>();
+		hm.put(key,value);
+		this.add(index,hm);
 		
 		return this;
 	}

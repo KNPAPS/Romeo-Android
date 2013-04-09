@@ -12,7 +12,7 @@ import android.content.Context;
  */
 public class ConnectionConfig {
 	//! 서버호스트
-	public static final String SERVER_HOST = "http://116.67.94.11:9876/";
+	public static final String SERVER_HOST = "http://116.67.94.11:80/";
 	//! event request url
 	public static final String REQUEST_URL = SERVER_HOST+"juliet/index.php/handler/call";
 	//! 업로드된 파일 url

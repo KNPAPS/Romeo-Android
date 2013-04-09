@@ -46,7 +46,7 @@ public class ImageManager {
 	 * @return
 	 */
 	public ImageManager uploadProfileImg( String userHash, String fileName){//, CallbackEvent<Payload,Integer,Payload> callBack) {
-		Payload requestPayload = new Payload(Event.USER_UPLOAD_PROFILE_IMG);
+		Payload requestPayload = new Payload().setEvent(Event.USER_UPLOAD_PROFILE_IMG);
 		Data reqData = new Data();
 		reqData.add(0,KEY.USER.IDX,userHash);
 		

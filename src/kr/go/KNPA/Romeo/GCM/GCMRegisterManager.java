@@ -144,7 +144,7 @@ public class GCMRegisterManager {
         		
         	}
         };
-        Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callback);
+        Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false).callBack(callback);
         conn.request();
     }
 	
@@ -165,7 +165,7 @@ public class GCMRegisterManager {
         String regid = UserInfo.getRegid(context);
         Data reqData = new Data().add(0, KEY.DEVICE.UUID, uuid).add(0, KEY.DEVICE.GCM_REGISTRATION_ID, regid);
         Payload request = new Payload().setEvent(Event.Device.unRegister()).setData(reqData);
-        Connection conn = new Connection().requestPayloadJSON(request.toJSON());
+        Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON());
         conn.request();
         
         UserInfo.clear(context);

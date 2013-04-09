@@ -57,7 +57,7 @@ public class MemberManager {
 		if ( user != null ) {
 			return user;
 		} else {
-			Payload request = new Payload(Event.User.getUserInfo())
+			Payload request = new Payload().setEvent(Event.User.getUserInfo())
 									.setData( new Data().add(0, KEY.USER.IDX, idx) );
 			
 			//Connection conn = new Connection(this).callBack(callBackEvent).requestPayloadJSON(request.toJson()).request();
@@ -97,7 +97,7 @@ public class MemberManager {
 			data.add(i, KEY.USER.IDX, idxs.get(i));
 		}
 		
-		Payload request = new Payload(Event.User.getUserInfo())
+		Payload request = new Payload().setEvent(Event.User.getUserInfo())
 								.setData( data );
 		
 		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
@@ -160,7 +160,7 @@ public class MemberManager {
 		
 			
 		//setting request payload
-		Payload request = new Payload(Event.User.getDepartmentInfo());
+		Payload request = new Payload().setEvent(Event.User.getDepartmentInfo());
 		Data reqData = new Data();
 		reqData.add(0,KEY.DEPT.IDX,deptIdx);
 		
@@ -197,7 +197,8 @@ public class MemberManager {
 	 */
 	public ArrayList<Department> getChildDepts(String deptIdx) {
 		//setting request payload
-		Payload request = new Payload(Event.User.getChildDepartments());
+		Payload request = new Payload().setEvent(Event.User.getChildDepartments());
+		
 		Data reqData = new Data();
 		
 		if(deptIdx == null || deptIdx.trim().length() < 1 || deptIdx.trim().equals(""))
@@ -205,7 +206,7 @@ public class MemberManager {
 		reqData.add(0,KEY.DEPT.IDX, deptIdx);
 		request.setData(reqData);
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false).request();
 		
 		Payload response = conn.getResponsePayload();
 		if ( response.getStatusCode() == StatusCode.SUCCESS ){
@@ -239,7 +240,7 @@ public class MemberManager {
 	
 	public ArrayList<User> getDeptMembers(String depIdx, boolean doRecursive) {
 		//setting request payload
-		Payload request = new Payload(Event.User.getMembers());
+		Payload request = new Payload().setEvent(Event.User.getMembers());
 		
 		Data reqData = new Data();
 		

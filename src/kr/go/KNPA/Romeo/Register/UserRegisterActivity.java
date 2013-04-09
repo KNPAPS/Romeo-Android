@@ -157,7 +157,7 @@ public class UserRegisterActivity extends Activity {
 	private UserRegisterEditView getView(int key, String sKey) {
 		UserRegisterEditView view = screens.get(sKey);
 		if(view == null) {
-			view = new UserRegisterEditView(this, UserRegisterEditView.KEY_NAME);
+			view = new UserRegisterEditView(this, key);
 			screens.put(sKey, view);
 			layout.addView(view);
 		}
