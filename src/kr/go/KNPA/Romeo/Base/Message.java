@@ -107,6 +107,7 @@ public class Message implements Parcelable{
 				case Message.MESSAGE_TYPE_SURVEY	:		message = new Survey(json);		break;
 			}
 			
+			message.idx = jo.getString(KEY.MESSAGE.IDX);
 			message.type = jo.getInt(KEY.MESSAGE.TYPE);
 			message.title = jo.getString(KEY.MESSAGE.TITLE);
 			message.content = jo.getString(KEY.MESSAGE.CONTENT);
@@ -118,6 +119,7 @@ public class Message implements Parcelable{
 				_receivers.add(__receivers.getString(i));
 			}
 			message.receiversIdx = _receivers;
+			message.TS = jo.getLong(KEY.MESSAGE.CREATED_TS);
 		} catch (JSONException e) {
 			message = null;
 		}

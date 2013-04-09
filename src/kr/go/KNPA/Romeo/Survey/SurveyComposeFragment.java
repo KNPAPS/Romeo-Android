@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey.Form;
@@ -286,10 +287,10 @@ public class SurveyComposeFragment extends Fragment {
 		// TODO : title, content
 		String title = titleET.getText().toString();
 		String content = contentET.getText().toString();
-		form.put(Form.TITLE, 	title);
-		form.put(Form.CONTENT, 	content);
-		form.put(Form.OPEN_TS, getTSFrom(openETs));
-		form.put(Form.CLOSE_TS, getTSFrom(closeETs));
+		form.put(KEY.SURVEY.TITLE, 	title);
+		form.put(KEY.SURVEY.CONTENT, 	content);
+		form.put(KEY.SURVEY.OPEN_TS, getTSFrom(openETs));
+		form.put(KEY.SURVEY.CLOSE_TS, getTSFrom(closeETs));
 		//form.put(Form.IS_MULTIPLE, value);
 		
 		// 돌면서 양식을 취합.
@@ -317,7 +318,7 @@ public class SurveyComposeFragment extends Fragment {
 			
 		}
 		 
-		form.put(Form.QUESTIONS, questions);
+		form.put(KEY.SURVEY.QUESTIONS, questions);
 		
 		long currentTS = System.currentTimeMillis();
 		Survey survey = new Survey(
@@ -330,8 +331,7 @@ public class SurveyComposeFragment extends Fragment {
 				false, 
 				currentTS, 
 				true, 
-				currentTS,
-				false
+				currentTS
 				);
 		
 		survey.send(getActivity());	  

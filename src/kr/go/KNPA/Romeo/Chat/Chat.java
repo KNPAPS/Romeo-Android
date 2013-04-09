@@ -32,6 +32,7 @@ public class Chat extends Message {
 	public Chat(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
 		this.roomCode = jo.getString(KEY_ROOMCODE);
+		this.contentType = jo.getInt(KEY.CHAT.CONTENT_TYPE);
 	}
 
 	public Chat(

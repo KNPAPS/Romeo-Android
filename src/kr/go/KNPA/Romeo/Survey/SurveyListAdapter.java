@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
+import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Survey.Survey.Form;
@@ -31,7 +33,7 @@ class SurveyListAdapter extends CursorAdapter {
 	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);							}
 
 	@Override
-	public void bindView(View v, final Context ctx, Cursor c) {
+	public void bindView(View v, final Context ctx, final Cursor c) {
 		// TODO
 		
 		 /* 설문조사 목록 가져오기 */
@@ -51,8 +53,8 @@ class SurveyListAdapter extends CursorAdapter {
 		// Animation
 		// TODO :  더 빠르게..
 		Survey survey = Survey.surveyFromServer(ctx, surveyIdx, subType);
-		String openDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(Form.OPEN_TS), ctx.getString(R.string.formatString_openDT));
-		String closeDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(Form.CLOSE_TS), ctx.getString(R.string.formatString_closeDT));
+		String openDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.OPEN_TS), ctx.getString(R.string.formatString_openDT));
+		String closeDT = Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.CLOSE_TS), ctx.getString(R.string.formatString_closeDT));
 	
 		User user = User.getUserWithIdx(surveyIdx);
 		String senderInfo = user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name;
@@ -102,7 +104,10 @@ class SurveyListAdapter extends CursorAdapter {
 					@Override
 					public void onClick(View v) {
 						// TODO : 서버에서 정보 받기??
-						SurveyResultFragment f = new SurveyResultFragment(surveyIdx, subType);
+						
+						Survey survey = new Survey(ctx, c);
+						
+						SurveyResultFragment f = new SurveyResultFragment(survey, subType);
 						MainActivity.sharedActivity().pushContent(f);
 					}
 				});
