@@ -5,11 +5,19 @@
     android:orientation="horizontal" >
 
     <ImageView
+        android:id="@+id/sub_indicator"
+        android:layout_width="11dp"
+        android:layout_height="11dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/gap"
+        android:src="@drawable/sub_indicator" />
+    
+    <ImageView
         android:id="@+id/cell_icon"
         android:layout_width="@dimen/menu_list_cell_icon_width"
         android:layout_height="@dimen/menu_list_cell_icon_width"
         android:padding="@dimen/menu_list_cell_padding"
-        android:layout_marginLeft="@dimen/gap"
+        android:layout_marginLeft="0dp"
         android:src="@drawable/ic_launcher" />
 
     <TextView
