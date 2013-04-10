@@ -32,8 +32,8 @@ public class Data extends ArrayList<HashMap<String,Object>> {
 	 * @return obj object or null
 	 */
 	public Object get( int index, String key ) {
-		if(this.get(index) != null && this.get(index).containsKey(key)) {
-			this.get(index).get(key);
+		if( this.size()>=index && this.get(index).containsKey(key)) {
+			return this.get(index).get(key);
 		}
 				
 		return null;

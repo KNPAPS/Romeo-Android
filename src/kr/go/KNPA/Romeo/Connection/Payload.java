@@ -39,7 +39,7 @@ import com.google.gson.GsonBuilder;
 public class Payload {
 	private static final String TAG = "Payload";
 	private static final String KEY_EVENT = "event";
-	private static final String KEY_STATUS_CODE = "status_code";
+	private static final String KEY_STATUS_CODE = "status";
 	private static final String KEY_DATA = "data";
 	private String event;
 	private int statusCode;

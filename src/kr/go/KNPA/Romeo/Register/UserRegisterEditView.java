@@ -242,6 +242,8 @@ public class UserRegisterEditView extends LinearLayout {
 					deps = dummySet;
 				}
 				
+				((TextView)((Spinner)parent).findViewById(R.id.textView1)).setText(dep.name);
+				
 				// 선택된 스피너의 다음 스피너를 위한 새 어댑터를 생성한다.
 				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
 				
@@ -620,7 +622,7 @@ public class UserRegisterEditView extends LinearLayout {
 				convertView = inflater.inflate(R.layout.edit_dropdown_item_layout, parent, false);
 			}
 			
-			Department dep = getItem(position);
+ 			Department dep = getItem(position);
 			TextView depTV = (TextView)convertView.findViewById(R.id.title);
 			depTV.setText(dep.name);
 			
