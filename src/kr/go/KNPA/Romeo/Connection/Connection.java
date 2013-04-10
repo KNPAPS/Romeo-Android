@@ -8,11 +8,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
@@ -248,7 +250,15 @@ public class Connection {
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
 			dos.writeBytes(TH + BOUNDARY);
 			dos.writeBytes(RN+"Content-Disposition: form-data; name=" + "\"payload\"" + ";"+RN);
-			dos.writeBytes(RN+ requestPayloadJSON +RN);
+			
+			String encoded = null;
+			try {
+				 encoded = URLEncoder.encode(requestPayloadJSON, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				encoded = requestPayloadJSON;
+				Log.d("urlEncoder", e.getMessage());
+			}
+			dos.writeBytes(RN+ encoded +RN);
 
 			for(int fi=0; fi< nAttachedFiles; fi++) {
 				//개별 파일인풋스트림 열기
