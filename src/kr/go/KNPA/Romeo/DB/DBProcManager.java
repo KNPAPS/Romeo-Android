@@ -34,6 +34,7 @@ public class DBProcManager {
 	
 	private DBManager dbm = null;
 	private SQLiteDatabase db;
+	private Context context;
 	
 	private DBProcManager(Context context) {
 		if ( this.dbm == null ) {
@@ -42,6 +43,7 @@ public class DBProcManager {
 		if ( this.db == null ) {
 			this.db = dbm.getWritableDatabase();
 		}
+		this.context = context;
 	}
 	
 	public static DBProcManager sharedManager(Context context) {
@@ -85,12 +87,16 @@ public class DBProcManager {
 	public void close(){
 		this.dbm.close();
 		this.db.close();
-	} 
+	}
+	
+	public void dropDatabase(){
+		this.context.deleteDatabase(DBSchema.DATABASE_NAME);
+	}
 	
 	private long hashToId(String tableName, String hashColName, String hash) {
 		String[] args = { hash };
 		Cursor c = db.rawQuery("select _id from "+tableName+" where "+hashColName+" = ?",args);
-		if ( c.getCount() > 0 ) {
+		if ( c.moveToNext() ) {
 			return c.getLong(0);
 		} else {
 			Log.w(TAG,"입력한 해쉬에 대한 id값을 찾을 수 없음 at hashToId("+tableName+", "+hashColName+", "+hash+")");
@@ -374,7 +380,7 @@ public class DBProcManager {
 		 */
 		public Cursor getRoomList(int roomType) {
 			String sql = 
-					"select " +
+					"select r._id ," +
 					" r."+DBSchema.ROOM.COLUMN_IDX+
 						COLUMN_ROOM_IDX+"," +
 					
@@ -407,6 +413,7 @@ public class DBProcManager {
 					
 					" order by lc."+DBSchema.CHAT.COLUMN_CREATED_TS+" desc ";
 			Cursor c = db.rawQuery(sql, null);
+			Log.d(TAG, sql);
 			return c;
 		}
 		
@@ -422,7 +429,7 @@ public class DBProcManager {
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, hash);
 			
 			String sql = 
-					"select "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+COLUMN_USER_IDX+
+					"select _id, "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+COLUMN_USER_IDX+
 					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
 					" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"="+String.valueOf(roomId);
 			return db.rawQuery(sql,null);
@@ -445,7 +452,7 @@ public class DBProcManager {
 		
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			String sql=
-					"select "+
+					"select _id, "+
 					DBSchema.CHAT.COLUMN_IDX+COLUMN_CHAT_IDX+", "+
 					DBSchema.CHAT.COLUMN_SENDER_IDX+COLUMN_CHAT_SENDER_IDX+", "+
 					DBSchema.CHAT.COLUMN_CREATED_TS+COLUMN_CHAT_TS+", "+
@@ -675,7 +682,7 @@ public class DBProcManager {
 		public Cursor getDocumentList(int docCategory) {
 			
 			if ( docCategory == Document.TYPE_FAVORITE ) {
-				String sql ="select "+
+				String sql ="select _id,"+
 						DBSchema.DOCUMENT.COLUMN_IDX+COLUMN_DOC_IDX+", "+
 						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
 						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
@@ -686,7 +693,7 @@ public class DBProcManager {
 						" order by "+DBSchema.DOCUMENT.COLUMN_CREATED_TS+" desc ";
 				return db.rawQuery(sql, null);
 			} else {
-				String sql ="select "+
+				String sql ="select _id, "+
 						DBSchema.DOCUMENT.COLUMN_IDX+COLUMN_DOC_IDX+", "+
 						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+", "+
 						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
@@ -719,7 +726,7 @@ public class DBProcManager {
 			
 			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 			
-			String sql ="select "+
+			String sql ="select _id,"+
 					DBSchema.DOCUMENT.COLUMN_TITLE + COLUMN_DOC_TITLE +", "+
 					DBSchema.DOCUMENT.COLUMN_CONTENT + COLUMN_DOC_CONTENT +", "+
 					DBSchema.DOCUMENT.COLUMN_CREATOR_IDX + COLUMN_SENDER_IDX +", "+
@@ -745,7 +752,7 @@ public class DBProcManager {
 		public Cursor getDocumentForwardInfo(String docHash) {
 			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 					
-			String sql ="select "+
+			String sql ="select _id, "+
 					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARDER_IDX + COLUMN_FORWARDER_IDX +", "+
 					DBSchema.DOCUMENT_FORWARD.COLUMN_COMMENT + COLUMN_FORWARD_COMMENT +", "+
 					DBSchema.DOCUMENT_FORWARD.COLUMN_FORWARD_TS + COLUMN_FORWARD_TS +
@@ -768,7 +775,7 @@ public class DBProcManager {
 		public Cursor getDocumentAttachment(String docHash) {
 			long docId = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, docHash);
 			
-			String sql ="select "+
+			String sql ="select _id, "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_NAME + COLUMN_FILE_NAME +", "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_TYPE + COLUMN_FILE_TYPE +", "+
 					DBSchema.DOCUMENT_ATTACHMENT.COLUMN_FILE_SIZE_IN_BYTE + COLUMN_FILE_SIZE +", "+
@@ -789,7 +796,7 @@ public class DBProcManager {
 			long id = hashToId(DBSchema.DOCUMENT.TABLE_NAME, DBSchema.DOCUMENT.COLUMN_IDX, hash);
 			
 			String sql = 
-					"select "+DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_IDX+
+					"select _id, "+DBSchema.DOCUMENT_RECEIVER.COLUMN_RECEIVER_IDX+
 					" from"+DBSchema.DOCUMENT_RECEIVER.TABLE_NAME+
 					" where "+DBSchema.DOCUMENT_RECEIVER.COLUMN_DOC_ID+" = "+String.valueOf(id);
 			return db.rawQuery(sql,null);
@@ -901,7 +908,7 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getSurveyList(int svyCategory) {
-			String sql ="select "+
+			String sql ="select _id, "+
 					DBSchema.SURVEY.COLUMN_IDX+COLUMN_SURVEY_IDX+", "+
 //					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
 					DBSchema.SURVEY.COLUMN_IS_CHECKED+COLUMN_SURVEY_IS_CHECKED+", "+
@@ -924,7 +931,7 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getSurveyInfo(String hash) {
-			String sql ="select "+
+			String sql ="select _id, "+
 //					DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
 //					DBSchema.SURVEY.COLUMN_CONTENT+COLUMN_SURVEY_CONTENT+", "+
 //					DBSchema.SURVEY.COLUMN_CREATED_TS+COLUMN_SURVEY_CREATED_TS+", "+
@@ -952,7 +959,7 @@ public class DBProcManager {
 			long id = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_IDX, hash);
 			
 			String sql = 
-					"select "+DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_IDX+
+					"select _id, "+DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_IDX+
 					" from"+DBSchema.SURVEY_RECEIVER.TABLE_NAME+
 					" where "+DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID+" = "+String.valueOf(id);
 			return db.rawQuery(sql,null);		
@@ -1087,7 +1094,7 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getFavoriteList() {
-			String sql = "select "+
+			String sql = "select _id, "+
 					DBSchema.USER_FAVORITE.COLUMN_IDX+COLUMN_FAVORITE_IDX+", "+
 					DBSchema.USER_FAVORITE.COLUMN_TITLE+COLUMN_FAVORITE_NAME+", "+
 					DBSchema.USER_FAVORITE.COLUMN_IS_GROUP+COLUMN_FAVORITE_IS_GROUP+
@@ -1107,7 +1114,7 @@ public class DBProcManager {
 			
 			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
 			
-			String sql = "select "+
+			String sql = "select _id, "+
 					DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_IDX+COLUMN_USER_IDX+
 					" from "+DBSchema.USER_FAVORITE_GROUP.TABLE_NAME+
 					" where "+DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID+" = "+String.valueOf(gpId);
@@ -1125,7 +1132,7 @@ public class DBProcManager {
 			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
 			
 			String sql =
-					"select "+
+					"select _id, "+
 					DBSchema.USER_FAVORITE.COLUMN_TITLE+COLUMN_FAVORITE_NAME+
 					" from "+DBSchema.USER_FAVORITE.TABLE_NAME+
 					" where _id = "+String.valueOf(gpId);
