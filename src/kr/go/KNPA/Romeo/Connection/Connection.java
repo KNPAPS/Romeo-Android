@@ -8,21 +8,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
-import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import android.content.Context;
 import android.os.Handler;
@@ -223,8 +217,6 @@ public class Connection {
 			Log.e(TAG, e.getMessage() );
 			throw new RuntimeException(e);
 		}
-<<<<<<< HEAD
-=======
 
 		final String RN = "\r\n";
 		final String TH = "--";
@@ -252,123 +244,12 @@ public class Connection {
 		conn.setRequestProperty("Connection","Keep-Alive");
 		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+BOUNDARY);
 		
->>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 		try {
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
 			dos.writeBytes(TH + BOUNDARY);
 			dos.writeBytes(RN+"Content-Disposition: form-data; name=" + "\"payload\"" + ";"+RN);
 			dos.writeBytes(RN+ requestPayloadJSON +RN);
 
-<<<<<<< HEAD
-			/**
-			 * 파일 첨부 여부에 따라 outputstream을 multipart로 보낼지 그냥 설정된 content type으로 보낼 지 구분하여 보내고
-			 * response는 어차피 같은 식으로 string만 받으니까 같은 루틴을 사용한다 
-			 */
-			int nAttachedFiles = 0;
-			if(attachedFiles != null ) {
-				nAttachedFiles = attachedFiles.size();
-			}
-			
-			OutputStreamWriter wr=null;
-			BufferedReader rd;
-			if ( nAttachedFiles > 0 ) { 
-				//첨부파일이 있을 때에는 무조건 multipart/form-data로 전송하고 keepalive를 사용한다
-				//request byte를 쓸 때 설정된 contentType을 따른다
-				System.setProperty("http.keepAlive","true");
-				conn.setRequestProperty("Content-type", MimeType.multipart);
-				conn.setRequestProperty("Connection", "Keep-Alive");
-					DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-					//payload json 부분
-					dos.writeBytes("--"+Constants.MIME_BOUNDARY+"\r\n");
-					dos.writeBytes("Content-Disposition: form-data; name=\"payload\";\r\n");
-					dos.writeBytes("Content-Type: "+contentType+";\r\n\r\n");
-					
-					dos.writeBytes(requestPayloadJSON);
-	
-					//파일첨부
-					for ( int i=0; i<nAttachedFiles; i++ ) {
-						
-						//개별 파일인풋스트림 열기
-						File f = new File(attachedFiles.get(i));
-						
-						//파일이 없을 시 에러 던지기
-						if ( f.exists() == false ) {
-							FileNotFoundException e = new FileNotFoundException(f.getPath());
-							throw new RuntimeException(e);
-						}
-						
-						FileInputStream fis = new FileInputStream(f);
-						
-						//write data
-						dos.writeBytes("--"+Constants.MIME_BOUNDARY+"\r\n");
-						dos.writeBytes("Content-Disposition: form-data; name=\"file_"+i+"\"; filename=\""+f.getName()+"\"\r\n");
-						dos.writeBytes("Content-Type: "+contentType+";\r\n\r\n");
-						
-						int bytesAvailable = fis.available();
-						int maxBufferSize = Constants.MAX_BUFFER_SIZE;
-						int bufferSize = Math.min(bytesAvailable, maxBufferSize);
-						byte[] buffer = new byte[bufferSize];
-						int bytesRead = fis.read(buffer,0,bufferSize);
-						
-						//read image
-						while(bytesRead > 0) {
-							dos.write(buffer,0,bufferSize);
-							bytesAvailable = fis.available();
-							maxBufferSize = Constants.MAX_BUFFER_SIZE;
-							bufferSize = Math.min(bytesAvailable, maxBufferSize);
-							bytesRead = fis.read(buffer,0,bufferSize);
-						}
-						
-						dos.writeBytes("\r\n");
-						fis.close();
-					}
-					
-					//close streams
-					dos.flush();
-					dos.close();
-			} else {
-				//첨부 파일이 없을 때는 설정된 contentType을 따른다
-				//keep alive 설정을 끈다. 
-				String mimeType = "application/x-www-form-urlencoded;charset=UTF-8";
-				conn.setRequestProperty("Cache-Control", "no-cache, no-store");
-				conn.setRequestProperty("Content-type", mimeType);
-				conn.setAllowUserInteraction(true);
-				
-				//캐시 사용여부
-				conn.setUseCaches(false);
-				conn.setDoOutput(true);
-				//URLConnection 객체에게 인풋과 아웃풋 스트림을 모두 허용한다 
-				conn.setDoInput(true);
-				
-				//타임아웃 설정
-				conn.setConnectTimeout(timeout);
-				conn.setReadTimeout(timeout);
-
-				
-//				OutputStream os = conn.getOutputStream();
-				String out = "payload="+requestPayloadJSON;
-				OutputStream _os;
-				try {
-					_os = conn.getOutputStream();
-				} catch (IOException e) {
-					RuntimeException re = new RuntimeException(e);
-					throw re;
-				}
-				OutputStreamWriter _osw;
-				try {
-					_osw = new OutputStreamWriter(_os,"UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					RuntimeException re = new RuntimeException(e);
-					throw re;
-				}
-				PrintWriter ps = new PrintWriter(_osw);
-				ps.write(out);
-				ps.flush();		
-//				os = conn.getOutputStream();
-//				os.write(data.getBytes());
-//				os.flush();
-				ps.close();
-=======
 			for(int fi=0; fi< nAttachedFiles; fi++) {
 				//개별 파일인풋스트림 열기
 				File f = new File(attachedFiles.get(fi));
@@ -404,7 +285,6 @@ public class Connection {
 				dos.writeBytes(RN);
 				
 				fis.close();
->>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 			}
 			
 			dos.writeBytes(TH+BOUNDARY+TH+RN);
@@ -415,53 +295,8 @@ public class Connection {
 			/**
 			 * HTTP_OK가 떨어지면 응답을 inputstream으로 읽기 시작.
 			 */ 
-			//statusCode = conn.getResponseCode();
+			statusCode = conn.getResponseCode();
 	
-<<<<<<< HEAD
-			int responseCode;
-			try {
-				responseCode = conn.getResponseCode();
-			} catch (IOException e) {
-				RuntimeException re = new RuntimeException(e);
-				throw re;
-			}
-
-			StringBuffer resp = new StringBuffer();
-			if(responseCode == HttpURLConnection.HTTP_OK) {
-				String line;
-
-				InputStream _is;
-				try {
-					_is = conn.getInputStream();
-				} catch (IOException e) {
-					RuntimeException re = new RuntimeException(e);
-					throw re;
-				}
-				InputStreamReader _isr;
-				try {
-					_isr = new InputStreamReader(_is, "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					RuntimeException re = new RuntimeException(e);
-					throw re;
-				}
-				BufferedReader br = new BufferedReader(_isr);
-
-				try {
-					while ((line = br.readLine() ) != null) {
-						//System.out.println(line);
-						resp.append(line);
-					}
-				} catch (IOException e) {
-					RuntimeException re = new RuntimeException(e);
-					throw re;
-				}
-
-				try {
-					br.close();
-				} catch (IOException e) {
-					RuntimeException re = new RuntimeException(e);
-					throw re;
-=======
 			//HTTP 통신이 올바르게 되었으면 response 읽어들인다.
 			if ( statusCode == HttpURLConnection.HTTP_OK ) {
 				InputStream is;
@@ -476,23 +311,12 @@ public class Connection {
 				BufferedReader br = new BufferedReader(isr);
 				while ((line = br.readLine() ) != null) {
 					resp.append(line);
->>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 				}
-
-//				is = conn.getInputStream();
-//				baos = new ByteArrayOutputStream();
-//				byte[] byteBuffer = new byte[1024];
-//				byte[] byteData = null;
-//				int nLength = 0;
-//				while((nLength = is.read(byteBuffer, 0, byteBuffer.length)) != -1) {
-//					baos.write(byteBuffer, 0, nLength);
-//				}
-//				byteData = baos.toByteArray();
-//				response = new String(byteData);
-				//is.close();
+				br.close();
 				responsePayloadJSON = resp.toString();
-				//Log.v("CONNECTION","Got JSON DATA : " + response);
-
+				responsePayload = new Payload(responsePayloadJSON);
+			} else {
+				Log.e(TAG, "HTTP response code : "+statusCode );
 			}
 			
 			/*
@@ -506,7 +330,6 @@ public class Connection {
 			String result = b.toString();
 			 */
 			
->>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 		} catch ( IOException e ){
 			Log.e(TAG, e.getMessage() );
 			throw new RuntimeException(e);
