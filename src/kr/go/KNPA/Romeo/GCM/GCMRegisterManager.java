@@ -78,6 +78,7 @@ public class GCMRegisterManager {
     	// 다시시작하도록 유도.
     	// 문제가 자꾸 발생할 시 재설치를 유도.
         
+        /*
         AlertDialog alert = new AlertDialog.Builder(context)
         									.setIcon(kr.go.KNPA.Romeo.R.drawable.icon)
         									.setTitle("오류가 발생했습니다.")//context.getString(kr.go.KNPA.Romeo.R.string.)
@@ -89,6 +90,7 @@ public class GCMRegisterManager {
 													android.os.Process.killProcess(android.os.Process.myPid());
 												}
 											}).show();
+											*/
     	//alert("오류가 발생했습니다. 다시 시도해주시기 바랍니다. 문제가 반복되어 발생하는 경우 재설치해주시기 바랍니다.");
     }
 
@@ -129,6 +131,7 @@ public class GCMRegisterManager {
         		if(response.getStatusCode() == StatusCode.SUCCESS) {
         			UserInfo.setRegid(ctx, rid);
         		} else {
+        			/*
         			AlertDialog alert = new AlertDialog.Builder(ctx)
 									.setIcon(kr.go.KNPA.Romeo.R.drawable.icon)
 									.setTitle("기기 등록에 실패했습니다.")//context.getString(kr.go.KNPA.Romeo.R.string.)
@@ -140,6 +143,7 @@ public class GCMRegisterManager {
 							android.os.Process.killProcess(android.os.Process.myPid());
 						}
 					}).show();
+					*/
         		}
         		
         	}
