@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,21 +16,31 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 
 public class HandBookFragment extends Fragment {
-	private final static String BASE_PATH = "handbook/"; 
+	private final static String BASE_PATH = "handbook"; 
 	private final static String DELIMITER = "#";
 	private ViewPager pager;
 	private HashMap<Integer, ArrayList<String>> book;
+	private static int nPages = 0; 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		
 		
 		AssetManager am = getResources().getAssets();
 		String[] list = null;
@@ -38,7 +50,7 @@ public class HandBookFragment extends Fragment {
 		} catch (IOException e) {
 		}
 		
-		
+		nPages = list.length;
 		book = new HashMap<Integer, ArrayList<String>>();
 		ArrayList<String> chapter = null;
 		
@@ -46,10 +58,11 @@ public class HandBookFragment extends Fragment {
 			String fileName = list[i];
 			String[] segments = fileName.split(DELIMITER);
 			
-			int chapterNumber = Integer.parseInt(segments[i]);
+			int chapterNumber = Integer.parseInt(segments[0]);
 			
 			if( book.containsKey( (Integer)chapterNumber  ) == false) {
 				chapter = new ArrayList<String>();
+				book.put(chapterNumber, chapter);
 			} else {
 				chapter = book.get((Integer) chapterNumber );
 			}
@@ -63,6 +76,15 @@ public class HandBookFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		View view = inflater.inflate(R.layout.handbook_fragment, container, false); 
+		
+		OnClickListener lbbOnClickListener = new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				MainActivity.sharedActivity().toggle();
+			}
+		}; 
+		initNavigationBar(view, "현장매뉴얼", true, false, "메뉴", "", lbbOnClickListener, null);
 		
 		pager = (ViewPager)view.findViewById(R.id.pager);
 		pager.setAdapter(new HandBookAdapter());
@@ -82,13 +104,15 @@ public class HandBookFragment extends Fragment {
 		@Override
 		public int getCount() {
 			// 현재 PagerAdapter에서 관리할 갯수를 반환 한다.
-			
+			/*
 			int count = 0;
 			for(int c=0; c<book.size(); c++)
 				for(int p=0; p<book.get((Integer)c).size(); p++)
 					count++;
 			
 			return count;
+			*/
+			return nPages;
 		}
 
 		@Override
@@ -100,12 +124,14 @@ public class HandBookFragment extends Fragment {
 		private Bitmap getImageFromPosition(int position) {
 			int count = 0;
 			String fileName = null;
+			
+			bookLoop:
 			for(int c=0; c<book.size(); c++) {
 				ArrayList<String> chapter = book.get((Integer)c);
 				for(int p=0; p<chapter.size(); p++) {
 					if(position == count) {
 						fileName = chapter.get(p);
-						break;
+						break bookLoop;
 					}
 					count++;
 				}
@@ -114,7 +140,7 @@ public class HandBookFragment extends Fragment {
 			AssetManager am = getResources().getAssets();
 			InputStream is;
 			try {
-				is = am.open(BASE_PATH+fileName);
+				is = am.open(BASE_PATH+"/"+fileName);
 			} catch (IOException e) {
 				return null;
 			}
@@ -123,12 +149,140 @@ public class HandBookFragment extends Fragment {
 		
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-			// ViewPager에서 사용할 뷰객체 생성 및 등록 한다.  
-			ImageView iv = new ImageView(getActivity());
-			
-			Bitmap bm = getImageFromPosition(position);
+			// ViewPager에서 사용할 뷰객체 생성 및 등록 한다.
+			final ImageView iv = new ImageView(getActivity());
+			//iv.setScrollContainer(true);
+			//iv.setScrollbarFadingEnabled(true);
+			//iv.setVerticalScrollBarEnabled(true);
+			iv.setScaleType(ScaleType.CENTER_CROP);
+			final Bitmap bm = getImageFromPosition(position);
 			if(bm != null)
-			iv.setImageBitmap( bm );
+				iv.setImageBitmap( bm );
+
+			Display display = getActivity().getWindowManager().getDefaultDisplay();
+			// set maximum scroll amount (based on center of image)
+		    int maxX = (int)((bm.getWidth() / 2) - (display.getWidth() / 2));
+		    int maxY = (int)((bm.getHeight() / 2) - (display.getHeight() / 2));
+		    
+		    // set scroll limits
+		    final int maxLeft = 0;//(maxX * -1);
+		    final int maxRight = 0;//maxX;
+		    final int maxTop = 0;//(maxY * -1);
+		    final int maxBottom = 2*maxY;
+
+		    Resources r = getResources();
+		    float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, r.getDisplayMetrics());
+		    
+			iv.scrollTo(0, -maxY-(int)px/2 );
+			
+			iv.setOnTouchListener(new View.OnTouchListener() {
+
+				float downX, downY;
+		        int totalX, totalY;
+		        int scrollByX, scrollByY;
+				@Override
+				public boolean onTouch(View view, MotionEvent event)
+		        {
+		            float currentX, currentY;
+		            switch (event.getAction())
+		            {
+		                case MotionEvent.ACTION_DOWN:
+		                    downX = event.getX();
+		                    downY = event.getY();
+		                    break;
+
+		                case MotionEvent.ACTION_MOVE:
+		                    currentX = event.getX();
+		                    currentY = event.getY();
+		                    scrollByX = 0;//(int)(downX - currentX);
+		                    scrollByY = (int)(downY - currentY);
+		                    // scrolling to left side of image (pic moving to the right)
+		                    /*
+		                    if (currentX > downX)
+		                    {
+		                        if (totalX == maxLeft)
+		                        {
+		                            scrollByX = 0;
+		                        }
+		                        if (totalX > maxLeft)
+		                        {
+		                            totalX = totalX + scrollByX;
+		                        }
+		                        if (totalX < maxLeft)
+		                        {
+		                            scrollByX = maxLeft - (totalX - scrollByX);
+		                            totalX = maxLeft;
+		                        }
+		                    }
+
+		                    // scrolling to right side of image (pic moving to the left)
+		                    if (currentX < downX)
+		                    {
+		                        if (totalX == maxRight)
+		                        {
+		                            scrollByX = 0;
+		                        }
+		                        if (totalX < maxRight)
+		                        {
+		                            totalX = totalX + scrollByX;
+		                        }
+		                        if (totalX > maxRight)
+		                        {
+		                            scrollByX = maxRight - (totalX - scrollByX);
+		                            totalX = maxRight;
+		                        }
+		                    }
+		                    */
+		                    // scrolling to top of image (pic moving to the bottom)
+		                    if (currentY > downY)
+		                    {
+		                        if (totalY == maxTop)
+		                        {
+		                            scrollByY = 0;
+		                        }
+		                        if (totalY > maxTop)
+		                        {
+		                            totalY = totalY + scrollByY;
+		                        }
+		                        if (totalY < maxTop)
+		                        {
+		                            scrollByY = maxTop - (totalY - scrollByY);
+		                            totalY = maxTop;
+		                        }
+		                    }
+
+		                    // scrolling to bottom of image (pic moving to the top)
+		                    if (currentY < downY)
+		                    {
+		                        if (totalY == maxBottom)
+		                        {
+		                            scrollByY = 0;
+		                        }
+		                        if (totalY < maxBottom)
+		                        {
+		                            totalY = totalY + scrollByY;
+		                        }
+		                        if (totalY > maxBottom)
+		                        {
+		                            scrollByY = maxBottom - (totalY - scrollByY);
+		                            totalY = maxBottom;
+		                        }
+		                    }
+
+		                    iv.scrollBy(0, scrollByY); //scrollByX
+		                    //downX = currentX;
+		                    downY = currentY;
+		                    break;
+
+		            }
+
+		            return true;
+		        }
+				
+			});
+			
+			
+			
 			
 			container.addView(iv, 0);
 			return iv;
@@ -162,5 +316,23 @@ public class HandBookFragment extends Fragment {
 			// 페이지 변경이 완료되었을때 호출 됩니다.
 			super.finishUpdate(container);
 		}
+	}
+	
+	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
+		
+		Button lbb = (Button)parentView.findViewById(R.id.left_bar_button);
+		Button rbb = (Button)parentView.findViewById(R.id.right_bar_button);
+		
+		lbb.setVisibility((lbbVisible?View.VISIBLE:View.INVISIBLE));
+		rbb.setVisibility((rbbVisible?View.VISIBLE:View.INVISIBLE));
+		
+		if(lbb.getVisibility() == View.VISIBLE) { lbb.setText(lbbTitle);	}
+		if(rbb.getVisibility() == View.VISIBLE) { rbb.setText(rbbTitle);	}
+		
+		TextView titleView = (TextView)parentView.findViewById(R.id.title);
+		titleView.setText(titleText);
+		
+		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
+		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
 	}
 }

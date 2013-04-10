@@ -51,6 +51,7 @@ public class BaseActivity extends SlidingFragmentActivity {
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		sm.setFadeDegree(0.35f);
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		sm.setSlidingEnabled(false);
 
 		
 		//나중에 NavigationBar를 만들면서 지워버리도록하자. 리스너를 등록?
