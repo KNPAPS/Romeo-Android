@@ -311,7 +311,7 @@ public class Connection {
 
 				
 //				OutputStream os = conn.getOutputStream();
-				String out = "payload="+"\""+requestPayloadJSON+"\"";
+				String out = "payload="+requestPayloadJSON;
 				OutputStream _os;
 				try {
 					_os = conn.getOutputStream();
