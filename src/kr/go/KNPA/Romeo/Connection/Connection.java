@@ -106,9 +106,11 @@ public class Connection {
 	public Connection callBack(CallbackEvent<Payload, Integer, Payload> v) { this.callBack = v; return this; }
 	public Connection contentType( String v ) { this.contentType = v; return this; }
 	public Connection context( Context v ) { this.context = v; return this; }
-	public Connection requestPayloadJSON( String v ) { 
-		this.requestPayloadJSON = v;
-		requestPayload = new Payload(requestPayloadJSON);
+	
+	
+	public Connection requestPayload( Payload payload ) { 
+		this.requestPayload = payload;
+		this.requestPayloadJSON = payload.toJSON();
 		return this; 
 	}
 	public Connection timeout( int v ) { this.timeout = v; return this; }
@@ -368,7 +370,7 @@ public class Connection {
 					//msg.obj = RuntimeException 객체임
 					
 					connection.callBack.onError("서버와 통신 중 오류가 발생했습니다", 
-												(RuntimeException)msg.obj);
+												null);
 										
 				} else {
 					@SuppressWarnings("unchecked")

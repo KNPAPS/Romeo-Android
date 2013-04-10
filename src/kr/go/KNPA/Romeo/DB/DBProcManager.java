@@ -94,6 +94,11 @@ public class DBProcManager {
 	}
 	
 	private long hashToId(String tableName, String hashColName, String hash) {
+		
+		if ( hash == null ) {
+			return Constants.NOT_SPECIFIED;
+		}
+		
 		String[] args = { hash };
 		Cursor c = db.rawQuery("select _id from "+tableName+" where "+hashColName+" = ?",args);
 		if ( c.moveToNext() ) {
@@ -413,7 +418,6 @@ public class DBProcManager {
 					
 					" order by lc."+DBSchema.CHAT.COLUMN_CREATED_TS+" desc ";
 			Cursor c = db.rawQuery(sql, null);
-			Log.d(TAG, sql);
 			return c;
 		}
 		
@@ -1112,7 +1116,7 @@ public class DBProcManager {
 		 */
 		public Cursor getFavoriteGroupMemberList(String hash){
 			
-			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
+			long gpId = hashToId(DBSchema.USER_FAVORITE.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
 			
 			String sql = "select _id, "+
 					DBSchema.USER_FAVORITE_GROUP.COLUMN_MEMBER_IDX+COLUMN_USER_IDX+
@@ -1129,7 +1133,7 @@ public class DBProcManager {
 		 * @return
 		 */
 		public Cursor getFavoriteInfo( String hash ) {
-			long gpId = hashToId(DBSchema.USER_FAVORITE_GROUP.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
+			long gpId = hashToId(DBSchema.USER_FAVORITE.TABLE_NAME, DBSchema.USER_FAVORITE.COLUMN_IDX, hash);
 			
 			String sql =
 					"select _id, "+

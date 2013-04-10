@@ -219,7 +219,7 @@ public class UserRegisterActivity extends Activity {
 		// TODO : 사진 업로드
 		
 		Payload request = new Payload().setEvent(Event.User.register()).setData(reqData);
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false).request();
+		Connection conn = new Connection().requestPayload(request).async(false).request();
 		Payload response = conn.getResponsePayload();
 		
 		if(response.getStatusCode() == StatusCode.SUCCESS) {

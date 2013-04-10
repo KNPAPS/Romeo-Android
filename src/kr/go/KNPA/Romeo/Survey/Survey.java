@@ -44,7 +44,7 @@ public class Survey extends Message {// implements Parcelable{
 		
 		Data reqData = new Data().add(0, KEY.SURVEY.IDX, surveyIdx);
 		Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
-		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().async(false).requestPayload(request).request();
 		Payload response = conn.getResponsePayload();
 		Data respData = response.getData();
 		

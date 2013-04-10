@@ -50,7 +50,7 @@ public class ImageManager {
 		Data reqData = new Data();
 		reqData.add(0,KEY.USER.IDX,userHash);
 		
-		new Connection().requestPayloadJSON(requestPayload.toJSON()).attachFile(fileName).callBack(callBack).request();
+		new Connection().requestPayload(requestPayload).attachFile(fileName).callBack(callBack).request();
 		return this;
 	}
 	

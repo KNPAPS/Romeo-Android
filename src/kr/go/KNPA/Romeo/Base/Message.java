@@ -312,7 +312,7 @@ public class Message implements Parcelable{
 			}
 		};
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callback);
+		Connection conn = new Connection().requestPayload(request).callBack(callback);
 		conn.request();
 	}
 	/** @} */

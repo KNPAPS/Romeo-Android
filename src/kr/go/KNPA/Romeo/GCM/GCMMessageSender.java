@@ -45,7 +45,7 @@ public class GCMMessageSender {
 					.add(0, KEY.MESSAGE.IDX, messageIdx)
 					.add(0, KEY.USER.IDX, userIdx)
 				);
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().requestPayload(request).request();
 		Payload response = conn.getResponsePayload();
 		
 		if ( response.getStatusCode() == StatusCode.SUCCESS ){
@@ -58,7 +58,7 @@ public class GCMMessageSender {
 
 	public static ArrayList<String> getUncheckers(int type, String idx) {
 		Payload request = new Payload().setData(new Data().add(0, KEY.MESSAGE.TYPE, type).add(0, KEY.MESSAGE.IDX, idx));
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().requestPayload(request).request();
 		Payload response = conn.getResponsePayload();
 		
 		ArrayList<String> uncheckers = new ArrayList<String>();
@@ -82,7 +82,7 @@ public class GCMMessageSender {
 			private Message _message;
 			@Override
 			public void onPreExecute(Payload request){
-				_message = (Message)request.getData().get(0,"message");
+				_message = (Message)request.getData().get(0,KEY._MESSAGE);
 			}
 			
 			@Override
@@ -127,7 +127,7 @@ public class GCMMessageSender {
 			}
 		};
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callBack);
+		Connection conn = new Connection().requestPayload(request).callBack(callBack);
 		conn.request();
 	}
 	
@@ -151,7 +151,7 @@ public class GCMMessageSender {
 			}
 		};
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).callBack(callBack);
+		Connection conn = new Connection().requestPayload(request).callBack(callBack);
 		conn.request();
 	}
 	

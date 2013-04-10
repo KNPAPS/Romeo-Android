@@ -31,6 +31,15 @@ public class MemberManager {
 		if(_instance == null) {
 			_instance = new MemberManager();
 		}
+		
+		if ( cachedUsers == null ) {
+			cachedUsers = new HashMap<String, User>();
+		}
+		
+		if ( cachedDepartment == null ) {
+			cachedDepartment = new HashMap<String, Department>();
+		}
+		
 		return _instance;
 	}
 	
@@ -60,8 +69,8 @@ public class MemberManager {
 			Payload request = new Payload().setEvent(Event.User.getUserInfo())
 									.setData( new Data().add(0, KEY.USER.IDX, idx) );
 			
-			//Connection conn = new Connection(this).callBack(callBackEvent).requestPayloadJSON(request.toJson()).request();
-			Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+			//Connection conn = new Connection(this).callBack(callBackEvent).requestPayloadJSON(request).request();
+			Connection conn = new Connection().requestPayload(request).async(false).request();
 			Payload response = conn.getResponsePayload();
 			
 			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
@@ -71,7 +80,6 @@ public class MemberManager {
 												.idx((String)hm.get(KEY.DEPT.IDX))
 												.name((String)hm.get(KEY.DEPT.NAME))
 												.nameFull((String)hm.get(KEY.DEPT.FULL_NAME))
-												.sequence(Long.parseLong((String)hm.get(KEY.DEPT.SEQUENCE)))
 												.build();
 				
 				user = new User.Builder()
@@ -100,7 +108,7 @@ public class MemberManager {
 		Payload request = new Payload().setEvent(Event.User.getUserInfo())
 								.setData( data );
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().requestPayload(request).request();
 		Payload response = conn.getResponsePayload();
 		
 		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
@@ -166,7 +174,7 @@ public class MemberManager {
 		
 		request.setData(reqData);
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().requestPayload(request).request();
 		
 		Payload response = conn.getResponsePayload();
 		if ( response.getStatusCode() == StatusCode.SUCCESS ){
@@ -206,7 +214,7 @@ public class MemberManager {
 		reqData.add(0,KEY.DEPT.IDX, deptIdx);
 		request.setData(reqData);
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false).request();
+		Connection conn = new Connection().requestPayload(request).async(false).request();
 		
 		Payload response = conn.getResponsePayload();
 		if ( response.getStatusCode() == StatusCode.SUCCESS ){
@@ -255,7 +263,7 @@ public class MemberManager {
 		
 		request.setData(reqData);
 		
-		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().async(false).requestPayload(request).request();
 		
 		Payload response = conn.getResponsePayload();
 		if ( response.getStatusCode() == StatusCode.SUCCESS ) {

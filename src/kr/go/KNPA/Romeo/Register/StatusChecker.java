@@ -58,7 +58,7 @@ public class StatusChecker {
 		Payload request = new Payload().setEvent(Event.User.getUserInfo());
 		request.setData(data);
 		
-		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().async(false).requestPayload(request).request();
 		Payload responsePayload = conn.getResponsePayload();
 		/** 데이터 가져오기 끝 */
 		
@@ -110,7 +110,7 @@ public class StatusChecker {
 		data.add(hm);
 		Payload requestPayload = new Payload().setEvent(Event.Device.isRegistered());
 		requestPayload.setData(data);
-		Connection conn = new Connection().async(false).requestPayloadJSON(requestPayload.toJSON());
+		Connection conn = new Connection().async(false).requestPayload(requestPayload);
 		conn.request();
 		Payload responsePayload = conn.getResponsePayload();
 		/** 데이터 가져오기 끝 */

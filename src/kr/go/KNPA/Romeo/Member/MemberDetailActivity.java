@@ -94,9 +94,10 @@ public class MemberDetailActivity extends Activity {
 		TextView nameTV = (TextView)findViewById(R.id.name);
 				
 		Cursor cursor_favoriteInfo = mpm.getFavoriteInfo(idx);
-		cursor_favoriteInfo.moveToFirst();
-		String title = cursor_favoriteInfo.getString(cursor_favoriteInfo.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_NAME));
-		
+		String title = null;
+		if ( cursor_favoriteInfo.moveToNext() ) {
+			title = cursor_favoriteInfo.getString(cursor_favoriteInfo.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_NAME));
+		}
 		if(idxType == IDX_TYPE_USER) {
 			// User 정보를 얻어온다.
 			User user = User.getUserWithIdx(idx); 
@@ -112,8 +113,7 @@ public class MemberDetailActivity extends Activity {
 			if( title == null || title.trim().length() == 0) {
 				title = "";
 				Cursor cursor_favoriteUsers = mpm.getFavoriteGroupMemberList(idx);
-				cursor_favoriteUsers.moveToFirst();
-				while(!cursor_favoriteUsers.isAfterLast()) {
+				while(cursor_favoriteUsers.moveToNext()) {
 					User user = User.getUserWithIdx(cursor_favoriteUsers.getString(cursor_favoriteUsers.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));  
 					title += user.rank + " " + user.name;
 					if(title.length() > 20 ) {
