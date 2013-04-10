@@ -12,6 +12,7 @@ import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
@@ -81,7 +82,7 @@ public class MenuListFragment extends ListFragment {
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"자료실", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"집회시위 현장매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:HandBook"));
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
@@ -217,7 +218,10 @@ public class MenuListFragment extends ListFragment {
 				} else if(codes[1].toUpperCase().equals("FAVORITE")) {
 					fragment = new MemberFragment(User.TYPE_FAVORITE);
 				}
-				
+			} else if (codes[0].toUpperCase().equals("LIBRARY")) {
+				if(codes[1].toUpperCase().equals("HANDBOOK")) {
+					fragment = new HandBookFragment();
+				}
 			} else if (codes[0].toUpperCase().equals("SETTINGS")) {
 			}
 			

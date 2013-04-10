@@ -1,6 +1,13 @@
 package kr.go.KNPA.Romeo;
+import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Chat.Room;
+import kr.go.KNPA.Romeo.Chat.RoomFragment;
+import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
+import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,11 +40,13 @@ public class MainActivity extends BaseActivity {
 		long mil = 0;
 		if(b!= null && b.containsKey("TEST"))
 			mil = b.getLong("TEST");
+		
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		// 부모 클래스의 온크리에잇
+		
 		
 		// set the Above View
 				if (savedInstanceState != null)
@@ -45,6 +54,11 @@ public class MainActivity extends BaseActivity {
 				if (currentFragment == null)
 					currentFragment = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
 				
+				Intent intent = getIntent();
+				if(intent != null) {
+					// TODO
+					// currentFragment = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);
+				}
 				((MemberFragment)currentFragment).showIntroView = true;
 
 				// set the Above View
@@ -66,6 +80,25 @@ public class MainActivity extends BaseActivity {
 				// 슬라이딩 메뉴가 뭐지??????
 				//?????	
 		
+	}
+	
+	public void goRoomFragment(int subType, String roomCode) {
+		ChatFragment chatFragment = ChatFragment.chatFragment(subType);
+		switchContent(chatFragment);
+		
+		Room room = new Room(MainActivity.this, subType, roomCode);
+		RoomFragment roomFragment = new RoomFragment(room);
+		pushContent(roomFragment);
+	}
+	
+	public void goDocumentFragment() {
+		DocumentFragment docFragment = DocumentFragment.documentFragment(Document.TYPE_RECEIVED);
+		switchContent(docFragment);
+	}
+	
+	public void goSurveyFragment() {
+		SurveyFragment survFragment = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED);
+		switchContent(survFragment);
 	}
 	
 	@Override

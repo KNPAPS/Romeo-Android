@@ -1,34 +1,47 @@
 package kr.go.KNPA.Romeo;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
 import kr.go.KNPA.Romeo.Register.NotRegisteredActivity;
 import kr.go.KNPA.Romeo.Register.StatusChecker;
 import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
-import android.app.Activity;
+import kr.go.KNPA.Romeo.Survey.Survey;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-public class IntroActivity extends Activity{
+public class IntroActivity extends BaseActivity{
+
 	private static IntroActivity _sharedActivity; 
 	private final int REQUEST_REGISTER_USER = 0;
 	private static StatusChecker checker; 
 	
+	private Bundle targetModuleInfo = null;
+	
+	public IntroActivity() {
+		super(R.string.changing_fragments);
+		_sharedActivity = this;	//?
+	}
 	public static IntroActivity sharedActivity() {
 		return _sharedActivity;
 	}
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
-		Bundle b = intent.getExtras();
+		Bundle _b = intent.getExtras();
 		long mil = 0;
-		if(b!= null && b.containsKey("TEST"))
-			mil = b.getLong("TEST");
+		if(_b!= null && _b.containsKey("TEST"))
+			mil = _b.getLong("TEST");
+		
+		targetModuleInfo = new Bundle();
+		Bundle b = intent.getExtras();
+		if(b != null) targetModuleInfo.putAll(b);
 	}
 	
-	@Override	
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		_sharedActivity = this;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.intro);
@@ -40,6 +53,12 @@ public class IntroActivity extends Activity{
 		 * 메인 액티비티 시작 
 		 */
 		if(registered) {
+			Intent intent = getIntent();
+			targetModuleInfo = new Bundle();
+			
+			Bundle b = intent.getExtras();
+			if(b != null) targetModuleInfo.putAll(b);
+			
 			runApplication();
 		}
 	}
@@ -113,6 +132,8 @@ public class IntroActivity extends Activity{
 	
 	private void startUserRegisterActivity() {
 		Intent intent = new Intent(IntroActivity.this, UserRegisterActivity.class);
+		if(targetModuleInfo != null)
+			intent.putExtras(targetModuleInfo);
 		startActivityForResult(intent, REQUEST_REGISTER_USER);
 		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 	}
@@ -129,6 +150,8 @@ public class IntroActivity extends Activity{
 		Intent intent = null;
 		
 		intent = new Intent(IntroActivity.this, MainActivity.class);
+		
+		
 		startActivity(intent);
 		finish();
 		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -144,14 +167,16 @@ public class IntroActivity extends Activity{
 				boolean isDeviceRegistered = checkDeviceRegistered();
 				if(isDeviceRegistered == true)
 					runApplication();
-					
+				// TODO : 유저 등록, 디바이스 등록을 할만큼 처음 사용하는 것이라면,
+				// 메시지가 온적도 없을 것이고, 메시지가 와서 그것을 알리는 푸시 노티피케이션을 누르고
+				// 앱 && 액티비티가 실행되는 일도 없을 것이다.
+				// 따라서 이 곳에 해당 모듈이 실행되도록 하는 로직을 구성할 필요는 없다.
+				// TODO : 분실 신고, 분실 중 메시지 도착, 단말기 복구 ?? =>> 쌓여있던 메시지들은??,,,,
 			}
 		} else {
 			
 		}
 	}
-	
-
 	
 	public void removeIntroView(ViewGroup v) {
 		View view = (View)v.findViewById(R.id.intro);
