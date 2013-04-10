@@ -223,8 +223,43 @@ public class Connection {
 			Log.e(TAG, e.getMessage() );
 			throw new RuntimeException(e);
 		}
-		try {
+<<<<<<< HEAD
+=======
 
+		final String RN = "\r\n";
+		final String TH = "--";
+		final String BOUNDARY = "*****";
+		
+		int nAttachedFiles = 0;
+		if(attachedFiles != null) {	nAttachedFiles = attachedFiles.size();	}
+		
+		//캐시 사용여부
+		conn.setUseCaches(false);
+		//URLConnection 객체에게 인풋과 아웃풋 스트림을 모두 허용한다 
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		
+		//타임아웃 설정
+		conn.setConnectTimeout(timeout);
+		conn.setReadTimeout(timeout);
+
+		conn.setRequestProperty("Charset", "UTF-8");
+		conn.setRequestProperty("Cache-Control", "no-cache, no-store");
+		conn.setRequestProperty("Accept", accepts);
+
+		//첨부파일이 있을 때에는 무조건 multipart/form-data로 전송하고 keepalive를 사용한다
+		//request byte를 쓸 때 설정된 contentType을 따른다
+		conn.setRequestProperty("Connection","Keep-Alive");
+		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+BOUNDARY);
+		
+>>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
+		try {
+			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+			dos.writeBytes(TH + BOUNDARY);
+			dos.writeBytes(RN+"Content-Disposition: form-data; name=" + "\"payload\"" + ";"+RN);
+			dos.writeBytes(RN+ requestPayloadJSON +RN);
+
+<<<<<<< HEAD
 			/**
 			 * 파일 첨부 여부에 따라 outputstream을 multipart로 보낼지 그냥 설정된 content type으로 보낼 지 구분하여 보내고
 			 * response는 어차피 같은 식으로 string만 받으니까 같은 루틴을 사용한다 
@@ -333,13 +368,56 @@ public class Connection {
 //				os.write(data.getBytes());
 //				os.flush();
 				ps.close();
+=======
+			for(int fi=0; fi< nAttachedFiles; fi++) {
+				//개별 파일인풋스트림 열기
+				File f = new File(attachedFiles.get(fi));
+				
+				//파일이 없을 시 에러 던지기
+				if ( f.exists() == false ) {
+					FileNotFoundException e = new FileNotFoundException(f.getPath());
+					throw new RuntimeException(e);
+				}
+				
+				//write data
+				dos.writeBytes(TH + BOUNDARY);
+				dos.writeBytes(RN+"Content-Disposition: form-data; name="+ "\"file_"+fi+"\""+ "; filename=\""+f.getName()+"\""+ RN);
+				dos.writeBytes("Content-Type: "+contentType+";"+RN);
+				
+				dos.writeBytes(RN);
+				FileInputStream fis = new FileInputStream(f);
+				
+				int bytesAvailable = fis.available();
+				int maxBufferSize = Constants.MAX_BUFFER_SIZE;
+				int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				
+				byte[] buffer = new byte[bufferSize];
+				//int bytesRead = fis.read(buffer,0,bufferSize);
+				int bytesRead = -1;
+				while( (bytesRead = fis.read(buffer)) != -1 ) {
+					dos.write(buffer,0,bytesRead);
+					bytesAvailable = fis.available();
+					maxBufferSize = Constants.MAX_BUFFER_SIZE;
+					bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				}
+				
+				dos.writeBytes(RN);
+				
+				fis.close();
+>>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 			}
+			
+			dos.writeBytes(TH+BOUNDARY+TH+RN);
+			
+			dos.flush();
+			dos.close();
 			
 			/**
 			 * HTTP_OK가 떨어지면 응답을 inputstream으로 읽기 시작.
 			 */ 
 			//statusCode = conn.getResponseCode();
 	
+<<<<<<< HEAD
 			int responseCode;
 			try {
 				responseCode = conn.getResponseCode();
@@ -383,6 +461,22 @@ public class Connection {
 				} catch (IOException e) {
 					RuntimeException re = new RuntimeException(e);
 					throw re;
+=======
+			//HTTP 통신이 올바르게 되었으면 response 읽어들인다.
+			if ( statusCode == HttpURLConnection.HTTP_OK ) {
+				InputStream is;
+				is = conn.getInputStream();
+			
+				//가져오는 정보가 파일이 아닐 때
+				StringBuffer resp = new StringBuffer();
+				
+				String line;
+				InputStreamReader isr;
+				isr = new InputStreamReader(is, ConnectionConfig.CHARSET_RESPONSE_ENCODING);
+				BufferedReader br = new BufferedReader(isr);
+				while ((line = br.readLine() ) != null) {
+					resp.append(line);
+>>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 				}
 
 //				is = conn.getInputStream();
@@ -400,12 +494,26 @@ public class Connection {
 				//Log.v("CONNECTION","Got JSON DATA : " + response);
 
 			}
-			responsePayload = new Payload(responsePayloadJSON);
-			conn.disconnect();
+			
+			/*
+			 StringBuffer b = new StringBuffer();
+			InputStream is = conn.getInputStream();
+			byte[] data = new byte[bufferSize];
+			int leng = -1;
+			while((leng = is.read(data)) != -1) {
+			  b.append(new String(data, 0, leng));
+			}
+			String result = b.toString();
+			 */
+			
+>>>>>>> 8cc44acb953cb421dcec6d7ccc5f582fea95379f
 		} catch ( IOException e ){
 			Log.e(TAG, e.getMessage() );
 			throw new RuntimeException(e);
+		} finally {
+			conn.disconnect();
 		}
+		
 
 		return new Pair<Integer,Payload>(statusCode,responsePayload);
 	}
