@@ -13,7 +13,6 @@
     android:layout_margin="@dimen/menu_searchbar_margin"
     android:hint="@string/placehold_search"
     android:textSize="@dimen/menu_list_cell_fontsize" >
-    <requestFocus />
 </EditText>
 <!-- 
 <ListView 
