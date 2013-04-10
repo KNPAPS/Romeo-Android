@@ -408,7 +408,9 @@ public class DBProcManager {
 					" (CASE lc."+DBSchema.CHAT.COLUMN_CONTENT_TYPE+" " +
 					"WHEN "+CHAT_CONTENT_TYPE_TEXT+" " +
 					"THEN lc."+DBSchema.CHAT.COLUMN_CONTENT+" " +
-					"ELSE \"(사진)\" END) "+
+					"WHEN "+CHAT_CONTENT_TYPE_PICTURE+" " +
+					"THEN \"(사진)\" " +
+					"ELSE \"\" END) "+
 					COLUMN_ROOM_LAST_CHAT_CONTENT+
 						
 					" from "+DBSchema.ROOM.TABLE_NAME+" r " +
@@ -470,8 +472,8 @@ public class DBProcManager {
 		}
 		
 		public static final String COLUMN_ROOM_IDX = "room_idx";
-		public static final String COLUMN_ROOM_TITLE = "room_idx";
-		public static final String COLUMN_ROOM_NUM_CHATTER = "room_idx";
+		public static final String COLUMN_ROOM_TITLE = "room_title";
+		public static final String COLUMN_ROOM_NUM_CHATTER = "num_chatter";
 		public static final String COLUMN_ROOM_NUM_NEW_CHAT = "num_new_chat";
 		public static final String COLUMN_ROOM_LAST_CHAT_TS = "last_chat_ts";
 		public static final String COLUMN_ROOM_LAST_CHAT_CONTENT = "last_chat_content";

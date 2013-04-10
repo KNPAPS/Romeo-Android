@@ -172,31 +172,37 @@ public class CellNode {
 		public Condition() {}
 		public Condition indexPath(IndexPath path) {
 			this._indexPath = path;
+			_hasIndexPath = true;
 			return this;
 		}
 		
 		public Condition type(int type) {
 			this._type = type;
+			_hasType = true;
 			return this;
 		}
 		
 		public Condition idx(String idx) {
 			this._idx = idx;
+			_hasIdx = true;
 			return this;
 		}
 		
 		public Condition isRoot(boolean isRoot) {
 			this._isRoot = isRoot;
+			_hasIsRoot = true;
 			return this;
 		}
 		
 		public Condition status (int status) {
 			this._status = status;
+			_hasStatus = true;
 			return this;
 		}
 		
 		public Condition isUnfolded(boolean isUnfolded) {
 			this._isUnfolded = isUnfolded;
+			_hasIsUnfolded = true;
 			return this;
 		}
 		

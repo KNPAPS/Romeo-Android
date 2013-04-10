@@ -78,7 +78,8 @@ class RoomListAdapter extends CursorAdapter {
 				rankNameTV.setText(title);
 			}
 			// TODO : departmentTV
-		} else {
+		} else if ( roomUsers.size() > 0 ) {
+			
 			User user = roomUsers.get(0);
 			// rank and name
 			String rankName = User.RANK[user.rank]+" "+user.name;
@@ -87,6 +88,9 @@ class RoomListAdapter extends CursorAdapter {
 			// department
 			String department = user.department.nameFull;
 			departmentTV.setText(department);
+		} else {
+			rankNameTV.setText("빈 방");
+			departmentTV.setText("");
 		}
 		
 		

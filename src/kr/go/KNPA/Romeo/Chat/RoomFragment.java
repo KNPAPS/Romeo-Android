@@ -135,7 +135,7 @@ public class RoomFragment extends RomeoFragment {
 				if(room.roomCode ==null) {
 					// 만약 roomCode가 없다면 새로 만들어진 방이다.
 					ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
-					for(int i=0; i<userIdxs.size(); i++) {
+					for(int i=0; i<room.usersIdx.size(); i++) {
 						userIdxs.add(room.usersIdx.get(i));
 					}
 					

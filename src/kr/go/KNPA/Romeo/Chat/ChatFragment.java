@@ -195,7 +195,7 @@ public class ChatFragment extends RomeoFragment {
 			} else {
 				//data.getExtras().get;
 				
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
 				ArrayList<String> newUsersIdx = receiversIdxs;
 				RoomFragment fragment = new RoomFragment(new Room(this.type, null, newUsersIdx));

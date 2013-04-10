@@ -111,7 +111,7 @@ public class Room {
 		
 		cursorRoomUsers.moveToFirst();
 		while(!cursorRoomUsers.isAfterLast()) {
-			roomUsers.add( new User( cursorRoomUsers.getString(cursorRoomUsers.getColumnIndex(ChatProcManager.COLUMN_USER_IDX)) ) );
+			roomUsers.add( User.getUserWithIdx(cursorRoomUsers.getString(cursorRoomUsers.getColumnIndex(ChatProcManager.COLUMN_USER_IDX)) ) );
 			cursorRoomUsers.moveToNext();
 		}
 		

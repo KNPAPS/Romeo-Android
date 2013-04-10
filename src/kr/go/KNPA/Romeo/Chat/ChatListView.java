@@ -51,7 +51,7 @@ public class ChatListView extends RomeoListView {
 	}
 
 	public Cursor query(int nItems) {
-		return DBProcManager.sharedManager(getContext()).chat().getChatList(room.roomCode, 0, nItems);
+	return DBProcManager.sharedManager(getContext()).chat().getChatList(room.roomCode, 0, nItems);
 	}
 
 	// refresh()
