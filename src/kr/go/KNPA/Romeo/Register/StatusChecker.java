@@ -58,7 +58,7 @@ public class StatusChecker {
 		Payload request = new Payload().setEvent(Event.User.getUserInfo());
 		request.setData(data);
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
 		Payload responsePayload = conn.getResponsePayload();
 		/** 데이터 가져오기 끝 */
 		
@@ -72,8 +72,9 @@ public class StatusChecker {
 		 * 서버에 등록조차 안되어 있는 상태임
 		 */
 		if ( responsePayload.getStatusCode() == StatusCode.SUCCESS ) {
-			int status = (Integer) responsePayload.getData().get(0).get(KEY.USER.IS_ENABLED);
-			return status == 1 ? USER_REGISTERED_ENABLED : USER_REGISTERED_NOT_ENABLED;
+			//TODO
+			boolean status = (Boolean)responsePayload.getData().get(0).get(KEY.USER.IS_ENABLED);
+			return status == true ? USER_REGISTERED_ENABLED : USER_REGISTERED_NOT_ENABLED;
 		}else {
 			return USER_NOT_REGISTERED;
 		}

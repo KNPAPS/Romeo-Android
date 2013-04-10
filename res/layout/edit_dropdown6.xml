@@ -46,7 +46,6 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:background="@drawable/edit_dropdown_layout"
 		        android:paddingLeft="@dimen/gap"
 		        android:paddingRight="@dimen/gap"
 		        android:prompt="@string/title" />
@@ -57,7 +56,6 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:background="@drawable/edit_dropdown_layout"
 		        android:paddingLeft="@dimen/gap"
 		        android:paddingRight="@dimen/gap"
 		        android:prompt="@string/title" />
@@ -68,7 +66,6 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:background="@drawable/edit_dropdown_layout"
 		        android:paddingLeft="@dimen/gap"
 		        android:paddingRight="@dimen/gap"
 		        android:prompt="@string/title" />
@@ -79,7 +76,6 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:background="@drawable/edit_dropdown_layout"
 		        android:paddingLeft="@dimen/gap"
 		        android:paddingRight="@dimen/gap"
 		        android:prompt="@string/title" />
@@ -90,7 +86,6 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:background="@drawable/edit_dropdown_layout"
 		        android:paddingLeft="@dimen/gap"
 		        android:paddingRight="@dimen/gap"
 		        android:prompt="@string/title" />
@@ -100,11 +95,11 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:background="@drawable/edit_dropdown_layout"
 		        android:paddingLeft="@dimen/gap"
 		        android:paddingRight="@dimen/gap"
 		        android:prompt="@string/title" />
-    
+    <!--  		        android:background="@drawable/edit_dropdown_layout"
+     -->
     
     <TextView
         android:id="@+id/footer"

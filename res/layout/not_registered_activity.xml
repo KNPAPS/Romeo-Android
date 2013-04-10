@@ -5,33 +5,16 @@
     android:background="@color/light"
     android:orientation="vertical" >
     
-    <ImageView
-        android:id="@+id/intro"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:adjustViewBounds="false"
-		    android:scaleType="centerCrop"
-		    android:src="@drawable/intro" />
+    
     
     <include layout="@layout/navigation_bar" />
 
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop = "80dp"
-        android:text="Medium Text"
-        android:textColor="@color/black"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    <TextView
-        android:id="@+id/footer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop = "40dp"
-        android:text="Medium Text"
-        android:textColor="@color/black"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <ImageView
+        android:id="@+id/image"
+		    android:layout_width="match_parent"
+		    android:layout_height="0dp"
+		    android:layout_weight="1"
+		    android:adjustViewBounds="false"
+		    android:scaleType="centerCrop" />
     
 </LinearLayout>

@@ -1,16 +1,13 @@
 package kr.go.KNPA.Romeo.Register;
 
-import kr.go.KNPA.Romeo.IntroActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.R.id;
-import kr.go.KNPA.Romeo.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class NotRegisteredActivity extends Activity {
@@ -22,15 +19,19 @@ public class NotRegisteredActivity extends Activity {
 		View view = inflater.inflate(R.layout.not_registered_activity, null);
 		
 		initNavigationBar(view, "", false, false, "", "", null, null);
+		/*
 		TextView header = (TextView)view.findViewById(R.id.header);
 		TextView footer = (TextView)view.findViewById(R.id.footer);
 		
 		header.setText("사용자 등록이 되지 않았거나,\n등록 요청 중에 있습니다.\n\n사용자 등록이 완료된 후\n다시 실행해 주세요.");
 		footer.setText("");
+		*/
 		
+		ImageView messageIV = (ImageView)view.findViewById(R.id.image);
+		messageIV.setImageResource(R.drawable.not_registered);
 		setContentView(view);
 		
-		IntroActivity.sharedActivity().removeIntroView((ViewGroup) view);
+		//IntroActivity.sharedActivity().removeIntroView((ViewGroup) view);
 	}
 	
 	@Override

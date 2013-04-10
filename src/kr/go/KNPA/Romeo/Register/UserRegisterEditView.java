@@ -136,7 +136,7 @@ public class UserRegisterEditView extends LinearLayout {
 			dd1.setOnItemSelectedListener(deptListener);
 			dd1.setPrompt(context.getString(R.string.department)+" 선택");
 			
-			// 2~6번의 DropDown에도 Listener 할당
+/*			// 2~6번의 DropDown에도 Listener 할당
 			for(int i=1; i<DROPDOWN_MAX_LENGTH; i++) {
 				Spinner dd = getDropdown(i);
 				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, dummySet);
@@ -146,7 +146,7 @@ public class UserRegisterEditView extends LinearLayout {
 				if(i != DROPDOWN_MAX_LENGTH-1 )
 					dd.setOnItemSelectedListener(deptListener);
 			}
-		}
+*/		}
 			setHeaderTitle("본인 소속 부서를 선택해주세요.");
 			setFooterTitle("");
 			break;
@@ -154,8 +154,9 @@ public class UserRegisterEditView extends LinearLayout {
 		case KEY_RANK:
 		{
 			Spinner dd = getDropdown();
-			ArrayList<String> ranks = new ArrayList<String>(User.RANK.length+1);
-			for(int i=0; i<ranks.size(); i++) {
+			ArrayList<String> ranks = new ArrayList<String>(User.RANK.length+1); // +1 : "선택해주세요"
+			
+			for(int i=0; i<User.RANK.length+1; i++) {
 				if(i==0) {
 					ranks.add( context.getString(R.string.letSelect) );
 				} else {
@@ -230,28 +231,37 @@ public class UserRegisterEditView extends LinearLayout {
 			// 현재 선택한 Department
 			Department dep = ((Department)parent.getSelectedItem());
 			
-			if( (ddIdx+1) != DROPDOWN_MAX_LENGTH) {
+			
 				// 선택된 정보를 가지고 서버에 하위 부서들을 요청한다.
 				ArrayList<Department> deps = null;
 				
 				if( !dep.equals(dummy) && dep.idx != null ) {
-					getDepartment( dep.idx );
+					deps =getDepartment( dep.idx );
 				} else {
 					// 선택된 Department가 dummy일 경우
 					//  "해당 없음" 아이템이 선택된 경우(자신이 실제로는 빈 집합을 받은 경우) 아래 스피너에 빈 어댑터를 할당한다.
 					deps = dummySet;
 				}
 				
-				((TextView)((Spinner)parent).findViewById(R.id.textView1)).setText(dep.name);
+				String depName = dep.name;
+				((TextView)view).setText(depName);
 				
 				// 선택된 스피너의 다음 스피너를 위한 새 어댑터를 생성한다.
 				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
 				
-				// 다음 스피너에 조금 전에 생성한 어댑터를 할당한다.
-					getDropdown((ddIdx+1)).setAdapter(adapter);
-				//  스피너에 어댑터를 할당하게 되면 스피너 내의 리스트가 업데이트 되면서, 자동으로 첫 번째 아이템이 선택되게 되므로,
-				//  어댑터를 할당하는 것만으로도 이벤트 전파 효과가 난다.
-			}
+
+				if(ddIdx != DROPDOWN_MAX_LENGTH-1) {
+					// 다음 스피너에 조금 전에 생성한 어댑터를 할당한다.
+					Spinner ddNext = getDropdown((ddIdx+1));
+					ddNext.setAdapter(adapter);
+					ddNext.setPrompt(context.getString(R.string.department)+" 선택");
+					//  스피너에 어댑터를 할당하게 되면 스피너 내의 리스트가 업데이트 되면서, 자동으로 첫 번째 아이템이 선택되게 되므로,
+					//  어댑터를 할당하는 것만으로도 이벤트 전파 효과가 난다.
+					if(ddNext.getOnItemSelectedListener() == null)
+						ddNext.setOnItemSelectedListener(deptListener);
+				
+				}
+			
 				
 		}
 
@@ -413,27 +423,35 @@ public class UserRegisterEditView extends LinearLayout {
 				
 				@Override
 				public void onClick(View v) {
-					boolean selected = true;
+					boolean allRight = true;
 					
 					Department[] selectedDeps = new Department[DROPDOWN_MAX_LENGTH];
 					int depth = 0;
 					
 					for(int i=0; i<DROPDOWN_MAX_LENGTH; i++) {
 						Department selectedDep = (Department)getDropdown(i).getSelectedItem();
-						if( selectedDep.idx == null || selectedDep.name.equals(context.getString(R.string.letSelect))) {
-							selected = false;
+						if(  (selectedDep.idx == null && !selectedDep.name.equals(context.getString(R.string.none))) 
+								|| selectedDep.name.equals(context.getString(R.string.letSelect))) {
+							allRight = false;
 							selectedDeps[i] = null;
 						} else {
-							selectedDeps[i] = selectedDep;
-							depth++;
+							if(selectedDep.name.equals(context.getString(R.string.none))) {
+								selectedDeps[i] = null;
+							} else {
+								selectedDeps[i] = selectedDep;
+								depth++;
+							}
 						}
 					}
 					
-					if(!selected) {
+					if(!allRight) {
 						Toast.makeText(context, "소속 부서를 올바르게 선택해 주세요.", Toast.LENGTH_SHORT).show();
 					} else {
 						
-						context.selectedDepartments = selectedDeps;
+						context.selectedDepartments = new ArrayList<Department>(depth);
+						for(int i=0; i<depth; i++) {
+							context.selectedDepartments.add(selectedDeps[i]);
+						}
 						context.setFrontViewWithKey(KEY_RANK);
 					}
 				}
@@ -612,16 +630,19 @@ public class UserRegisterEditView extends LinearLayout {
 		}
 		
 		public DepartmentDropdownAdapter(Context context, ArrayList<Department> deps) {
+			//스피너 자체
 			this(context, android.R.layout.simple_spinner_item, deps);
 		}
 		
 		@Override
 		public View getDropDownView(int position, View convertView, ViewGroup parent) {
 			if(convertView == null) {
+				// 새로 뜨는 리스트 아이템
 				LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = inflater.inflate(R.layout.edit_dropdown_item_layout, parent, false);
 			}
 			
+			// 스피너 클릭했을 때 뜨는 리스트 뷰
  			Department dep = getItem(position);
 			TextView depTV = (TextView)convertView.findViewById(R.id.title);
 			depTV.setText(dep.name);

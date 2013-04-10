@@ -1,5 +1,6 @@
 package kr.go.KNPA.Romeo.Register;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
@@ -47,7 +48,7 @@ public class UserRegisterActivity extends Activity {
 	public	Uri 		picURI;
 	public	String 		password;	// TODO
 	private String		userIdx;
-	Department[] selectedDepartments;
+	ArrayList<Department> selectedDepartments;
 	/** @} */
 	
 	/**
@@ -125,11 +126,16 @@ public class UserRegisterActivity extends Activity {
 		case UserRegisterEditView.KEY_CONFIRM :			
 			view = getView(key, "confirm");	
 			
-			String deps[] = department.nameFull.split(" ");
-			String dep1 = deps[0];
+			
+			department = selectedDepartments.get(selectedDepartments.size()-1);
+			
+			//String deps[] = department.nameFull.split(" ");
+			//String dep1 = deps[0];
+			//String dep23456 = "";
+			String dep1 = selectedDepartments.get(0).name;
 			String dep23456 = "";
-			for( int i=1; i<deps.length; i++){
-				dep23456 += (" " + deps[i]);
+			for( int i=1; i<selectedDepartments.size(); i++){
+				dep23456 += (" " + selectedDepartments.get(i).name);//deps[i]);
 			}
 			
 					

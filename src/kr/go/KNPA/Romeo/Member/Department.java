@@ -36,7 +36,11 @@ public class Department implements Parcelable{
 		
 		public Builder sequence(String _sequence) {
 			if(_sequence != null)
-				this.sequence = Long.parseLong(_sequence);
+				try {
+					this.sequence = Long.parseLong(_sequence);
+				} catch (NumberFormatException e) {
+					this.sequence =  NOT_SPECIFIED;
+				}
 			return this;
 		}
 		
@@ -72,6 +76,11 @@ public class Department implements Parcelable{
 		}
 	}
 
+	// TODO UserRegisterEditView 에서 Spinner 기본값이 자꾸 Class .toString으로 뜨길래
+	@Override
+	public String toString() {
+		return "";
+	}
 	
 	@Override
 	public int describeContents() {

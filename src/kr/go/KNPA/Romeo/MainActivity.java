@@ -59,8 +59,7 @@ public class MainActivity extends BaseActivity {
 					// TODO
 					// currentFragment = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);
 				}
-				((MemberFragment)currentFragment).showIntroView = true;
-
+				
 				// set the Above View
 				setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰   
 				getSupportFragmentManager()

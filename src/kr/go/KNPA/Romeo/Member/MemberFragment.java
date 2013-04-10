@@ -31,7 +31,6 @@ public class MemberFragment extends RomeoFragment {
 	public static final int TYPE_MEMBERLIST_SEARCH = 10;
 	public static final int TYPE_FAVORITE_SEARCH = 11;
 	
-	public static boolean showIntroView = false;
 	
 	// Constructor
 	public MemberFragment() 			{	this(TYPE_MEMBERLIST);	}
