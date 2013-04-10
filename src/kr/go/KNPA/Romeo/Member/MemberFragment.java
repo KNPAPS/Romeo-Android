@@ -4,17 +4,14 @@
 package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +28,18 @@ public class MemberFragment extends RomeoFragment {
 	public static final int TYPE_MEMBERLIST_SEARCH = 10;
 	public static final int TYPE_FAVORITE_SEARCH = 11;
 	
+	private static HashMap<Integer, MemberFragment> _sharedMemberFragments;
 	
 	// Constructor
-	public MemberFragment() 			{	this(TYPE_MEMBERLIST);	}
+	public MemberFragment() 			{	memberFragment(TYPE_MEMBERLIST);	}
 	public MemberFragment(int type) 	{	super(type);			}
-	
+	public static MemberFragment memberFragment(int type) {
+		if(_sharedMemberFragments == null)
+			_sharedMemberFragments = new HashMap<Integer, MemberFragment>();
+		if(_sharedMemberFragments.containsKey(type) == false)
+			_sharedMemberFragments.put(type, new MemberFragment(type));
+		return _sharedMemberFragments.get(type);
+	}
 	// Manage List View
 	public RomeoListView getListView() {
 		View view = ((ViewGroup)getView());

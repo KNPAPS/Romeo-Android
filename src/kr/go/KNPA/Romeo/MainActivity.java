@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
 				if (savedInstanceState != null)
 					currentFragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
 				if (currentFragment == null)
-					currentFragment = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
+					currentFragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
 					
 				
 				Intent intent = getIntent();

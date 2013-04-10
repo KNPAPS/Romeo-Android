@@ -109,10 +109,10 @@ public class CellNode {
 		if(this.parent() != null && this.parent().isRoot() == false )
 			path = this.parent().indexPath();
 		
-		if(path == null) {
+		if(path == null ) {//|| path.length() == 0) {
 			path = IndexPath.indexPathWithIndex(this.index());
 		} else {
-			path.clone().addIndex(this.index());
+			path = path.clone().addIndex(this.index());
 		}
 		
 		return path;
@@ -132,6 +132,8 @@ public class CellNode {
 	}
 	
 	public ArrayList<CellNode> children() {
+		if(_children == null)
+			_children = new ArrayList<CellNode>();
 		return _children;
 	}
 	
@@ -376,6 +378,7 @@ public class CellNode {
 		IndexPath.Iterator itr = new IndexPath.Iterator(path);
 		
 		while(itr.hasNextIndex()) {
+			cn = cn.children().get(itr.nextIndex());
 		}
 		return cn;
 

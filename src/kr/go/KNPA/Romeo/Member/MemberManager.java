@@ -255,7 +255,7 @@ public class MemberManager {
 		
 		request.setData(reqData);
 		
-		Connection conn = new Connection().requestPayloadJSON(request.toJSON()).request();
+		Connection conn = new Connection().async(false).requestPayloadJSON(request.toJSON()).request();
 		
 		Payload response = conn.getResponsePayload();
 		if ( response.getStatusCode() == StatusCode.SUCCESS ) {

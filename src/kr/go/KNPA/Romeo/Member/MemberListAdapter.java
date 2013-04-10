@@ -361,6 +361,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 						case CellNode.NCHECK : status = CellNode.NCHECK; break;
 					}
 					for(int i=0; i<deps.size(); i++) {
+						// clickedNode.child()가 없으면 오류가 난다. => CellNode에 CellNode.child() 호출시 null이면 new ArrayList<CellNode>를 할당하도록 코드를 추가했다.
 						CellNode node = new CellNode().type(CellNode.CN_DEPARTMENT).idx( deps.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
 						nodeClicked.append(node);
 					}
