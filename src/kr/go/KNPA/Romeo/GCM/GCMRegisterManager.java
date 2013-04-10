@@ -123,15 +123,14 @@ public class GCMRegisterManager {
         
         Payload request = new Payload().setEvent(Event.Device.register()).setData(reqData);
         
-        final Context ctx = context;
-        final String rid = regId;
+        /*
         CallbackEvent<Payload, Integer, Payload> callback = new CallbackEvent<Payload, Integer, Payload>(){
         	@Override
         	public void onPostExecute(Payload response) {
         		if(response.getStatusCode() == StatusCode.SUCCESS) {
         			UserInfo.setRegid(ctx, rid);
         		} else {
-        			/*
+        			
         			AlertDialog alert = new AlertDialog.Builder(ctx)
 									.setIcon(kr.go.KNPA.Romeo.R.drawable.icon)
 									.setTitle("기기 등록에 실패했습니다.")//context.getString(kr.go.KNPA.Romeo.R.string.)
@@ -143,13 +142,19 @@ public class GCMRegisterManager {
 							android.os.Process.killProcess(android.os.Process.myPid());
 						}
 					}).show();
-					*/
+					
         		}
         		
         	}
-        };
-        Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false).callBack(callback);
+        };*/
+        Connection conn = new Connection().requestPayloadJSON(request.toJSON()).async(false);//.callBack(callback);
         conn.request();
+        
+        Payload response = conn.getResponsePayload();
+        if(response.getStatusCode() == StatusCode.SUCCESS) {
+        	UserInfo.setRegid(context, regId);
+        }
+        
     }
 	
 	/**

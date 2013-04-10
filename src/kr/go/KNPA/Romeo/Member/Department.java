@@ -79,7 +79,7 @@ public class Department implements Parcelable{
 	// TODO UserRegisterEditView 에서 Spinner 기본값이 자꾸 Class .toString으로 뜨길래
 	@Override
 	public String toString() {
-		return "";
+		return name;
 	}
 	
 	@Override

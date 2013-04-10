@@ -93,6 +93,7 @@ public class StatusChecker {
 		String userHash = UserInfo.getUserIdx(context);
 		String uuid = UserInfo.getUUID(context);
 		String regid = UserInfo.getRegid(context);
+		
 		if ( userHash == null || uuid == null || regid == null ) {
 			return DEVICE_NOT_REGISTERED;
 		}
@@ -107,9 +108,9 @@ public class StatusChecker {
 		
 		Data data = new Data();
 		data.add(hm);
-		Payload requestPayload = new Payload(Event.DEVICE_IS_REGISTERED);
+		Payload requestPayload = new Payload().setEvent(Event.Device.isRegistered());
 		requestPayload.setData(data);
-		Connection conn = new Connection().requestPayloadJSON(requestPayload.toJSON());
+		Connection conn = new Connection().async(false).requestPayloadJSON(requestPayload.toJSON());
 		conn.request();
 		Payload responsePayload = conn.getResponsePayload();
 		/** 데이터 가져오기 끝 */
@@ -123,12 +124,12 @@ public class StatusChecker {
 		 * 만약 서버에서 리턴한 상태코드가 success가 아니라면
 		 * 서버에 등록조차 안되어 있는 상태임
 		 */
-		int isRegistered = (Integer) responsePayload.getData().get(0).get(KEY.DEVICE.IS_REGISTERED);
-		int isEnabled = (Integer) responsePayload.getData().get(0).get(KEY.DEVICE.IS_ENABLED);
+		boolean isRegistered = (Boolean) responsePayload.getData().get(0).get(KEY.DEVICE.IS_REGISTERED);
+		boolean isEnabled = (Boolean) responsePayload.getData().get(0).get(KEY.DEVICE.IS_ENABLED);
 
-		if ( isRegistered == 0 ) {
+		if ( isRegistered == false ) {
 			return DEVICE_NOT_REGISTERED;
-		} else if ( isEnabled == 0 ) {
+		} else if ( isEnabled == false) {
 			return DEVICE_REGISTERED_NOT_ENABLED;
 		} else {
 			return DEVICE_REGISTERED_ENABLED;

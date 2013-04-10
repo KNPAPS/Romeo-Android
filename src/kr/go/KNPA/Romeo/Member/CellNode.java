@@ -106,7 +106,7 @@ public class CellNode {
 	
 	public IndexPath indexPath() {
 		IndexPath path = null;
-		if(this.parent() != null)
+		if(this.parent() != null && this.parent().isRoot() == false )
 			path = this.parent().indexPath();
 		
 		if(path == null) {

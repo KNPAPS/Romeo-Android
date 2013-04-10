@@ -3,12 +3,14 @@ import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
 import kr.go.KNPA.Romeo.Register.NotRegisteredActivity;
 import kr.go.KNPA.Romeo.Register.StatusChecker;
 import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
-import kr.go.KNPA.Romeo.Util.UserInfo;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 
-public class IntroActivity extends BaseActivity{
+public class IntroActivity extends Activity{//extends BaseActivity{
 	private static IntroActivity _sharedActivity; 
 	private final int REQUEST_REGISTER_USER = 0;
 	private static StatusChecker checker; 
@@ -16,7 +18,8 @@ public class IntroActivity extends BaseActivity{
 	private Bundle targetModuleInfo = null;
 
 	public IntroActivity() {
-		super(R.string.changing_fragments);
+		//super(R.string.changing_fragments);
+		super();
 		_sharedActivity = this;	//?
 	}
 	public static IntroActivity sharedActivity() {
@@ -103,7 +106,7 @@ public class IntroActivity extends BaseActivity{
 			case StatusChecker.USER_NOT_REGISTERED:						//등록이 되어있지 않을 때
 				userRegistered = false;
 				userEnabled = false;
-	
+				break;
 			case StatusChecker.USER_REGISTERED_NOT_ENABLED:				//아직 유저 활성화가 안됨
 				userRegistered = true;
 				userEnabled = false;
@@ -211,7 +214,17 @@ public class IntroActivity extends BaseActivity{
 				// TODO : 분실 신고, 분실 중 메시지 도착, 단말기 복구 ?? =>> 쌓여있던 메시지들은??,,,,
 			}
 		} else {
-
+			AlertDialog alert = new AlertDialog.Builder(IntroActivity.this)
+				.setTitle("유저 등록에 실패했습니다.")//context.getString(kr.go.KNPA.Romeo.R.string.)
+				.setMessage("다시 시도해주시기 바랍니다. 문제가 반복되어 발생하는 경우 재설치해주시기 바랍니다.")
+				.setPositiveButton(IntroActivity.this.getString(kr.go.KNPA.Romeo.R.string.ok), new DialogInterface.OnClickListener() {
+					
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					android.os.Process.killProcess(android.os.Process.myPid());
+				}
+			}).show();
 		}
 	}
 

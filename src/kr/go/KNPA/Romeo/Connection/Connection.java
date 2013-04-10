@@ -316,7 +316,7 @@ public class Connection {
 				responsePayloadJSON = resp.toString();
 				responsePayload = new Payload(responsePayloadJSON);
 			} else {
-				Log.e(TAG, "HTTP response code : "+statusCode );
+				Log.e(TAG, "HTTP response code : "+statusCode+ " " + requestPayloadJSON );
 			}
 			
 			/*
