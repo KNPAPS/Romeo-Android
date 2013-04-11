@@ -26,9 +26,6 @@ public class MainActivity extends BaseActivity {
 	static MainActivity _sharedActivity = null;
 	public static final int MEMBER_SEARCH_ACTIVITY = 1;
 	
-	private Fragment currentFragment;		// 현재 프레그먼트 
-	private Fragment oldFragment;
-	
 	public boolean isRegistered = false;
 	
 	private static int lastKeyCode = Constants.NOT_SPECIFIED;
@@ -55,12 +52,13 @@ public class MainActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		// 부모 클래스의 온크리에잇
 		
-		
+
+		Fragment fragment=null;
 		// set the Above View
 				if (savedInstanceState != null)
-					currentFragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
-				if (currentFragment == null)
-					currentFragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
+					fragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
+				if (fragment == null)
+					fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
 					
 				
 				Intent intent = getIntent();
@@ -73,7 +71,7 @@ public class MainActivity extends BaseActivity {
 				setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰   
 				getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.content_frame, currentFragment)
+				.replace(R.id.content_frame, fragment)
 				.commit();												// 컨텐트 프레임과 현재(혹은 생성된) 프레그먼트를 바꾼다.
 				
 				// set the Behind View
@@ -85,9 +83,6 @@ public class MainActivity extends BaseActivity {
 				
 				// customize the SlidingMenu
 				getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-				// 슬라이딩 메뉴가 뭐지??????
-				//?????	
-		
 	}
 	
 	public void goRoomFragment(int subType, String roomCode) {
@@ -109,14 +104,14 @@ public class MainActivity extends BaseActivity {
 		switchContent(survFragment);
 	}
 	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		getSupportFragmentManager().putFragment(outState, "currentFragment", currentFragment);	// 키 값으로 저
-	}
-	
+//	@Override
+//	public void onSaveInstanceState(Bundle outState) {
+//		super.onSaveInstanceState(outState);
+//		getSupportFragmentManager().putFragment(outState, "currentFragment", currentFragment);	// 키 값으로 저
+//	}
+//	
 	public void switchContent(Fragment fragment) {		// 이 소스 내에서는 쓰이지 않았다.
-		currentFragment = fragment;							// 바꿀 프레그먼트를 fragment 변수로 받아, 이 객체의 전역 변수로 할당한다.
+														// 바꿀 프레그먼트를 fragment 변수로 받아, 이 객체의 전역 변수로 할당한다.
 		getSupportFragmentManager()						// 프레그멘트 매니저를 호출하여 교체한다.
 		.beginTransaction()
 		.replace(R.id.content_frame, fragment)
@@ -126,8 +121,7 @@ public class MainActivity extends BaseActivity {
 	
 	public void pushContent(Fragment fragment) {
 		//http://developer.android.com/guide/topics/resources/animation-resource.html#View
-		oldFragment = currentFragment;
-		currentFragment = fragment;					
+		
 		getSupportFragmentManager()				
 		.beginTransaction()
 		.setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
@@ -136,14 +130,15 @@ public class MainActivity extends BaseActivity {
 		.commit();
 	}
 	
-	public void popContent(Fragment fragment) {
-		currentFragment = oldFragment;
-		// TODO : 백 버튼으로 뒤돌아올때 mFragment를 복구할 방법이 없다. // savedInstace만을 위한것인듯 
-		getSupportFragmentManager()				
-		.beginTransaction()
-		.setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
-		.remove(fragment)
-		.commit();
+	public void popContent() {
+//		currentFragment = oldFragment;
+//		// TODO : 백 버튼으로 뒤돌아올때 mFragment를 복구할 방법이 없다. // savedInstace만을 위한것인듯 
+//		getSupportFragmentManager()				
+//		.beginTransaction()
+//		.setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
+//		.remove(fragment)
+//		.commit();
+		getSupportFragmentManager().popBackStack();
 	}
 		
 	 
@@ -199,7 +194,7 @@ public class MainActivity extends BaseActivity {
 				//lastKeyCode = keyCode;
 				return true;
 			} else {
-				fm.popBackStack();
+				this.popContent();
 				//lastKeyCode = keyCode;
 				return true;
 			}	
