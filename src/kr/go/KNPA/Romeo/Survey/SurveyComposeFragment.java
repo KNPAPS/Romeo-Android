@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -273,26 +274,66 @@ public class SurveyComposeFragment extends Fragment {
 	}
 	
 	private long getTSFrom(EditText yearET, EditText monthET, EditText dayET) {
+		// TODO , input validation
+		
 		GregorianCalendar openGC = new GregorianCalendar(
 				Integer.parseInt(yearET.getText().toString()), 
 				Integer.parseInt(monthET.getText().toString()), 
 				Integer.parseInt(dayET.getText().toString()));
 		return openGC.getTimeInMillis();
 	}
+
 	
 	public void sendSurvey() {
 		// Form
 		Form form = new Form();
 
-		// TODO : title, content
 		String title = titleET.getText().toString();
 		String content = contentET.getText().toString();
-		form.put(KEY.SURVEY.TITLE, 	title);
-		form.put(KEY.SURVEY.CONTENT, 	content);
-		form.put(KEY.SURVEY.OPEN_TS, getTSFrom(openETs));
-		form.put(KEY.SURVEY.CLOSE_TS, getTSFrom(closeETs));
-		//form.put(Form.IS_MULTIPLE, value);
 		
+		if( title != null && title.trim().length() > 0) {
+			form.put(KEY.SURVEY.TITLE, 	title);
+		} else {
+			Toast.makeText(getActivity(), "설문 제목이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		if(content != null && title.trim().length() > 0) {
+			form.put(KEY.SURVEY.CONTENT, 	content);
+		} else {
+			Toast.makeText(getActivity(), "설문 요지가 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		if(receiversIdx == null || receiversIdx.size() == 0 ) {
+			Toast.makeText(getActivity(), "설문 수신자가 지정되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		boolean openTSValid = true;
+		for(int i=0; i< openETs.length; i++) {
+			String open = openETs[i].getText().toString();
+			if(open == null || open.trim().length() ==0 )
+				openTSValid = false;
+		}
+		
+		boolean closeTSValid = true;
+		for(int i=0; i< closeETs.length; i++) {
+			String close = closeETs[i].getText().toString();
+			if(close == null || close.trim().length() == 0)
+				closeTSValid = false;
+		}
+		
+		if( openTSValid == true && closeTSValid == true) {
+			form.put(KEY.SURVEY.OPEN_TS, getTSFrom(openETs));
+			form.put(KEY.SURVEY.CLOSE_TS, getTSFrom(closeETs));
+		} else {
+			Toast.makeText(getActivity(), "설문 기간이 정확히 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			// TODO : NumberFormatException
+			return;
+		}
+		
+		// TODO : 나머지 Validation
 		// 돌면서 양식을 취합.
 		ArrayList<Form.Question> questions = new ArrayList<Form.Question>();
 		
@@ -316,6 +357,7 @@ public class SurveyComposeFragment extends Fragment {
 			boolean isMultiple = ((CheckBox)qView.findViewById(R.id.isMultiple)).isChecked() == true;
 			question.isMultiple(isMultiple);
 			
+			questions.add(question);
 		}
 		 
 		form.put(KEY.SURVEY.QUESTIONS, questions);
@@ -331,10 +373,14 @@ public class SurveyComposeFragment extends Fragment {
 				false, 
 				currentTS, 
 				true, 
-				currentTS
+				currentTS,
+				form
 				);
 		
 		survey.send(getActivity());	  
+		
+		InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		im.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 		
 		MainActivity.sharedActivity().popContent(this);
 	}
@@ -372,11 +418,8 @@ public class SurveyComposeFragment extends Fragment {
 		if(requestCode == MemberSearch.REQUEST_CODE) {
 			if(resultCode != MemberSearch.RESULT_OK) {
 				// onError
-				Toast.makeText(getActivity(), "Activity Result Error", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), "선택된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
 			} else {
-				//data.getExtras().get;
-				Toast.makeText(getActivity(), "Activity Result Success", Toast.LENGTH_SHORT).show();
-				
 				// 대체
 				receiversIdx = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				

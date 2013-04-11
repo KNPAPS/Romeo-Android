@@ -113,6 +113,23 @@ public class Survey extends Message {// implements Parcelable{
 		this.checked = checked;
 		this.checkTS = checkTS;
 	}
+	
+	public Survey (
+			String				idx, 
+			int					type, 
+			String				title, 
+			String				content, 
+			String 				senderIdx, 
+			ArrayList<String>	receivers, 
+			boolean				received,
+			long				TS,
+			boolean				checked, 
+			long 				checkTS,
+			Form				form
+			) {
+		this(idx, type, title, content, senderIdx, receivers, received, TS, checked, checkTS);
+		this.form = form;
+	}
 
 	public static boolean isAnswered(Context context, String surveyIdx) {
 		Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);

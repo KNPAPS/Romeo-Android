@@ -35,6 +35,7 @@
 				            android:layout_height="wrap_content"
 				            android:inputType="text"
 				            android:layout_weight="1"
+				            android:nextFocusDown="@+id/open_year"
 				            android:ems="10" >
 				        </EditText>
 				
@@ -63,6 +64,7 @@
 				                android:hint="@string/survey_receivers_placehold"
 				                android:layout_width="match_parent"
 				                android:inputType="text"
+				                android:focusable="false"
 				                android:layout_height="wrap_content" />
 						    
 						    		<Button
@@ -106,6 +108,7 @@
 				            android:layout_weight="2"
 				            android:inputType="number"
 				            android:textSize="12sp"
+				            android:nextFocusDown="@+id/open_month"
 				            android:ems="10" />
 				
 				        <EditText
@@ -118,6 +121,7 @@
 				            android:layout_weight="1"
 				            android:inputType="number"
 				            android:textSize="12sp"
+				            android:nextFocusDown="@+id/open_day"
 				            android:ems="10" />
 				
 				        <EditText
@@ -130,6 +134,7 @@
 				            android:layout_weight="1"
 				            android:inputType="number"
 				            android:textSize="12sp"
+				            android:nextFocusDown="@+id/close_year"
 				            android:ems="10" />
 				
 				        <TextView
@@ -147,6 +152,7 @@
 				            android:layout_weight="2"
 				            android:inputType="number"
 				            android:textSize="12sp"
+				            android:nextFocusDown="@+id/close_month"
 				            android:ems="10" />
 				
 				        <EditText
@@ -159,6 +165,7 @@
 				            android:layout_weight="1"
 				            android:inputType="number"
 				            android:textSize="12sp"
+				            android:nextFocusDown="@+id/close_day"
 				            android:ems="10" />
 				
 				        <EditText
@@ -171,6 +178,7 @@
 				            android:layout_weight="1"
 				            android:inputType="number"
 				            android:textSize="12sp"
+				            android:nextFocusDown="@+id/content"
 				            android:ems="10" />
 				
 				    </LinearLayout>
@@ -182,6 +190,7 @@
 				        android:layout_marginTop="5dp"
 				        android:layout_marginBottom="5dp"
 				        android:ems="10"
+				        android:nextFocusDown="@+id/questions"
 				        android:inputType="none|textMultiLine" />
 				
 				    <LinearLayout

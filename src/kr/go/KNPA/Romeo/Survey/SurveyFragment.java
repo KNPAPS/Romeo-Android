@@ -76,7 +76,7 @@ public class SurveyFragment extends RomeoFragment {
 			}
 		};
 		
-		/*
+		
 		OnClickListener rbbOnClickListener = new OnClickListener() {
 			
 			@Override
@@ -85,7 +85,7 @@ public class SurveyFragment extends RomeoFragment {
 				MainActivity.sharedActivity().pushContent(f);
 			}
 		};
-		*/
+		
 		
 		switch(this.type) {
 		case Survey.TYPE_RECEIVED :
@@ -106,10 +106,10 @@ public class SurveyFragment extends RomeoFragment {
 					view, 
 					R.string.surveyDepartedTitle, 
 					true, 
-					false, 
+					true, 
 					R.string.menu, 
 					R.string.compose, 
-					lbbOnClickListener, null);
+					lbbOnClickListener, rbbOnClickListener);
 			break;
 		}
 		

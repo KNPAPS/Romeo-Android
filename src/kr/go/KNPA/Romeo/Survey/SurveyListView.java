@@ -57,7 +57,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	
 	// Database management
 	@Override
-	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).document().getDocumentList(this.type);	}
+	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).survey().getSurveyList(this.type);	}
 
 	// Click Listener
 	@Override
