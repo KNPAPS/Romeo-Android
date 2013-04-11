@@ -2,13 +2,19 @@ package kr.go.KNPA.Romeo;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Chat.RoomFragment;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +30,8 @@ public class MainActivity extends BaseActivity {
 	private Fragment oldFragment;
 	
 	public boolean isRegistered = false;
+	
+	private static int lastKeyCode = Constants.NOT_SPECIFIED;
 	
 	public MainActivity() {		// 생성자 
 		super(R.string.changing_fragments);
@@ -140,24 +148,59 @@ public class MainActivity extends BaseActivity {
 		
 	 
 	@Override 
-	public boolean onKeyUp(int keyCode, KeyEvent event) { 
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		FragmentManager fm = getSupportFragmentManager();
+		int count = fm.getBackStackEntryCount();
+		
+		if( count != 0)
+			//lastKeyCode = Constants.NOT_SPECIFIED;
+			;
+		
 		if ( keyCode == KeyEvent.KEYCODE_MENU ) { 
 			toggle();
+			//lastKeyCode = keyCode;
 			return true; 
 		} 
 		
 		if ( keyCode == KeyEvent.KEYCODE_BACK) {
-			FragmentManager fm = getSupportFragmentManager(); 
-			int count = fm.getBackStackEntryCount();
+			 
 			if(count == 0) {
-				if(getSlidingMenu().isMenuShowing() == true) {
-					 finish();
-				} else {
-					showMenu();
+				
+				if( getSlidingMenu().isMenuShowing() == true) {
+					toggle();
+					//lastKeyCode = Constants.NOT_SPECIFIED;
+					return true;
 				}
+				
+				//if( lastKeyCode == keyCode ) {
+				//	 finish();
+				//} else {
+					//Toast.makeText(MainActivity.this, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+				
+				 AlertDialog alert = new AlertDialog.Builder(MainActivity.this)
+						.setIcon( this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog) )
+						.setTitle("다On")//context.getString(kr.go.KNPA.Romeo.R.string.)
+						.setMessage("종료하시겠습니까?")
+						.setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+								android.os.Process.killProcess(android.os.Process.myPid());
+							}
+						}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int whichButton) {
+							    dialog.dismiss();
+							  }
+							})
+					.show();
+				//}
+				
+				//lastKeyCode = keyCode;
 				return true;
 			} else {
 				fm.popBackStack();
+				//lastKeyCode = keyCode;
 				return true;
 			}	
 		}

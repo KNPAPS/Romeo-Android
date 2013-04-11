@@ -61,7 +61,7 @@ public class MemberFragment extends RomeoFragment {
 		
 		
 		View view = null;
-		switch(this.type) {
+		switch(this.subType) {
 		case TYPE_FAVORITE :
 		case TYPE_FAVORITE_SEARCH :
 			view = inflater.inflate(R.layout.member_favorite_fragment, container, false);
@@ -74,7 +74,7 @@ public class MemberFragment extends RomeoFragment {
 							R.string.add, 
 							lbbOnClickListener, rbbOnClickListener);
 			
-			listView = (MemberFavoriteListView)initListViewWithType(this.type, R.id.memberListView, view);
+			listView = (MemberFavoriteListView)initListViewWithType(this.subType, R.id.memberListView, view);
 			
 			break;
 			
@@ -104,7 +104,7 @@ public class MemberFragment extends RomeoFragment {
 					R.string.dummy, 
 					lbbOnClickListener, rbbOnClickListener);
 				
-			listView = (MemberListView)initListViewWithType(this.type, R.id.memberListView, view);
+			listView = (MemberListView)initListViewWithType(this.subType, R.id.memberListView, view);
 			
 			break;
 		}

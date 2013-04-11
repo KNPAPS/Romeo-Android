@@ -57,9 +57,9 @@ public class SurveyFragment extends RomeoFragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(type == Survey.TYPE_DEPARTED) {
+		if(subType == Survey.TYPE_DEPARTED) {
 			_departedFragment = null;
-		} else if(type==Survey.TYPE_RECEIVED) {
+		} else if(subType==Survey.TYPE_RECEIVED) {
 			_receivedFragment = null;
 		}
 	}
@@ -87,7 +87,7 @@ public class SurveyFragment extends RomeoFragment {
 		};
 		
 		
-		switch(this.type) {
+		switch(this.subType) {
 		case Survey.TYPE_RECEIVED :
 			view = inflater.inflate(R.layout.survey_fragment, container, false);
 			initNavigationBar(
@@ -113,7 +113,7 @@ public class SurveyFragment extends RomeoFragment {
 			break;
 		}
 		
-		listView = (SurveyListView)initListViewWithType(this.type, R.id.surveyListView, view);
+		listView = (SurveyListView)initListViewWithType(this.subType, R.id.surveyListView, view);
 		
 		return view;
 	}

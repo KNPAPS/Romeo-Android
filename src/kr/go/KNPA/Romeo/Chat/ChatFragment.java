@@ -23,15 +23,12 @@ import android.view.ViewGroup;
  */
 public class ChatFragment extends RomeoFragment {
 
-	
-	
-
 	/**
 	 * @name Constructors
 	 * @{
 	 */
 	public ChatFragment() 			{	this(Chat.TYPE_MEETING);	}
-	public ChatFragment(int type) 	{	super(type);				}
+	public ChatFragment(int subType) 	{	super(subType);				}
 	/** @} */
 	
 	/**
@@ -40,9 +37,9 @@ public class ChatFragment extends RomeoFragment {
 	 */
 	private static ChatFragment _commandFragment = null;
 	private static ChatFragment _meetingFragment = null;
-	public static ChatFragment chatFragment(int type) {
+	public static ChatFragment chatFragment(int subType) {
 		ChatFragment f = null;
-		if(type == Chat.TYPE_COMMAND) {
+		if(subType == Chat.TYPE_COMMAND) {
 			if(_commandFragment == null)
 				_commandFragment = new ChatFragment(Chat.TYPE_COMMAND);
 			f = _commandFragment;
@@ -86,9 +83,9 @@ public class ChatFragment extends RomeoFragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(type == Chat.TYPE_COMMAND) {
+		if(subType == Chat.TYPE_COMMAND) {
 			_commandFragment = null;
-		} else if(type==Chat.TYPE_MEETING) {
+		} else if(subType==Chat.TYPE_MEETING) {
 			_meetingFragment = null;
 		}
 	}
@@ -115,7 +112,7 @@ public class ChatFragment extends RomeoFragment {
 			}
 		};
 		
-		switch(this.type) {
+		switch(this.subType) {
 		case Chat.TYPE_MEETING :
 			view = inflater.inflate(R.layout.chat_fragment, container, false);
 			initNavigationBar(
@@ -141,7 +138,7 @@ public class ChatFragment extends RomeoFragment {
 			break;
 		}
 				
-		listView = (RoomListView)initListViewWithType(this.type, R.id.roomListView, view);
+		listView = (RoomListView)initListViewWithType(this.subType, R.id.roomListView, view);
 
 		return view;
 	}
@@ -198,7 +195,7 @@ public class ChatFragment extends RomeoFragment {
 				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
 				ArrayList<String> newUsersIdx = receiversIdxs;
-				RoomFragment fragment = new RoomFragment(new Room(this.type, null, newUsersIdx));
+				RoomFragment fragment = new RoomFragment(new Room(this.subType, null, newUsersIdx));
 				MainActivity.sharedActivity().pushContent(fragment);
 			}
 		} else {

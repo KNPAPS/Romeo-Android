@@ -9,7 +9,7 @@
         android:layout_width="@dimen/menu_list_cell_icon_width"
         android:layout_height="@dimen/menu_list_cell_icon_width"
         android:padding="@dimen/menu_list_cell_padding"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/icon" />
 
     <TextView
         android:id="@+id/cell_title"

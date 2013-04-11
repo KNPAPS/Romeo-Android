@@ -21,17 +21,9 @@ public class ChatListView extends RomeoListView {
 	private int currentNumberOfRecentItem = NUMBER_OF_INITIAL_RECENT_ITEM;
 
 	// Constructor
-	public ChatListView(Context context) {
-		this(context,null);
-	}
-
-	public ChatListView(Context context, AttributeSet attrs) {
-		this(context, attrs,0);
-	}
-
-	public ChatListView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+	public ChatListView(Context context) 									{	this (context,null);					}
+	public ChatListView(Context context, AttributeSet attrs) 				{	this (context, attrs,0);				}
+	public ChatListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle);	}
 	
 	// Initializer
 	public void setRoom(Room room) {

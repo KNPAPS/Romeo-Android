@@ -59,11 +59,11 @@ public class DocumentFragment extends RomeoFragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(type == Document.TYPE_DEPARTED) {
+		if(subType == Document.TYPE_DEPARTED) {
 			_departedFragment = null;
-		} else if(type ==Document.TYPE_FAVORITE) {
+		} else if(subType ==Document.TYPE_FAVORITE) {
 			_favoriteFragment = null;
-		} else if (type == Document.TYPE_RECEIVED) {
+		} else if (subType == Document.TYPE_RECEIVED) {
 			_receivedFragment = null;
 		}
 	}
@@ -80,7 +80,7 @@ public class DocumentFragment extends RomeoFragment {
 		
 	
 		View view = null;
-		switch(this.type) {
+		switch(this.subType) {
 		case Document.TYPE_RECEIVED :
 			view = inflater.inflate(R.layout.document_fragment, container, false);
 			initNavigationBar(
@@ -117,7 +117,7 @@ public class DocumentFragment extends RomeoFragment {
 			break;
 		}
 		
-		listView = (DocumentListView)initListViewWithType(this.type, R.id.documentListView, view);
+		listView = (DocumentListView)initListViewWithType(this.subType, R.id.documentListView, view);
 		
 		return view;
 	}

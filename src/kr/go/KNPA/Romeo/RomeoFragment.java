@@ -19,14 +19,14 @@ import android.widget.Toast;
 public abstract class RomeoFragment extends Fragment {
 	
 	// Variables
-	public int type = Message.NOT_SPECIFIED;
+	public int subType = Message.NOT_SPECIFIED;
 	public RomeoListView listView;
 	// Constructor
 	public RomeoFragment() {}
 
-	public RomeoFragment(int type) {
+	public RomeoFragment(int subType) {
 		super();
-		this.type = type;
+		this.subType = subType;
 	}
 	
 	// ListView management
@@ -89,9 +89,9 @@ public abstract class RomeoFragment extends Fragment {
 		initNavigationBar(parentView, getString(titleTextId), lbbVisible, rbbVisible, getString(lbbTitleId), getString(rbbTitleId), lbbOnClickListener, rbbOnClickListener);
 	}
 	
-	protected RomeoListView initListViewWithType(int type, int listViewResourceId, View parentView) {
+	protected RomeoListView initListViewWithType(int subType, int listViewResourceId, View parentView) {
 		if(parentView != null) {
-			return ((RomeoListView) parentView.findViewById(listViewResourceId)).initWithType(type);
+			return ((RomeoListView) parentView.findViewById(listViewResourceId)).initWithType(subType);
 		} else {
 			return null;
 		}
