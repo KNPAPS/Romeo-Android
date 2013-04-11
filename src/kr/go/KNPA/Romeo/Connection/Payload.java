@@ -41,8 +41,8 @@ public class Payload {
 	private static final String KEY_EVENT = "event";
 	private static final String KEY_STATUS_CODE = "status";
 	private static final String KEY_DATA = "data";
-	private String event;
-	private int statusCode;
+	private String event = "";
+	private int statusCode = Constants.NOT_SPECIFIED;
 	private Data data;
 	
 	/**
@@ -68,7 +68,7 @@ public class Payload {
 			setStatusCode(responseStatus);
 			setData( DataParser.parse(getEvent(), getStatusCode(), jo.getJSONArray(KEY_DATA) ) );
 		} catch( JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage()+":"+json);
 		}
 	}
 	
@@ -115,6 +115,7 @@ public class Payload {
 		
 		Gson gson = new GsonBuilder()
 	     .setFieldNamingStrategy(fieldNamingStrategy)
+	     .serializeNulls()
 	     .create();
 		
 		StringBuilder sb = new StringBuilder();

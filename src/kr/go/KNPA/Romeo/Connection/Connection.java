@@ -349,7 +349,7 @@ public class Connection {
 			conn.disconnect();
 		}
 		
-
+		Log.d(TAG, "request : "+requestPayloadJSON+", response : "+responsePayloadJSON);
 		return new Pair<Integer,Payload>(statusCode,responsePayload);
 	}
 	
