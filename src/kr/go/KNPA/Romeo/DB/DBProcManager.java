@@ -359,7 +359,7 @@ public class DBProcManager {
 			String sql = "update "+DBSchema.ROOM.TABLE_NAME+
 					"set "+
 					DBSchema.ROOM.COLUMN_LAST_READ_TS+" = "+String.valueOf(lastReadTS)+
-					" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
+					" where _id = "+String.valueOf(roomId);
 			db.execSQL(sql);	
 		}
 		

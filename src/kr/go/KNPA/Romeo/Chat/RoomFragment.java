@@ -126,11 +126,20 @@ public class RoomFragment extends RomeoFragment {
 			}
 		});
 		
-		// 전송버튼에 대한 ClickListener
+		/**
+		 * 채팅 전송
+		 */
 		submitBT.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//채팅 input text
 				EditText et = inputET;
+				
+				if ( room.usersIdx.size() == 0 ) {
+					//TODO 리시버가 한 명도 없는 상태에서는 메세지 못 보냄
+					return;
+				}
+				
 				
 				if(room.roomCode ==null) {
 					// 만약 roomCode가 없다면 새로 만들어진 방이다.
@@ -147,7 +156,8 @@ public class RoomFragment extends RomeoFragment {
 				String sender = UserInfo.getUserIdx(getActivity());
 				ArrayList<String> receivers = room.getUsersIdx(getActivity());	
 					
-				Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT).send(getActivity());
+				Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT)
+					.send(getActivity());
 				// local DB에 대한 저장은, async로 전송 후 afterSend에서 처리한다.
 				
 				// 마무리
