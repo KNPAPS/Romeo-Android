@@ -50,7 +50,7 @@ public class Chat extends Message {
 			int 				contentType) {
 		this.idx = idx;
 		this.type = type;
-//		this.title = title;
+		this.title = "";
 		this.content = content;
 		this.senderIdx = sender;
 		this.receiversIdx = receivers;

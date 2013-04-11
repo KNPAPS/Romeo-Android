@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundSpinnerView">
+        <attr name="fps" format="integer"/>
+        <attr name="duration" format="integer"	 />
+        <attr name="src" format="string"	/>
+    </declare-styleable>
+</resources>

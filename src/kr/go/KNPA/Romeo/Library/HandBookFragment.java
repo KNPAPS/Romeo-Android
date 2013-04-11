@@ -100,6 +100,45 @@ public class HandBookFragment extends Fragment {
 		return view;
 	}
 	
+	public static int calculateInSampleSize(
+        BitmapFactory.Options options, int reqWidth, int reqHeight) {
+	    // Raw height and width of image
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+	
+	    if (height > reqHeight || width > reqWidth) {
+	
+	        // Calculate ratios of height and width to requested height and width
+	        final int heightRatio = Math.round((float) height / (float) reqHeight);
+	        final int widthRatio = Math.round((float) width / (float) reqWidth);
+	
+	        // Choose the smallest ratio as inSampleSize value, this will guarantee
+	        // a final image with both dimensions larger than or equal to the
+	        // requested height and width.
+	        inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+	    }
+
+	    return inSampleSize;
+	}
+	
+	
+	public static Bitmap decodeSampledBitmapFromInputStraem(InputStream is,
+	        int reqWidth, int reqHeight) {
+
+	    // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;	 
+	    BitmapFactory.decodeStream(is, null, options);
+	    
+	    // Calculate inSampleSize
+	    options.inSampleSize = Math.max(calculateInSampleSize(options, reqWidth, reqHeight) , 2);
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeStream(is, null, options);
+	}
+	
 	private class HandBookAdapter extends PagerAdapter {
 		@Override
 		public int getCount() {
@@ -144,8 +183,12 @@ public class HandBookFragment extends Fragment {
 			} catch (IOException e) {
 				return null;
 			}
-			return BitmapFactory.decodeStream(is);
+			
+			Display display = getActivity().getWindowManager().getDefaultDisplay();
+			return decodeSampledBitmapFromInputStraem(is, display.getWidth(), display.getHeight());
 		}
+		
+		
 		
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
@@ -161,8 +204,9 @@ public class HandBookFragment extends Fragment {
 
 			Display display = getActivity().getWindowManager().getDefaultDisplay();
 			// set maximum scroll amount (based on center of image)
-		    int maxX = (int)((bm.getWidth() / 2) - (display.getWidth() / 2));
-		    int maxY = (int)((bm.getHeight() / 2) - (display.getHeight() / 2));
+			float zoomRatio = display.getWidth() / bm.getWidth();
+		    //int maxX = Math.max((int)((bm.getWidth() / 2) - (display.getWidth() / 2)), 0);
+		    int maxY = Math.max( (int)((bm.getHeight() * zoomRatio / 2) - (display.getHeight() / 2)), 0);
 		    
 		    // set scroll limits
 		    final int maxLeft = 0;//(maxX * -1);

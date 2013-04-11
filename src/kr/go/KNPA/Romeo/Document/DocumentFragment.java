@@ -78,6 +78,7 @@ public class DocumentFragment extends RomeoFragment {
 			}
 		};
 		
+	
 		View view = null;
 		switch(this.type) {
 		case Document.TYPE_RECEIVED :

@@ -55,8 +55,10 @@ public abstract class RomeoListView extends ListView {
  
 		if(listAdapter instanceof CursorAdapter) {
 			Cursor c = query();
-			setListBackground(c);
-			listAdapter.changeCursor(c);
+			if(c != null) {
+				setListBackground(c);
+				listAdapter.changeCursor(c);
+			}
 		} else {
 			listAdapter.notifyDataSetChanged();
 		}

@@ -2,8 +2,14 @@ package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.DataSetObserver;
+import android.net.Uri;
+import android.os.Bundle;
 import android.util.AttributeSet;
 
 public class ChatListView extends RomeoListView {
@@ -51,7 +57,9 @@ public class ChatListView extends RomeoListView {
 	}
 
 	public Cursor query(int nItems) {
-	return DBProcManager.sharedManager(getContext()).chat().getChatList(room.roomCode, 0, nItems);
+		if(room == null || room.roomCode == null || room.roomCode.trim().length() == 0 )
+			return null;
+		return DBProcManager.sharedManager(getContext()).chat().getChatList(room.roomCode, 0, nItems);
 	}
 
 	// refresh()
