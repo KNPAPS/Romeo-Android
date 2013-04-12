@@ -124,7 +124,7 @@ public class Message implements Parcelable{
 			message = null;
 		}
 		
-rn message;
+		return message;
 	}
 
 	/**
