@@ -66,56 +66,56 @@ public class MainActivity extends BaseActivity {
 
 		Fragment fragment=null;
 		// set the Above View
-				if (savedInstanceState != null)
-					fragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
-				if (fragment == null)
-					fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
-				
-				// customize the SlidingMenu
-				getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		if (savedInstanceState != null)
+			fragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
+		if (fragment == null)
+			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
+		
+		// customize the SlidingMenu
+		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 
-				// set the Behind View
-				setBehindContentView(R.layout.menu_frame);				// 비하인드 프레임은, 메뉴 뷰다. 프레그먼트를 대입하기 위해 빈것으로 존재(베이스에서는)
-				// set the Above View
-				setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰
+		// set the Behind View
+		setBehindContentView(R.layout.menu_frame);				// 비하인드 프레임은, 메뉴 뷰다. 프레그먼트를 대입하기 위해 빈것으로 존재(베이스에서는)
+		// set the Above View
+		setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰
+		
+		getSupportFragmentManager()
+		.beginTransaction()
+		.replace(R.id.menu_frame, new MenuListFragment())
+		.commit();
+
+		Intent intent = getIntent();
+		if(intent != null && intent.getExtras().containsKey(KEY.MESSAGE.TYPE)) {
+			try {
+				Bundle b = intent.getExtras();
+				int type = b.getInt(KEY.MESSAGE.TYPE);
 				
+				int mainType = type / Message.MESSAGE_TYPE_DIVIDER;
+				int subType = type % Message.MESSAGE_TYPE_DIVIDER;
+				switch(mainType) {
+				case Message.MESSAGE_TYPE_CHAT :
+					goRoomFragment(subType, b.getString(KEY.CHAT.ROOM_CODE));
+					break;
+				case Message.MESSAGE_TYPE_DOCUMENT :
+					goDocumentFragment();
+					break;
+				case Message.MESSAGE_TYPE_SURVEY :
+					goSurveyFragment();
+					break;
+				}
+				// currentFragment = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);
+			} catch (Exception e) {
 				getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.menu_frame, new MenuListFragment())
-				.commit();
-		
-				Intent intent = getIntent();
-				if(intent != null && intent.getExtras().containsKey(KEY.MESSAGE.TYPE)) {
-					try {
-						Bundle b = intent.getExtras();
-						int type = b.getInt(KEY.MESSAGE.TYPE);
-						
-						int mainType = type / Message.MESSAGE_TYPE_DIVIDER;
-						int subType = type % Message.MESSAGE_TYPE_DIVIDER;
-						switch(mainType) {
-						case Message.MESSAGE_TYPE_CHAT :
-							goRoomFragment(subType, b.getString(KEY.CHAT.ROOM_CODE));
-							break;
-						case Message.MESSAGE_TYPE_DOCUMENT :
-							goDocumentFragment();
-							break;
-						case Message.MESSAGE_TYPE_SURVEY :
-							goSurveyFragment();
-							break;
-						}
-						// currentFragment = new MemberFragment(MemberFragment.TYPE_MEMBERLIST);
-					} catch (Exception e) {
-						getSupportFragmentManager()
-						.beginTransaction()
-						.replace(R.id.content_frame, fragment)
-						.commit();												// 컨텐트 프레임과 현재(혹은 생성된) 프레그먼트를 바꾼다.
-					}
-				} else {
-					getSupportFragmentManager()
-					.beginTransaction()
-					.replace(R.id.content_frame, fragment)
-					.commit();												// 컨텐트 프레임과 현재(혹은 생성된) 프레그먼트를 바꾼다.
-				}
+				.replace(R.id.content_frame, fragment)
+				.commit();												// 컨텐트 프레임과 현재(혹은 생성된) 프레그먼트를 바꾼다.
+			}
+		} else {
+			getSupportFragmentManager()
+			.beginTransaction()
+			.replace(R.id.content_frame, fragment)
+			.commit();												// 컨텐트 프레임과 현재(혹은 생성된) 프레그먼트를 바꾼다.
+		}
 				
 	}
 	
