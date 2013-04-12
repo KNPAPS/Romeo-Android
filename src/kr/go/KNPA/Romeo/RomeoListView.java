@@ -54,9 +54,11 @@ public abstract class RomeoListView extends ListView {
 		if(listAdapter == null) return;
  
 		if(listAdapter instanceof CursorAdapter) {
+			// TODO : DB Loading
 			Cursor c = query();
+			
+			setListBackground(c);
 			if(c != null) {
-				setListBackground(c);
 				listAdapter.changeCursor(c);
 			}
 		} else {
@@ -70,7 +72,7 @@ public abstract class RomeoListView extends ListView {
 	
 	// 커서로부터 행의 갯수를 세어 비었을 경우 빈 배경을 출력해준다.
 	public void setListBackground(Cursor c) {
-		if(c.getCount() == 0) {
+		if(c == null || c.getCount() == 0) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 1;
 			options.inPreferredConfig = Config.RGB_565;

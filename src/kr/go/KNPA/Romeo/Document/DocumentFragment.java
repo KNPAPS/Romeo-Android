@@ -21,23 +21,23 @@ public class DocumentFragment extends RomeoFragment {
 		this(Document.TYPE_RECEIVED);
 	}
 	
-	public DocumentFragment (int type) {
-		super(type);
+	public DocumentFragment (int subType) {
+		super(subType);
 	}
 	
-	public static DocumentFragment documentFragment(int type) {
+	public static DocumentFragment documentFragment(int subType) {
 		DocumentFragment f = null;
-		if(type == Document.TYPE_DEPARTED) {
+		if(subType == Document.TYPE_DEPARTED) {
 			if( _departedFragment == null)
-				_departedFragment = new DocumentFragment(type);
+				_departedFragment = new DocumentFragment(subType);
 			f = _departedFragment;
-		} else if(type == Document.TYPE_FAVORITE) {
+		} else if(subType == Document.TYPE_FAVORITE) {
 			if( _favoriteFragment == null)
-				_favoriteFragment = new DocumentFragment(type);
+				_favoriteFragment = new DocumentFragment(subType);
 			f = _favoriteFragment;			
-		} else if(type == Document.TYPE_RECEIVED) {
+		} else if(subType == Document.TYPE_RECEIVED) {
 			if(_receivedFragment == null)
-				_receivedFragment = new DocumentFragment(type);
+				_receivedFragment = new DocumentFragment(subType);
 			f = _receivedFragment;
 		} 
 		return f;
@@ -124,7 +124,7 @@ public class DocumentFragment extends RomeoFragment {
 	
 	
 	
-	// Message Receiving
+	// Message Receiving	: in OTHER THREAD
 	public static void receive(Document document) {
 		if(_receivedFragment != null) {
 			View view = _receivedFragment.getView();
@@ -139,6 +139,7 @@ public class DocumentFragment extends RomeoFragment {
 				_receivedFragment.getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						// DB
 						lv.refresh();	
 					}
 				});

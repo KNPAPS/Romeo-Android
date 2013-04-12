@@ -81,8 +81,8 @@ public class GCMMessageManager {
         events = event.split(":");
         
         
-        if(events[0].equalsIgnoreCase(Event.Message())) {	// MESSAGE
-        	if(events[1].equalsIgnoreCase("RECEIVED")) {	// RECEIVED
+        if(events[0].trim().equalsIgnoreCase(Event.Message())) {	// MESSAGE
+        	if(events[1].trim().equalsIgnoreCase("RECEIVED")) {	// RECEIVED
         		
         		// payload 속에 담겨있는 Message 객체
         		Message message = (Message)payload.getData().get(0, KEY._MESSAGE);
