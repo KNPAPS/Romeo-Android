@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,29 +29,52 @@ class DocumentListAdapter extends CursorAdapter {
 	public void bindView(View v, final Context ctx, Cursor c) {
 		
 		DBProcManager.sharedManager(ctx).document();
-		// 문서해쉬 (String)
-		final String docIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
-		// 확인여부 (int)
 		
-		//boolean docChecked = ( c.getInt(c.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
 		// 문서제목 (String)
 		String title = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
 		
-		// 발신자 (String)
-		User sender = User.getUserWithIdx( c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX)) );
-		String senderInfo = sender.department.nameFull + " "+User.RANK[sender.rank] +" "+ sender.name;
+		TextView titleTV = (TextView)v.findViewById(R.id.title);
+		titleTV.setText(title);
+		
+		
+		// 발신자 (String) TODO 통신
+		final String userIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX));
+		
+		final View _givenView = v;
+		final Handler userNameHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				String senderInfo = (String)msg.obj;
+				
+				TextView senderTV = (TextView)_givenView.findViewById(R.id.sender);
+				senderTV.setText(senderInfo);
+			}
+		};
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				User sender = User.getUserWithIdx( userIdx );
+				String senderInfo = sender.department.nameFull + " "+User.RANK[sender.rank] +" "+ sender.name;
+				
+				android.os.Message message = userNameHandler.obtainMessage();
+				message.obj = senderInfo;
+			}
+		}).start();
+		
+		
 		// 발신일시 (long)
 		long TS =  c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
 		String DT = Formatter.timeStampToRecentString(TS);
 		
-		
-		TextView titleTV = (TextView)v.findViewById(R.id.title);
-		TextView senderTV = (TextView)v.findViewById(R.id.sender);
 		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
-	
-		titleTV.setText(title);
-		senderTV.setText(senderInfo);
 		arrivalDTTV.setText(DT);
+		
+		
+		
+		// 문서해쉬 (String)
+		final String docIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
 		
 		if(this.type == Document.TYPE_DEPARTED) {
 			Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
@@ -68,6 +93,8 @@ class DocumentListAdapter extends CursorAdapter {
 
 	}
 
+	
+	
 	@Override
 	public View newView(Context ctx, Cursor c, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(ctx);

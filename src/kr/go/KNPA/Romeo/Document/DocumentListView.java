@@ -57,6 +57,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 	}
 
 	
+	// TODO : DB Loading
 	@Override
 	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).document().getDocumentList(this.type);	}	
 
@@ -68,6 +69,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 			adapter= ((SimpleSectionAdapter)this.getAdapter());
 		
 		Cursor c = (Cursor)adapter.getItem(position);
+		// TODO : DB Loading
 		Document document = new Document(getContext(), c);
 		
 		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);

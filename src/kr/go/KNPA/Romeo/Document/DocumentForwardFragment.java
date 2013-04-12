@@ -77,7 +77,7 @@ public class DocumentForwardFragment extends Fragment {
 				public void onClick(View v) {
 					// Forward!!
 					forwardDocument(v);
-					MainActivity.sharedActivity().popContent(fragment);
+					MainActivity.sharedActivity().popContent();
 				}
 			});
 		}
@@ -87,7 +87,6 @@ public class DocumentForwardFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				//Toast.makeText(getActivity(), "리시버", Toast.LENGTH_SHORT).show();
 				callMemberSearchActivity();
 				
 			}
@@ -109,7 +108,7 @@ public class DocumentForwardFragment extends Fragment {
 	private void forwardDocument(View v) {
 		
 		// Appdix에 att 추가
-		Document fwdDocument = document.clone();
+		final Document fwdDocument = document.clone();
 		
 		HashMap<String,Object> forward = new HashMap<String,Object>();
 		forward.put(KEY.DOCUMENT.FORWARDER_IDX, UserInfo.getUserIdx( getActivity() ));
@@ -122,8 +121,14 @@ public class DocumentForwardFragment extends Fragment {
 		
 		fwdDocument.receiversIdx = receiversIdx;
 		
+		// TODO 통신
 		// Send
-		fwdDocument.send(getActivity());
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				fwdDocument.send(getActivity());
+			}
+		});
 		
 	}
 	

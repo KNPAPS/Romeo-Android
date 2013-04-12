@@ -4,15 +4,23 @@ import java.lang.reflect.Field;
 
 import kr.go.KNPA.Romeo.R;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 
 public class RoundSpinnerView extends ImageView {
+	
+	private View savedView = null;
+	private int savedViewVisibility = -777;
+	
 	public RoundSpinnerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setAnimation(context, attrs);
@@ -75,5 +83,36 @@ public class RoundSpinnerView extends ImageView {
             }
         });
         startAnimation(a);
+    }
+    
+    public void substituteView(View view) {
+    	_substituteView(view, (int)(view.getHeight()*0.9));
+    }
+    
+    public void substituteView(View view, int widthInDP) {
+    	Resources r = getResources();
+    	int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widthInDP, r.getDisplayMetrics());
+    	
+    	_substituteView(view, px);
+    }
+    
+    private void _substituteView(View view, int widthInPixel) {
+    	ViewGroup parentView = (ViewGroup)view.getParent();
+    	int index = parentView.indexOfChild(view);
+    	
+    	savedViewVisibility = savedView.getVisibility();
+    	savedView = view;
+    	
+    	view.setVisibility(GONE);
+    	this.setVisibility(VISIBLE);
+    	parentView.addView(this, index);
+    }
+    
+    public void restoreView() {
+    	ViewGroup parentView = (ViewGroup)savedView.getParent();
+    	savedView.setVisibility(savedViewVisibility);
+    	
+    	parentView.removeView(this);
+    	savedView = null;
     }
 }

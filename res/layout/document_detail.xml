@@ -104,6 +104,11 @@
 	            		android:textColor="@color/gray"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
+			        <kr.go.KNPA.Romeo.Util.RoundSpinnerView
+			            android:id="@+id/waiter"
+			            android:layout_width="18dp"
+			            android:layout_height="18dp" 
+			            />
 			        <TextView
 			            android:id="@+id/sender"
 			            android:text="@string/sampleSender"
