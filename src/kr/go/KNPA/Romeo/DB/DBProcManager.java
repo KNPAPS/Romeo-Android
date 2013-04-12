@@ -340,8 +340,9 @@ public class DBProcManager {
 			for( int i=0; i<chatHash.size(); i++) {
 				sql += "?,";
 			}
-			sql = sql.replaceAll("/,$/", ")");
-			db.execSQL(sql, (String[])chatHash.toArray());
+			sql = sql.substring(0,sql.length()-1);
+			sql += ")";
+			db.execSQL(sql, chatHash.toArray());
 		}
 
 		/**

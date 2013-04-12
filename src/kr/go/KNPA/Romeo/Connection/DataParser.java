@@ -40,9 +40,9 @@ public class DataParser {
 	public static Data parse( String event, int status, JSONArray dataJSONArray ) throws JSONException {
 		Data dataNative = null;
 		
-		if ( event == Event.MESSAGE_SEND ) {
+		if ( event.equals( Event.Message.send() )) {
 			dataNative = parse_on_msg_send(dataJSONArray);					
-		} else if ( event == Event.MESSAGE_RECEIVED ) {
+		} else if ( event.equals( Event.Message.received() ) ) {
 			dataNative = parse_on_msg_receive(dataJSONArray);	
 			
 		} else {
@@ -120,7 +120,7 @@ public class DataParser {
 		
 		JSONObject jo = dataJSONArray.getJSONObject(0);
 		
-		switch( jo.getInt(KEY.MESSAGE.TYPE)/Message.MESSAGE_TYPE_DIVIDER ) {
+		switch( jo.getJSONObject(KEY._MESSAGE).getInt(KEY.MESSAGE.TYPE)/Message.MESSAGE_TYPE_DIVIDER ) {
 		case Message.MESSAGE_TYPE_CHAT:
 			//jsonobject를 다시 json으로 바꿔서 MessageParser를 통해 생성
 			Chat chat = (Chat) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
@@ -130,13 +130,13 @@ public class DataParser {
 			Document document = (Document) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
 			dataNative.add(0,KEY._MESSAGE,document);
 			
-			HashMap<String,String> af = new HashMap<String, String>();
-			
-			af.put(KEY.DOCUMENT.FILE_IDX, jo.getString(KEY.DOCUMENT.FILE_IDX) );
-			af.put(KEY.DOCUMENT.FILE_TYPE, jo.getString(KEY.DOCUMENT.FILE_TYPE) );
-			af.put(KEY.DOCUMENT.FILE_SIZE, jo.getString(KEY.DOCUMENT.FILE_SIZE) );
-			
-			dataNative.add(0,KEY.DOCUMENT.FILES,af);
+//			HashMap<String,String> af = new HashMap<String, String>();
+//			
+//			af.put(KEY.DOCUMENT.FILE_IDX, jo.getString(KEY.DOCUMENT.FILE_IDX) );
+//			af.put(KEY.DOCUMENT.FILE_TYPE, jo.getString(KEY.DOCUMENT.FILE_TYPE) );
+//			af.put(KEY.DOCUMENT.FILE_SIZE, jo.getString(KEY.DOCUMENT.FILE_SIZE) );
+//			
+//			dataNative.add(0,KEY.DOCUMENT.FILES,af);
 			break;
 		case Message.MESSAGE_TYPE_SURVEY:
 			Survey svy = (Survey) Message.parseMessage(jo.get(KEY._MESSAGE).toString());

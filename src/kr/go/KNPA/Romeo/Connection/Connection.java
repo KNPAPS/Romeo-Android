@@ -168,7 +168,7 @@ public class Connection {
 					 * msg.arg1에 1이 들어가면 성공. 0이면 에러로 구분
 					 */
 					
-					Message msg = new Message();
+					Message msg = mHandler.obtainMessage();
 					try {
 						Pair<Integer,Payload> result = doRequest(accepts, contentType, requestPayloadJSON, timeout, type);
 						msg.obj = result;
@@ -365,7 +365,7 @@ public class Connection {
 	    public void handleMessage(Message msg) {
 	    	Connection connection = mConnection.get();
 			if (mConnection != null) {
-				if ( msg.arg1 == 0 ) {
+				if ( msg.what == 0 ) {
 					//doRequest() 도중 예외가 발생한거임. 그러니 콜백으로 error를 호출
 					//msg.obj = RuntimeException 객체임
 					

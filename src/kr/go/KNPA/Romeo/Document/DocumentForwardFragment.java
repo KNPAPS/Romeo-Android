@@ -77,7 +77,7 @@ public class DocumentForwardFragment extends Fragment {
 				public void onClick(View v) {
 					// Forward!!
 					forwardDocument(v);
-					MainActivity.sharedActivity().popContent(fragment);
+					MainActivity.sharedActivity().popContent();
 				}
 			});
 		}
