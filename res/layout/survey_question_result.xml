@@ -12,27 +12,32 @@
 
         <TextView
             android:id="@+id/index"
-            android:layout_marginLeft="0dp"
             android:layout_width="20dp"
-            android:gravity="center"
             android:layout_height="36dp"
-            android:text="@string/question_index" />
+            android:layout_marginLeft="0dp"
+            android:gravity="center"
+            android:text="@string/question_index"
+            android:textColor="@color/text" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="36dp"
-            android:layout_weight="1"
             android:layout_marginLeft="@dimen/gap"
-            android:gravity="center_vertical" />
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/text" />
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/isMultiple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="22dp"
-        android:text="@string/question_is_multiple" />
+        android:text="@string/question_is_multiple"
+        android:textColor="@color/text" />
+
     <WebView
         android:id="@+id/graphView"
         android:layout_width="match_parent"

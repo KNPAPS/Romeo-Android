@@ -6,19 +6,21 @@
 
     <TextView
         android:id="@+id/index"
-        android:layout_marginLeft="10dp"
         android:layout_width="20dp"
         android:layout_height="wrap_content"
-        android:text="@string/sampleListIndex" />
+        android:layout_marginLeft="10dp"
+        android:text="@string/sampleListIndex"
+        android:textColor="@color/text" />
 
     <EditText
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:ems="10"
         android:hint="@string/option_title_placehold"
         android:inputType="text"
-        android:ems="10" >
+        android:textColor="@color/text" >
 
     </EditText>
 

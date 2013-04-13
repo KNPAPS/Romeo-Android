@@ -9,12 +9,13 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginTop="11dp"
+        android:gravity="center_horizontal"
         android:paddingLeft="5dp"
-        android:gravity="center_horizontal" />
+        android:textColor="@color/text" />
     
     <FrameLayout
     android:layout_width="match_parent"
@@ -41,13 +42,14 @@
     <TextView
         android:id="@+id/textView1"
         android:layout_width="104dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:gravity="center"
-        android:background="@color/light"
         android:layout_height="wrap_content"
-        android:paddingTop = "5dp"
-        android:paddingBottom = "5dp"
-        android:text="@string/edit" />
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/light"
+        android:gravity="center"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/edit"
+        android:textColor="@color/text" />
     
     </FrameLayout>
     
@@ -55,13 +57,14 @@
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        android:layout_marginBottom="11dp"
-        android:paddingLeft="5dp"
+        android:layout_marginTop="11dp"
         android:gravity="center_horizontal"
-        android:text="" />
+        android:paddingLeft="5dp"
+        android:text=""
+        android:textColor="@color/text" />
     
     <Button
         android:id="@+id/submit"

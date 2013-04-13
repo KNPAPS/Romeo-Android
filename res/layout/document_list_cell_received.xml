@@ -19,28 +19,27 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-		        android:textSize="16sp"
-            android:textColor="@color/black"  />
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/sender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-		        android:textSize="11sp"
-            android:textColor="@color/gray"  />
+            android:textColor="@color/text"
+            android:textSize="11sp" />
 		
     </LinearLayout>
 
-   
 		<TextView
-			    android:id="@+id/arrivalDT"
-			    android:layout_width="72dp"
-			    android:layout_height="match_parent"
-			    android:layout_marginRight="@dimen/gap"
-			    android:layout_gravity="center_vertical"
-			    android:gravity="center"
-			    android:background="@color/transparent"
-			    android:textSize="12sp"
-			    android:textColor="@color/black" />
+		    android:id="@+id/arrivalDT"
+		    android:layout_width="72dp"
+		    android:layout_height="match_parent"
+		    android:layout_gravity="center_vertical"
+		    android:layout_marginRight="@dimen/gap"
+		    android:background="@color/transparent"
+		    android:gravity="center"
+		    android:textColor="@color/text"
+		    android:textSize="12sp" />
 				
 </LinearLayout>

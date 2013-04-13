@@ -28,13 +28,15 @@
             android:text="조건부 검색" 
             android:background="@color/midium" />
  -->
+
         <Button
             android:id="@+id/tabFavorite"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="38dp"
-            android:text="즐겨찾기" 
-            android:background="@color/midium" />
+            android:layout_weight="1"
+            android:background="@color/midium"
+            android:text="즐겨찾기"
+            android:textColor="@color/text" />
 
     </LinearLayout>
 

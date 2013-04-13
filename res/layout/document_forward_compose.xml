@@ -15,12 +15,13 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:gravity="center"
-            android:layout_margin="@dimen/gap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/receiver" />
+            android:layout_margin="@dimen/gap"
+            android:gravity="center"
+            android:text="@string/receiver"
+            android:textColor="@color/text" />
 				
         <FrameLayout
             android:layout_width="0dp"
@@ -29,9 +30,10 @@
 
             <EditText
                 android:id="@+id/receivers"
-                android:hint="@string/document_receivers_placehold"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:hint="@string/document_receivers_placehold"
+                android:textColor="@color/text" />
 
             <Button
                 android:id="@+id/receivers_search"
@@ -55,12 +57,13 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/gap"
+        android:layout_marginLeft="@dimen/gap"
+        android:layout_marginRight="@dimen/gap"
         android:layout_weight="1"
         android:ems="10"
         android:gravity="top"
-        android:layout_marginRight ="@dimen/gap"
-        android:layout_marginBottom ="@dimen/gap"
-        android:layout_marginLeft ="@dimen/gap"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        android:textColor="@color/text" />
 
 </LinearLayout>

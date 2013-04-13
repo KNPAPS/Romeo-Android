@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="11dp"
                     android:text="Department"
+                    android:textColor="@color/text"
                     android:textSize="12sp" />
 
                 <LinearLayout
@@ -82,6 +83,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
                         android:text="Rank"
+                        android:textColor="@color/text"
                         android:textSize="17sp" />
 
                     <TextView
@@ -89,7 +91,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Name"
+                        android:textColor="@color/text"
                         android:textSize="17sp" />
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

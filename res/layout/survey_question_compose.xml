@@ -21,20 +21,22 @@
 
         <TextView
             android:id="@+id/index"
-            android:layout_marginLeft="0dp"
             android:layout_width="30dp"
-            android:gravity="center_horizontal"
             android:layout_height="wrap_content"
-            android:text="@string/question_index" />
+            android:layout_marginLeft="0dp"
+            android:gravity="center_horizontal"
+            android:text="@string/question_index"
+            android:textColor="@color/text" />
 
         <EditText
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:ems="10"
             android:hint="@string/question_title_placehold"
             android:inputType="text"
-            android:ems="10" >
+            android:textColor="@color/text" >
 
         </EditText>
 
@@ -46,7 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="27dp"
         android:layout_marginTop="-7dp"
-        android:text="@string/question_is_multiple" />
+        android:text="@string/question_is_multiple"
+        android:textColor="@color/text" />
 
     <LinearLayout
         android:id="@+id/options"

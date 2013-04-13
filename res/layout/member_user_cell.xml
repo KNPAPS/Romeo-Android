@@ -37,10 +37,10 @@
             android:id="@+id/department"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-		        android:orientation="vertical"
-		        android:textSize="11sp"
-            android:textColor="@color/black"
-            android:text="@string/department" />
+            android:orientation="vertical"
+            android:text="@string/department"
+            android:textColor="@color/text"
+            android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,9 +52,9 @@
                 android:id="@+id/rank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:text="@string/rank" />
+                android:text="@string/rank"
+                android:textColor="@color/text"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/name"
@@ -62,16 +62,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:text="@string/name" />
+                android:text="@string/name"
+                android:textColor="@color/text"
+                android:textSize="16sp" />
             
             <TextView
                 android:id="@+id/role"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="@string/role" />
+                android:text="@string/role"
+                android:textColor="@color/text" />
 
         </LinearLayout>
 		

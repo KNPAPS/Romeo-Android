@@ -9,12 +9,13 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginTop="11dp"
+        android:gravity="center_horizontal"
         android:paddingLeft="5dp"
-        android:gravity="center_horizontal" />
+        android:textColor="@color/text" />
     
     <FrameLayout
     android:layout_width="match_parent"
@@ -37,50 +38,54 @@
         android:id="@+id/footer1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginBottom="2dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        android:layout_marginBottom="2dp"
-        android:textSize="14sp"
-        android:paddingLeft="5dp"
+        android:layout_marginTop="22dp"
         android:gravity="center_horizontal"
-        android:lineSpacingExtra="8dp" />
+        android:lineSpacingExtra="8dp"
+        android:paddingLeft="5dp"
+        android:textColor="@color/text"
+        android:textSize="14sp" />
+
     <TextView
         android:id="@+id/footer2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"        
-        android:layout_marginTop="2dp"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center_horizontal"
         android:paddingLeft="5dp"
-        android:gravity="center_horizontal"/>
+        android:textColor="@color/text"
+        android:textSize="20sp" />
 		
 		<TextView
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"        
-        android:layout_marginTop="2dp"
-        android:layout_marginLeft="11dp"
-        android:layout_marginRight="11dp"
-        android:layout_marginBottom="11dp"
-        android:paddingLeft="5dp"
-        android:gravity="center_horizontal"/>
+		    android:id="@+id/password"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginBottom="11dp"
+		    android:layout_marginLeft="11dp"
+		    android:layout_marginRight="11dp"
+		    android:layout_marginTop="2dp"
+		    android:gravity="center_horizontal"
+		    android:paddingLeft="5dp"
+		    android:textColor="@color/text"
+		    android:textSize="12sp" />
     
     <TextView
         android:id="@+id/footer3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp"
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
-        android:layout_marginBottom="11dp"
+        android:layout_marginTop="11dp"
+        android:gravity="center_horizontal"
         android:paddingLeft="5dp"
-        android:textSize="12sp"
-        android:gravity="center_horizontal"/>
-
+        android:textColor="@color/text"
+        android:textSize="12sp" />
     
     <Button
         android:id="@+id/submit"

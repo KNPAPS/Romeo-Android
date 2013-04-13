@@ -19,15 +19,15 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-		        android:textSize="16sp"
-            android:textColor="@color/black"  />
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/sender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-		        android:textSize="11sp"
-            android:textColor="@color/gray"  />
+            android:textColor="@color/text"
+            android:textSize="11sp" />
 		
     </LinearLayout>
 
@@ -43,8 +43,8 @@
             android:id="@+id/openDT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-		        android:textSize="8sp"
-            android:textColor="@color/gray"  />
+            android:textColor="@color/text"
+            android:textSize="8sp" />
         
 				<LinearLayout
 		        android:layout_width="wrap_content"

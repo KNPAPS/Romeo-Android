@@ -27,5 +27,6 @@
     <color name="color1">#FF8500</color>
     <color name="color2">#008196</color>
     <color name="color3">#002787</color>
-    <color name="color4">#49037C</color>    
+    <color name="color4">#49037C</color>
+    <color name="text">#000000</color>    
 </resources>

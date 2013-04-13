@@ -14,18 +14,20 @@
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
         <TextView
             android:id="@+id/labelLocation"
             android:layout_width="54dp"
             android:layout_height="36dp"
-            android:padding="@dimen/gapSmall"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/gapSmaller"
-            android:layout_marginLeft="@dimen/gapSmaller"
             android:layout_marginBottom="@dimen/gapSmaller"
-            android:textSize="16sp"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginTop="@dimen/gapSmaller"
             android:background="@color/white"
-            android:text="@string/condition_location" />
+            android:gravity="center"
+            android:padding="@dimen/gapSmall"
+            android:text="@string/condition_location"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/conditionLocation"
@@ -41,18 +43,20 @@
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
         <TextView
             android:id="@+id/labelDepartment"
             android:layout_width="54dp"
             android:layout_height="36dp"
-            android:padding="@dimen/gapSmall"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/gapSmaller"
-            android:layout_marginLeft="@dimen/gapSmaller"
             android:layout_marginBottom="@dimen/gapSmaller"
-            android:textSize="16sp"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginTop="@dimen/gapSmaller"
             android:background="@color/white"
-            android:text="@string/condition_department" />
+            android:gravity="center"
+            android:padding="@dimen/gapSmall"
+            android:text="@string/condition_department"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/conditionDepartment"
@@ -67,18 +71,20 @@
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
         <TextView
             android:id="@+id/labelRank"
             android:layout_width="54dp"
             android:layout_height="36dp"
-            android:padding="@dimen/gapSmall"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/gapSmaller"
-            android:layout_marginLeft="@dimen/gapSmaller"
             android:layout_marginBottom="@dimen/gapSmaller"
-            android:textSize="16sp"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginTop="@dimen/gapSmaller"
             android:background="@color/white"
-            android:text="@string/condition_rank" />
+            android:gravity="center"
+            android:padding="@dimen/gapSmall"
+            android:text="@string/condition_rank"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/conditionRank"
@@ -93,18 +99,20 @@
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
         <TextView
             android:id="@+id/labelRole"
             android:layout_width="54dp"
             android:layout_height="36dp"
-            android:padding="@dimen/gapSmall"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/gapSmaller"
-            android:layout_marginLeft="@dimen/gapSmaller"
             android:layout_marginBottom="@dimen/gapSmaller"
-            android:textSize="16sp"
+            android:layout_marginLeft="@dimen/gapSmaller"
+            android:layout_marginTop="@dimen/gapSmaller"
             android:background="@color/white"
-            android:text="@string/condition_role" />
+            android:gravity="center"
+            android:padding="@dimen/gapSmall"
+            android:text="@string/condition_role"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
 
         <Spinner
             android:id="@+id/conditionRole"

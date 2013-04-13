@@ -24,16 +24,16 @@
 
 		    <EditText
 		        android:id="@+id/edit"
-		        android:layout_gravity="center_horizontal"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
 		        android:layout_marginBottom="11dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
 		        android:ems="10"
 		        android:inputType="text"
-		        android:singleLine="true" />
-		    
+		        android:singleLine="true"
+		        android:textColor="@color/text" />
 		        
 		    <Button
 		        android:id="@+id/clearEdit"      

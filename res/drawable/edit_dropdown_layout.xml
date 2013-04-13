@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/dropdown_background" android:state_pressed="true"/>
-    <item  android:drawable="@drawable/dropdown_background" android:state_focused="true"/>
-    <item android:drawable="@drawable/dropdown_background"/>
+    <item 
+        android:state_window_focused="false"
+        android:state_enabled="true"
+        android:drawable="@drawable/dropdown_background" />
+    <item 
+        android:drawable="@drawable/dropdown_background" 
+        android:state_pressed="true" />
+    <item  
+        android:drawable="@drawable/dropdown_background" 
+        android:state_focused="true" 
+        android:state_enabled="true" />
+    <item 
+        android:drawable="@drawable/dropdown_background"/>
+    
 </selector>

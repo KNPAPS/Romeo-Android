@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,12 +109,12 @@ public class ChatListAdapter extends CursorAdapter {
 	
 	@Override
 	public boolean isEnabled(int position) {
-		return false;
+		return true;
 	}
 	
 	@Override
 	public boolean areAllItemsEnabled() {
-		return false;
+		return true;
 	}
 	
 	@Override

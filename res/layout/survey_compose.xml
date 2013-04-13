@@ -21,22 +21,25 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
+				            android:layout_width="40dp"
+				            android:layout_height="wrap_content"
 				            android:layout_marginLeft="5dp"
 				            android:layout_marginRight="5dp"
 				            android:gravity="center_horizontal"
-				            android:layout_width="40dp"
-				            android:layout_height="wrap_content"
-				            android:text="@string/title" />
+				            android:text="@string/title"
+				            android:textColor="@color/text" />
 				
 				        <EditText
 				            android:id="@+id/title"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_title_placehold"
 				            android:layout_height="wrap_content"
-				            android:inputType="text"
 				            android:layout_weight="1"
+				            android:ems="10"
+				            android:hint="@string/survey_title_placehold"
+				            android:inputType="text"
 				            android:nextFocusDown="@+id/open_year"
-				            android:ems="10" >
+				            android:textColor="@color/text" >
+
 				        </EditText>
 				
 				    </LinearLayout>
@@ -46,13 +49,14 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
-				            android:layout_marginLeft="5dp"
-				            android:layout_marginRight="5dp"
 				            android:layout_width="40dp"
 				            android:layout_height="wrap_content"
 				            android:layout_gravity="center_vertical"
+				            android:layout_marginLeft="5dp"
+				            android:layout_marginRight="5dp"
 				            android:gravity="center_horizontal"
-				            android:text="@string/receiver" />
+				            android:text="@string/receiver"
+				            android:textColor="@color/text" />
 				
 				        <FrameLayout
 				            android:layout_width="0dp"
@@ -90,96 +94,104 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
-				            android:layout_marginLeft="5dp"
-				            android:layout_marginRight="5dp"
 				            android:layout_width="40dp"
 				            android:layout_height="wrap_content"
 				            android:layout_gravity="center_vertical"
+				            android:layout_marginLeft="5dp"
+				            android:layout_marginRight="5dp"
 				            android:gravity="center_horizontal"
-				            android:text="@string/duration" />
+				            android:text="@string/duration"
+				            android:textColor="@color/text" />
 				
 				        <EditText
 				            android:id="@+id/open_year"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_open_year_placehold"
-				            android:gravity="center"
-				            android:padding="@dimen/gapSmaller"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="2"
+				            android:ems="10"
+				            android:gravity="center"
+				            android:hint="@string/survey_open_year_placehold"
 				            android:inputType="number"
-				            android:textSize="12sp"
 				            android:nextFocusDown="@+id/open_month"
-				            android:ems="10" />
+				            android:padding="@dimen/gapSmaller"
+				            android:textColor="@color/text"
+				            android:textSize="12sp" />
 				
 				        <EditText
 				            android:id="@+id/open_month"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_open_month_placehold"
-				            android:gravity="center"
-				            android:padding="@dimen/gapSmaller"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="1"
+				            android:ems="10"
+				            android:gravity="center"
+				            android:hint="@string/survey_open_month_placehold"
 				            android:inputType="number"
-				            android:textSize="12sp"
 				            android:nextFocusDown="@+id/open_day"
-				            android:ems="10" />
+				            android:padding="@dimen/gapSmaller"
+				            android:textColor="@color/text"
+				            android:textSize="12sp" />
 				
 				        <EditText
 				            android:id="@+id/open_day"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_open_day_placehold"
-				            android:gravity="center"
-				            android:padding="@dimen/gapSmaller"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="1"
+				            android:ems="10"
+				            android:gravity="center"
+				            android:hint="@string/survey_open_day_placehold"
 				            android:inputType="number"
-				            android:textSize="12sp"
 				            android:nextFocusDown="@+id/close_year"
-				            android:ems="10" />
+				            android:padding="@dimen/gapSmaller"
+				            android:textColor="@color/text"
+				            android:textSize="12sp" />
 				
 				        <TextView
 				            android:layout_width="wrap_content"
 				            android:layout_height="wrap_content"
-				            android:text="@string/fromTo" />
+				            android:text="@string/fromTo"
+				            android:textColor="@color/text" />
 				
 				        <EditText
 				            android:id="@+id/close_year"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_close_year_placehold"
-				            android:gravity="center"
-				            android:padding="@dimen/gapSmaller"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="2"
+				            android:ems="10"
+				            android:gravity="center"
+				            android:hint="@string/survey_close_year_placehold"
 				            android:inputType="number"
-				            android:textSize="12sp"
 				            android:nextFocusDown="@+id/close_month"
-				            android:ems="10" />
+				            android:padding="@dimen/gapSmaller"
+				            android:textColor="@color/text"
+				            android:textSize="12sp" />
 				
 				        <EditText
 				            android:id="@+id/close_month"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_close_month_placehold"
-				            android:gravity="center"
-				            android:padding="@dimen/gapSmaller"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="1"
+				            android:ems="10"
+				            android:gravity="center"
+				            android:hint="@string/survey_close_month_placehold"
 				            android:inputType="number"
-				            android:textSize="12sp"
 				            android:nextFocusDown="@+id/close_day"
-				            android:ems="10" />
+				            android:padding="@dimen/gapSmaller"
+				            android:textColor="@color/text"
+				            android:textSize="12sp" />
 				
 				        <EditText
 				            android:id="@+id/close_day"
 				            android:layout_width="0dp"
-				            android:hint="@string/survey_close_day_placehold"
-				            android:gravity="center"
-				            android:padding="@dimen/gapSmaller"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="1"
+				            android:ems="10"
+				            android:gravity="center"
+				            android:hint="@string/survey_close_day_placehold"
 				            android:inputType="number"
-				            android:textSize="12sp"
 				            android:nextFocusDown="@+id/content"
-				            android:ems="10" />
+				            android:padding="@dimen/gapSmaller"
+				            android:textColor="@color/text"
+				            android:textSize="12sp" />
 				
 				    </LinearLayout>
 				
@@ -187,11 +199,12 @@
 				        android:id="@+id/content"
 				        android:layout_width="match_parent"
 				        android:layout_height="wrap_content"
-				        android:layout_marginTop="5dp"
 				        android:layout_marginBottom="5dp"
+				        android:layout_marginTop="5dp"
 				        android:ems="10"
+				        android:inputType="none|textMultiLine"
 				        android:nextFocusDown="@+id/questions"
-				        android:inputType="none|textMultiLine" />
+				        android:textColor="@color/text" />
 				
 				    <LinearLayout
 				        android:id="@+id/questions"

@@ -19,11 +19,13 @@
         android:id="@+id/edit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginTop="@dimen/gapSmall"
+        android:layout_weight="1"
         android:ems="10"
+        android:inputType="textMultiLine"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:inputType="textMultiLine" >
+        android:textColor="@color/text" >
+
     </EditText>
 
     <Button

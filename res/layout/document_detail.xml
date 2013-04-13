@@ -48,6 +48,7 @@
 		                android:layout_weight="1"
 		                android:layout_height="wrap_content"
 		                android:orientation="vertical" >
+
 				            <TextView
 				                android:id="@+id/title"
 				                android:layout_width="wrap_content"
@@ -56,6 +57,7 @@
 				                android:layout_marginRight="@dimen/gap"
 				                android:layout_marginTop="@dimen/gap"
 				                android:text="@string/title"
+				                android:textColor="@color/text"
 				                android:textSize="16sp" />
 
 				            <TextView
@@ -143,13 +145,14 @@
 		            android:src="@drawable/hr" />
 		        
 		    		<TextView
-				        android:layout_marginLeft = "@dimen/gap"
-		            android:layout_marginRight = "@dimen/gap"
-		            android:layout_marginBottom = "@dimen/gap"
-		            android:id="@+id/content"
-				        android:layout_width="match_parent"
-				        android:layout_height="wrap_content"
-				        android:layout_marginTop="5dp" />
+		    		    android:id="@+id/content"
+		    		    android:layout_width="match_parent"
+		    		    android:layout_height="wrap_content"
+		    		    android:layout_marginBottom="@dimen/gap"
+		    		    android:layout_marginLeft="@dimen/gap"
+		    		    android:layout_marginRight="@dimen/gap"
+		    		    android:layout_marginTop="5dp"
+		    		    android:textColor="@color/text" />
 		    
 		    </LinearLayout>
 		    

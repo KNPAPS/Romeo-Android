@@ -28,15 +28,17 @@
                 android:id="@+id/department"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="@string/department" />
+                android:text="@string/department"
+                android:textColor="@color/text"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/rankName"
-                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/name" />
+                android:text="@string/name"
+                android:textColor="@color/text"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -55,11 +57,12 @@
             android:layout_height="wrap_content"
             android:background="@drawable/chat_bubble_received"
             android:maxWidth="150dp"
-            android:paddingTop="@dimen/gapSmall"
-            android:paddingRight="@dimen/gapSmall"
             android:paddingBottom="@dimen/gapSmall"
             android:paddingLeft="@dimen/gap"
-            android:text="@string/loremIpsumShort" />
+            android:paddingRight="@dimen/gapSmall"
+            android:paddingTop="@dimen/gapSmall"
+            android:text="@string/loremIpsumShort"
+            android:textColor="@color/text" />
 
         <ImageView
             android:id="@+id/contentImage"
@@ -78,7 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:padding="@dimen/gapSmaller"
-            android:text="@string/sampleTime" />
+            android:text="@string/sampleTime"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/goUnchecked"
