@@ -8,7 +8,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
-import kr.go.KNPA.Romeo.Util.RoundSpinnerView;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -90,7 +90,7 @@ public class DocumentDetailFragment extends Fragment {
 				
 				// 전달자 정보 : TODO 통신
 				final TextView fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
-				final RoundSpinnerView spinner = (RoundSpinnerView)forwardView.findViewById(R.id.waiter);
+				final WaiterView spinner = (WaiterView)forwardView.findViewById(R.id.waiter);
 				
 				spinner.substituteView(fForwarderTV);
 				
