@@ -44,7 +44,7 @@ public abstract class RomeoListView extends ListView {
 	protected Context getContext() {
 		return this.context;
 	}
-	*/
+	*/	
 
 	// DB에 쿼리를 날린다. 추상메소드.
 	abstract protected Cursor query();
