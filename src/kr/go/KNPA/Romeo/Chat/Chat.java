@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Member.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +18,10 @@ public class Chat extends Message {
 	
 	public static final int CONTENT_TYPE_TEXT = 1;
 	public static final int CONTENT_TYPE_PICTURE = 2;
+
+	public static final int STATE_SUCCESS = 1;
+	public static final int STATE_FAIL = 2;
+	public static final int STATE_SENDING = 3;
 	
 	public String roomCode;
 	public int contentType = CONTENT_TYPE_TEXT;
@@ -80,7 +82,7 @@ public class Chat extends Message {
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).chat().saveChatOnSend(this.roomCode, this.idx, this.senderIdx, this.content, this.contentType, this.TS);
+			//DBProcManager.sharedManager(context).chat().saveChatOnSend(this.roomCode, this.idx, this.senderIdx, this.content, this.contentType, this.TS);
 		}  else {
 			// Failure
 		}

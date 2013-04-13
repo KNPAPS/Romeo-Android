@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBManager.DBSchema;
@@ -87,6 +88,9 @@ public class DBProcManager {
 	public void close(){
 		this.dbm.close();
 		this.db.close();
+		this.dbm = null;
+		this.db = null;
+		DBProcManager._sharedManager = null;
 	}
 	
 	public void dropDatabase(){
@@ -269,17 +273,27 @@ public class DBProcManager {
 		/**
 		 * 채팅 보낼때 메세지 내용 저장 
 		 * @param roomHash 채팅방 해쉬
-		 * @param chatHash 서버에서 부여한 채팅의 hash
 		 * @param senderHash 보내는 사람 
 		 * @param content 채팅 내용
 		 * @param contentType 채팅메세지의 콘텐츠타입 (채팅이면 1 사진이면 2) @see {DBProcManager.CHAT_CONTENT_TYPE_TEXT}, @see{DBProcManager.CHAT_CONTENT_TYPE_PICTURE}
 		 * @param createdTS 채팅을 보낸 타임스탬프
+		 * @param chatState 채팅메세지의 전송상태. @see{Chat.STATE_SUCCESS}, @see{Chat.STATE_FAIL}, @see{Chat.STATE_SENDING}
 		 */
-		public void saveChatOnSend(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
-			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS);
+		public String saveChatOnSend(String roomHash, String senderHash, String content, int contentType, long createdTS, int chatState) {
+			
+			//자신이 보내는 메세지는 채팅 해시를 새로 생성한다
+			String chatHash = md5(senderHash+String.valueOf(createdTS));
+
+			//저장
+			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS, chatState);
+			
+			//자신이 보내는 메세지는 확인 시간을 createdTS로 설정한다
 			ArrayList<String> ar = new ArrayList<String>();
 			ar.add(chatHash);
 			updateCheckedTS(ar, createdTS);
+
+			//채팅 해쉬를 리턴하여 활용할 수 있게 한다.
+			return chatHash;
 		}
 		
 		/**
@@ -292,10 +306,10 @@ public class DBProcManager {
 		 * @param createdTS 채팅을 보낸 타임스탬프
 		 */
 		public void saveChatOnReceived(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
-			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS);
+			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS, Chat.STATE_SUCCESS);
 		}
 		
-		private void saveChat(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
+		private void saveChat(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS, int chatState) {
 			//room hash가 유효한 방인지 검사
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
@@ -309,6 +323,7 @@ public class DBProcManager {
 						DBSchema.CHAT.COLUMN_SENDER_IDX+", "+
 						DBSchema.CHAT.COLUMN_CONTENT+", "+
 						DBSchema.CHAT.COLUMN_CONTENT_TYPE+", "+
+						DBSchema.CHAT.COLUMN_STATE+", "+
 						DBSchema.CHAT.COLUMN_CREATED_TS+") " +
 					"values(" +
 						String.valueOf(roomId)+","+
@@ -316,9 +331,10 @@ public class DBProcManager {
 						"?,"+
 						"?,"+
 						String.valueOf(contentType)+","+
+						String.valueOf(chatState)+","+
 						String.valueOf(createdTS)+")";
 			String[] val = { chatHash, senderHash, content };
-			db.rawQuery(sql, val);
+			db.execSQL(sql, val);
 		}
 		
 		/**
@@ -343,6 +359,21 @@ public class DBProcManager {
 			sql = sql.substring(0,sql.length()-1);
 			sql += ")";
 			db.execSQL(sql, chatHash.toArray());
+		}
+		
+		/**
+		 * 채팅의 상태를 변경
+		 * @param chatHash 채팅 해쉬
+		 * @param chatState 채팅메세지의 전송상태. @see{Chat.STATE_SUCCESS}, @see{Chat.STATE_FAIL}, @see{Chat.STATE_SENDING}
+		 */
+		public void updateChatState( String chatHash, int chatState ) {
+			
+			String sql = "update "+DBSchema.CHAT.TABLE_NAME+" "+
+					"set "+
+					DBSchema.CHAT.COLUMN_STATE + " = " + String.valueOf(chatState)+
+					" where " + DBSchema.CHAT.COLUMN_IDX + " = ?";
+			String[] val = {chatHash};
+			db.execSQL(sql, val);
 		}
 
 		/**
@@ -459,7 +490,7 @@ public class DBProcManager {
 		
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			String sql=
-					"select _id, "+
+					"select * from (select _id, "+
 					DBSchema.CHAT.COLUMN_IDX+COLUMN_CHAT_IDX+", "+
 					DBSchema.CHAT.COLUMN_SENDER_IDX+COLUMN_CHAT_SENDER_IDX+", "+
 					DBSchema.CHAT.COLUMN_CREATED_TS+COLUMN_CHAT_TS+", "+
@@ -468,7 +499,8 @@ public class DBProcManager {
 					" from "+DBSchema.CHAT.TABLE_NAME+
 					" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId)+
 					" order by "+DBSchema.CHAT.COLUMN_CREATED_TS+" desc "+
-					" limit "+String.valueOf(start)+", "+String.valueOf(count);
+					" limit "+String.valueOf(start)+", "+String.valueOf(count)+
+					") tmp order by "+COLUMN_CHAT_TS+" asc ";
 			return db.rawQuery(sql, null);
 		}
 		

@@ -44,7 +44,10 @@ public abstract class RomeoFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		RomeoListView lv = getListView();
-		lv.refresh();
+		
+		if ( lv != null ) {
+			lv.refresh();
+		}
 	}
 
 	@Override

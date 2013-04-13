@@ -5,14 +5,25 @@
     android:background="@drawable/room_background"
     android:orientation="vertical" >
 
-    <include  layout="@layout/navigation_bar" />
-    
-    <kr.go.KNPA.Romeo.Chat.ChatListView
-        android:id="@+id/chatListView"
-        android:layout_width="match_parent"
-        android:isScrollContainer="true"
-        android:layout_height="0dp" 
-        android:layout_weight="1" />
+    <include
+        android:layout_weight="0.12"
+        layout="@layout/navigation_bar" />
+
+	<ListView
+	    android:id="@id/android:list"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_weight="1"
+	    android:cacheColorHint="#00000000"
+	    android:divider="#00000000"
+	    android:drawSelectorOnTop="false"
+	    android:footerDividersEnabled="false"
+	    android:headerDividersEnabled="false"
+	    android:scrollingCache="true"
+	    android:stackFromBottom="false" >
+
+	</ListView>
 
     <include layout="@layout/chat_input_bar" />
+
 </LinearLayout>

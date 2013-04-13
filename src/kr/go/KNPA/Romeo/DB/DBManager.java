@@ -15,7 +15,7 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final String REAL = " REAL ";
 	private static final String BLOB = " BLOB ";
 	private static final String UNIQUE = " UNIQUE ";
-	private static final String NOT_NULL = "  "; // do not use not null
+	private static final String NOT_NULL = " "; // do not use not null
 	private static final String AUTO_INCREMENT = " AUTOINCREMENT ";
 	private static final String PRIMARY_KEY = " PRIMARY KEY ";
 	private static final String COMMA = " , ";
@@ -30,6 +30,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.CHAT.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
 			DBSchema.CHAT.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.CHAT.COLUMN_ROOM_ID	+	INT	+	NOT_NULL	+	COMMA+
+			DBSchema.CHAT.COLUMN_STATE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.CHAT.COLUMN_SENDER_IDX	+	TEXT	+	NOT_NULL+	COMMA+
 			DBSchema.CHAT.COLUMN_CHECKED_TS	+	INT	+
 			")";
@@ -285,6 +286,7 @@ public class DBManager extends SQLiteOpenHelper {
 			public static final String COLUMN_IS_CHECKED = " is_checked ";
 			public static final String COLUMN_CHECKED_TS = " checked_ts ";
 			public static final String COLUMN_CONTENT_TYPE = " content_type ";
+			public static final String COLUMN_STATE = " chat_state ";
 		}
 		
 		public static abstract class ROOM implements BaseColumns {

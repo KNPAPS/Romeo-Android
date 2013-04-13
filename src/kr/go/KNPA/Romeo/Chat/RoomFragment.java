@@ -1,20 +1,25 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
-import kr.go.KNPA.Romeo.Member.MemberSearch;
-import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -23,42 +28,58 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * ChatFragment의 RoomListView 중 하나의 Cell을 누르면 RoomFragment로 진입하게 된다.
  */
-public class RoomFragment extends RomeoFragment {
-
+public class RoomFragment extends ListFragment {
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
-	
+	private Handler mHandler;
+	private final int NUMBER_OF_INITIAL_RECENT_ITEM = 10;
+	ChatListAdapter mAdapter;
 	/**
 	 * @name Constructor
 	 * @{
 	 */
-	public RoomFragment() {	}
-	public RoomFragment(Room room) {	this.room = room;	}
-	/** @} */
-	
-	// Manage List View
-	public ChatListView getListView() {
-		ChatListView lv = null;
-		View view = ((ViewGroup)getView());
+	public RoomFragment(Room room) { 
 		
-		if(view!=null)
-			lv = (ChatListView)view.findViewById(R.id.chatListView);
-		
-		return lv;
+		this.room = room; 
+		mHandler = new RoomHandler(RoomFragment.this);
 	}
+	/** @} */
 
+	public void toast(int i) {
+		if ( i==1) {
+			Toast.makeText(getActivity(), "메세지 전송 성공", Toast.LENGTH_LONG).show();
+		}else {
+			Toast.makeText(getActivity(), "메세지 전송 실패", Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	/**
 	 * @name View Life-Cycle
 	 * @{
 	 */
 	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setListAdapter(mAdapter);
+		
+	}
+	
+	@Override
 	public void onResume() {
-		ChatFragment.setCurrentRoom(this);
 		super.onResume();
-		getListView().scrollToBottom();
+		ChatFragment.setCurrentRoom(this);
+
+
+        Thread refreshThread = new RefreshThread(NUMBER_OF_INITIAL_RECENT_ITEM);
+        refreshThread.start();
+        
+		getListView().setSelectionFromTop(getListView().getCount(), 0);
 		
 		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
@@ -69,12 +90,16 @@ public class RoomFragment extends RomeoFragment {
 		super.onDestroy();
 		ChatFragment.unsetCurrentRoom();
 	}
-	/** @} */
 	
+	/**
+	 * onCreateView 역할을 함
+	 */
 	@Override
-	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		// Navigation BarButton ClickListneer
+		View view = inflater.inflate(R.layout.chat_room_fragment, container, false);
+        
+		//nav bar button setting 
 		OnClickListener lbbOnClickListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -91,21 +116,20 @@ public class RoomFragment extends RomeoFragment {
 		};
 		
 		// Navigation Bar Initilize
-		View view = inflater.inflate(R.layout.chat_room_fragment, null, false);
-		initNavigationBar(
-				view, 
-				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
-				true, 
-				true, 
-				R.string.menu, 
-				R.string.edit, 
-				lbbOnClickListener, rbbOnClickListener);
+		Button lbb = (Button)view.findViewById(R.id.left_bar_button);
+		Button rbb = (Button)view.findViewById(R.id.right_bar_button);
 		
-		// listView 인스턴스화
-		ChatListView listView = (ChatListView)view.findViewById(R.id.chatListView);
+		lbb.setVisibility(View.VISIBLE);
+		rbb.setVisibility(View.VISIBLE);
 		
-		// listView에 room 설정
-		listView.setRoom(room);
+		lbb.setText(getString(R.string.menu));	
+		rbb.setText(getString(R.string.edit));
+		
+		TextView titleView = (TextView)view.findViewById(R.id.title);
+		titleView.setText(getString( this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle ));
+		
+		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
+		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
 		
 		// Room Setting
 		final EditText inputET = (EditText)view.findViewById(R.id.edit);
@@ -127,7 +151,7 @@ public class RoomFragment extends RomeoFragment {
 		});
 		
 		/**
-		 * 채팅 전송
+		 * 채팅 전송 클릭리스너
 		 */
 		submitBT.setOnClickListener(new OnClickListener() {
 			@Override
@@ -156,17 +180,18 @@ public class RoomFragment extends RomeoFragment {
 				String sender = UserInfo.getUserIdx(getActivity());
 				ArrayList<String> receivers = room.getUsersIdx(getActivity());	
 					
-				Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT)
-					.send(getActivity());
-				// local DB에 대한 저장은, async로 전송 후 afterSend에서 처리한다.
+				Chat newChat = Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT);
 				
-				// 마무리
+				Thread sendThread = new ChatSendThread(newChat);
+				sendThread.start();
+				
+				// reset input EditText
 				et.setText("");
 			
-				// 뷰에 추가 (refresh)?
-				getListView().refresh();
-				getListView().scrollToBottom();
-				ChatFragment.chatFragment(room.type).listView.refresh();
+//				// 뷰에 추가 (refresh)?
+//				getListView().refresh();
+//				getListView().scrollToBottom();
+//				ChatFragment.chatFragment(room.type).listView.refresh();
 			}
 		});
 		
@@ -175,23 +200,23 @@ public class RoomFragment extends RomeoFragment {
 	
 	// Message Receiving
 	public void receive(Chat chat) {
-		//http://stackoverflow.com/questions/4486034/get-root-view-from-current-activity
-		//getWindow().getDecorView().findViewById(android.R.id.content) : 
-		//I've noticed that this view appears to include the status bar, so if you're looking for the visible part of your activity, use below
-		//((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)
-		final ChatListView lv = getListView();
-		if(lv == null)  return;
-				
+
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				// 로드할 메시지 갯수를 하나 증가시킨만큼 다시 모두 불러오는 식으로 Refresh를 진행한다.
-				lv.increaseNumberOfItemsBy(1);
-				lv.refresh();	
+
+				String s = new String();
+				
 			}
 		});
 			
 	}
+
+	/** @} */
+	
+	
+	
 	/*
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -216,6 +241,147 @@ public class RoomFragment extends RomeoFragment {
 	}
 	*/
 	
+	private static class RoomHandler extends Handler {
+		private final WeakReference<RoomFragment> mReference;
+		/**
+		 * @name 메세지 종류
+		 * ChatSendThread로부터 넘겨받는 Message 객체의 msg.what에 설정되어 있는 값에 대한 구분\n
+		 * msg.what의 값을 이용해 어떤 상황에서 메세지를 보낸건지 구별하여 핸들러는 해당되는 액션을 취한다.
+		 * {@
+		 */
+		//! 메세지 전송 전에 DB에 STATE_SENDING 상태로 저장
+		public static final int REFRESH = 1;
+		
+		//! 메세지 전송 성공
+		public static final int SENDING_SUCCEED= 2;
+				
+		//! 메세지 전송 실패
+		public static final int SENDING_FAILED = 3;
+						
+		/**@}*/
+		
+		public RoomHandler(RoomFragment roomFragment) {
+			this.mReference = new WeakReference<RoomFragment>(roomFragment);
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			RoomFragment roomFragment = mReference.get();
+			
+			if ( roomFragment != null ) {
+				
+				switch(msg.what) {
+				case REFRESH:
+					Cursor cursor = (Cursor)msg.obj;
+					
+					if ( roomFragment.getListAdapter() == null ) {
+						roomFragment.mAdapter = new ChatListAdapter(roomFragment.getActivity(), cursor, roomFragment.room.type);
+						roomFragment.setListAdapter(roomFragment.mAdapter);						
+					} else {
+						roomFragment.mAdapter.changeCursor(cursor);
+						roomFragment.mAdapter.notifyDataSetChanged();
+					}
+					break;
+				case SENDING_SUCCEED:
+					roomFragment.toast(1);
+					ViewGroup parent = (ViewGroup)roomFragment.getView();
+					View chatSending = parent.findViewWithTag(msg.obj).findViewById(R.id.chatSending);
+					int index = parent.indexOfChild(chatSending);
+					parent.removeView(chatSending);
+					
+					Button goUncheckersBtn = (Button)roomFragment.getActivity().getLayoutInflater().inflate(R.id.goUnchecked, parent, false);
+					
+				    parent.addView(goUncheckersBtn, index);
+					
+					roomFragment.getListView()
+								.setSelectionFromTop( roomFragment.getListView().getCount(), 0);
+					break;
+				case SENDING_FAILED:
+					roomFragment.toast(2);
+					break;
+				}
+
+			}
+			super.handleMessage(msg);
+		}
+	}
+	
+	private class RefreshThread extends Thread {
+		private int nItems;
+		public RefreshThread(int nItems) {
+			this.nItems = nItems;
+		}
+		@Override
+		public void run() {
+			//리스트뷰 커서 새로 불러오기
+			Cursor newCursor = DBProcManager.sharedManager(getActivity())
+								.chat()
+								.getChatList(room.roomCode, 0, nItems);
+
+			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
+			Message msgOnNewCursor = mHandler.obtainMessage();
+			msgOnNewCursor.what = RoomHandler.REFRESH; 
+			msgOnNewCursor.obj = newCursor;
+			mHandler.sendMessage(msgOnNewCursor);
+			super.run();
+		}
+	}
+	
+	private class ChatSendThread extends Thread {
+		private Chat chat;
+		public ChatSendThread(Chat chat) {
+			this.chat = chat;
+		}
+		
+		@Override
+		public void run() {
+			
+			//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
+			String chatHash = DBProcManager.sharedManager(getActivity())
+								.chat()
+								.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
+
+			//채팅해쉬를 채팅 객체에 설정함
+			chat.idx = chatHash;
+			
+			int nItems = getListView().getCount();
+			
+			//리스트뷰 커서 새로 불러오기
+			Cursor newCursor = DBProcManager.sharedManager(getActivity())
+								.chat()
+								.getChatList(chat.roomCode, 0, nItems+1);
+
+			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
+			Message msgOnNewCursor = mHandler.obtainMessage();
+			msgOnNewCursor.what = RoomHandler.REFRESH; 
+			msgOnNewCursor.obj = newCursor;
+			mHandler.sendMessage(msgOnNewCursor);
+			
+			//채팅 객체를 서버에 전송			
+			Data reqData = new Data().add(0, KEY._MESSAGE, chat);
+			Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
+			Connection conn = new Connection().requestPayload(request).async(false);
+			conn.request();
+			
+			//응답 받아와서 성공여부를 핸들러에 알림
+			Payload response = conn.getResponsePayload();
+			if ( response != null && response.getStatusCode() == StatusCode.SUCCESS ) {
+				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_SUCCESS);
+				Message msgOnSucceed = mHandler.obtainMessage();
+				msgOnSucceed.what = RoomHandler.SENDING_SUCCEED; 
+				msgOnSucceed.obj = chatHash;
+				mHandler.sendMessage(msgOnSucceed);
+			} else {
+				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_FAIL);
+				Message msgOnFail = mHandler.obtainMessage();
+				msgOnFail.what = RoomHandler.SENDING_FAILED; 
+				msgOnFail.obj = chatHash;
+				mHandler.sendMessage(msgOnFail);
+			}
+			
+			super.run();
+		}
+	}
 	
 	
 	
