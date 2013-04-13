@@ -12,6 +12,7 @@ import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.KEY.MESSAGE;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
@@ -148,7 +149,7 @@ public class GCMMessageManager {
 		return (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 	
-	private Notification makeNotification(NotificationManager nm, int type, String ticker, String title, String content) {
+	private Notification makeNotification(NotificationManager nm, int type, String ticker, String title, String content, Message message) {
 		//알림만 띄우지
 		
 		title = title.substring(0, Math.min(title.length(), 15));
@@ -156,7 +157,12 @@ public class GCMMessageManager {
 	
 		Intent intent = new Intent(context, MainActivity.class);
 		Bundle b = new Bundle();
-		b.putLong("TEST", System.currentTimeMillis());
+		b.putInt(KEY.MESSAGE.TYPE, type);
+		
+		if(message.mainType() == Message.MESSAGE_TYPE_CHAT) {
+			b.putString(KEY.CHAT.ROOM_CODE, ((Chat)message).roomCode);
+		}
+		
 		intent.putExtras(b);
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(
@@ -205,7 +211,7 @@ public class GCMMessageManager {
 		}
 		
 		NotificationManager nm = getNotificationManager();
-		Notification nt = makeNotification(nm, message.type(), ticker, title, content);
+		Notification nt = makeNotification(nm, message.type(), ticker, title, content, message);
 		refreshNotification(nm, nt, message.type());
 	}
 	

@@ -649,7 +649,7 @@ public class DBProcManager {
 			
 			//document 테이블에 insert
 			String sql =
-					"insert into "+DBSchema.DOCUMENT.TABLE_NAME+
+					"insert or ignore into "+DBSchema.DOCUMENT.TABLE_NAME+
 					" ("+DBSchema.DOCUMENT.COLUMN_IDX+","+
 					DBSchema.DOCUMENT.COLUMN_CREATOR_IDX+","+
 					DBSchema.DOCUMENT.COLUMN_TITLE+","+
@@ -664,8 +664,10 @@ public class DBProcManager {
 			//doc rowid
 			long docId = lastInsertId();
 			//포워딩정보저장
-			addForwardInfo(docHash, forwards);
-			saveAttachmentInfo(docId, files);
+			if(forwards != null)
+				addForwardInfo(docHash, forwards);
+			if(files != null)
+				saveAttachmentInfo(docId, files);
 		}
 		
 		/**
