@@ -182,6 +182,11 @@ public class WaiterView extends ImageView {
     }
     
     public void restoreView() {
+    	
+    	if ( savedView == null ) {
+    		return;
+    	}
+    	
     	ViewGroup parentView = (ViewGroup)savedView.getParent();
     	
     	parentView.removeView(this);

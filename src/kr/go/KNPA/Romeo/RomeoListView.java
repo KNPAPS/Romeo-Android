@@ -24,7 +24,7 @@ public abstract class RomeoListView extends ListView {
 	
 	// Adapter
 	public CursorAdapter listAdapter;
-	private ListHandler mHandler;
+	protected ListHandler mHandler;
 	
 	// Variables
 	public int type = Message.NOT_SPECIFIED;

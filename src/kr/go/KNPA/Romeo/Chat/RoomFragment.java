@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
-import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
@@ -14,8 +13,8 @@ import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Document.DocumentListView;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /*
@@ -71,7 +69,6 @@ public class RoomFragment extends RomeoFragment {
 		ChatFragment.setCurrentRoom(this);
 
         getListView().refresh();
-		
 		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
 	}
@@ -139,9 +136,8 @@ public class RoomFragment extends RomeoFragment {
 				
 		//! 메세지 전송 실패
 		public static final int SENDING_FAILED = 3;
-						
 		/**@}*/
-		
+
 		public RoomHandler(RoomFragment roomFragment) {
 			this.mReference = new WeakReference<RoomFragment>(roomFragment);
 		}
@@ -154,12 +150,13 @@ public class RoomFragment extends RomeoFragment {
 				
 				switch(msg.what) {
 				case REFRESH:
-					roomFragment.getListView().refresh();
+					roomFragment.getListView().increaseNumberOfItemsBy(1);
+					roomFragment.getListView().refresh((Cursor)msg.obj);
 					roomFragment.getListView().scrollToBottom();
 					break;
 				case SENDING_SUCCEED:
-					roomFragment.toast(1);
-					//roomFragment.getListView().findViewWithTag(msg.obj).;
+					roomFragment.getListView().refresh((Cursor)msg.obj);
+					roomFragment.getListView().scrollToBottom();
 					break;
 				case SENDING_FAILED:
 					roomFragment.toast(2);
@@ -187,21 +184,14 @@ public class RoomFragment extends RomeoFragment {
 
 			//채팅해쉬를 채팅 객체에 설정함
 			chat.idx = chatHash;
-			
-			int nItems = getListView().getCount();
-			
-			//리스트뷰 커서 새로 불러오기
-			Cursor newCursor = DBProcManager.sharedManager(getActivity())
-								.chat()
-								.getChatList(chat.roomCode, 0, nItems+1);
 
-			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가1
+			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
 			Message msgOnNewCursor = mHandler.obtainMessage();
 			msgOnNewCursor.what = RoomHandler.REFRESH; 
-			msgOnNewCursor.obj = newCursor;
+			msgOnNewCursor.obj = getListView().query( getListView().getNumberOfItems() );
 			mHandler.sendMessage(msgOnNewCursor);
 			
-			//채팅 객체를 서버에 전송			
+			//채팅 객체를 서버에 전송
 			Data reqData = new Data().add(0, KEY._MESSAGE, chat);
 			Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 			Connection conn = new Connection().requestPayload(request).async(false);
@@ -213,13 +203,13 @@ public class RoomFragment extends RomeoFragment {
 				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_SUCCESS);
 				Message msgOnSucceed = mHandler.obtainMessage();
 				msgOnSucceed.what = RoomHandler.SENDING_SUCCEED; 
-				msgOnSucceed.obj = chatHash;
+				msgOnSucceed.obj = getListView().query( getListView().getNumberOfItems() );
 				mHandler.sendMessage(msgOnSucceed);
 			} else {
 				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_FAIL);
 				Message msgOnFail = mHandler.obtainMessage();
 				msgOnFail.what = RoomHandler.SENDING_FAILED; 
-				msgOnFail.obj = chatHash;
+				msgOnFail.obj = getListView().query( getListView().getNumberOfItems() );
 				mHandler.sendMessage(msgOnFail);
 			}			
 			super.run();

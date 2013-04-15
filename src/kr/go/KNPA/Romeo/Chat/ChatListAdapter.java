@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 
 public class ChatListAdapter extends CursorAdapter {
 
+	public static HashMap<String,WaiterView> waiterViews;
+	
 	int chatType = Chat.NOT_SPECIFIED;
 	
 	/**
@@ -35,10 +38,14 @@ public class ChatListAdapter extends CursorAdapter {
 	public ChatListAdapter(Context context, Cursor c, int chatType) {
 		super(context, c, 0);
 		this.chatType = chatType;
+		ChatListAdapter.waiterViews = new HashMap<String, WaiterView>();
 	}
 
 	@Override
 	public void bindView(View v, final Context context, Cursor c) {
+		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
+		//챗 해쉬로 태그 설정
+		v.setTag(messageIdx);
 		
 		// 센더해쉬
 		String 	senderIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
@@ -48,11 +55,8 @@ public class ChatListAdapter extends CursorAdapter {
 		String 	content 	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
 		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
 		int 	contentType	= c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
-		// 챗 해쉬값
-		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
-		v.setTag(messageIdx);
 		
-		ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
+		//ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
 		TextView 	departmentTV	= (TextView) 	v.findViewById(R.id.department);
 		TextView 	rankNameTV		= (TextView) 	v.findViewById(R.id.rankName);
 		TextView 	contentTV	= (TextView) 	v.findViewById(R.id.content);
@@ -78,25 +82,48 @@ public class ChatListAdapter extends CursorAdapter {
 			contentTV.setVisibility(View.GONE);
 		}
 		
-		final ArrayList<String> uncheckersIdxs = new ArrayList<String>();
-		//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
-		//;Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.chatType, messageIdx);
+		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
 		
-		goUncheckedBT.setOnClickListener(new OnClickListener() {
+		switch(chatStatus){
+		case Chat.STATE_SENDING:
 			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(context, UserListActivity.class);
-				
-				Bundle b = new Bundle();
-				b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
-				intent.putExtras(b);
-				
-				context.startActivity(intent);
-				
+			if ( goUncheckedBT.getVisibility() != View.GONE ) {
+				WaiterView wv = new WaiterView(context);
+				wv.substituteView(goUncheckedBT);
+				waiterViews.put(v.getTag().toString(),wv);
+			}			
+			break;
+		case Chat.STATE_SUCCESS:
+			
+			if ( waiterViews.get(v.getTag().toString()) != null ) {
+				waiterViews.get(v.getTag().toString()).restoreView();
 			}
-		});
-		
+			
+			final ArrayList<String> uncheckersIdxs = new ArrayList<String>();
+			//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
+			//;Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.chatType, messageIdx);
+			
+			goUncheckedBT.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(context, UserListActivity.class);
+					
+					Bundle b = new Bundle();
+					b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
+					intent.putExtras(b);
+					
+					context.startActivity(intent);
+					
+				}
+			});
+			break;
+		case Chat.STATE_FAIL:
+			break;
+		default:
+			break;
+		}
+
 
 	}
 	

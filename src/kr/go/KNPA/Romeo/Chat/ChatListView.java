@@ -4,12 +4,12 @@ import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
 
 public class ChatListView extends RomeoListView {
 	// Constants
 	private final int NUMBER_OF_INITIAL_RECENT_ITEM = 10;
-	
 	// Variables
 	private Room room;
 	private int currentNumberOfRecentItem = NUMBER_OF_INITIAL_RECENT_ITEM;
@@ -52,6 +52,24 @@ public class ChatListView extends RomeoListView {
 		this.setAdapter(listAdapter);
 		return this;
 	}
+	
+	public void refresh(Cursor c){
+		if ( mHandler == null ) {
+			mHandler = new ListHandler(this);
+		}
+		
+		if(this.listAdapter == null) return;
+		 
+		if(this.listAdapter instanceof CursorAdapter) {
+			this.setListBackground( c );
+			if(c != null) {
+				this.listAdapter.changeCursor(c);
+				this.listAdapter.notifyDataSetChanged();
+			}
+		} else {
+			this.listAdapter.notifyDataSetChanged();
+		}
+	}
 
 	@Override
 	protected Cursor query() {
@@ -71,7 +89,6 @@ public class ChatListView extends RomeoListView {
 
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		
+		scrollToBottom();
 	}
-	
 }
