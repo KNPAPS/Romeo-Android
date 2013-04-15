@@ -145,4 +145,8 @@ public class KEY {
 		public static final String IS_ENABLED = "isDeviceEnabled";
 		
 	}
+	
+	public static class SEARCH {
+		public static final String QUERY = "query";
+	}
 }

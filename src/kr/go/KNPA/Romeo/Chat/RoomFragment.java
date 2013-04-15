@@ -15,19 +15,26 @@ import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /*
@@ -62,6 +69,7 @@ public class RoomFragment extends RomeoFragment {
 	 * @{
 	 */
 	
+	    
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -90,31 +98,7 @@ public class RoomFragment extends RomeoFragment {
 
 	/** @} */
 	
-	
-	
-	/*
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	// TODO : 대화방에 사용자 추가	
-		if(requestCode == MemberSearch.REQUEST_CODE) {
-			if(resultCode == Activity.RESULT_OK) {
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList("receivers");
-				ArrayList<User> newUsers = new ArrayList<User>();
-				
-				for(int i=0; i< receiversIdxs.size(); i++ ){
-					User user = User.getUserWithIdx(receiversIdxs.get(i));
-					if(room.users.contains(user)) continue;
-					newUsers.add(user);
-				}
-				room.users.addAll(newUsers);
-				
-				// TODO 초대했다는 메시지를 띄운다.
-			}
-		} else {
-			super.onActivityResult(requestCode, resultCode, data);
-		}
-	}
-	*/
+
 	
 	private static class RoomHandler extends Handler {
 		private final WeakReference<RoomFragment> mReference;
@@ -212,13 +196,25 @@ public class RoomFragment extends RomeoFragment {
 		}
 	}
 	
-	
-	
 	public static class RoomSettingActivity extends PreferenceActivity {
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.room);
+		}
+		
+		@Override
+		public SharedPreferences getSharedPreferences(String name, int mode) {
+			// TODO Auto-generated method stub
+			return super.getSharedPreferences(name, mode);
+		}
+		
+		
+		@Override
+		protected void onListItemClick(ListView l, View v, int position, long id) {
+			// TODO Auto-generated method stub
+			super.onListItemClick(l, v, position, id);
+			Toast.makeText(this, "선택", Toast.LENGTH_LONG).show();
 		}
 	}
 

@@ -91,4 +91,6 @@ public class ChatListView extends RomeoListView {
 	public void onPostExecute(boolean isValidCursor) {
 		scrollToBottom();
 	}
+	
+	
 }

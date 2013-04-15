@@ -41,8 +41,8 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 	 * @{
 	 */
 	@Override
-	public RoomListView initWithType (int type) {
-		this.subType = type;
+	public RoomListView initWithType (int subType) {
+		this.subType = subType;
 		
 		Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 			@Override

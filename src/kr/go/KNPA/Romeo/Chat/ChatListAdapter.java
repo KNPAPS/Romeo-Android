@@ -29,6 +29,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -88,6 +89,7 @@ public class ChatListAdapter extends CursorAdapter {
 		if(contentType == Chat.CONTENT_TYPE_TEXT) {
 			contentTV.setText(content);
 			contentIV.setVisibility(View.GONE);
+			
 		} else if(contentType == Chat.CONTENT_TYPE_PICTURE) {
 			// TODO image
 			// contentIV.setImageBitmap(bm);
@@ -169,8 +171,6 @@ public class ChatListAdapter extends CursorAdapter {
 		default:
 			break;
 		}
-
-
 	}
 	
 	@Override

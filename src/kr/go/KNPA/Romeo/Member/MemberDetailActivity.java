@@ -1,5 +1,6 @@
 package kr.go.KNPA.Romeo.Member;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
@@ -174,7 +175,7 @@ public class MemberDetailActivity extends Activity {
 			} else if (goSurvey == btn) {
 				android.widget.Toast.makeText(MemberDetailActivity.this, "goSurvey", android.widget.Toast.LENGTH_SHORT).show();
 			} else if (goMeeting == btn) {
-				android.widget.Toast.makeText(MemberDetailActivity.this, "goMeeting", android.widget.Toast.LENGTH_SHORT).show();
+				
 			} else if (goCommand == btn) {
 				android.widget.Toast.makeText(MemberDetailActivity.this, "goCommand", android.widget.Toast.LENGTH_SHORT).show();
 			}
