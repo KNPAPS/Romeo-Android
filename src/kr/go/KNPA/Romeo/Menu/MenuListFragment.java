@@ -19,7 +19,9 @@ import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -30,7 +32,9 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 
 
 
@@ -42,6 +46,26 @@ public class MenuListFragment extends ListFragment {
 	private SimpleSectionAdapter<MenuListItem> sectionAdapter; 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.menu_list, null);
+		
+		//// 간단 프로필 출력!!
+		LinearLayout userLL = (LinearLayout) v.findViewById(R.id.favorite_user_cell);
+		//userLL.setBackgroundResource(android.R.color.transparent);
+		userLL.setBackgroundResource(R.drawable.menu_user_info_box);
+		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
+		userPicIV.setImageResource(R.drawable.user_pic_default);
+		TextView rankTV = (TextView)v.findViewById(R.id.rank);
+		rankTV.setTextColor(Color.WHITE);
+		rankTV.setText(User.RANK[UserInfo.getRank(getActivity())]);
+		TextView departmentTV = (TextView)v.findViewById(R.id.department);
+		departmentTV.setText(UserInfo.getDepartment(getActivity()));
+		departmentTV.setTextColor(Color.WHITE);
+		TextView nameTV = (TextView)v.findViewById(R.id.name);
+		nameTV.setText(UserInfo.getName(getActivity()));
+		nameTV.setTextColor(Color.WHITE);
+		TextView roleTV = (TextView)v.findViewById(R.id.role);
+		roleTV.setText("");
+		roleTV.setTextColor(Color.WHITE);
+		
 		
 		List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
         List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();

@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark" >
+    android:background="@drawable/menu_background" >
 
 <EditText
     android:id="@+id/search_bar"
@@ -14,6 +14,7 @@
     android:hint="@string/placehold_search"
     android:textSize="@dimen/menu_list_cell_fontsize" >
 </EditText>
+<include layout="@layout/member_favorite_user_cell" />
 <!-- 
 <ListView 
     android:id="@android:id/list"
@@ -35,7 +36,7 @@
     android:layout_weight="1"
     android:paddingLeft= "@dimen/list_padding"
     android:paddingRight="@dimen/list_padding" 
-    android:background="@drawable/menu_background"
+    
     android:divider="#80010101"
     android:dividerHeight="1dp"
     android:groupIndicator="@null" 
