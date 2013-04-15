@@ -3,12 +3,14 @@ package kr.go.KNPA.Romeo.Util;
 import java.lang.reflect.Field;
 
 import kr.go.KNPA.Romeo.R;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -24,6 +26,7 @@ public class WaiterView extends ImageView {
 	
 	private View savedView = null;
 	private int savedViewVisibility = -777;
+	private static Dialog _waiterDialog;
 	
 	public WaiterView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -39,6 +42,21 @@ public class WaiterView extends ImageView {
         super(context);
     }
 
+    public static void showDialog(Context context) {
+    	if(_waiterDialog == null) {
+    		_waiterDialog = new Dialog(context, R.style.Theme_Dialog);
+    		LayoutInflater inflter = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    		_waiterDialog.setContentView(inflter.inflate(R.layout.waiter_dialog, null));
+    	}
+		_waiterDialog.show();
+    }
+    
+    public static void dismiss(Context context) {
+    	if(_waiterDialog == null)
+    		return;
+    	_waiterDialog.dismiss();
+    }
+    
     private void setAnimation(Context context, AttributeSet attrs) {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WaiterView);
         int fps = a.getInt(R.styleable.WaiterView_fps, 50);  

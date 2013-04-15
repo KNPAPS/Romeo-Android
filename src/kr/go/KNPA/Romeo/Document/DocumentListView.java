@@ -6,6 +6,7 @@ import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
@@ -56,8 +57,6 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 		return this;
 	}
 
-	
-	// TODO : DB Loading
 	@Override
 	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).document().getDocumentList(this.type);	}	
 
@@ -75,6 +74,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 		DocumentDetailFragment fragment = new DocumentDetailFragment(document, type);
 		MainActivity.sharedActivity().pushContent(fragment);
 	}
+
 	@Override
 	public void onPreExecute() {
 		// TODO Auto-generated method stub
@@ -82,8 +82,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 }

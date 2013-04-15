@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="140dp"
+    android:layout_height="140dp"
+    android:background="@drawable/waiter_dialog_background"
+    android:orientation="vertical" >
+    
+    <kr.go.KNPA.Romeo.test.WaiterView 
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:layout_margin="20dp"
+       android:id="@+id/waiter" />
+
+</LinearLayout>
