@@ -1,78 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/favorite_user_cell"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favorite_group_cell"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:orientation="horizontal" 
-    android:background="@color/white" >
+    android:layout_height="60dp">
 
-    <ImageView
-        android:id="@+id/userPic"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_gravity="center_vertical"
-      	android:layout_margin="11dp"
-        android:src="@color/black" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-      	android:layout_gravity="center_vertical"
-      	android:gravity="center_vertical"
-      	android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/department"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:text="Department"
-            android:textColor="@color/text"
-            android:textSize="11sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-      			android:layout_marginTop="3dp" 
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/rank"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rank"
-                android:textColor="@color/text"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
-                android:text="Name"
-                android:textColor="@color/text"
-                android:textSize="16sp" />
-            
-            <TextView
-                android:id="@+id/role"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="(Role)"
-                android:textColor="@color/text" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-		
-		<Button
+    <include
+        layout="@layout/member_user_cell" />
+	
+	<Button
         android:id="@+id/control"
         android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight = "@dimen/gap"
-        android:background="@drawable/circle_check_gray"
+        android:layout_height="32dp" 
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="11dp"
         android:focusable="false"
-         />
-</LinearLayout>
+        android:background="@drawable/circle_check_gray">
+
+    </Button>
+    
+</RelativeLayout>

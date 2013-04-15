@@ -27,7 +27,7 @@ public abstract class RomeoListView extends ListView {
 	protected ListHandler mHandler;
 	
 	// Variables
-	public int type = Message.NOT_SPECIFIED;
+	public int subType = Message.NOT_SPECIFIED;
 	
 	// Constructor
 	public RomeoListView(Context context) {

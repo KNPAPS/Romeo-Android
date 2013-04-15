@@ -16,8 +16,8 @@ public class MemberFavoriteListView extends RomeoListView {
 
 	@Override
 	public RomeoListView initWithType(int type) {
-		this.type = type;
-		listAdapter = new MemberFavoriteListAdapter(getContext(), this.type, null, false);
+		this.subType = type;
+		listAdapter = new MemberFavoriteListAdapter(getContext(), this.subType, null, false);
 		this.setAdapter(listAdapter);
 		this.setOnItemClickListener((android.widget.AdapterView.OnItemClickListener) listAdapter);
 		return this;

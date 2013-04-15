@@ -33,7 +33,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 	 * *{
 	 */
 	@Override
-	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).chat().getRoomList(this.type);	}
+	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).chat().getRoomList(this.subType);	}
 	/** @} */
 	
 	/**
@@ -42,7 +42,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 	 */
 	@Override
 	public RoomListView initWithType (int type) {
-		this.type = type;
+		this.subType = type;
 		
 		Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 			@Override
@@ -52,7 +52,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 			}
 		};
 		
-		listAdapter = new RoomListAdapter(getContext(), null, false, this.type);
+		listAdapter = new RoomListAdapter(getContext(), null, false, this.subType);
 		SimpleSectionAdapter<Cursor> sectionAdapter
 			= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.cell_title, sectionizer);
 		this.setAdapter(sectionAdapter);
@@ -84,7 +84,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		Cursor c = (Cursor)adapter.getItem(position);
 		
 		String roomCode = c.getString(c.getColumnIndex(DBProcManager.sharedManager(getContext()).chat().COLUMN_ROOM_IDX));
-		Room room = new Room(getContext(), this.type, roomCode);
+		Room room = new Room(getContext(), this.subType, roomCode);
 		RoomFragment fragment = new RoomFragment(room);
 		
 		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.roomCode, System.currentTimeMillis());

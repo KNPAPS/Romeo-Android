@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Util.IndexPath;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +41,8 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		
 		this._rootNode = new CellNode().isRoot(true).isUnfolded(true).parent((CellNode)null);
 		
+		WaiterView.showDialog(context);
+		
 		ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(null);
 		
 		for(int i=0; i< deps.size(); i++) {
@@ -45,6 +50,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			this.rootNode().append(node);
 		}
 		
+		WaiterView.dismissDialog(context);
 	}
 	
 	public CellNode rootNode() 	{	return _rootNode;						}
@@ -144,6 +150,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		    }
 			siIV.setLayoutParams(lp);
 		}	
+		
+		WaiterView waiter = (WaiterView)convertView.findViewById(R.id.waiter);
+		waiter.setVisibility(View.INVISIBLE);
+		
 		return convertView;
 	}
 
@@ -323,12 +333,14 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		// l_position : 클릭한 row의 long Type의 position을 반환
 		
 		// 클릭된 셀의 position을 이용하여 indexpath를 알아낸다.
+		
+		//final WaiterView waiter = (WaiterView)view.findViewById(R.id.waiter);
 		IndexPath path = getIndexPathFromPosition(position);
-		IndexPath.Iterator itr = new IndexPath.Iterator(path);
+		//IndexPath.Iterator itr = new IndexPath.Iterator(path);
 
 		
 		
-		CellNode nodeClicked = CellNode.nodeAtIndexPath(this.rootNode(), path);
+		final CellNode nodeClicked = CellNode.nodeAtIndexPath(this.rootNode(), path);
 		if(nodeClicked.type() == CellNode.CN_USER) {	
 		// node의 type이 USER이면 상세안내창 띄우기
 			Intent intent = new Intent(this.context, MemberDetailActivity.class);
@@ -348,31 +360,61 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				// 숨겨진 children이 있으면.
 					nodeClicked.isUnfolded(true);
 				} else {
+					WaiterView.showDialog(context);
+					//waiter.setVisibility(View.VISIBLE);
+					//waiter.setVisibility(View.VISIBLE);
+					//waiter.setAlpha(254);
+					//((View)waiter.getParent()).invalidate();
+					//waiter.invalidate();
+					//waiter.setAnimation(50, 1000);
+					
 				// 숨겨진 children이 없으면.
+					final String deptIdx = nodeClicked.idx();
 					
-					String deptIdx = nodeClicked.idx();
-					ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(deptIdx);
+					final Handler getDepartmentHandler = new Handler() {
+						@Override
+						public void handleMessage(Message msg) {
+							super.handleMessage(msg);
+							
+							//waiter.setVisibility(View.INVISIBLE);
+							WaiterView.dismissDialog(context);
+							notifyDataSetChanged();
+						}
+					};
 					
-					int status;
-					switch(nodeClicked.status()) {
-						case CellNode.HCHECK : status = CellNode.NCHECK; break;	// NEVER REACH
-						case CellNode.FCHECK : status = CellNode.FCHECK; break;
-						default :
-						case CellNode.NCHECK : status = CellNode.NCHECK; break;
-					}
-					for(int i=0; i<deps.size(); i++) {
-						// clickedNode.child()가 없으면 오류가 난다. => CellNode에 CellNode.child() 호출시 null이면 new ArrayList<CellNode>를 할당하도록 코드를 추가했다.
-						CellNode node = new CellNode().type(CellNode.CN_DEPARTMENT).idx( deps.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
-						nodeClicked.append(node);
-					}
+					new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(deptIdx);
+							
+							int status;
+							switch(nodeClicked.status()) {
+								case CellNode.HCHECK : status = CellNode.NCHECK; break;	// NEVER REACH
+								case CellNode.FCHECK : status = CellNode.FCHECK; break;
+								default :
+								case CellNode.NCHECK : status = CellNode.NCHECK; break;
+							}
+							
+							for(int i=0; i<deps.size(); i++) {
+								// clickedNode.child()가 없으면 오류가 난다. => CellNode에 CellNode.child() 호출시 null이면 new ArrayList<CellNode>를 할당하도록 코드를 추가했다.
+								CellNode node = new CellNode().type(CellNode.CN_DEPARTMENT).idx( deps.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
+								nodeClicked.append(node);
+							}
+							
+							ArrayList<User> users = MemberManager.sharedManager().getDeptMembers(deptIdx, false);
+							for(int i=0; i<users.size(); i++) {
+								CellNode node = new CellNode().type(CellNode.CN_USER).idx( users.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
+								nodeClicked.append(node);
+							}
+												
+							nodeClicked.isUnfolded(true);
+							
+							getDepartmentHandler.sendMessage(getDepartmentHandler.obtainMessage());
+						}
+					}).start();
 					
-					ArrayList<User> users = MemberManager.sharedManager().getDeptMembers(deptIdx, false);
-					for(int i=0; i<users.size(); i++) {
-						CellNode node = new CellNode().type(CellNode.CN_USER).idx( users.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
-						nodeClicked.append(node);
-					}
-										
-					nodeClicked.isUnfolded(true);
+					
 				}
 				
 			} else {
@@ -380,6 +422,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 				nodeClicked.isUnfolded(false);
 			}
 		}
+		
 		
 		// view referesh
 		this.notifyDataSetChanged();

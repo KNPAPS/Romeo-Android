@@ -19,6 +19,7 @@
         android:layout_height="match_parent"
       	android:layout_gravity="center_vertical"
       	android:gravity="center_vertical"
+      	android:layout_weight="1"
         android:orientation="vertical" >
 
         <TextView
@@ -65,4 +66,11 @@
 
     </LinearLayout>
 
+    <kr.go.KNPA.Romeo.Util.WaiterView
+        android:id="@+id/waiter"
+        android:visibility="invisible"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="70dp"
+        android:layout_gravity="center" />
 </LinearLayout>

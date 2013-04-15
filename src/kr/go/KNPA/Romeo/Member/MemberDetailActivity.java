@@ -137,8 +137,8 @@ public class MemberDetailActivity extends Activity {
 		
 		goMeeting = (Button)findViewById(R.id.goMeeting);
 		goCommand = (Button)findViewById(R.id.goCommand);
-		goDocument = (Button)findViewById(R.id.goDocument);
-		goSurvey = (Button)findViewById(R.id.goSurvey);
+		//goDocument = (Button)findViewById(R.id.goDocument);
+		//goSurvey = (Button)findViewById(R.id.goSurvey);
 		
 		// TODO
 		background.setOnClickListener(finish);
@@ -156,8 +156,8 @@ public class MemberDetailActivity extends Activity {
 		
 		goMeeting.setOnClickListener(goMessage);
 		goCommand.setOnClickListener(goMessage);
-		goDocument.setOnClickListener(goMessage);
-		goSurvey.setOnClickListener(goMessage);
+		//goDocument.setOnClickListener(goMessage);
+		//goSurvey.setOnClickListener(goMessage);
 	}
 
  	private final OnClickListener finish = new OnClickListener() {

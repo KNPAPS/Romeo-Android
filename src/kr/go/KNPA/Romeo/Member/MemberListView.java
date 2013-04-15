@@ -2,6 +2,7 @@ package kr.go.KNPA.Romeo.Member;
 
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
@@ -26,16 +27,16 @@ public class MemberListView extends RomeoListView {
 	
 	// View management
 	@Override
-	public MemberListView initWithType (int type) {
-		this.type = type;
+	public MemberListView initWithType (int subType) {
+		this.subType = subType;
 
-		if(!(type == User.TYPE_FAVORITE || type==User.TYPE_MEMBERLIST || type==User.TYPE_FAVORITE_SEARCH || type==User.TYPE_MEMBERLIST_SEARCH)) return null;
+		if(!(subType == User.TYPE_FAVORITE || subType==User.TYPE_MEMBERLIST || subType==User.TYPE_FAVORITE_SEARCH || subType==User.TYPE_MEMBERLIST_SEARCH)) return null;
 	
-		switch(this.type) {
+		switch(this.subType) {
 			case User.TYPE_MEMBERLIST_SEARCH :
 			case User.TYPE_MEMBERLIST :
 
-				listAdapter = new MemberListAdapter(getContext(), type);
+				listAdapter = new MemberListAdapter(getContext(), subType);
 				this.setOnItemClickListener(listAdapter);
 				this.setAdapter(listAdapter);
 			
@@ -45,12 +46,18 @@ public class MemberListView extends RomeoListView {
 	}
 	@Override
 	public void onPreExecute() {
-		// TODO Auto-generated method stub
+		if(this.subType == User.TYPE_FAVORITE || this.subType == User.TYPE_FAVORITE_SEARCH) {
+			
+		}
+		//WaiterView.showDialog(getContext());
 		
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		// TODO Auto-generated method stub
+		if(this.subType == User.TYPE_FAVORITE || this.subType == User.TYPE_FAVORITE_SEARCH) {
+			
+		}
+		//WaiterView.dismissDialog(getContext());
 		
 	}
 

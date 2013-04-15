@@ -27,11 +27,11 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	// Initialize
 	@Override
 	public SurveyListView initWithType (int type) {
-		this.type = type;
+		this.subType = type;
 		
-		switch(this.type) {
+		switch(this.subType) {
 		case Survey.TYPE_DEPARTED :
-			listAdapter = new SurveyListAdapter(getContext(), null, false, this.type);
+			listAdapter = new SurveyListAdapter(getContext(), null, false, this.subType);
 			this.setAdapter(listAdapter);
 			this.setOnItemClickListener(this);
 			break;
@@ -44,7 +44,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 				}
 			};
-			listAdapter = new SurveyListAdapter(getContext(), null, false, this.type);
+			listAdapter = new SurveyListAdapter(getContext(), null, false, this.subType);
 
 			SimpleSectionAdapter<Cursor> sectionAdapter
 				= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.cell_title, sectionizer);
@@ -59,7 +59,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	
 	// Database management
 	@Override
-	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).survey().getSurveyList(this.type);	}
+	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).survey().getSurveyList(this.subType);	}
 
 	// Click Listener
 	@Override

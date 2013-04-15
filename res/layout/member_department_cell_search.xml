@@ -1,38 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/member_department_cell"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:orientation="horizontal" 
     android:background="@color/lighter"
     android:padding="11dp" >
-
-    <ImageView
-        android:id="@+id/sub_indicator"
-        android:layout_width="11dp"
-        android:layout_height="11dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="0dp"
-        android:src="@drawable/sub_indicator" />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="2dp"
-        android:layout_weight="1"
-        android:text="Department"
-        android:textColor="@color/text"
-        android:textSize="16sp" />
+    
+    <include layout="@layout/member_department_cell" />
 
     <Button
         android:id="@+id/control"
         android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/circle_check_gray"
+        android:layout_height="32dp" 
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="11dp"
         android:focusable="false"
+        android:background="@drawable/circle_check_gray"
          />
 
-</LinearLayout>
+</RelativeLayout>

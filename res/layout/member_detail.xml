@@ -123,40 +123,16 @@
                 android:layout_height="61dp"
                 android:layout_marginBottom="11dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="0dp"
+                android:layout_marginRight="22dp"
                 android:layout_marginTop="0dp"
                 android:layout_weight="1"
                 android:paddingTop = "5dp"
                 android:paddingBottom = "5dp"
                 android:paddingLeft = "15dp"
-                android:paddingRight = "15dp"
+                android:paddingRight = "0dp"
                 android:textSize="16sp"
                 android:text="@string/command" />
 
-
-            <Button
-                android:id="@+id/goDocument"
-                android:layout_width="84dp"
-                android:layout_height="61dp"
-                android:layout_marginBottom="11dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:text="@string/document" />
-
-            <Button
-                android:id="@+id/goSurvey"
-                android:layout_width="84dp"
-                android:layout_height="61dp"
-                android:layout_marginBottom="11dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="22dp"
-                android:layout_marginTop="0dp"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:text="@string/survey" />
         </LinearLayout>
     </LinearLayout>
 

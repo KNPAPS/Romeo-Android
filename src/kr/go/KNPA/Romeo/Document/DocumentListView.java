@@ -26,10 +26,10 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 	// initializer
 	@Override
 	public DocumentListView initWithType(int type) {
-		this.type = type;
+		this.subType = type;
 		
-		listAdapter = new DocumentListAdapter(getContext(), null, false, this.type);
-		switch(this.type) {
+		listAdapter = new DocumentListAdapter(getContext(), null, false, this.subType);
+		switch(this.subType) {
 		case Document.TYPE_RECEIVED :
 			Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 				@Override
@@ -62,7 +62,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 	protected Cursor query() {
 		
 		DBProcManager dbm = DBProcManager.sharedManager(getContext());
-		Cursor c = dbm.document().getDocumentList(this.type);
+		Cursor c = dbm.document().getDocumentList(this.subType);
 		return c;
 		
 		//return DBProcManager.sharedManager(getContext()).document().getDocumentList(this.type);

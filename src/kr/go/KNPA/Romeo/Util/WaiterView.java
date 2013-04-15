@@ -107,6 +107,16 @@ public class WaiterView extends ImageView {
         startAnimation(a);
     }
     
+    @Override
+    public void setVisibility(int visibility) {
+    	if(visibility == View.VISIBLE) {
+    		this.setAlpha(234);
+    	} else {
+    		this.setAlpha(0);
+    	}
+    	super.setVisibility(visibility);
+    }
+    
     public void substituteView(View view) {
     	_substituteView(view, (int)(view.getHeight()*1.0));
     }
