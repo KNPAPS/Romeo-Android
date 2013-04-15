@@ -179,29 +179,29 @@ class SurveyListAdapter extends CursorAdapter {
 				Button goResultBT = (Button)v.findViewById(R.id.goResult);
 				String answeredStatus = null;
 				
-				int answeredColor = ctx.getResources().getColor(R.color.black);
-				
-				if(isAnswered) {	// TODO DB
-					answeredStatus 	= ctx.getString(R.string.statusAnswered);
-					answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
-					
-					goResultBT.setOnClickListener( new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							Survey survey = new Survey(ctx, c);
-							
-							SurveyResultFragment f = new SurveyResultFragment(survey, subType);
-							MainActivity.sharedActivity().pushContent(f);
-						}
-					});
-					
-				} else {
-					answeredStatus 	= ctx.getString(R.string.statusNotAnswered);
-					answeredColor 	= ctx.getResources().getColor(R.color.maroon);
-				}
-				
-				goResultBT.setText(answeredStatus);
-				goResultBT.setTextColor(answeredColor);
+//				int answeredColor = ctx.getResources().getColor(R.color.black);
+//				
+//				if(isAnswered) {	// TODO DB
+//					answeredStatus 	= ctx.getString(R.string.statusAnswered);
+//					answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
+//					
+//					goResultBT.setOnClickListener( new OnClickListener() {
+//						@Override
+//						public void onClick(View v) {
+//							Survey survey = new Survey(ctx, c);
+//							
+//							SurveyResultFragment f = new SurveyResultFragment(survey, subType);
+//							MainActivity.sharedActivity().pushContent(f);
+//						}
+//					});
+//					
+//				} else {
+//					answeredStatus 	= ctx.getString(R.string.statusNotAnswered);
+//					answeredColor 	= ctx.getResources().getColor(R.color.maroon);
+//				}
+//				
+//				goResultBT.setText(answeredStatus);
+//				goResultBT.setTextColor(answeredColor);
 			break;
 			}
 			

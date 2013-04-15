@@ -14,7 +14,6 @@ import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;

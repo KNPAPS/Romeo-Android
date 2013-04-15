@@ -16,12 +16,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class ChatListAdapter extends CursorAdapter {
@@ -84,15 +87,21 @@ public class ChatListAdapter extends CursorAdapter {
 		}
 		
 		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
+
+
+		
 		
 		switch(chatStatus){
 		case Chat.STATE_SENDING:
-			
-			if ( goUncheckedBT.getVisibility() != View.GONE ) {
-				WaiterView wv = new WaiterView(context);
-				wv.substituteView(goUncheckedBT);
-				waiterViews.put(v.getTag().toString(),wv);
-			}			
+			WaiterView wv = new WaiterView(context);
+			wv.substituteView(goUncheckedBT);
+			DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+
+			LayoutParams params = new LayoutParams( (int)((26 * displayMetrics.density) + 0.5), (int)((26 * displayMetrics.density) + 0.5));
+			params.gravity = Gravity.BOTTOM;
+			params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
+			wv.setLayoutParams(params);
+			waiterViews.put(v.getTag().toString(),wv);
 			break;
 		case Chat.STATE_SUCCESS:
 			
@@ -136,8 +145,18 @@ public class ChatListAdapter extends CursorAdapter {
 	    if (!mCursor.moveToPosition(position)) {
 	        throw new IllegalStateException("couldn't move cursor to position " + position);
 	    }
-	    
-	    View v = newView(mContext, mCursor, parent);
+//	    String userIdx = UserInfo.getUserIdx(mContext);
+	    View v = newView(mContext,mCursor,parent);
+//	    
+//	    if ( convertView == null ) {
+//	    	v = newView(mContext, mCursor, parent);
+//	    } else {
+//	    	if ( userIdx.equals(convertView.getTag()) && (Integer)convertView.getId() != R.layout.chat_bubble_departed ){
+//	    		v = newView(mContext, mCursor, parent);
+//	    	} else if ( !userIdx.equals(convertView.getTag()) && (Integer)convertView.getId() != R.layout.chat_bubble_received ) {
+//	    		v = newView(mContext, mCursor, parent);
+//	    	}
+//	    }
 	    
 	    bindView(v, mContext, mCursor);
 	    return v;
@@ -157,7 +176,6 @@ public class ChatListAdapter extends CursorAdapter {
 			rId = R.layout.chat_bubble_received;
 		}
 		View v = inflater.inflate(rId, parent, false);
-		v.setTag(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX)));
 		return v;
 	}
 	
