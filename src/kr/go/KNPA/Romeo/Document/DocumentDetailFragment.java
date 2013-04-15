@@ -62,7 +62,7 @@ public class DocumentDetailFragment extends Fragment {
 			public void run() {
 
 				document = new Document(context, documentIdx);
-				if(document.subType() == Document.TYPE_FAVORITE) {
+				if(document.favorite == true) {
 					subType = Document.TYPE_FAVORITE;
 				} else if(document.subType() == Document.TYPE_DEPARTED) {
 					subType = Document.TYPE_DEPARTED;
@@ -96,7 +96,7 @@ public class DocumentDetailFragment extends Fragment {
 		initContentView(view);
 		initFilesView(view);
 		initFavoriteView(view);
-		WaiterView.dismiss(getActivity());
+		WaiterView.dismissDialog(getActivity());
 	}
 	
 	private void initNavigationBar(View parent) {
@@ -258,21 +258,40 @@ public class DocumentDetailFragment extends Fragment {
 		favorite.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onClick(View v) {
+			public void onClick(final View v) {
 				// 정보를 업데이트하고 DB 에 등록한다.
-				WaiterView.showDialog(getActivity());
+				//WaiterView.showDialog(getActivity());
+				final WaiterView waiter = new WaiterView(getActivity());
+				
+				waiter.substituteView(v);
+				LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams)waiter.getLayoutParams();
+				lp.rightMargin = lp.width/3;
+				lp.topMargin = lp.height/3;
+				waiter.setLayoutParams(lp);
+				
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						document.toggleFavorite(context);
+						
+						
+						document.toggleFavorite(context);		
+						getActivity().runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+
+								// 버튼 모양을 바꾼다.
+								int _favoriteBackground = (document.favorite ? R.drawable.star_active : R.drawable.star_gray);
+								favorite.setBackgroundResource(_favoriteBackground);
+								waiter.restoreView();
+								//WaiterView.dismissDialog(getActivity());
+							}
+						});
 					}
-				});
+				}).start();
 				
-				// 버튼 모양을 바꾼다.
-				int _favoriteBackground = (document.favorite ? R.drawable.star_active : R.drawable.star_gray);
-				favorite.setBackgroundResource(_favoriteBackground);
 				
-				WaiterView.dismiss(getActivity());
+				
 			}
 		});
 
