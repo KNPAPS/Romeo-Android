@@ -12,6 +12,7 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,6 +63,13 @@ public class SurveyComposeFragment extends Fragment {
 		return view;
 	}
 	
+	@Override
+	public void onPause() {
+		super.onPause();
+		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView().refresh();
+		SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED).getListView().refresh();
+	}
+	
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		// Bar Button 리스너
@@ -106,7 +114,7 @@ public class SurveyComposeFragment extends Fragment {
 		contentET = (EditText)rootLayout.findViewById(R.id.content);
 		ImageView hrIV = (ImageView)rootLayout.findViewById(R.id.hr);
 		hrIV.setVisibility(View.INVISIBLE);
-		// TODO  엔터치면 자동으로 넘어가도록.
+		// TODO  갯수차면 자동으로 넘어가도록.
 		
 		addQuestionBT = (Button)rootLayout.findViewById(R.id.add_question);
 		addQuestionBT.setOnClickListener(addNewQuestion);
@@ -285,6 +293,9 @@ public class SurveyComposeFragment extends Fragment {
 
 	
 	public void sendSurvey() {
+		
+		WaiterView.showDialog(getActivity());
+		
 		// Form
 		Form form = new Form();
 
@@ -381,6 +392,8 @@ public class SurveyComposeFragment extends Fragment {
 		
 		InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		im.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+		
+		WaiterView.dismiss(getActivity());
 		
 		MainActivity.sharedActivity().popContent();
 	}

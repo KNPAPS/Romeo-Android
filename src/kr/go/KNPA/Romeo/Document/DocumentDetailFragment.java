@@ -134,7 +134,7 @@ public class DocumentDetailFragment extends Fragment {
 				
 				// 전달자 정보 
 				final TextView fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
-				final WaiterView spinner = (WaiterView)forwardView.findViewById(R.id.waiter);
+				final WaiterView spinner = new WaiterView(getActivity());
 				
 				spinner.substituteView(fForwarderTV);
 				
@@ -180,11 +180,31 @@ public class DocumentDetailFragment extends Fragment {
 		String receivedDT = Formatter.timeStampToStringInRegularFormat(this.document.TS, getActivity());
 		receivedDTTV.setText(receivedDT);
 		
-		TextView senderTV = (TextView)metaData.findViewById(R.id.sender);
-		User user = User.getUserWithIdx(this.document.senderIdx);
-		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
-		senderTV.setText(sender);
+		
+		
+		final TextView senderTV = (TextView)metaData.findViewById(R.id.sender);
+		final WaiterView spinner = new WaiterView(getActivity());
         
+		spinner.substituteView(senderTV);
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				final User user = User.getUserWithIdx( document.senderIdx );
+				
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
+						senderTV.setText(sender);
+						spinner.restoreView();
+					}
+				});
+			}
+		}).start();
+		
+		
+		
 		TextView contentTV = (TextView)parent.findViewById(R.id.content);
 		String content = this.document.content;
 		contentTV.setText(content);

@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey.AnswerSheet;
 import kr.go.KNPA.Romeo.Survey.Survey.Form.Question;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,8 +27,11 @@ public class SurveyAnswerFragment extends Fragment  {
 	
 	
 	public SurveyAnswerFragment() {}
-	public SurveyAnswerFragment(Survey survey, int subType) {	this.survey = survey; this.subType = subType;}
-
+	//public SurveyAnswerFragment(Survey survey, int subType) {	this.survey = survey; this.subType = subType;}
+	public SurveyAnswerFragment(String surveyIdx) {
+		this.survey = new Survey(getActivity(), surveyIdx); 
+		this.subType = survey.subType();
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,11 +62,27 @@ public class SurveyAnswerFragment extends Fragment  {
 		String arrivalDT = Formatter.timeStampToStringInRegularFormat(this.survey.TS, getActivity());
 		arrivalDTTV.setText(arrivalDT);
 
-		TextView senderTV = (TextView)view.findViewById(R.id.sender);
-		User user = User.getUserWithIdx(this.survey.senderIdx);
-		String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
-		senderTV.setText(sender);
-
+		final TextView senderTV = (TextView)view.findViewById(R.id.sender);
+		final WaiterView spinner = new WaiterView(getActivity());
+        
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				final User user = User.getUserWithIdx(survey.senderIdx);
+				
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						String sender = user.department.nameFull + " " + User.RANK[user.rank] +" "  + user.name;
+						senderTV.setText(sender);
+						spinner.restoreView();
+					}
+				});
+			}
+		}).start();
+		
+		
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
 		String openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_openDT));
 		openDTTV.setText(openDT);

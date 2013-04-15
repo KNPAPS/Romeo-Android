@@ -52,7 +52,7 @@ public class Survey extends Message {// implements Parcelable{
 		
 		return s;
 	}
-	
+	/*
 	public Survey(Context context, Cursor c) {
 		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
 		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
@@ -81,6 +81,37 @@ public class Survey extends Message {// implements Parcelable{
 
 		this.TS			= fromServer.TS;
 		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
+		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
+	}
+	*/
+	public Survey(Context context, String surveyIdx) {
+		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
+		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
+		
+		String idx = surveyIdx;
+		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
+		
+		Survey fromServer = surveyFromServer(
+				context, 
+				idx, 
+				subType);
+		
+		this.idx 			= idx;
+		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
+		
+		this.title 			= fromServer.title;
+		this.content 		= fromServer.content;
+		this.senderIdx		= fromServer.senderIdx;		
+		// X : receiversIdx 
+		
+		if(subType == Survey.TYPE_DEPARTED) {
+			this.received = false; 
+		} else if (subType == Survey.TYPE_RECEIVED) {
+			this.received = true;
+		}
+
+		this.TS			= fromServer.TS;
+		this.checked 	= cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
 		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
 	}
 

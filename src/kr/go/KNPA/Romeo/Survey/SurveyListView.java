@@ -5,8 +5,10 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
@@ -67,18 +69,18 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 			adapter= ((SimpleSectionAdapter)this.getAdapter());
 		
 		Cursor c = (Cursor)adapter.getItem(position);
-		Survey survey = new Survey(getContext(), c);
-		SurveyAnswerFragment f = new SurveyAnswerFragment(survey, type);
+		String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+		SurveyAnswerFragment f = new SurveyAnswerFragment(surveyIdx);
 		MainActivity.sharedActivity().pushContent(f);
 	}
 	@Override
 	public void onPreExecute() {
-		// TODO Auto-generated method stub
+		WaiterView.showDialog(getContext());
 		
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		// TODO Auto-generated method stub
+		WaiterView.showDialog(getContext());
 		
 	}
 
