@@ -1,7 +1,4 @@
 package kr.go.KNPA.Romeo;
-import java.util.Iterator;
-import java.util.Set;
-
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Chat.Room;
@@ -15,13 +12,17 @@ import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.slidingmenu.lib.SlidingMenu;
 
@@ -65,6 +66,14 @@ public class MainActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		// 부모 클래스의 온크리에잇
 		
+		// customize the SlidingMenu
+		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+
+		// set the Above View
+		setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰
+				
+		// set the Behind View
+		setBehindContentView(R.layout.menu_frame);				// 비하인드 프레임은, 메뉴 뷰다. 프레그먼트를 대입하기 위해 빈것으로 존재(베이스에서는)
 
 		Fragment fragment=null;
 		// set the Above View
@@ -73,13 +82,7 @@ public class MainActivity extends BaseActivity {
 		if (fragment == null)
 			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
 		
-		// customize the SlidingMenu
-		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 
-		// set the Behind View
-		setBehindContentView(R.layout.menu_frame);				// 비하인드 프레임은, 메뉴 뷰다. 프레그먼트를 대입하기 위해 빈것으로 존재(베이스에서는)
-		// set the Above View
-		setContentView(R.layout.content_frame);					// 레이아웃만 있는 빈 뷰
 		
 		getSupportFragmentManager()
 		.beginTransaction()
