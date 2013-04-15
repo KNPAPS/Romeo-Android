@@ -82,14 +82,11 @@ public class RoomFragment extends RomeoFragment {
 	// Message Receiving
 	public void receive(Chat chat) {
 
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				// 로드할 메시지 갯수를 하나 증가시킨만큼 다시 모두 불러오는 식으로 Refresh를 진행한다.
-
-			}
-		});
-			
+		Cursor c = getListView().query(getListView().getNumberOfItems()+1);
+		Message msg = mHandler.obtainMessage();
+		msg.what = RoomHandler.REFRESH;
+		msg.obj = c;
+		mHandler.sendMessage(msg);			
 	}
 
 	/** @} */
@@ -249,9 +246,8 @@ public class RoomFragment extends RomeoFragment {
 				startActivity(intent);
 			}
 		};
-
 		initNavigationBar(
-				container, 
+				view, 
 				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
 				true, 
 				true, 

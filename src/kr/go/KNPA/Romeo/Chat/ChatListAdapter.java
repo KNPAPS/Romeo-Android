@@ -43,6 +43,7 @@ public class ChatListAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View v, final Context context, Cursor c) {
+		
 		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
 		//챗 해쉬로 태그 설정
 		v.setTag(messageIdx);
@@ -128,6 +129,21 @@ public class ChatListAdapter extends CursorAdapter {
 	}
 	
 	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+	    if (!mDataValid) {
+	        throw new IllegalStateException("this should only be called when the cursor is valid");
+	    }
+	    if (!mCursor.moveToPosition(position)) {
+	        throw new IllegalStateException("couldn't move cursor to position " + position);
+	    }
+	    
+	    View v = newView(mContext, mCursor, parent);
+	    
+	    bindView(v, mContext, mCursor);
+	    return v;
+	}
+	
+	@Override
 	public View newView(Context context, Cursor c, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -140,8 +156,8 @@ public class ChatListAdapter extends CursorAdapter {
 		} else {
 			rId = R.layout.chat_bubble_received;
 		}
-		
 		View v = inflater.inflate(rId, parent, false);
+		v.setTag(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX)));
 		return v;
 	}
 	
