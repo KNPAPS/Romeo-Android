@@ -1,6 +1,9 @@
 package kr.go.KNPA.Romeo;
 
+import java.lang.ref.WeakReference;
+
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
 import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
 import android.widget.ListView;
@@ -20,6 +24,7 @@ public abstract class RomeoListView extends ListView {
 	
 	// Adapter
 	public CursorAdapter listAdapter;
+	private ListHandler mHandler;
 	
 	// Variables
 	public int type = Message.NOT_SPECIFIED;
@@ -51,24 +56,44 @@ public abstract class RomeoListView extends ListView {
 	
 	// 리스트를 다시 불러온다.
 	public void refresh() {
-		if(listAdapter == null) return;
- 
-		if(listAdapter instanceof CursorAdapter) {
-			// TODO : DB Loading
-			Cursor c = query();
-			
-			setListBackground(c);
-			if(c != null) {
-				listAdapter.changeCursor(c);
-			}
-		} else {
-			listAdapter.notifyDataSetChanged();
+//		if(listAdapter == null) return;
+// 
+//		if(listAdapter instanceof CursorAdapter) {
+//			// TODO : DB Loading
+//			Cursor c = query();
+//			
+//			setListBackground(c);
+//			if(c != null) {
+//				listAdapter.changeCursor(c);
+//			}
+//		} else {
+//			listAdapter.notifyDataSetChanged();
+//		}
+//		
+//		if(this.getAdapter() instanceof SimpleSectionAdapter && this.getAdapter() != listAdapter)
+//			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
+		onPreExecute();
+		
+		if ( mHandler == null ) {
+			mHandler = new ListHandler(this);
 		}
 		
-		if(this.getAdapter() instanceof SimpleSectionAdapter && this.getAdapter() != listAdapter)
-			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
+		Thread thread = new Thread(){
+			@Override
+			public void run() {
+				Cursor c = query();
+				android.os.Message msg = mHandler.obtainMessage();
+				msg.obj = c;
+				msg.arg1 = (c!=null)? 1 : 0;
+				mHandler.sendMessage(msg);
+			}
+		};
+		thread.start();
 	}
 	
+	abstract public void onPreExecute();
+	
+	abstract public void onPostExecute( boolean isValidCursor );
 	
 	// 커서로부터 행의 갯수를 세어 비었을 경우 빈 배경을 출력해준다.
 	public void setListBackground(Cursor c) {
@@ -87,6 +112,38 @@ public abstract class RomeoListView extends ListView {
 		}
 	}
 
+	public static class ListHandler extends Handler {
+		private final WeakReference<RomeoListView> mReference;
+		public ListHandler(RomeoListView listView) {
+			this.mReference = new WeakReference<RomeoListView>(listView);
+		}
+		
+		@Override
+		public void handleMessage(android.os.Message msg) {
+			RomeoListView listView = mReference.get();
+			
+			if ( listView != null ) {
+				Cursor c = (Cursor)msg.obj;
+				if(listView.listAdapter == null) return;
+					 
+				if(listView.listAdapter instanceof CursorAdapter) {
+					listView.setListBackground( c );
+					if(c != null) {
+						listView.listAdapter.changeCursor(c);
+					}
+				} else {
+					listView.listAdapter.notifyDataSetChanged();
+				}
+				
+				if(listView.getAdapter() instanceof SimpleSectionAdapter && listView.getAdapter() != listView.listAdapter)
+					((SimpleSectionAdapter)listView.getAdapter()).notifyDataSetChanged();
+			}
+			
+			listView.onPostExecute( msg.arg1==1?true:false );
+			super.handleMessage(msg);
+		}
+	}
+	
 /*	/// abstract
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
