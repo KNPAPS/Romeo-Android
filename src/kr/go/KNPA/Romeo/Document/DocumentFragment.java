@@ -3,11 +3,13 @@ package kr.go.KNPA.Romeo.Document;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.DB.DBManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 
 public class DocumentFragment extends RomeoFragment {
 	// Fragment Static Variables
@@ -55,6 +57,11 @@ public class DocumentFragment extends RomeoFragment {
 		return lv;
 	}
 	
+	@Override
+	public void onPause() {
+		super.onPause();
+		DBProcManager.sharedManager(getActivity()).close();
+	}
 	// Fragment Life-cycle
 	@Override
 	public void onDestroy() {

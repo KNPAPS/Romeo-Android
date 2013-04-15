@@ -86,8 +86,8 @@ public class DBProcManager {
 	 * 원하는 프로시져를 모두 호출한 후 DB를 닫기 위해 호출
 	 */
 	public void close(){
-		this.dbm.close();
 		this.db.close();
+		this.dbm.close();
 		this.dbm = null;
 		this.db = null;
 		DBProcManager._sharedManager = null;

@@ -6,11 +6,13 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,28 +33,70 @@ public class DocumentDetailFragment extends Fragment {
 	public DocumentDetailFragment() {
 	}
 	
-	public DocumentDetailFragment(Document document, int subType) {
+	public DocumentDetailFragment(String documentIdx) {
 		super();
-		this.document = document;
-		this.subType = subType;
+		
+		initView(documentIdx);
 	}
 	
+	private Handler detailHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			_initView();
+		};
+	};
+	
 	@Override	public void onCreate(Bundle savedInstanceState) {	super.onCreate(savedInstanceState);									}
-	@Override	public void onResume() 							{	super.onResume();	document.setChecked(getActivity());				}
-	@Override	public void onPause() 							{	DocumentFragment.documentFragment(subType).getListView().refresh();	}
+	@Override	public void onResume() 							{	super.onResume();	/*document.setChecked(getActivity());*/				}
+	@Override	public void onPause() 							{	super.onPause(); DocumentFragment.documentFragment(subType).getListView().refresh();	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.document_detail, null, false);
 	}
 
-	public void initView() {
+	public void initView(final String documentIdx) {
+		WaiterView.showDialog(getActivity());
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+
+				document = new Document(context, documentIdx);
+				if(document.subType() == Document.TYPE_FAVORITE) {
+					subType = Document.TYPE_FAVORITE;
+				} else if(document.subType() == Document.TYPE_DEPARTED) {
+					subType = Document.TYPE_DEPARTED;
+				} else {
+					subType = Document.TYPE_RECEIVED;
+				}
+				
+				
+				getActivity().runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						_initView();
+					}
+				});
+				//detailHandler.sendMessage(detailHandler.obtainMessage());
+								
+			}//end run
+			
+		}).start();// end Thread
+	}
+	
+
+	
+	private void _initView() {
+		document.setChecked(getActivity());
 		View view = getView();
 		initNavigationBar(view);
 		initForwardView(view);		
 		initContentView(view);
 		initFilesView(view);
 		initFavoriteView(view);
+		WaiterView.dismiss(getActivity());
 	}
 	
 	private void initNavigationBar(View parent) {
@@ -88,7 +132,7 @@ public class DocumentDetailFragment extends Fragment {
 				ViewGroup forwardView = (ViewGroup)inflater.inflate(R.layout.document_forward, forwardsLL, false);
 				final HashMap<String, Object> forward = forwards.get(i);
 				
-				// 전달자 정보 : TODO 통신
+				// 전달자 정보 
 				final TextView fForwarderTV = (TextView)forwardView.findViewById(R.id.forwarder);
 				final WaiterView spinner = (WaiterView)forwardView.findViewById(R.id.waiter);
 				
@@ -195,15 +239,20 @@ public class DocumentDetailFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				// 정보를 업데이트하고 DB 에 등록한다. TODO : DB
-				document.toggleFavorite(context);
+				// 정보를 업데이트하고 DB 에 등록한다.
+				WaiterView.showDialog(getActivity());
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						document.toggleFavorite(context);
+					}
+				});
 				
 				// 버튼 모양을 바꾼다.
 				int _favoriteBackground = (document.favorite ? R.drawable.star_active : R.drawable.star_gray);
 				favorite.setBackgroundResource(_favoriteBackground);
 				
-				// 리스트 리로드??
-				DocumentFragment.documentFragment(subType).getListView().refresh();
+				WaiterView.dismiss(getActivity());
 			}
 		});
 

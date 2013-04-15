@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,25 +42,22 @@ class DocumentListAdapter extends CursorAdapter {
 		final String userIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX));
 		
 		final View _givenView = v;
-		final Handler userNameHandler = new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				super.handleMessage(msg);
-				String senderInfo = (String)msg.obj;
-				
-				TextView senderTV = (TextView)_givenView.findViewById(R.id.sender);
-				senderTV.setText(senderInfo);
-			}
-		};
 		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				User sender = User.getUserWithIdx( userIdx );
-				String senderInfo = sender.department.nameFull + " "+User.RANK[sender.rank] +" "+ sender.name;
 				
 				android.os.Message message = userNameHandler.obtainMessage();
-				message.obj = senderInfo;
+				
+				Bundle b = new Bundle();
+				String senderInfo = sender.department.nameFull + " "+User.RANK[sender.rank] +" "+ sender.name;
+				b.putString(KEY_SENDER_INFO, senderInfo);
+				message.setData(b);
+				
+				message.obj = _givenView;
+				
+				userNameHandler.sendMessage(message);
 			}
 		}).start();
 		
@@ -117,4 +115,18 @@ class DocumentListAdapter extends CursorAdapter {
 	public boolean areAllItemsEnabled() {
 		return true;
 	}
+	
+	private static String KEY_SENDER_INFO = "senderInfo";
+	private static Handler userNameHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			//String senderInfo = (String)msg.obj;
+			Bundle b = msg.getData();
+			View _givenView = (View)msg.obj;
+			String senderInfo = b.getString(KEY_SENDER_INFO);
+			TextView senderTV = (TextView)_givenView.findViewById(R.id.sender);
+			senderTV.setText(senderInfo);
+		}
+	};
 }

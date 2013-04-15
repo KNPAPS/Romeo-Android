@@ -42,6 +42,7 @@ public class MainActivity extends BaseActivity {
 		return _sharedActivity;
 	}
 	
+	/*
 	@Override
 	protected void onNewIntent(Intent intent) {
 		Bundle b = intent.getExtras();
@@ -58,6 +59,7 @@ public class MainActivity extends BaseActivity {
 		}
 		
 	}
+	*/
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
