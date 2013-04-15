@@ -108,7 +108,7 @@ public class MemberManager {
 		Payload request = new Payload().setEvent(Event.User.getUserInfo())
 								.setData( data );
 		
-		Connection conn = new Connection().requestPayload(request).request();
+		Connection conn = new Connection().requestPayload(request).async(false).request();
 		Payload response = conn.getResponsePayload();
 		
 		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
@@ -122,7 +122,7 @@ public class MemberManager {
 												.idx((String)hm.get(KEY.DEPT.IDX))
 												.name((String)hm.get(KEY.DEPT.NAME))
 												.nameFull((String)hm.get(KEY.DEPT.FULL_NAME))
-												.sequence(Long.parseLong((String)hm.get(KEY.DEPT.SEQUENCE)))
+												.sequence(Long.parseLong(hm.get(KEY.DEPT.SEQUENCE)==null?"0":(String)hm.get(KEY.DEPT.SEQUENCE)))
 												.build();
 				
 				User user = new User.Builder()
