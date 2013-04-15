@@ -48,7 +48,6 @@ public class RoomFragment extends RomeoFragment {
 		
 		this.room = room; 
 		mHandler = new RoomHandler(RoomFragment.this);
-		listView = new ChatListView(getActivity(),room);
 		
 	}
 	/** @} */
@@ -71,9 +70,7 @@ public class RoomFragment extends RomeoFragment {
 		super.onResume();
 		ChatFragment.setCurrentRoom(this);
 
-
         getListView().refresh();
-        
 		
 		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
@@ -158,6 +155,7 @@ public class RoomFragment extends RomeoFragment {
 				switch(msg.what) {
 				case REFRESH:
 					roomFragment.getListView().refresh();
+					roomFragment.getListView().scrollToBottom();
 					break;
 				case SENDING_SUCCEED:
 					roomFragment.toast(1);
@@ -233,8 +231,7 @@ public class RoomFragment extends RomeoFragment {
 				msgOnFail.what = RoomHandler.SENDING_FAILED; 
 				msgOnFail.obj = chatHash;
 				mHandler.sendMessage(msgOnFail);
-			}
-			
+			}			
 			super.run();
 		}
 	}
@@ -341,7 +338,9 @@ public class RoomFragment extends RomeoFragment {
 				ChatFragment.chatFragment(room.type).listView.refresh();
 			}
 		});
-		
+
+		listView = (ChatListView) initListViewWithType(room.type, R.id.chatListView, view);
+		((ChatListView)listView).setRoom(room);
 		return view;
 	}
 }

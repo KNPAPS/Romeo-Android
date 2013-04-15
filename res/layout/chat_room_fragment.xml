@@ -9,7 +9,7 @@
         android:layout_weight="0.12"
         layout="@layout/navigation_bar" />
 
-	<ListView
+	<kr.go.KNPA.Romeo.Chat.ChatListView
 	    android:id="@+id/chatListView"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
@@ -22,7 +22,7 @@
 	    android:scrollingCache="true"
 	    android:stackFromBottom="false" >
 
-	</ListView>
+	</kr.go.KNPA.Romeo.Chat.ChatListView>
 
     <include layout="@layout/chat_input_bar" />
 

@@ -19,15 +19,7 @@ public class ChatListView extends RomeoListView {
 	 * Android layout edit tool 때문에 여러 개의 생성자를 만들어 놓음\n
 	 * 그렇지만 첫번째 생성자만 사용한다.
 	 * @{
-	 
-	/** 주로 사용하는 생성자
-	 * @param context
-	 * @param room
 	 */
-	public ChatListView( Context context, Room room ) { 
-		super(context);
-		this.room = room;
-	}
 	
 	public ChatListView(Context context, AttributeSet attrs) {
 		super(context,attrs);
