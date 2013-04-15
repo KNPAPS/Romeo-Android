@@ -1,18 +1,19 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import kr.go.KNPA.Romeo.RomeoListView;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.content.Context;
+import android.database.Cursor;
 import android.util.AttributeSet;
-import android.widget.ListView;
 
-public class ChatListView extends ListView {
+public class ChatListView extends RomeoListView {
 	// Constants
 	private final int NUMBER_OF_INITIAL_RECENT_ITEM = 10;
 	
 	// Variables
 	private Room room;
 	private int currentNumberOfRecentItem = NUMBER_OF_INITIAL_RECENT_ITEM;
-	private ChatListAdapter listAdapter;
-
+	
 	/**
 	 * @name Constructors
 	 * Android layout edit tool 때문에 여러 개의 생성자를 만들어 놓음\n
@@ -26,8 +27,6 @@ public class ChatListView extends ListView {
 	public ChatListView( Context context, Room room ) { 
 		super(context);
 		this.room = room;
-		listAdapter = new ChatListAdapter(getContext(), null, room.type);
-		this.setAdapter(listAdapter);
 	}
 	
 	public ChatListView(Context context, AttributeSet attrs) {
@@ -39,11 +38,8 @@ public class ChatListView extends ListView {
 	}
 	/**@}*/
 	
-	
 	public ChatListView setRoom(Room room) { this.room = room; return this; }
 	public Room getRoom(){ return this.room; } 
-	
-	
 	
 	public void increaseNumberOfItemsBy(int nItem) {
 		this.currentNumberOfRecentItem += nItem;
@@ -59,5 +55,31 @@ public class ChatListView extends ListView {
 		this.setSelectionFromTop(this.getCount(), 0);
 	}
 	
+	public ChatListView initWithType(int type){
+		listAdapter = new ChatListAdapter(getContext(),null,type);
+		this.setAdapter(listAdapter);
+		return this;
+	}
+
+	@Override
+	protected Cursor query() {
+		return query(NUMBER_OF_INITIAL_RECENT_ITEM);
+	}
+	
+	protected Cursor query( int nItems ) {
+		return DBProcManager.sharedManager(getContext())
+					.chat()
+					.getChatList(room.roomCode, 0, nItems);
+	}
+
+	@Override
+	public void onPreExecute() {
+		
+	}
+
+	@Override
+	public void onPostExecute(boolean isValidCursor) {
+		
+	}
 	
 }

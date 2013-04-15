@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
@@ -12,6 +14,7 @@ import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Document.DocumentListView;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceActivity;
-import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,18 +30,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /*
  * ChatFragment의 RoomListView 중 하나의 Cell을 누르면 RoomFragment로 진입하게 된다.
  */
-public class RoomFragment extends ListFragment {
+public class RoomFragment extends RomeoFragment {
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	private Handler mHandler;
-	private final int NUMBER_OF_INITIAL_RECENT_ITEM = 10;
-	ChatListAdapter mAdapter;
+	
 	/**
 	 * @name Constructor
 	 * @{
@@ -48,6 +48,8 @@ public class RoomFragment extends ListFragment {
 		
 		this.room = room; 
 		mHandler = new RoomHandler(RoomFragment.this);
+		listView = new ChatListView(getActivity(),room);
+		
 	}
 	/** @} */
 
@@ -63,12 +65,6 @@ public class RoomFragment extends ListFragment {
 	 * @name View Life-Cycle
 	 * @{
 	 */
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		setListAdapter(mAdapter);
-		
-	}
 	
 	@Override
 	public void onResume() {
@@ -76,10 +72,8 @@ public class RoomFragment extends ListFragment {
 		ChatFragment.setCurrentRoom(this);
 
 
-        Thread refreshThread = new RefreshThread(NUMBER_OF_INITIAL_RECENT_ITEM);
-        refreshThread.start();
+        getListView().refresh();
         
-		getListView().setSelectionFromTop(getListView().getCount(), 0);
 		
 		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
@@ -91,113 +85,6 @@ public class RoomFragment extends ListFragment {
 		ChatFragment.unsetCurrentRoom();
 	}
 	
-	/**
-	 * onCreateView 역할을 함
-	 */
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-		View view = inflater.inflate(R.layout.chat_room_fragment, container, false);
-        
-		//nav bar button setting 
-		OnClickListener lbbOnClickListener = new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				MainActivity.sharedActivity().toggle();
-			}
-		};
-		
-		OnClickListener rbbOnClickListener = new OnClickListener() {		
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
-				startActivity(intent);
-			}
-		};
-		
-		// Navigation Bar Initilize
-		Button lbb = (Button)view.findViewById(R.id.left_bar_button);
-		Button rbb = (Button)view.findViewById(R.id.right_bar_button);
-		
-		lbb.setVisibility(View.VISIBLE);
-		rbb.setVisibility(View.VISIBLE);
-		
-		lbb.setText(getString(R.string.menu));	
-		rbb.setText(getString(R.string.edit));
-		
-		TextView titleView = (TextView)view.findViewById(R.id.title);
-		titleView.setText(getString( this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle ));
-		
-		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
-		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
-		
-		// Room Setting
-		final EditText inputET = (EditText)view.findViewById(R.id.edit);
-		final Button submitBT = (Button)view.findViewById(R.id.submit);
-		
-		// 채팅 입력 창에 글씨 숫자에 따라 전송 버튼을 활성화/비활성화 하기 위한 Listener
-		inputET.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) 	{ /* 눌린 키 반영하기 전 */ }
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) 	{ /* 눌린 키 반영 후 */		}
-			
-			@Override
-			public void afterTextChanged(Editable s) {	/* 결과 */		
-				if(s.length() > 0) submitBT.setEnabled(true);
-				else	submitBT.setEnabled(false);
-			}
-		});
-		
-		/**
-		 * 채팅 전송 클릭리스너
-		 */
-		submitBT.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//채팅 input text
-				EditText et = inputET;
-				
-				if ( room.usersIdx.size() == 0 ) {
-					//TODO 리시버가 한 명도 없는 상태에서는 메세지 못 보냄
-					return;
-				}
-				
-				
-				if(room.roomCode ==null) {
-					// 만약 roomCode가 없다면 새로 만들어진 방이다.
-					ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
-					for(int i=0; i<room.usersIdx.size(); i++) {
-						userIdxs.add(room.usersIdx.get(i));
-					}
-					
-					// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
-					room.roomCode = Room.makeRoomCode(getActivity());
-					DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type, room.roomCode);
-				}
-				
-				String sender = UserInfo.getUserIdx(getActivity());
-				ArrayList<String> receivers = room.getUsersIdx(getActivity());	
-					
-				Chat newChat = Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT);
-				
-				Thread sendThread = new ChatSendThread(newChat);
-				sendThread.start();
-				
-				// reset input EditText
-				et.setText("");
-			
-//				// 뷰에 추가 (refresh)?
-//				getListView().refresh();
-//				getListView().scrollToBottom();
-//				ChatFragment.chatFragment(room.type).listView.refresh();
-			}
-		});
-		
-		return view;
-	}
-	
 	// Message Receiving
 	public void receive(Chat chat) {
 
@@ -206,8 +93,6 @@ public class RoomFragment extends ListFragment {
 			public void run() {
 				// 로드할 메시지 갯수를 하나 증가시킨만큼 다시 모두 불러오는 식으로 Refresh를 진행한다.
 
-				String s = new String();
-				
 			}
 		});
 			
@@ -272,29 +157,21 @@ public class RoomFragment extends ListFragment {
 				
 				switch(msg.what) {
 				case REFRESH:
-					Cursor cursor = (Cursor)msg.obj;
-					
-					if ( roomFragment.getListAdapter() == null ) {
-						roomFragment.mAdapter = new ChatListAdapter(roomFragment.getActivity(), cursor, roomFragment.room.type);
-						roomFragment.setListAdapter(roomFragment.mAdapter);						
-					} else {
-						roomFragment.mAdapter.changeCursor(cursor);
-						roomFragment.mAdapter.notifyDataSetChanged();
-					}
+					roomFragment.getListView().refresh();
 					break;
 				case SENDING_SUCCEED:
 					roomFragment.toast(1);
-					ViewGroup parent = (ViewGroup)roomFragment.getView();
-					View chatSending = parent.findViewWithTag(msg.obj).findViewById(R.id.chatSending);
-					int index = parent.indexOfChild(chatSending);
-					parent.removeView(chatSending);
-					
-					Button goUncheckersBtn = (Button)roomFragment.getActivity().getLayoutInflater().inflate(R.id.goUnchecked, parent, false);
-					
-				    parent.addView(goUncheckersBtn, index);
-					
-					roomFragment.getListView()
-								.setSelectionFromTop( roomFragment.getListView().getCount(), 0);
+//					ViewGroup parent = (ViewGroup)roomFragment.getView();
+//					View chatSending = roomFragment.getListView().findViewWithTag(msg.obj).findViewById(R.id.chatSending);
+//					int index = parent.indexOfChild(chatSending);
+//					parent.removeView(chatSending);
+//					
+//					Button goUncheckersBtn = (Button)roomFragment.getActivity().getLayoutInflater().inflate(R.id.goUnchecked, parent, false);
+//					
+//				    parent.addView(goUncheckersBtn, index);
+//					
+//					roomFragment.getListView()
+//								.setSelectionFromTop( roomFragment.getListView().getCount(), 0);
 					break;
 				case SENDING_FAILED:
 					roomFragment.toast(2);
@@ -303,27 +180,6 @@ public class RoomFragment extends ListFragment {
 
 			}
 			super.handleMessage(msg);
-		}
-	}
-	
-	private class RefreshThread extends Thread {
-		private int nItems;
-		public RefreshThread(int nItems) {
-			this.nItems = nItems;
-		}
-		@Override
-		public void run() {
-			//리스트뷰 커서 새로 불러오기
-			Cursor newCursor = DBProcManager.sharedManager(getActivity())
-								.chat()
-								.getChatList(room.roomCode, 0, nItems);
-
-			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
-			Message msgOnNewCursor = mHandler.obtainMessage();
-			msgOnNewCursor.what = RoomHandler.REFRESH; 
-			msgOnNewCursor.obj = newCursor;
-			mHandler.sendMessage(msgOnNewCursor);
-			super.run();
 		}
 	}
 	
@@ -351,7 +207,7 @@ public class RoomFragment extends ListFragment {
 								.chat()
 								.getChatList(chat.roomCode, 0, nItems+1);
 
-			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
+			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가1
 			Message msgOnNewCursor = mHandler.obtainMessage();
 			msgOnNewCursor.what = RoomHandler.REFRESH; 
 			msgOnNewCursor.obj = newCursor;
@@ -391,7 +247,101 @@ public class RoomFragment extends ListFragment {
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.room);
 		}
+	}
+
+	@Override
+	public ChatListView getListView() {
+		return (ChatListView) listView;
+	}
+	@Override
+	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.chat_room_fragment, container, false);
+        
+		//nav bar button setting 
+		OnClickListener lbbOnClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				MainActivity.sharedActivity().toggle();
+			}
+		};
 		
+		OnClickListener rbbOnClickListener = new OnClickListener() {		
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
+				startActivity(intent);
+			}
+		};
+
+		initNavigationBar(
+				container, 
+				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
+				true, 
+				true, 
+				R.string.menu, 
+				R.string.edit, 
+				lbbOnClickListener, 
+				rbbOnClickListener);
 		
+		// Room Setting
+		final EditText inputET = (EditText)view.findViewById(R.id.edit);
+		final Button submitBT = (Button)view.findViewById(R.id.submit);
+		
+		// 채팅 입력 창에 글씨 숫자에 따라 전송 버튼을 활성화/비활성화 하기 위한 Listener
+		inputET.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) 	{ /* 눌린 키 반영하기 전 */ }
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) 	{ /* 눌린 키 반영 후 */		}
+			
+			@Override
+			public void afterTextChanged(Editable s) {	/* 결과 */		
+				if(s.length() > 0) submitBT.setEnabled(true);
+				else	submitBT.setEnabled(false);
+			}
+		});
+		
+		/**
+		 * 채팅 전송 클릭리스너
+		 */
+		submitBT.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//채팅 input text
+				EditText et = inputET;
+				
+				if ( room.usersIdx.size() == 0 ) {
+					//TODO 리시버가 한 명도 없는 상태에서는 메세지 못 보냄
+					return;
+				}
+				
+				
+				if(room.roomCode ==null) {
+					// 만약 roomCode가 없다면 새로 만들어진 방이다.
+					ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
+					for(int i=0; i<room.usersIdx.size(); i++) {
+						userIdxs.add(room.usersIdx.get(i));
+					}
+					
+					// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
+					room.roomCode = Room.makeRoomCode(getActivity());
+					DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type, room.roomCode);
+				}
+				
+				String sender = UserInfo.getUserIdx(getActivity());
+				ArrayList<String> receivers = room.getUsersIdx(getActivity());	
+					
+				Chat newChat = Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT);
+				
+				new ChatSendThread(newChat).start();
+				
+				// reset input EditText
+				et.setText("");
+				ChatFragment.chatFragment(room.type).listView.refresh();
+			}
+		});
+		
+		return view;
 	}
 }

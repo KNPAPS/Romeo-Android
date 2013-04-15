@@ -92,6 +92,12 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		MainActivity.sharedActivity().pushContent(fragment);
 	}
 	/** @} */
+	@Override
+	public void onPreExecute() {
+	}
+	@Override
+	public void onPostExecute(boolean isValidCursor) {
+	}
 
 	
 	
