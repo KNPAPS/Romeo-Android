@@ -77,12 +77,11 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 
 	@Override
 	public void onPreExecute() {
-		// TODO Auto-generated method stub
-		
+		WaiterView.showDialog(getContext());
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-
+		WaiterView.dismiss(getContext());
 	}
 
 }

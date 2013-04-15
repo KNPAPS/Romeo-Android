@@ -5,7 +5,7 @@
     android:background="@drawable/waiter_dialog_background"
     android:orientation="vertical" >
     
-    <kr.go.KNPA.Romeo.test.WaiterView 
+    <kr.go.KNPA.Romeo.Util.WaiterView 
         android:layout_height="100dp"
         android:layout_width="100dp"
         android:layout_margin="20dp"
