@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class UserListActivity extends Activity {
 		
 		ListView lv = (ListView)view.findViewById(R.id.listView);
 		ArrayList<String> userIdxs = getIntent().getExtras().getStringArrayList(KEY_USERS_IDX);
+		
 	}
 
 	@Override

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
@@ -15,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.CursorAdapter;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -45,9 +53,9 @@ public class ChatListAdapter extends CursorAdapter {
 	}
 
 	@Override
-	public void bindView(View v, final Context context, Cursor c) {
+	public void bindView(final View v, final Context context, Cursor c) {
 		
-		String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
+		final String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
 		//챗 해쉬로 태그 설정
 		v.setTag(messageIdx);
 		
@@ -67,7 +75,7 @@ public class ChatListAdapter extends CursorAdapter {
 		ImageView	contentIV	= (ImageView)	v.findViewById(R.id.contentImage);
 		TextView 	arrivalDTTV		= (TextView) 	v.findViewById(R.id.arrivalDT);
 		
-		Button goUncheckedBT = (Button) v.findViewById(R.id.goUnchecked);
+		final Button goUncheckedBT = (Button) v.findViewById(R.id.goUnchecked);
 		
 		User sender = User.getUserWithIdx(senderIdx);
 		
@@ -88,9 +96,6 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
 
-
-		
-		
 		switch(chatStatus){
 		case Chat.STATE_SENDING:
 			WaiterView wv = new WaiterView(context);
@@ -104,29 +109,60 @@ public class ChatListAdapter extends CursorAdapter {
 			waiterViews.put(v.getTag().toString(),wv);
 			break;
 		case Chat.STATE_SUCCESS:
-			
-			if ( waiterViews.get(v.getTag().toString()) != null ) {
-				waiterViews.get(v.getTag().toString()).restoreView();
-			}
-			
-			final ArrayList<String> uncheckersIdxs = new ArrayList<String>();
-			//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
-			//;Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.chatType, messageIdx);
-			
-			goUncheckedBT.setOnClickListener(new OnClickListener() {
-				
+
+			final Handler handler = new Handler(){
+				@SuppressWarnings("unchecked")
 				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(context, UserListActivity.class);
+				public void handleMessage(Message msg) {
+					final ArrayList<String> uncheckersIdxs = (ArrayList<String>) msg.obj;
 					
-					Bundle b = new Bundle();
-					b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
-					intent.putExtras(b);
-					
-					context.startActivity(intent);
-					
+					goUncheckedBT.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							Intent intent = new Intent(context, UserListActivity.class);
+							
+							Bundle b = new Bundle();
+							b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
+							intent.putExtras(b);
+							
+							context.startActivity(intent);
+							
+						}
+					});
+					goUncheckedBT.setText( String.valueOf(uncheckersIdxs.size()) );
+					super.handleMessage(msg);
 				}
-			});
+			};
+			
+			new Thread(){
+				@Override
+				public void run() {
+					if ( waiterViews.get(v.getTag().toString()) != null ) {
+						waiterViews.get(v.getTag().toString()).restoreView();
+					}
+					
+					Payload request = new Payload().setEvent(Event.Message.getUncheckers()).setData(new Data().add(0, KEY.MESSAGE.TYPE, chatType).add(0, KEY.MESSAGE.IDX, messageIdx));
+					Connection conn = new Connection().requestPayload(request).async(false).request();
+					Payload response = conn.getResponsePayload();
+					
+					ArrayList<String> uncheckers = new ArrayList<String>();
+					if ( response.getStatusCode() == StatusCode.SUCCESS ){
+						Data respData = response.getData();
+						int nUncheckers = respData.size();
+						for(int i=0; i<nUncheckers; i++) {
+							uncheckers.add( (String)respData.get(i, KEY.USER.IDX) );
+						}	
+					}
+					Message msg = handler.obtainMessage();
+					msg.obj = uncheckers;
+					handler.sendMessage(msg);
+					
+					super.run();
+				}
+			}.start();
+			//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
+			
 			break;
 		case Chat.STATE_FAIL:
 			break;
