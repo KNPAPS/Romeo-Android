@@ -159,17 +159,7 @@ public class RoomFragment extends RomeoFragment {
 					break;
 				case SENDING_SUCCEED:
 					roomFragment.toast(1);
-//					ViewGroup parent = (ViewGroup)roomFragment.getView();
-//					View chatSending = roomFragment.getListView().findViewWithTag(msg.obj).findViewById(R.id.chatSending);
-//					int index = parent.indexOfChild(chatSending);
-//					parent.removeView(chatSending);
-//					
-//					Button goUncheckersBtn = (Button)roomFragment.getActivity().getLayoutInflater().inflate(R.id.goUnchecked, parent, false);
-//					
-//				    parent.addView(goUncheckersBtn, index);
-//					
-//					roomFragment.getListView()
-//								.setSelectionFromTop( roomFragment.getListView().getCount(), 0);
+					//roomFragment.getListView().findViewWithTag(msg.obj).;
 					break;
 				case SENDING_FAILED:
 					roomFragment.toast(2);
@@ -335,6 +325,7 @@ public class RoomFragment extends RomeoFragment {
 				
 				// reset input EditText
 				et.setText("");
+				// 방목록 refresh
 				ChatFragment.chatFragment(room.type).listView.refresh();
 			}
 		});

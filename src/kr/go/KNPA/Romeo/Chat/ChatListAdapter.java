@@ -1,18 +1,25 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,6 +59,8 @@ public class ChatListAdapter extends CursorAdapter {
 		ImageView	contentIV	= (ImageView)	v.findViewById(R.id.contentImage);
 		TextView 	arrivalDTTV		= (TextView) 	v.findViewById(R.id.arrivalDT);
 		
+		Button goUncheckedBT = (Button) v.findViewById(R.id.goUnchecked);
+		
 		User sender = User.getUserWithIdx(senderIdx);
 		
 		departmentTV.setText( sender.department.nameFull );
@@ -69,24 +78,26 @@ public class ChatListAdapter extends CursorAdapter {
 			contentTV.setVisibility(View.GONE);
 		}
 		
-//		final ArrayList<String> uncheckersIdxs = new ArrayList<String>();
-//		//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
-//		//;Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.chatType, messageIdx);
-//		
-//		goUncheckedBT.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(context, UserListActivity.class);
-//				
-//				Bundle b = new Bundle();
-//				b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
-//				intent.putExtras(b);
-//				
-//				context.startActivity(intent);
-//				
-//			}
-//		});
+		final ArrayList<String> uncheckersIdxs = new ArrayList<String>();
+		//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
+		//;Chat.getUncheckersIdxsWithMessageTypeAndIndex(this.chatType, messageIdx);
+		
+		goUncheckedBT.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(context, UserListActivity.class);
+				
+				Bundle b = new Bundle();
+				b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
+				intent.putExtras(b);
+				
+				context.startActivity(intent);
+				
+			}
+		});
+		
+
 	}
 	
 	@Override

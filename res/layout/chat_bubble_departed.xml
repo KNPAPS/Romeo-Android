@@ -52,13 +52,12 @@
         android:layout_marginTop="-5dp"
         android:layout_height="wrap_content" >
 
-        <ProgressBar
-            android:id="@+id/chatSending"
+        <Button
+            android:id="@+id/goUnchecked"
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="3dp"
-            android:layout_marginRight="4dp" />
+            android:background="@drawable/bubble_active" />
 
         <TextView
             android:id="@+id/arrivalDT"
@@ -89,7 +88,7 @@
             android:background="@drawable/chat_bubble_departed"
             android:scaleType="fitCenter"
             />
-
+                
     </LinearLayout>
 
 </LinearLayout>

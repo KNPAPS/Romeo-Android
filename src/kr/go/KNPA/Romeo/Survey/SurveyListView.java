@@ -71,5 +71,15 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 		SurveyAnswerFragment f = new SurveyAnswerFragment(survey, type);
 		MainActivity.sharedActivity().pushContent(f);
 	}
+	@Override
+	public void onPreExecute() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onPostExecute(boolean isValidCursor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

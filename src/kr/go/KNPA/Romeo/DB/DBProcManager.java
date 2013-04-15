@@ -481,6 +481,7 @@ public class DBProcManager {
 		 * @b COLUMN_CHAT_TS 채팅TS\n
 		 * @b COLUMN_CHAT_CONTENT 내용 \n
 		 * @b COLUMN_CHAT_CONTENT_TYPE 내용의 종류 @see{CHAT_CONTENT_TYPE_TEXT} @see{CHAT_CONTENT_TYPE_PICTURE}\n
+		 * @b COLUMN_CHAT_STATE 채팅 상태 @see{Chat.STATE_SENDING} @see{Chat.STATE_SUCCESS} @see{Chat.STATE_FAIL}\n
 		 * @param roomHash
 		 * @param TS 역순으로 정렬시 불러올 목록 시작 index
 		 * @param 불러올 채팅의 개수
@@ -495,6 +496,7 @@ public class DBProcManager {
 					DBSchema.CHAT.COLUMN_SENDER_IDX+COLUMN_CHAT_SENDER_IDX+", "+
 					DBSchema.CHAT.COLUMN_CREATED_TS+COLUMN_CHAT_TS+", "+
 					DBSchema.CHAT.COLUMN_CONTENT+COLUMN_CHAT_CONTENT+", "+
+					DBSchema.CHAT.COLUMN_STATE+COLUMN_CHAT_STATE+", "+
 					DBSchema.CHAT.COLUMN_CONTENT_TYPE+COLUMN_CHAT_CONTENT_TYPE+
 					" from "+DBSchema.CHAT.TABLE_NAME+
 					" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId)+
@@ -516,6 +518,7 @@ public class DBProcManager {
 		public static final String COLUMN_CHAT_TS = "created_ts";
 		public static final String COLUMN_CHAT_CONTENT = "chat_content";
 		public static final String COLUMN_CHAT_CONTENT_TYPE = "chat_content_type";
+		public static final String COLUMN_CHAT_STATE = "chat_state";
 		
 		public static final int CHAT_CONTENT_TYPE_TEXT = 1;
 		public static final int CHAT_CONTENT_TYPE_PICTURE = 2;

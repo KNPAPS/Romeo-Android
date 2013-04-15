@@ -43,6 +43,16 @@ public class MemberListView extends RomeoListView {
 		}
 		return this;
 	}
+	@Override
+	public void onPreExecute() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onPostExecute(boolean isValidCursor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 }

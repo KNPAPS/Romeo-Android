@@ -24,4 +24,14 @@ public class MemberFavoriteListView extends RomeoListView {
 	}
 	@Override
 	protected Cursor query() 	{	return DBProcManager.sharedManager(getContext()).member().getFavoriteList();	}
+	@Override
+	public void onPreExecute() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onPostExecute(boolean isValidCursor) {
+		// TODO Auto-generated method stub
+		
+	}
 }
