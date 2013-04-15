@@ -19,6 +19,7 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 
 	public IntroActivity() {
 		//super(R.string.changing_fragments);
+		
 		super();
 		_sharedActivity = this;	//?
 	}
@@ -49,14 +50,19 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.intro);
 
-		
-		Intent intent = getIntent();
-		targetModuleInfo = new Bundle();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Intent intent = getIntent();
+				targetModuleInfo = new Bundle();
 
-		Bundle b = intent.getExtras();
-		if(b != null) targetModuleInfo.putAll(b);
-		
-		checkRegistered();
+				Bundle b = intent.getExtras();
+				if(b != null) targetModuleInfo.putAll(b);
+				
+				checkRegistered();				
+			}
+		}).start();
 	}
 
 
@@ -148,18 +154,33 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 
 
 	private void startUserRegisterActivity() {
-		Intent intent = new Intent(IntroActivity.this, UserRegisterActivity.class);
-		if(targetModuleInfo != null)
-			intent.putExtras(targetModuleInfo);
-		startActivityForResult(intent, REQUEST_REGISTER_USER);
-		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Intent intent = new Intent(IntroActivity.this, UserRegisterActivity.class);
+				//if(targetModuleInfo != null)
+				//	intent.putExtras(targetModuleInfo);
+				startActivityForResult(intent, REQUEST_REGISTER_USER);
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+				
+			}
+		});
+		
 	}
 
 	private void startNotRegisteredActivity() {
-		Intent intent = new Intent(IntroActivity.this, NotRegisteredActivity.class);
-		startActivity(intent);
-		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-		finish();
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Intent intent = new Intent(IntroActivity.this, NotRegisteredActivity.class);
+				startActivity(intent);
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+				finish();
+			}
+		});
+		
 	}
 
 
@@ -171,20 +192,27 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 			startNotRegisteredActivity();
 	}
 	private void runApplication() {
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				/**
+				 * 모든 검증을 정상적으로 통과.
+				 * 메인 액티비티 시작 
+				 */
+				
+				Intent intent = null;
 
-		/**
-		 * 모든 검증을 정상적으로 통과.
-		 * 메인 액티비티 시작 
-		 */
-		
-		Intent intent = null;
+				intent = new Intent(IntroActivity.this, MainActivity.class);
+				intent.putExtras(targetModuleInfo);
 
-		intent = new Intent(IntroActivity.this, MainActivity.class);
-		intent.putExtras(targetModuleInfo);
+				startActivity(intent);
+				finish();
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
-		startActivity(intent);
-		finish();
-		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+				
+			}
+		});
 	}
 
 

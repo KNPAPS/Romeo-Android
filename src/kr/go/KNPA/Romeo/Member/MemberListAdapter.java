@@ -151,9 +151,6 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			siIV.setLayoutParams(lp);
 		}	
 		
-//		WaiterView waiter = (WaiterView)convertView.findViewById(R.id.waiter);
-//		waiter.setVisibility(View.INVISIBLE);
-		
 		return convertView;
 	}
 
