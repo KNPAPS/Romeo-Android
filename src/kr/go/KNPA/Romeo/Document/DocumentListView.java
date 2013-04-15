@@ -89,7 +89,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		WaiterView.dismiss(getContext());
+		WaiterView.dismissDialog(getContext());
 	}
 
 }

@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
-import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
-import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -45,6 +43,7 @@ class SurveyListAdapter extends CursorAdapter {
 		// Animation	// TODO
 		
 		final View _v = v;
+		WaiterView.showDialog(ctx);
 		new Thread(new Runnable() {
 			
 			@Override
@@ -75,20 +74,20 @@ class SurveyListAdapter extends CursorAdapter {
 				
 				message.what = WHAT_TITLE;
 				message.setData(b);
-				surveyHandler.sendMessage(message);
 				b.putString("title", survey.title);
+				surveyHandler.sendMessage(message);
 				b.clear();
 				
 				message.what = WHAT_OPENDT;
 				message.setData(b);
-				surveyHandler.sendMessage(message);
 				b.putString("openDT", Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.OPEN_TS), ctx.getString(R.string.formatString_openDT)) );
+				surveyHandler.sendMessage(message);
 				b.clear();
 				
 				message.what = WHAT_CLOSEDT;
 				message.setData(b);
-				surveyHandler.sendMessage(message);
 				b.putString("closeDT", Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.CLOSE_TS), ctx.getString(R.string.formatString_closeDT)) );
+				surveyHandler.sendMessage(message);
 				b.clear();
 				
 				
@@ -115,8 +114,24 @@ class SurveyListAdapter extends CursorAdapter {
 				} else if(subType == Survey.TYPE_RECEIVED) {
 					boolean isAnswered = survey.isAnswered(ctx);
 					
+					int answeredColor = ctx.getResources().getColor(R.color.black);
+					String answeredStatus = null;
+
+					if(isAnswered) {
+						answeredStatus 	= ctx.getString(R.string.statusAnswered);
+						answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
+					} else {
+						answeredStatus 	= ctx.getString(R.string.statusNotAnswered);
+						answeredColor 	= ctx.getResources().getColor(R.color.maroon);
+					}
 					
-					
+					b.clear();
+					b.putBoolean("isAnswered", isAnswered);
+					b.putInt("answeredColor", answeredColor);
+					b.putString("answeredStatus", answeredStatus);
+					b.putParcelable("survey", survey);
+					surveyHandler.sendMessage(message);
+					b.clear();
 				}
 		
 		
@@ -125,7 +140,7 @@ class SurveyListAdapter extends CursorAdapter {
 		});
 		
 		
-		
+		WaiterView.dismissDialog(ctx);
 	}
 
 	@Override
@@ -173,37 +188,32 @@ class SurveyListAdapter extends CursorAdapter {
 			case WHAT_UNCHECKERS : 
 				break;
 			case WHAT_IS_ANSWERED : 
-				boolean isAnswered;
-				
 				//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
+				boolean isAnswered = msg.getData().getBoolean("isAnswered");
+				String answeredStatus = msg.getData().getString("answeredStatus");
+				int answeredColor = msg.getData().getInt("answeredColor");
+				final Survey survey = msg.getData().getParcelable("survey");
 				Button goResultBT = (Button)v.findViewById(R.id.goResult);
-				String answeredStatus = null;
+
+				if(isAnswered) {
+					
+					goResultBT.setOnClickListener( new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							SurveyResultFragment f = new SurveyResultFragment(survey, subType);
+							MainActivity.sharedActivity().pushContent(f);
+						}
+					});
+					
+				} else {	
+				}
 				
-//				int answeredColor = ctx.getResources().getColor(R.color.black);
-//				
-//				if(isAnswered) {	// TODO DB
-//					answeredStatus 	= ctx.getString(R.string.statusAnswered);
-//					answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
-//					
-//					goResultBT.setOnClickListener( new OnClickListener() {
-//						@Override
-//						public void onClick(View v) {
-//							Survey survey = new Survey(ctx, c);
-//							
-//							SurveyResultFragment f = new SurveyResultFragment(survey, subType);
-//							MainActivity.sharedActivity().pushContent(f);
-//						}
-//					});
-//					
-//				} else {
-//					answeredStatus 	= ctx.getString(R.string.statusNotAnswered);
-//					answeredColor 	= ctx.getResources().getColor(R.color.maroon);
-//				}
-//				
-//				goResultBT.setText(answeredStatus);
-//				goResultBT.setTextColor(answeredColor);
-			break;
+				goResultBT.setText(answeredStatus);
+				goResultBT.setTextColor(answeredColor);
+				
+				break;
 			}
+			
 			
 		};
 	};

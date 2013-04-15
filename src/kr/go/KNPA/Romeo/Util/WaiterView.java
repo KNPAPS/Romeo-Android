@@ -51,7 +51,7 @@ public class WaiterView extends ImageView {
 		_waiterDialog.show();
     }
     
-    public static void dismiss(Context context) {
+    public static void dismissDialog(Context context) {
     	if(_waiterDialog == null)
     		return;
     	_waiterDialog.dismiss();

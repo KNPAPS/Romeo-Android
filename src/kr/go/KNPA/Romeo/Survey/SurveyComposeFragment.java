@@ -393,7 +393,7 @@ public class SurveyComposeFragment extends Fragment {
 		InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		im.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 		
-		WaiterView.dismiss(getActivity());
+		WaiterView.dismissDialog(getActivity());
 		
 		MainActivity.sharedActivity().popContent();
 	}
