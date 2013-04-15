@@ -25,11 +25,12 @@
         android:text="Department"
         android:textColor="@color/text"
         android:textSize="16sp" />
-
+<!-- 
     <kr.go.KNPA.Romeo.Util.WaiterView
         android:id="@+id/waiter"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginRight="70dp"
-        android:layout_gravity="center" />    
+        android:layout_gravity="center" />
+        -->    
 </LinearLayout>
