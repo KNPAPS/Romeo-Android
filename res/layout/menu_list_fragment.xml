@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_background" >
+
+    <LinearLayout
+        android:orientation="horizontal" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_bar" >
+	<EditText
+	    android:id="@+id/edit"
+	    android:layout_gravity="top"
+	    android:layout_weight="1"
+	    android:layout_width="0dp"
+	    android:layout_height="@dimen/menu_searchbar_height"
+	    android:layout_margin="@dimen/menu_searchbar_margin"
+	    android:hint="@string/placehold_search"
+	    android:textSize="@dimen/menu_list_cell_fontsize" >
+	</EditText>
+
+	<Button
+	    android:id="@+id/cancel"
+	    android:layout_width="wrap_content"
+	    android:layout_height="36dp"
+	    android:layout_margin="2dp"
+	    android:minWidth="40dp"
+	    android:background="@color/light"
+	    android:visibility="gone"
+	    android:text="@string/cancel" />
+
+	</LinearLayout>
+	<include
+	    android:id="@+id/user_profile" 
+	    layout="@layout/member_favorite_user_cell" />
+	<!-- 
+	<ListView 
+	    android:id="@android:id/list"
+	    android:layout_gravity="bottom"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingLeft= "@dimen/list_padding"
+	    android:paddingRight="@dimen/list_padding" 
+	    android:background="@drawable/menu_background"
+	    android:divider="#80010101"
+	    android:scaleType="centerCrop"
+	    android:cacheColorHint="#00000000" />
+	     -->
+	<RelativeLayout
+	    android:id="@+id/lists"
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1" > 
+	    
+		<ExpandableListView
+		    android:layout_alignLeft="@id/lists"
+		    android:layout_alignTop="@id/lists" 
+		    android:id="@android:id/list"
+		    android:layout_gravity="bottom"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    
+		    android:paddingLeft= "@dimen/list_padding"
+		    android:paddingRight="@dimen/list_padding" 
+		    
+		    android:divider="#80010101"
+		    android:dividerHeight="1dp"
+		    android:groupIndicator="@null" 
+		     
+		    android:headerDividersEnabled="true"
+		    android:footerDividersEnabled="true"
+		    android:scrollingCache="false"
+		    android:cacheColorHint="#00000000"
+		    android:drawSelectorOnTop="true" />
+		
+		<ListView 
+		    
+	        android:layout_alignLeft="@id/lists"
+	        android:layout_alignTop="@id/lists"
+	        android:id="@+id/searchList"
+	        android:divider="#80010101"
+		    android:dividerHeight="1dp"
+		    android:groupIndicator="@null"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:headerDividersEnabled="true"
+		    android:footerDividersEnabled="true"
+	        android:scrollingCache="false"
+	        android:visibility="invisible"
+	        android:cacheColorHint="#00000000"
+	        android:drawSelectorOnTop="true" />
+	    
+	</RelativeLayout>
+</LinearLayout>

@@ -16,6 +16,7 @@ import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserProfileFragment;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
@@ -27,17 +28,26 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 
@@ -46,38 +56,62 @@ public class MenuListFragment extends ListFragment {
 	private List<Map<String, String>> gData;
 	private List<List<Map<String, String>>> cData;
 	
+	private LinearLayout userLL;
+	private View searchBar;
+	private EditText searchET;
+	private Button cancelSearchBT;
+	private ExpandableListView menuList;
+	private ListView searchList;
+	
 	private SimpleSectionAdapter<MenuListItem> sectionAdapter; 
+	private BaseAdapter emptyAdapter = new BaseAdapter() {	
+		@Override	public int getCount() {	return 0;	}
+		@Override	public Object getItem(int arg0) {	return null;	}
+		@Override	public long getItemId(int arg0) {	return 0;	}
+		@Override	public View getView(int arg0, View arg1, ViewGroup arg2) {	return null; }	
+	};
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.menu_list, null);
+		View v = inflater.inflate(R.layout.menu_list_fragment, null);
 		
-		//// 간단 프로필 출력!!
-		LinearLayout userLL = (LinearLayout) v.findViewById(R.id.favorite_user_cell);
-		//userLL.setBackgroundResource(android.R.color.transparent);
+		////////////////////////
+		//// 간단 프로필 출력!!	//
+		//////////////////////
+		userLL = (LinearLayout) v.findViewById(R.id.user_profile);
 		userLL.setBackgroundResource(R.drawable.menu_user_info_box);
+		
 		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
-		//userPicIV.setImageResource(R.drawable.user_pic_default);
 		new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, UserInfo.getUserIdx(getActivity()), userPicIV);
+		
 		TextView rankTV = (TextView)v.findViewById(R.id.rank);
 		rankTV.setTextColor(Color.WHITE);
 		rankTV.setText(User.RANK[UserInfo.getRank(getActivity())]);
+		
 		TextView departmentTV = (TextView)v.findViewById(R.id.department);
 		departmentTV.setText(UserInfo.getDepartment(getActivity()));
 		departmentTV.setTextColor(Color.WHITE);
+		
 		TextView nameTV = (TextView)v.findViewById(R.id.name);
 		nameTV.setText(UserInfo.getName(getActivity()));
 		nameTV.setTextColor(Color.WHITE);
+		
 		TextView roleTV = (TextView)v.findViewById(R.id.role);
 		roleTV.setText("");
 		roleTV.setTextColor(Color.WHITE);
 		
 		userLL.setOnClickListener(new OnClickListener() {
-			
+		
 			@Override
 			public void onClick(View v) {
 				UserProfileFragment profile = new UserProfileFragment();
 				MainActivity.sharedActivity().switchContent(profile);
 			}
 		});
+		
+		///////////////
+		// MENU LIST //
+		///////////////
+		
 		
 		List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
         List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
@@ -143,14 +177,109 @@ public class MenuListFragment extends ListFragment {
 						R.layout.menu_list_cell_item, 
 						new String[] {"title", "code"},// "iconImage" } , 
 						new int[] {R.id.cell_title, R.id.cell_code}// R.id.cell_icon,}
-						);
-		ExpandableListView elv = (ExpandableListView)v.findViewById(android.R.id.list);
-		elv.setAdapter(adapter);
-		elv.setOnGroupClickListener(adapter);
-		elv.setOnChildClickListener(adapter);
+					);
+		
+
+		menuList = (ExpandableListView)v.findViewById(android.R.id.list);
+		menuList.setAdapter(adapter);
+		menuList.setOnGroupClickListener(adapter);
+		menuList.setOnChildClickListener(adapter);
+		
+		
+		/////////////////
+		// Search List //
+		/////////////////
+		searchList = (ListView)v.findViewById(R.id.searchList);
+		searchList.setAdapter(emptyAdapter);
+		
+		////////////////
+		// Search Bar //
+		////////////////
+		
+		searchBar = v.findViewById(R.id.search_bar);
+		searchET = (EditText)searchBar.findViewById(R.id.edit);
+		cancelSearchBT = (Button)searchBar.findViewById(R.id.cancel);
+		
+		searchET.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				setSearchMode(hasFocus);
+			};
+		});
+		
+		searchET.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				setSearchMode(true);
+			}
+		});
+		
+		searchET.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				
+				if(keyCode == KeyEvent.KEYCODE_ENTER) {
+					searchResult();
+				}
+				return true;
+			}
+		});
+		
+		cancelSearchBT.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				searchET.setText("");
+				searchET.clearFocus();
+				searchList.setAdapter(emptyAdapter);
+				InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+				im.hideSoftInputFromWindow(searchET.getWindowToken(), 0);
+			}
+		});
+		
+		
 		return v;
 	}
 
+	private void setSearchMode(boolean willSearchMode) {
+		if(willSearchMode == true) {
+			cancelSearchBT.setVisibility(View.VISIBLE);
+			searchList.setVisibility(View.VISIBLE);
+			menuList.setVisibility(View.INVISIBLE);
+		} else {
+			cancelSearchBT.setVisibility(View.GONE);
+			searchList.setVisibility(View.INVISIBLE);
+			menuList.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	private void searchResult() {
+		String keyword = searchET.getText().toString().trim();
+		
+		// TODO : 각 섹션별로 정보 얻어오기
+		// TODO : 얻어온 정보들을 ArrayList로 만들기
+		
+		// TODO : SimpleSectionList
+		/*
+		BaseAdapter listAdapter = new BaseAdater();
+		
+		Sectionizer<T> sectionizer = new Sectionizer<T>() {
+			
+		};
+		
+		SimpleSectionAdapter<Object> resultAdapter = 
+				new SimpleSectionAdapter<Object>(
+													getActivity(), 
+													listAdapter, 
+													R.layout.section_header, R.id.cell_title,
+													sectionizer
+												);
+		*/
+	}
+	
 	class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements OnGroupClickListener, OnChildClickListener {
 
 		public ExpandableMenuListAdapter(
@@ -272,6 +401,8 @@ public class MenuListFragment extends ListFragment {
 		}
 	
 	}
+	
+	
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		/*

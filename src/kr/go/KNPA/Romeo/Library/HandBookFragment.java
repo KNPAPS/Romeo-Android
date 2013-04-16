@@ -4,11 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Util.CollectionFactory;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -24,9 +31,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class HandBookFragment extends Fragment {
 	private final static String BASE_PATH = "handbook"; 
@@ -84,7 +96,27 @@ public class HandBookFragment extends Fragment {
 				MainActivity.sharedActivity().toggle();
 			}
 		}; 
-		initNavigationBar(view, "현장매뉴얼", true, false, "메뉴", "", lbbOnClickListener, null);
+		
+		OnClickListener rbbOnClickListener = new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// AlertDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
+				ContentsListAdapter contentsAapter = new ContentsListAdapter();
+				ExpandableListView contentsView = new ExpandableListView(getActivity());
+				contentsView.setAdapter(contentsAapter);
+				contentsView.setOnGroupClickListener(contentsAapter);
+				contentsView.setOnChildClickListener(contentsAapter);
+				AlertDialog contents = new AlertDialog.Builder(getActivity())
+													  .setCancelable(true)
+													  .setTitle("집회시위 현장매뉴얼")
+													  .setView(contentsView)
+													  //.setAdapter((ListAdapter) contentsAapter, contentsAapter)
+													  .show();
+				
+			}
+		};
+		initNavigationBar(view, "현장매뉴얼", true, true, "메뉴", "목자", lbbOnClickListener, rbbOnClickListener);
 		
 		pager = (ViewPager)view.findViewById(R.id.pager);
 		pager.setAdapter(new HandBookAdapter());
@@ -98,6 +130,153 @@ public class HandBookFragment extends Fragment {
 		
 		
 		return view;
+	}
+	
+	private class ContentsListAdapter implements ExpandableListAdapter, OnGroupClickListener, OnChildClickListener {
+		List<Map<String, String>> groupData;
+		List<List<Map<String, String>>> childData;
+		
+		public ContentsListAdapter() {
+			groupData = new ArrayList<Map<String, String>>();
+			
+			groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"제1장 집회시위 관리 지침") );
+			groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"제2장 유형별 법규 적용") );
+			groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"제3장 관련법령 요약 해설") );
+			groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"제4장 집회시위 관리 지침") );
+			groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"제5장 집회시위 관리 지침") );
+			groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"참고") );
+			
+	        childData = new ArrayList<List<Map<String, String>>>();
+	        
+	        List<Map<String, String>> listItem = null;
+	        
+			listItem = new ArrayList<Map<String, String>>();
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"-"));
+			childData.add(listItem);
+			
+			listItem = new ArrayList<Map<String, String>>();
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"A. 단순 몸싸움"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"B. 도로점거 시위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"C. 상징물 소훼"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"D. 1인 시위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"E. 변형된 1인 시위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"F. 문화제,기자회견 등 빙자 불법집회"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"G. 불시 항의방문 및 시설점거 농성"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"H. 금지통고된 집회 상경 또는 집결 차단"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"I. 차량시위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"J. 돌,쇠파이프 및 피켓 등 사용 공격"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"K. 차벽 손괴,방화,전도"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"L. 고공 시위,농성"));
+			childData.add(listItem);
+			
+			listItem = new ArrayList<Map<String, String>>();
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"1. 집시법상 위반행위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"2. 집시법률 처벌 규정 요약"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"3. 시위유형별 위반행위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"4. 집회장소별 위반행위"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"5. 즉결심판 가능한 경미범죄 유형"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"6. 주요행위별 적용 가능 법령"));
+			childData.add(listItem);
+			
+			listItem = new ArrayList<Map<String, String>>();
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"-"));
+			childData.add(listItem);
+			
+			listItem = new ArrayList<Map<String, String>>();
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"-"));
+			childData.add(listItem);
+			
+			listItem = new ArrayList<Map<String, String>>();
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"집회시위 안전관리수칙"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"분사기 운용지침"));
+			listItem.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"물포 운용지침"));
+			childData.add(listItem);
+		}
+		
+	
+		@Override	public boolean areAllItemsEnabled() {	return true;	}
+		@Override	public Object getChild(int groupPosition, int childPosition) {	return childData.get(groupPosition).get(childPosition);	}
+		@Override	public long getChildId(int groupPosition, int childPosition) {	return getChild(groupPosition, childPosition).hashCode();	}
+		@Override	public int getChildrenCount(int groupPosition) {	return childData.get(groupPosition).size();	}
+		@Override	public long getCombinedChildId(long groupId, long childId) {	return ((groupId + childId)+"").hashCode();		}
+		@Override	public long getCombinedGroupId(long groupId) {	return (groupId + "").hashCode();	}
+		@Override	public Object getGroup(int groupPosition) {	return groupData.get(groupPosition);	}
+		@Override	public int getGroupCount() {	return groupData.size();	}
+		@Override	public long getGroupId(int groupPosition) {	return getGroup(groupPosition).hashCode();	}
+		@Override	public boolean hasStableIds() {	return false;	}
+		@Override	public boolean isChildSelectable(int groupPosition, int childPosition) {	return true;	}
+		@Override	public boolean isEmpty() {	return false;	}
+	
+		
+		@Override
+		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+			HashMap<String, String> child = (HashMap<String, String>)getChild(groupPosition, childPosition);
+			convertView  = ((LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+										.inflate(R.layout.dialog_menu_cell, parent, false);
+			
+			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
+			titleTV.setText(child.get("title"));
+			return convertView;
+		}
+		
+		@Override
+		public View getGroupView(int groupPosition, boolean isExpanded,	View convertView, ViewGroup parent) {
+			HashMap<String, String> group = (HashMap<String, String>)getGroup(groupPosition);
+			convertView  = ((LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+					.inflate(R.layout.dialog_menu_cell, parent, false);
+			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
+			titleTV.setText(group.get("section"));
+			return convertView;
+		}
+		
+		@Override	public void onGroupCollapsed(int groupPosition) {}
+		@Override	public void onGroupExpanded(int groupPosition) {}
+		@Override	public void registerDataSetObserver(DataSetObserver observer) {}
+		@Override	public void unregisterDataSetObserver(DataSetObserver observer) {}
+
+		@Override
+		public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+			int count = getCountUntilGroup(groupPosition);
+			switch(groupPosition) {
+				case 1 :	// 제2장 유형별 법규 적용		(14)
+				case 2 :	// 제3장 관련법령 요약 해설	(6)
+				case 5 :	// 참고 (3)
+					pager.setCurrentItem(count+childPosition+childPosition);
+					return true;
+			}
+			
+			return false;
+		}
+
+
+		@Override
+		public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+			int count = getCountUntilGroup(groupPosition);
+			switch(groupPosition) {
+			
+			case 1 :	// 제2장 유형별 법규 적용		(14)
+			case 2 :	// 제3장 관련법령 요약 해설	(6)
+			case 5 :	// 참고 (3)
+				return false;
+				
+			case 0 :	// 제1장 집회시위 관리 지침	(0)
+			case 3 :	// 제4장 집회시위 관리 지침	(0)
+			case 4 :	// 제5장 집회시위 관리 지침	(0)
+			default:
+				pager.setCurrentItem(count, true);
+				return true;	
+			}
+			
+		}
+		
+		private int getCountUntilGroup(int groupPosition) {
+			int count = 0;
+			for(int i=0; i<groupPosition; i++) {
+				count += childData.get(groupPosition).size();
+			}
+			return count;
+		}
+		
 	}
 	
 	public static int calculateInSampleSize(
