@@ -27,7 +27,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	
 	private Context context;
 	private CellNode _rootNode;
-	
+	  
 	public int type = User.NOT_SPECIFIED;
 	
 	// related with SEARCH
