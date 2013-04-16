@@ -26,7 +26,7 @@ public class Event {
 	public static final String DEVICE_UNREGISTER="DEVICE:UNREGISTER";/*!<기기 등록 해제*/
 	
 	//! 유저 검색
-	public static final String SEARCH_USER="SERACH:USER";
+	public static final String SEARCH_USER="SEARCH:USER";
 	
 	//! 이미지 파일 업로드
 	public static final String UPLOAD_IMAGE="UPLOAD:IMAGE";

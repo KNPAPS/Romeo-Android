@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/light" 
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
     android:layout_width="match_parent">
     
 	<RelativeLayout 
+	    android:layout_gravity="center_vertical"
 	    android:layout_weight="1"
 	    android:layout_width="0dp"
 	    android:layout_height="wrap_content" >
@@ -42,5 +43,17 @@
         android:minWidth="48dp"
         android:enabled="false"
 	    android:text="@string/search" />
+	
+	<Button
+	    android:id="@+id/cancel"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:textColor="@color/gray"
+        android:background="@color/lighter"
+        android:layout_marginTop="@dimen/gapSmall"
+        android:layout_marginBottom="@dimen/gapSmall"
+        android:layout_marginRight="@dimen/gapSmall"
+        android:minWidth="48dp"
+	    android:text="@string/cancel" />
 
 </LinearLayout>

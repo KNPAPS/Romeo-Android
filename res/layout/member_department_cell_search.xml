@@ -5,9 +5,35 @@
     android:layout_height="60dp"
     android:background="@color/lighter"
     android:padding="11dp" >
-    
+    <!-- 
     <include layout="@layout/member_department_cell" />
-
+-->
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="60dp"
+	    android:orientation="horizontal" 
+	    android:background="@color/lighter"
+	    android:padding="11dp" >
+	
+	    <ImageView
+	        android:id="@+id/sub_indicator"
+	        android:layout_width="11dp"
+	        android:layout_height="11dp"
+	        android:layout_gravity="center_vertical"
+	        android:layout_marginLeft="0dp"
+	        android:src="@drawable/sub_indicator" />
+	
+	    <TextView
+	        android:id="@+id/title"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+	        android:layout_marginLeft="2dp"
+	        android:layout_weight="1"
+	        android:text="Department"
+	        android:textColor="@color/text"
+	        android:textSize="16sp" />
+	</LinearLayout>
     <Button
         android:id="@+id/control"
         android:layout_width="32dp"

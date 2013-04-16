@@ -76,11 +76,13 @@ public class MemberManager {
 			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
 				HashMap<String,Object> hm = response.getData().get(0);
 				
-				Department dep = new Department.Builder()
-												.idx((String)hm.get(KEY.DEPT.IDX))
-												.name((String)hm.get(KEY.DEPT.NAME))
-												.nameFull((String)hm.get(KEY.DEPT.FULL_NAME))
-												.build();
+				Department dep = new Department(
+													(String)hm.get(KEY.DEPT.IDX), 
+													(String)hm.get(KEY.DEPT.NAME), 
+													(String)hm.get(KEY.DEPT.FULL_NAME), 
+													null, 
+													Department.NOT_SPECIFIED
+												);
 				
 				user = new User.Builder()
 									.idx((String)hm.get(KEY.USER.IDX))
@@ -118,12 +120,13 @@ public class MemberManager {
 			for(int i=0; i<responseData.size(); i++) {
 				HashMap<String,Object> hm = response.getData().get(i);
 				
-				Department dep = new Department.Builder()
-												.idx((String)hm.get(KEY.DEPT.IDX))
-												.name((String)hm.get(KEY.DEPT.NAME))
-												.nameFull((String)hm.get(KEY.DEPT.FULL_NAME))
-												.sequence(Long.parseLong(hm.get(KEY.DEPT.SEQUENCE)==null?"0":(String)hm.get(KEY.DEPT.SEQUENCE)))
-												.build();
+				Department dep = new Department(
+													(String)hm.get(KEY.DEPT.IDX), 
+													(String)hm.get(KEY.DEPT.NAME), 
+													(String)hm.get(KEY.DEPT.FULL_NAME), 
+													null, 
+													Long.parseLong(hm.get(KEY.DEPT.SEQUENCE)==null?"0":(String)hm.get(KEY.DEPT.SEQUENCE))
+												);
 				
 				User user = new User.Builder()
 									.idx((String)hm.get(KEY.USER.IDX))
@@ -181,15 +184,13 @@ public class MemberManager {
 			
 			Data respData = response.getData();
 			
-			department = new Department.Builder()
-											.idx((String)reqData.get(0, KEY.DEPT.IDX))
-											.name((String)reqData.get(0, KEY.DEPT.NAME))
-											.nameFull((String)reqData.get(0, KEY.DEPT.FULL_NAME))
-											.parentIdx((String)reqData.get(0, KEY.DEPT.PARENT_IDX))
-											.sequence( (String)respData.get(0, KEY.DEPT.SEQUENCE) )
-											.build();
+			department = new Department(
+											(String)reqData.get(0, KEY.DEPT.IDX), 
+											(String)reqData.get(0, KEY.DEPT.NAME), 
+											(String)reqData.get(0, KEY.DEPT.FULL_NAME), 
+											(String)reqData.get(0, KEY.DEPT.PARENT_IDX), 
+											(String)respData.get(0, KEY.DEPT.SEQUENCE));
 											
-
 		} else {
 			//TODO status 코드에 따라서 상황 처리	
 		}
@@ -226,13 +227,13 @@ public class MemberManager {
 			
 			
 			for ( int i=0; i<nDeps; i++ ) {
-				Department dep = new Department.Builder()
-												.idx((String)respData.get(i, KEY.DEPT.IDX))
-												.name((String)respData.get(i, KEY.DEPT.NAME))
-												.nameFull((String)respData.get(i, KEY.DEPT.FULL_NAME))
-												.parentIdx((String)respData.get(i, KEY.DEPT.PARENT_IDX))
-												.sequence( (String)respData.get(i, KEY.DEPT.SEQUENCE) )
-												.build();
+				Department dep = new Department(
+													(String)respData.get(i, KEY.DEPT.IDX), 
+													(String)respData.get(i, KEY.DEPT.NAME), 
+													(String)respData.get(i, KEY.DEPT.FULL_NAME), 
+													(String)respData.get(i, KEY.DEPT.PARENT_IDX), 
+													(String)respData.get(i, KEY.DEPT.SEQUENCE)
+												);
 
 				cacheDepartment(dep);
 				
