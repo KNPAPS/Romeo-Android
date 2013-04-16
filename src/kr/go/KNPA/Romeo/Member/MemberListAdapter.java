@@ -332,6 +332,10 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		// 클릭된 셀의 position을 이용하여 indexpath를 알아낸다.
 		
 		//final WaiterView waiter = (WaiterView)view.findViewById(R.id.waiter);
+		
+		if(type == User.TYPE_MEMBERLIST ){// || type == User.TYPE_MEMBERLIST_SEARCH) {
+			position = position-1;
+		}
 		IndexPath path = getIndexPathFromPosition(position);
 		//IndexPath.Iterator itr = new IndexPath.Iterator(path);
 

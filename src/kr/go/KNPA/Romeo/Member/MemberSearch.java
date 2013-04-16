@@ -162,6 +162,11 @@ public class MemberSearch extends Activity {
 		}
 		//result.addAll(fromFavoriteList);
 		
+		if(result.size() < 1) {
+			Toast.makeText(this, "수신자가 선택되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			return ; 
+		}
+		
 		Bundle b = new Bundle();
 		b.putStringArrayList(KEY_RESULT_USERS_IDX, result);
 		

@@ -40,7 +40,11 @@ public class User implements Parcelable{
 	}
 
 	public User(String idx, String name, int rank, String role, Department department) {
-		
+		this.idx = idx;
+		this.name = name;
+		this.rank = rank;
+		this.role = role;
+		this.department = department;
 	}
 	public static class Builder {
 		public	String		_idx 		= 	null;

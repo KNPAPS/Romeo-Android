@@ -22,60 +22,22 @@ public class Department implements Parcelable{
 		readFromPalcel(source);
 	}
 
-	public static class Builder {
-		private String idx;
-		private long sequence;
-		private String name;
-		private String nameFull;
-		private String parentIdx;
-		
-		public Builder idx(String idx) {
-			this.idx = idx;
-			return this;
-		}
-		
-		public Builder sequence(String _sequence) {
-			if(_sequence != null)
-				try {
-					this.sequence = Long.parseLong(_sequence);
-				} catch (NumberFormatException e) {
-					this.sequence =  NOT_SPECIFIED;
-				}
-			return this;
-		}
-		
-		public Builder sequence(long sequence) {
-			this.sequence = sequence;
-			return this;
-		}
-		
-		public Builder name(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		public Builder nameFull(String nameFull) {
-			this.nameFull = nameFull;
-			return this;
-		}
-		
-		public Builder parentIdx(String parentIdx) {
-			this.parentIdx = parentIdx;
-			return this;
-		}
-		
-		public Department build() {
-			Department department = new Department();
-			department.sequence = this.sequence;
-			department.name = this.name;
-			department.idx = this.idx;
-			department.nameFull = this.nameFull;
-			department.parentIdx = this.parentIdx;
-			
-			return department;
-		}
+	public Department(String idx, String name, String nameFull, String parentIdx, long sequence) {
+		this.idx = idx;
+		this.sequence = sequence;
+		this.name = name;
+		this.nameFull = nameFull;
+		this.parentIdx = parentIdx;
 	}
-
+	
+	public Department(String idx, String name, String nameFull, String parentIdx, String sequence) {
+		this(idx, name, nameFull, parentIdx, Long.parseLong(sequence));
+	}
+	
+	public Department(String idx, String name, String nameFull, String parentIdx) {
+		this(idx, name, nameFull, parentIdx, NOT_SPECIFIED);
+	}
+	
 	// TODO UserRegisterEditView 에서 Spinner 기본값이 자꾸 Class .toString으로 뜨길래
 	@Override
 	public String toString() {

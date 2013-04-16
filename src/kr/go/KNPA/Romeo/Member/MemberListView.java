@@ -1,9 +1,13 @@
 package kr.go.KNPA.Romeo.Member;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -15,11 +19,15 @@ import android.database.Cursor;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -54,7 +62,6 @@ public class MemberListView extends RomeoListView {
 			this.addHeaderView(searchBar);
 			
 			final EditText searchET = (EditText)searchBar.findViewById(R.id.edit);
-			final Button clearBT = (Button)searchBar.findViewById(R.id.clearEdit);
 			final Button submitBT = (Button)searchBar.findViewById(R.id.submit);
 			
 			searchET.addTextChangedListener(new TextWatcher() {
@@ -69,8 +76,22 @@ public class MemberListView extends RomeoListView {
 					if(s.length() > 0) submitBT.setEnabled(true);
 					else	submitBT.setEnabled(false);
 				}
+			
 			});
 			
+			final Button cancelBT = (Button)searchBar.findViewById(R.id.cancel);
+			cancelBT.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View view) {
+					if(getAdapter().equals(listAdapter) == false) {
+						setAdapter(listAdapter);
+						listAdapter.notifyDataSetChanged();
+					}
+				}
+			});
+			
+			final Button clearBT = (Button)searchBar.findViewById(R.id.clearEdit);
 			clearBT.setOnClickListener(new OnClickListener() {
 				
 				@Override
@@ -80,18 +101,25 @@ public class MemberListView extends RomeoListView {
 			});
 			
 			submitBT.setOnClickListener(goSearch);
+			
+			
 		}
 		
 		switch(this.subType) {
 			case User.TYPE_MEMBERLIST_SEARCH :
 			case User.TYPE_MEMBERLIST :
-
 				listAdapter = new MemberListAdapter(getContext(), subType);
 				this.setOnItemClickListener(listAdapter);
 				this.setAdapter(listAdapter);
-			
-			break;		
+				break;		
 		}
+		
+		
+		if(this.subType == User.TYPE_MEMBERLIST) {
+			this.setSelection(1);	
+		}
+		
+	
 		return this;
 	}
 	@Override
@@ -116,11 +144,17 @@ public class MemberListView extends RomeoListView {
 		@Override
 		public void onClick(View v) {
 			WaiterView.showDialog(getContext());
+			
 			if( searchBar != null) {
 				EditText searchET = (EditText)searchBar.findViewById(R.id.edit);
-				Data reqData = new Data().add(0, KEY.SEARCH.QUERY, searchET.getText().toString().trim());
-				Payload request = new Payload().setData(reqData).setEvent(Event.Search.User);
-				Connection conn = new Connection().callBack(searchCallback).requestPayload(request).request();
+				String searchText = searchET.getText().toString().trim();
+				if(searchText != null && searchText.length() > 0) {
+					Data reqData = new Data().add(0, KEY.SEARCH.QUERY, searchText);
+					Payload request = new Payload().setData(reqData).setEvent(Event.Search.user());
+					Connection conn = new Connection().callBack(searchCallback).requestPayload(request).request();
+				} else {
+					searchCallback.onPostExecute(null);
+				}
 			}
 			
 		}
@@ -133,12 +167,85 @@ public class MemberListView extends RomeoListView {
 		};
 		
 		public void onPostExecute(Payload result) {
-			// TODO
+			
+			ArrayList<User> users = new ArrayList<User>();
+			if(result == null) {
+				
+			} else {
+				if(result.getStatusCode() == StatusCode.SUCCESS) {
+					Data resData = result.getData();
+					for(int i = 0; i < resData.size(); i++) {
+						HashMap<String, Object> _user = resData.get(i);
+						
+						Department dept = new Department(
+															(String)_user.get(KEY.DEPT.IDX),
+															(String)_user.get(KEY.DEPT.NAME),
+															(String)_user.get(KEY.DEPT.FULL_NAME),
+															(String)_user.get(KEY.DEPT.PARENT_IDX)
+														);
+						
+						User user = new User(
+												(String)_user.get(KEY.USER.IDX), 
+												(String)_user.get(KEY.USER.NAME), 
+												(_user.get(KEY.USER.RANK) instanceof String) ?
+														Integer.parseInt((String)_user.get(KEY.USER.RANK)) : 
+														(Integer)_user.get(KEY.USER.RANK), 
+												(String)_user.get(KEY.USER.ROLE), 
+												dept);
+						users.add(user);
+					}
+				}
+			}
+			
+			if(result == null || result.getStatusCode() == StatusCode.SUCCESS) {
+				SearchResultListAdatper adapter = new SearchResultListAdatper(users);
+				setAdapter(adapter);
+				adapter.notifyDataSetChanged();
+			}	
 			WaiterView.dismissDialog(getContext());
 		};
 	};
 	
-	private class SearchResultListAdatper extends ArrayAdapter {
+	private class SearchResultListAdatper extends BaseAdapter {
+		private ArrayList<User> users = null;
+		
+		public SearchResultListAdatper(ArrayList<User> users) {	this.users = users;	}
+		
+		@Override
+		public int getCount() {	return users.size(); }
+
+		@Override
+		public Object getItem(int pos) {	return this.users.get(pos);	}
+
+		@Override
+		public long getItemId(int pos) {	return this.users.get(pos).idx.hashCode();	}
+
+		@Override
+		public View getView(int pos, View convertView, ViewGroup parent) {
+			User user = (User)getItem(pos);
+			if(convertView == null)
+				convertView = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+								.inflate(R.layout.member_favorite_user_cell, parent, false);
+			
+			ImageView userPicIV = (ImageView)convertView.findViewById(R.id.userPic);
+			userPicIV.setImageResource(R.id.userPic);
+			
+			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
+			departmentTV.setText(user.department.nameFull);
+			
+			TextView rankTV = (TextView)convertView.findViewById(R.id.rank);
+			rankTV.setText(User.RANK[user.rank]);
+			
+			TextView roleTV = (TextView)convertView.findViewById(R.id.role);
+			roleTV.setText(user.role);
+			
+			TextView nameTV = (TextView)convertView.findViewById(R.id.name);
+			nameTV.setText(user.name);
+			
+			return convertView;
+		}
+		
+		
 		
 	}
 }
