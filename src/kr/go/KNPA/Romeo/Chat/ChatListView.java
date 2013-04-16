@@ -28,6 +28,7 @@ public class ChatListView extends RomeoListView {
 	public ChatListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context,attrs,defStyle);
 	}
+	
 	/**@}*/
 	
 	public ChatListView setRoom(Room room) { this.room = room; return this; }
@@ -89,7 +90,7 @@ public class ChatListView extends RomeoListView {
 
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		scrollToBottom();
+		
 	}
 	
 	

@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Config.KEY.CHAT;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -84,6 +85,8 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		departmentTV.setText( sender.department.nameFull );
 		rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
+
+		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
 		
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 		arrivalDTTV.setText(arrivalDT);
@@ -93,12 +96,12 @@ public class ChatListAdapter extends CursorAdapter {
 			contentIV.setVisibility(View.GONE);
 			
 		} else if(contentType == Chat.CONTENT_TYPE_PICTURE) {
-			// TODO image
-			// contentIV.setImageBitmap(bm);
+			if ( chatStatus == Chat.STATE_SUCCESS ) {
+				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, content, contentIV);
+				
+			}
 			contentTV.setVisibility(View.GONE);
 		}
-		
-		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
 
 		switch(chatStatus){
 		case Chat.STATE_SENDING:
@@ -149,7 +152,9 @@ public class ChatListAdapter extends CursorAdapter {
 					Payload request = new Payload().setEvent(Event.Message.getUncheckers()).setData(new Data().add(0, KEY.MESSAGE.TYPE, chatType).add(0, KEY.MESSAGE.IDX, messageIdx));
 					Connection conn = new Connection().requestPayload(request).async(false).request();
 					Payload response = conn.getResponsePayload();
-					
+					if ( response == null ) {
+						return;
+					}
 					ArrayList<String> uncheckers = new ArrayList<String>();
 					if ( response.getStatusCode() == StatusCode.SUCCESS ){
 						Data respData = response.getData();
@@ -183,18 +188,8 @@ public class ChatListAdapter extends CursorAdapter {
 	    if (!mCursor.moveToPosition(position)) {
 	        throw new IllegalStateException("couldn't move cursor to position " + position);
 	    }
-//	    String userIdx = UserInfo.getUserIdx(mContext);
+	    
 	    View v = newView(mContext,mCursor,parent);
-//	    
-//	    if ( convertView == null ) {
-//	    	v = newView(mContext, mCursor, parent);
-//	    } else {
-//	    	if ( userIdx.equals(convertView.getTag()) && (Integer)convertView.getId() != R.layout.chat_bubble_departed ){
-//	    		v = newView(mContext, mCursor, parent);
-//	    	} else if ( !userIdx.equals(convertView.getTag()) && (Integer)convertView.getId() != R.layout.chat_bubble_received ) {
-//	    		v = newView(mContext, mCursor, parent);
-//	    	}
-//	    }
 	    
 	    bindView(v, mContext, mCursor);
 	    return v;

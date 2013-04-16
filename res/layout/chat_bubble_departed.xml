@@ -74,7 +74,10 @@
             android:layout_height="wrap_content"
             android:background="@drawable/chat_bubble_departed"
             android:maxWidth="150dp"
-            android:padding="@dimen/gapSmall"
+            android:paddingBottom="@dimen/gapSmall"
+            android:paddingLeft="@dimen/gapSmall"
+            android:paddingRight="@dimen/gap"
+            android:paddingTop="@dimen/gapSmall"
             android:text="@string/loremIpsumShort"
             android:textColor="@color/text" />
 
@@ -85,8 +88,12 @@
             android:background="@drawable/chat_bubble_departed"
             android:maxHeight="200dp"
             android:maxWidth="150dp"
-            android:padding="@dimen/gapSmall"
+            android:paddingBottom="@dimen/gapSmall"
+            android:paddingLeft="@dimen/gapSmall"
+            android:paddingRight="16dp"
+            android:paddingTop="@dimen/gapSmall"
             android:scaleType="fitCenter" />
+
     </LinearLayout>
 
 </LinearLayout>

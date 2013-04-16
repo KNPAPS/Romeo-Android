@@ -2,22 +2,32 @@ package kr.go.KNPA.Romeo.Util;
 
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 
 /**
  *  이미지 파일 관리
@@ -45,7 +55,7 @@ public class ImageManager {
 	public static final int CHAT_SIZE_SMALL = 4;
 	public static final int CHAT_SIZE_ORIGINAL = 5;
 	/**@}*/
-	
+		
 	private CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload,Integer,Payload>();
 	
 	/**
@@ -72,7 +82,7 @@ public class ImageManager {
 		Data reqData = new Data();
 		reqData.add(0,KEY.UPLOAD.FILE_IDX,imageHash);
 		reqData.add(0,KEY.UPLOAD.FILE_TYPE,imageType);
-		new Connection().requestPayload(requestPayload).attachFile(fileName).callBack(callBack).request();
+		new Connection().requestPayload(requestPayload).contentType("image/*").attachFile(fileName).callBack(callBack).request();
 		return this;
 	}
 	
@@ -214,4 +224,6 @@ public class ImageManager {
 		
     	return bitmap;
     }
+
+	
 }

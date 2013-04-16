@@ -29,8 +29,8 @@ public class UserListActivity extends Activity {
 		ListView lv = (ListView)view.findViewById(R.id.listView);
 		ArrayList<String> userIdxs = getIntent().getExtras().getStringArrayList(KEY_USERS_IDX);
 		ArrayList<User> users = User.getUsersWithIdxs(userIdxs);
-		//UserListAdapter adapter = new UserListAdapter(this, users);
-		//lv.setAdapter(adapter);
+		UserListAdapter adapter = new UserListAdapter(this, users);
+		lv.setAdapter(adapter);
 		
 	}
 

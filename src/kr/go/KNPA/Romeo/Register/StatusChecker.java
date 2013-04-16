@@ -62,6 +62,9 @@ public class StatusChecker {
 		Payload responsePayload = conn.getResponsePayload();
 		/** 데이터 가져오기 끝 */
 		
+		if ( responsePayload == null ) {
+			return USER_NOT_REGISTERED;
+		}
 		
 		/**
 		 * 서버에 등록되어 있다면 상태코드를 SUCCESS로 리턴할 것이고

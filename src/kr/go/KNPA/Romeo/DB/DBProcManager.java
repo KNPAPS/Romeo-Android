@@ -1,7 +1,5 @@
 package kr.go.KNPA.Romeo.DB;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +10,7 @@ import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBManager.DBSchema;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Util.Encrypter;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -122,24 +121,7 @@ public class DBProcManager {
 		return Constants.NOT_SPECIFIED;
 	}
 	
-	private String md5(String str){
-		String MD5 = ""; 
-		try{
-			MessageDigest md = MessageDigest.getInstance("MD5"); 
-			md.update(str.getBytes()); 
-			byte byteData[] = md.digest();
-			StringBuffer sb = new StringBuffer(); 
-			for(int i = 0 ; i < byteData.length ; i++){
-				sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
-			}
-			MD5 = sb.toString();
-			
-		}catch(NoSuchAlgorithmException e){
-			e.printStackTrace(); 
-			MD5 = null; 
-		}
-		return MD5;
-	}
+
 	
 	public class ChatProcManager {
 		
@@ -282,7 +264,7 @@ public class DBProcManager {
 		public String saveChatOnSend(String roomHash, String senderHash, String content, int contentType, long createdTS, int chatState) {
 			
 			//자신이 보내는 메세지는 채팅 해시를 새로 생성한다
-			String chatHash = md5(senderHash+String.valueOf(createdTS));
+			String chatHash = Encrypter.sharedEncrypter().md5(senderHash+String.valueOf(createdTS));
 
 			//저장
 			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS, chatState);
@@ -1062,7 +1044,7 @@ public class DBProcManager {
 			db.execSQL(sql);
 			
 			long gpId = lastInsertId();
-			String gpHash = md5(DBSchema.USER_FAVORITE.TABLE_NAME+String.valueOf(gpId));
+			String gpHash = Encrypter.sharedEncrypter().md5(DBSchema.USER_FAVORITE.TABLE_NAME+String.valueOf(gpId));
 			
 			sql = "update "+DBSchema.USER_FAVORITE.TABLE_NAME+" set hash = "+gpHash+" where _id = "+String.valueOf(gpId);
 			db.execSQL(sql);

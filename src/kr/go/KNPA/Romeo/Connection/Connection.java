@@ -121,7 +121,13 @@ public class Connection {
 	 * @name 파일 전송 관련
 	 * @{
 	 */
-	public Connection attachFile(String fileName) { this.attachedFiles.add(fileName); return this; }
+	public Connection attachFile(String fileName) {
+		if ( this.attachedFiles == null ) {
+			this.attachedFiles = new ArrayList<String>();
+		}
+		this.attachedFiles.add(fileName); 
+		return this; 
+	}
 	/** @} */
 	
 	/**

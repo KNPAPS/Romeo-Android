@@ -1,5 +1,10 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -8,30 +13,38 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Util.Encrypter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,6 +57,7 @@ public class RoomFragment extends RomeoFragment {
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	private Handler mHandler;
 	
+	private Uri mImageCaptureUri;
 	/**
 	 * @name Constructor
 	 * @{
@@ -76,6 +90,7 @@ public class RoomFragment extends RomeoFragment {
 		ChatFragment.setCurrentRoom(this);
 
         getListView().refresh();
+        getListView().scrollToBottom();
 		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
 		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
 	}
@@ -84,6 +99,35 @@ public class RoomFragment extends RomeoFragment {
 	public void onDestroy() {
 		super.onDestroy();
 		ChatFragment.unsetCurrentRoom();
+	}
+	
+	public void sendImage(String fileIdx) {
+		if ( room.usersIdx.size() == 0 ) {
+			//TODO 리시버가 한 명도 없는 상태에서는 메세지 못 보냄
+			return;
+		}
+		
+		if(room.roomCode ==null) {
+			// 만약 roomCode가 없다면 새로 만들어진 방이다.
+			ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
+			for(int i=0; i<room.usersIdx.size(); i++) {
+				userIdxs.add(room.usersIdx.get(i));
+			}
+			
+			// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
+			room.roomCode = Room.makeRoomCode(getActivity());
+			DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type, room.roomCode);
+		}
+		
+		String sender = UserInfo.getUserIdx(getActivity());
+		ArrayList<String> receivers = room.getUsersIdx(getActivity());	
+		
+		Chat newChat = Chat.chatOnSend(room.type, fileIdx, sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_PICTURE);
+		
+		new ChatSendThread(newChat).start();
+		
+		// 방목록 refresh
+		ChatFragment.chatFragment(room.type).listView.refresh();
 	}
 	
 	// Message Receiving
@@ -171,10 +215,14 @@ public class RoomFragment extends RomeoFragment {
 			msgOnNewCursor.obj = getListView().query( getListView().getNumberOfItems() );
 			mHandler.sendMessage(msgOnNewCursor);
 			
-			//채팅 객체를 서버에 전송
 			Data reqData = new Data().add(0, KEY._MESSAGE, chat);
 			Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 			Connection conn = new Connection().requestPayload(request).async(false);
+			
+			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
+				conn.attachFile("sdcard/DCIM/"+chat.content+".jpg").contentType(MimeType.jpeg);
+			}
+			
 			conn.request();
 			
 			//응답 받아와서 성공여부를 핸들러에 알림
@@ -259,11 +307,37 @@ public class RoomFragment extends RomeoFragment {
 		addApendix.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_PICK);
-				intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-				//startActivityForResult(intent, REQUEST_PIC_PICKER);
+				
+			    AlertDialog.Builder chooseDlg = new AlertDialog.Builder(getActivity());
+			    chooseDlg.setTitle("사진 보내기");
+			    
+			    ArrayList<String> array = new ArrayList<String>();
+			    array.add("사진 촬영");
+			    array.add("앨범에서 선택");
+			    
+			    ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(getActivity(), R.layout.dialog_menu_cell, array);
+			    
+			    chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener(){
+			    	@Override
+			    	public void onClick(DialogInterface dialog, int which) {
+			    		switch(which){
+			    		case 0://사진 촬영
+			    			doTakePhotoAction();
+			    			break;
+			    		case 1://앨범에서선택
+			    			doTakeAlbumAction();
+			    			break;
+			    		}
+			    	}
+			    });
+			    
+			    chooseDlg.setCancelable(true);
+			    chooseDlg.show();
+			    
 			}
 		});
+        
+
 		
 		// 채팅 입력 창에 글씨 숫자에 따라 전송 버튼을 활성화/비활성화 하기 위한 Listener
 		inputET.addTextChangedListener(new TextWatcher() {
@@ -323,6 +397,126 @@ public class RoomFragment extends RomeoFragment {
 
 		listView = (ChatListView) initListViewWithType(room.type, R.id.chatListView, view);
 		((ChatListView)listView).setRoom(room);
+
 		return view;
 	}
+	
+    private static final int PICK_FROM_CAMERA = 0;
+    private static final int PICK_FROM_ALBUM = 1;
+    private static final int CROP_FROM_CAMERA = 2;
+    
+    /**
+     * 카메라에서 이미지 가져오기
+     */
+    private void doTakePhotoAction()
+    {
+      /*
+       * 참고 해볼곳
+       * http://2009.hfoss.org/Tutorial:Camera_and_Gallery_Demo
+       * http://stackoverflow.com/questions/1050297/how-to-get-the-url-of-the-captured-image
+       * http://www.damonkohler.com/2009/02/android-recipes.html
+       * http://www.firstclown.us/tag/android/
+       */
+
+      Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+      
+      // 임시로 사용할 파일의 경로를 생성
+      String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+      mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+      
+      intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+      // 특정기기에서 사진을 저장못하는 문제가 있어 다음을 주석처리 합니다.
+      //intent.putExtra("return-data", true);
+      startActivityForResult(intent, PICK_FROM_CAMERA);
+    }
+    
+    /**
+     * 앨범에서 이미지 가져오기
+     */
+    private void doTakeAlbumAction()
+    {
+      // 앨범 호출
+      Intent intent = new Intent(Intent.ACTION_PICK);
+      intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+      startActivityForResult(intent, PICK_FROM_ALBUM);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+      if(resultCode != Activity.RESULT_OK)
+      {
+        return;
+      }
+
+      switch(requestCode)
+      {
+        case CROP_FROM_CAMERA:
+        {
+          // 크롭이 된 이후의 이미지를 넘겨 받습니다.
+          // 이미지뷰에 이미지를 보여준다거나 부가적인 작업 이후에
+          // 임시 파일을 삭제합니다.
+          final Bundle extras = data.getExtras();
+    
+          if(extras != null)
+          {
+            Bitmap bitmap = extras.getParcelable("data");
+            String fileIdx = Encrypter.sharedEncrypter().md5(UserInfo.getUserIdx(getActivity())+System.currentTimeMillis());
+            
+            File file = new File("sdcard/DCIM/"+fileIdx+".jpg");
+            
+           try {
+               file.createNewFile();
+               FileOutputStream fos = new FileOutputStream(file);
+               final BufferedOutputStream bos = new BufferedOutputStream(fos, 8192);
+               bitmap.compress(CompressFormat.JPEG, 100, bos);
+               bos.flush();
+               bos.close();
+               fos.close();
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
+           } catch (IOException e) {
+
+           }
+            sendImage(fileIdx);
+          }
+    
+          // 임시 파일 삭제
+          File f = new File(mImageCaptureUri.getPath());
+          if(f.exists())
+          {
+            f.delete();
+          }
+    
+          break;
+        }
+    
+        case PICK_FROM_ALBUM:
+        {
+          // 이후의 처리가 카메라와 같으므로 일단  break없이 진행합니다.
+          // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
+          
+          mImageCaptureUri = data.getData();
+        }
+        
+        case PICK_FROM_CAMERA:
+        {
+          // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
+          // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
+    
+          Intent intent = new Intent("com.android.camera.action.CROP");
+          intent.setDataAndType(mImageCaptureUri, "image/*");
+    
+          intent.putExtra("outputX", 90);
+          intent.putExtra("outputY", 90);
+          intent.putExtra("aspectX", 1);
+          intent.putExtra("aspectY", 1);
+          intent.putExtra("scale", true);
+          intent.putExtra("return-data", true);
+          startActivityForResult(intent, CROP_FROM_CAMERA);
+    
+          break;
+        }
+      }
+    }
 }

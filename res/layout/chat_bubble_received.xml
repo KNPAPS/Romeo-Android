@@ -58,7 +58,7 @@
             android:background="@drawable/chat_bubble_received"
             android:maxWidth="150dp"
             android:paddingBottom="@dimen/gapSmall"
-            android:paddingLeft="@dimen/gap"
+            android:paddingLeft="16dp"
             android:paddingRight="@dimen/gapSmall"
             android:paddingTop="@dimen/gapSmall"
             android:text="@string/loremIpsumShort"
@@ -68,12 +68,14 @@
             android:id="@+id/contentImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="150dp"
-            android:maxHeight="200dp"
-            android:padding="@dimen/gapSmall"
             android:background="@drawable/chat_bubble_received"
-            android:scaleType="fitCenter"
-            />
+            android:focusableInTouchMode="@dimen/gapSmall"
+            android:maxHeight="200dp"
+            android:maxWidth="150dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="@dimen/gapSmall"
+            android:paddingTop="@dimen/gapSmall"
+            android:scaleType="fitCenter" />
         
         <TextView
             android:id="@+id/arrivalDT"
