@@ -73,8 +73,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			roleTV.setText(user.role);
 			
 		} else {
-			//userPicIV.setImageResource(R.drawable.user_pic_default);
-			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, idx, userPicIV);
+			userPicIV.setImageResource(R.drawable.user_pic_default);
 			if(title == null || title.length() < 1 ) {
 				title = "";
 				Cursor cursor_favMemberList = mpm.getFavoriteGroupMemberList(idx);

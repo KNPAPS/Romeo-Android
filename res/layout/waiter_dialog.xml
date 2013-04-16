@@ -2,34 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="140dp"
     android:layout_height="140dp"
-    android:padding="0dp"
     android:background="@drawable/waiter_dialog_background"
     android:orientation="vertical" >
-
-    <RelativeLayout
-        android:layout_margin="0dp"
-        android:layout_width="140dp"
-        android:layout_height="140dp" >
-
-        <kr.go.KNPA.Romeo.Util.WaiterView
-            android:id="@+id/waiter"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:layout_margin="20dp" />
- 
-        <TextView
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:minHeight="24dp"
-            android:minWidth="24dp"
-            android:gravity="center"
-            android:textColor="#CCFFFFFF"
-            android:textSize="20sp"
-            />
- 
-    </RelativeLayout>
+    
+    <kr.go.KNPA.Romeo.Util.WaiterView 
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:layout_margin="20dp"
+       android:id="@+id/waiter" />
 
 </LinearLayout>

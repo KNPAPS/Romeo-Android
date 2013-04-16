@@ -3,7 +3,6 @@ package kr.go.KNPA.Romeo.Member;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
@@ -127,8 +126,6 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 					case CellNode.FCHECK : control.setBackgroundResource(R.drawable.circle_check_active); break;
 				}
 			}
-			ImageView userPicIV = (ImageView)convertView.findViewById(R.id.user_pic);
-			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, uIdx, userPicIV);
 			TextView rankTV = (TextView)convertView.findViewById(R.id.rank);
 			rankTV.setText(User.RANK[uRank]);
 			TextView nameTV = (TextView)convertView.findViewById(R.id.name);

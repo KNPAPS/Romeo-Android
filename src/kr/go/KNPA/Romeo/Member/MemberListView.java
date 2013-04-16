@@ -13,7 +13,6 @@ import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
-import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
@@ -229,8 +228,7 @@ public class MemberListView extends RomeoListView {
 								.inflate(R.layout.member_favorite_user_cell, parent, false);
 			
 			ImageView userPicIV = (ImageView)convertView.findViewById(R.id.userPic);
-			//userPicIV.setImageResource(R.id.userPic);
-			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, user.idx, userPicIV);
+			userPicIV.setImageResource(R.id.userPic);
 			
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
 			departmentTV.setText(user.department.nameFull);
