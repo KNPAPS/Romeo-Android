@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class WaiterView extends ImageView {
 	
@@ -115,6 +116,14 @@ public class WaiterView extends ImageView {
     		this.setAlpha(0);
     	}
     	super.setVisibility(visibility);
+    }
+    
+    public void setProgress(int percent) {
+    	TextView progressTV = (TextView)this.findViewById(R.id.progress);
+    	if(progressTV.getVisibility() != View.VISIBLE) {
+    		progressTV.setVisibility(View.VISIBLE);
+    	}
+    	progressTV.setText(percent+" %");
     }
     
     public void substituteView(View view) {

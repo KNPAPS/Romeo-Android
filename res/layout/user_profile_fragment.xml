@@ -1,62 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    <ImageView 
+        android:id="@+id/background"
+        android:layout_width = "match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/user_profile_background"
+        android:scaleType="centerCrop" 
+        android:layout_centerHorizontal="true" />
 
-        <ImageView
-            android:id="@+id/userPicBackground"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/user_pic_background" />
-
-        <ImageView
-            android:id="@+id/userPic"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/user_pic_default" />
-
-    </RelativeLayout>
-
+    <Button 
+        android:id="@+id/menu"
+        android:text="메뉴"
+        android:textColor="#CCFFFFFF"
+        android:layout_alignLeft="@id/background"
+        android:layout_alignTop="@id/background"
+        android:layout_width = "wrap_content"
+        android:layout_height= "wrap_content"
+        android:minWidth="40dp"
+        android:minHeight="20dp"
+        android:layout_margin= "10dp" />
+    
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/department"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium Text"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    </LinearLayout>
-
-</LinearLayout>
+        android:layout_centerHorizontal="true" 
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/transparent"
+	    android:orientation="vertical" >
+    
+    
+		<ImageView
+		    android:id="@+id/userPic"
+		    android:layout_marginTop="80dp"
+		    android:layout_width="140dp"
+		    android:layout_height="140dp"
+		    android:background="@color/transparent"
+		    android:layout_gravity="center_horizontal" />
+	
+		<TextView
+	        android:id="@+id/department"
+	        android:layout_marginTop="24dp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:textSize="16sp" />
+	
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_horizontal"
+		    android:text="—"
+		    android:textSize="24sp" />
+		
+	    <TextView
+		    android:id="@+id/rank"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_horizontal"
+		    android:textSize="18sp" />
+		
+		<TextView
+		    android:id="@+id/name"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_horizontal"
+		    android:textSize="36sp"	     />
+	</LinearLayout>
+</RelativeLayout>

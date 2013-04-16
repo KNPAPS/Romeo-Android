@@ -82,7 +82,7 @@ public class ImageManager {
 		Data reqData = new Data();
 		reqData.add(0,KEY.UPLOAD.FILE_IDX,imageHash);
 		reqData.add(0,KEY.UPLOAD.FILE_TYPE,imageType);
-		new Connection().requestPayload(requestPayload).contentType("image/*").attachFile(fileName).callBack(callBack).request();
+		new Connection().requestPayload(requestPayload).contentType(MimeType.jpeg).attachFile(fileName).callBack(callBack).request();
 		return this;
 	}
 	
