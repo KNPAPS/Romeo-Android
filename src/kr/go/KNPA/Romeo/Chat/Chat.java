@@ -40,7 +40,6 @@ public class Chat extends Message {
 	public Chat(
 			String				idx, 
 			int					type, 
-//			String				title, 
 			String				content, 
 			String 				sender, 
 			ArrayList<String>	receivers, 
@@ -63,12 +62,6 @@ public class Chat extends Message {
 		this.roomCode = roomCode;
 		this.contentType = contentType;
 	}
-	
-	public static Chat chatOnSend(int type, String content, String sender, ArrayList<String> receivers, long TS, String roomCode, int contentType) {
-		return new Chat(null, type, content, sender, receivers, false, TS, true, TS, roomCode, contentType);
-		// TODO Chat checked == true?? => 서버
-	}
-
 	
 	public Chat clone() {
 		Chat chat = (Chat)this.clone(new Chat());

@@ -83,11 +83,11 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		 */
 		Cursor c = (Cursor)adapter.getItem(position);
 		
-		String roomCode = c.getString(c.getColumnIndex(DBProcManager.sharedManager(getContext()).chat().COLUMN_ROOM_IDX));
+		String roomCode = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IDX));
 		Room room = new Room(getContext(), this.subType, roomCode);
 		RoomFragment fragment = new RoomFragment(room);
 		
-		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.roomCode, System.currentTimeMillis());
+		DBProcManager.sharedManager(getContext()).chat().updateLastReadTS(room.getRoomCode(), System.currentTimeMillis());
 		
 		MainActivity.sharedActivity().pushContent(fragment);
 	}

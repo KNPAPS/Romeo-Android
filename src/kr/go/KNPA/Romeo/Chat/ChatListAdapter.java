@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Chat;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.KEY.CHAT;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
@@ -110,7 +111,7 @@ public class ChatListAdapter extends CursorAdapter {
 			contentTV.setText(content);
 			contentIV.setVisibility(View.GONE);
 		} else if(contentType == Chat.CONTENT_TYPE_PICTURE) {
-			im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, content, contentIV);
+			im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
 			contentTV.setVisibility(View.GONE);
 		}
 		/** }}} */
@@ -130,6 +131,7 @@ public class ChatListAdapter extends CursorAdapter {
 			waiterViews.put(listItem.getTag().toString(),wv);
 			break;
 		case Chat.STATE_SUCCESS:
+			
 			
 			
 			break;

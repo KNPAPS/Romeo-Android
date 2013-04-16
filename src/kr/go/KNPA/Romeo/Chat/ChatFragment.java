@@ -8,15 +8,17 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
-import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 /**
  * 메뉴에서 Chat 종류의 기능을 선택했을 때 만날 수 있는 Fragment. \n
@@ -24,6 +26,7 @@ import android.view.ViewGroup;
  */
 public class ChatFragment extends RomeoFragment {
 
+	private static final String TAG = ChatFragment.class.getSimpleName();
 	/**
 	 * @name Constructors
 	 * @{
@@ -155,11 +158,14 @@ public class ChatFragment extends RomeoFragment {
 		// 현재 방에 대해서 작업을 한다.
 		// 현재 특정 방안에 입장해 있다면, 그 방의 인스턴스에도 메시지를 전달한다.
 		RoomFragment currentRoomFragment = getCurrentRoom();
+		
 		if(	currentRoomFragment !=null && 
 			currentRoomFragment.room != null && 
-			currentRoomFragment.room.roomCode !=null &&
-			currentRoomFragment.room.roomCode.equals(chat.roomCode))
+			currentRoomFragment.room.getRoomCode() !=null &&
+			currentRoomFragment.room.getRoomCode().equals(chat.roomCode)){
+		
 			currentRoomFragment.receive(chat);
+		}
 		
 		// 현재 Fragment의 ListView에도 메시지를 전달하여 refresh할 수 있도록 한다.
 		ChatFragment f = null;
@@ -189,15 +195,38 @@ public class ChatFragment extends RomeoFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MemberSearch.REQUEST_CODE) {
 			if(resultCode != MemberSearch.RESULT_OK) {
-				// onError
+				
 			} else {
 				
+				//채팅을 할 사람들 목록을 받음 
 				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
-				ArrayList<String> newUsersIdx = receiversIdxs;
-				newUsersIdx.add(UserInfo.getUserIdx(getActivity()));
+				if ( receiversIdxs.size() == 0 ) {
+					return;
+				}
 				
-				RoomFragment fragment = new RoomFragment(new Room(this.subType, null, newUsersIdx));
+				//일단 roomCode가 없는 빈 room 객체를 만듬
+				Room room = null;
+				String roomCode = null;
+				//만약 리시버가 1명이라면 기존에 있는 방이 있는지 검사
+				if ( receiversIdxs.size() == 1 ) {
+					 
+					roomCode = DBProcManager.sharedManager(getActivity())
+							 				.chat().getRoomCode(this.subType, receiversIdxs.get(0));
+					 
+					
+				} 
+				//기존에 있는 방이 있다면 roomCode를 지정해 생성함
+				if ( roomCode != null ) {
+					room = new Room(getActivity(),this.subType,roomCode);
+				} else {
+					ArrayList<String> chatters = new ArrayList<String>();
+					chatters.addAll(receiversIdxs);
+					chatters.add( UserInfo.getUserIdx(getActivity()) );
+					room = new Room(getActivity(),this.subType,chatters);
+				}
+				
+				RoomFragment fragment = new RoomFragment(room);
 				MainActivity.sharedActivity().pushContent(fragment);
 			}
 		} else {

@@ -125,7 +125,7 @@ public class ImageManager {
 			//없으면 서버에서 가져오고 캐싱
 			LoadImageTask task = new LoadImageTask(imageView);
 			task.execute(path, imageKey);
-		} else {
+		} else if (imageView != null) {
 			imageView.setImageBitmap(bitmap);
 		}
 	}

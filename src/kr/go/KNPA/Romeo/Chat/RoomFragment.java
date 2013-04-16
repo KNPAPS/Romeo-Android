@@ -55,7 +55,6 @@ public class RoomFragment extends RomeoFragment {
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	private Handler mHandler;
 	
-	private Uri mImageCaptureUri;
 	/**
 	 * @name Constructor
 	 * @{
@@ -83,35 +82,6 @@ public class RoomFragment extends RomeoFragment {
 		ChatFragment.unsetCurrentRoom();
 	}
 	
-	public void sendImage(String fileIdx) {
-		if ( room.usersIdx.size() == 0 ) {
-			//TODO 리시버가 한 명도 없는 상태에서는 메세지 못 보냄
-			return;
-		}
-		
-		if(room.roomCode ==null) {
-			// 만약 roomCode가 없다면 새로 만들어진 방이다.
-			ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
-			for(int i=0; i<room.usersIdx.size(); i++) {
-				userIdxs.add(room.usersIdx.get(i));
-			}
-			
-			// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
-			room.roomCode = Room.makeRoomCode(getActivity());
-			DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type, room.roomCode);
-		}
-		
-		String sender = UserInfo.getUserIdx(getActivity());
-		ArrayList<String> receivers = room.getUsersIdx(getActivity());	
-		
-		Chat newChat = Chat.chatOnSend(room.type, fileIdx, sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_PICTURE);
-		
-		new ChatSendThread(newChat).start();
-		
-		// 방목록 refresh
-		ChatFragment.chatFragment(room.type).listView.refresh();
-	}
-	
 	// Message Receiving
 	public void receive(Chat chat) {
 
@@ -119,131 +89,8 @@ public class RoomFragment extends RomeoFragment {
 		Message msg = mHandler.obtainMessage();
 		msg.what = RoomHandler.REFRESH;
 		msg.obj = c;
-		mHandler.sendMessage(msg);			
-	}
-
-	/** @} */
+		mHandler.sendMessage(msg);
 		
-	private static class RoomHandler extends Handler {
-		private final WeakReference<RoomFragment> mReference;
-		/**
-		 * @name 메세지 종류
-		 * ChatSendThread로부터 넘겨받는 Message 객체의 msg.what에 설정되어 있는 값에 대한 구분\n
-		 * msg.what의 값을 이용해 어떤 상황에서 메세지를 보낸건지 구별하여 핸들러는 해당되는 액션을 취한다.
-		 * {@
-		 */
-		//! 채팅 전송 전에 DB에 STATE_SENDING 상태로 저장
-		public static final int REFRESH = 1;
-		
-		//! 채팅 전송 성공
-		public static final int SENDING_SUCCEED= 2;
-				
-		//! 채팅 전송 실패
-		public static final int SENDING_FAILED = 3;
-		
-		/**@}*/
-
-		public RoomHandler(RoomFragment roomFragment) {
-			this.mReference = new WeakReference<RoomFragment>(roomFragment);
-		}
-		
-		@Override
-		public void handleMessage(Message msg) {
-			RoomFragment roomFragment = mReference.get();
-			
-			if ( roomFragment != null ) {
-				
-				switch(msg.what) {
-				case REFRESH:
-					roomFragment.getListView().increaseNumberOfItemsBy(1);
-					roomFragment.getListView().refresh((Cursor)msg.obj);
-					roomFragment.getListView().scrollToBottom();
-					break;
-				case SENDING_SUCCEED:
-					roomFragment.getListView().refresh((Cursor)msg.obj);
-					roomFragment.getListView().scrollToBottom();
-					break;
-				case SENDING_FAILED:
-					break;
-				}
-
-			}
-			super.handleMessage(msg);
-		}
-	}
-	
-	private class ChatSendThread extends Thread {
-		private Chat chat;
-		public ChatSendThread(Chat chat) {
-			this.chat = chat;
-		}
-		
-		@Override
-		public void run() {
-			
-			//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
-			String chatHash = DBProcManager.sharedManager(getActivity())
-								.chat()
-								.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
-
-			//채팅해쉬를 채팅 객체에 설정함
-			chat.idx = chatHash;
-
-			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
-			Message msgOnNewCursor = mHandler.obtainMessage();
-			msgOnNewCursor.what = RoomHandler.REFRESH; 
-			msgOnNewCursor.obj = getListView().query( getListView().getNumberOfItems() );
-			mHandler.sendMessage(msgOnNewCursor);
-			
-			Data reqData = new Data().add(0, KEY._MESSAGE, chat);
-			Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
-			Connection conn = new Connection().requestPayload(request).async(false);
-			
-			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
-				conn.attachFile("sdcard/DCIM/"+chat.content+".jpg").contentType(MimeType.jpeg);
-			}
-			
-			conn.request();
-			
-			//응답 받아와서 성공여부를 핸들러에 알림
-			Payload response = conn.getResponsePayload();
-			if ( response != null && response.getStatusCode() == StatusCode.SUCCESS ) {
-				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_SUCCESS);
-				Message msgOnSucceed = mHandler.obtainMessage();
-				msgOnSucceed.what = RoomHandler.SENDING_SUCCEED; 
-				msgOnSucceed.obj = getListView().query( getListView().getNumberOfItems() );
-				mHandler.sendMessage(msgOnSucceed);
-			} else {
-				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_FAIL);
-				Message msgOnFail = mHandler.obtainMessage();
-				msgOnFail.what = RoomHandler.SENDING_FAILED; 
-				msgOnFail.obj = getListView().query( getListView().getNumberOfItems() );
-				mHandler.sendMessage(msgOnFail);
-			}			
-			super.run();
-		}
-	}
-	
-	public static class RoomSettingActivity extends PreferenceActivity {
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.room);
-		}
-		
-		@Override
-		public SharedPreferences getSharedPreferences(String name, int mode) {
-			// TODO Auto-generated method stub
-			return super.getSharedPreferences(name, mode);
-		}
-		
-		
-		@Override
-		protected void onListItemClick(ListView l, View v, int position, long id) {
-			// TODO Auto-generated method stub
-			super.onListItemClick(l, v, position, id);
-			Toast.makeText(this, "선택", Toast.LENGTH_LONG).show();
-		}
 	}
 
 	@Override
@@ -274,21 +121,24 @@ public class RoomFragment extends RomeoFragment {
 			}
 		};
 		
+		String title = room.getTitle();
+
 		initNavigationBar(
-				view, 
-				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
-				true, 
-				true, 
-				R.string.menu, 
-				R.string.edit, 
-				lbbOnClickListener, 
-				rbbOnClickListener);
+			view, 
+			title, 
+			true, 
+			true, 
+			getActivity().getResources().getString(R.string.menu), 
+			getActivity().getResources().getString(R.string.edit), 
+			lbbOnClickListener, 
+			rbbOnClickListener);
 		
 		// Room Setting
 		final Button addApendix = (Button)view.findViewById(R.id.addAppendix);
 		final EditText inputET = (EditText)view.findViewById(R.id.edit);
 		final Button submitBT = (Button)view.findViewById(R.id.submit);
 		
+		// 사진 보내기 클릭 리스너
 		addApendix.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -350,38 +200,187 @@ public class RoomFragment extends RomeoFragment {
 				//채팅 input text
 				EditText et = inputET;
 				
-				if ( room.usersIdx.size() == 0 ) {
+				if ( room.getChatters().size() == 1 ) {
 					return;
 				}
 				
 				//만약 roomCode가 없다면 새로 만들어진 방이므로 방 생성 루틴 실행
 				//다른 쓰레드에서 통신과 DB작업을 하는동안 UI 쓰레드는 다이얼로그
 				//띄워놓고 대기함
-				if(room.roomCode ==null) {
-					createRoom();
+				if(room.isCreated() == false) {
+					startCreateRoomThread();
 				}
 				
-				String sender = UserInfo.getUserIdx(getActivity());
-				ArrayList<String> receivers = room.getUsersIdx(getActivity());	
-					
-				Chat newChat = Chat.chatOnSend(room.type, et.getText().toString(), sender, receivers, System.currentTimeMillis(), room.roomCode, Chat.CONTENT_TYPE_TEXT);
+				String senderIdx = UserInfo.getUserIdx(getActivity());
+				ArrayList<String> receivers = new ArrayList<String>(room.getChatters().size()-1);
+				
+				for( int i=0; i<room.getChatters().size(); i++ ) {
+					if ( room.getChatters().get(i).equals(senderIdx) == false ) {
+						receivers.add(room.getChatters().get(i));
+					}
+				}
+				
+				Chat newChat = new Chat(
+									null,
+									room.getType(), 
+									et.getText().toString(), 
+									senderIdx, 
+									receivers, 
+									false,
+									System.currentTimeMillis(),
+									true,
+									System.currentTimeMillis(),
+									room.getRoomCode(), 
+									Chat.CONTENT_TYPE_TEXT);
 				
 				new ChatSendThread(newChat).start();
 				
 				// reset input EditText
 				et.setText("");
-				// 방목록 refresh
-				ChatFragment.chatFragment(room.type).listView.refresh();
+				// 채팅방목록 refresh
+				ChatFragment.chatFragment(room.getType()).listView.refresh();
 			}
 		});
 
-		listView = (ChatListView) initListViewWithType(room.type, R.id.chatListView, view);
+		listView = (ChatListView) initListViewWithType(room.getType(), R.id.chatListView, view);
 		((ChatListView)listView).setRoom(room);
 
 		return view;
 	}
 	
-	private void createRoom() {
+	public static class RoomSettingActivity extends PreferenceActivity {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.room);
+		}
+		
+		@Override
+		public SharedPreferences getSharedPreferences(String name, int mode) {
+			// TODO Auto-generated method stub
+			return super.getSharedPreferences(name, mode);
+		}
+		
+		
+		@Override
+		protected void onListItemClick(ListView l, View v, int position, long id) {
+			// TODO Auto-generated method stub
+			super.onListItemClick(l, v, position, id);
+			Toast.makeText(this, "선택", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	/** @} */
+		
+	private static class RoomHandler extends Handler {
+		private final WeakReference<RoomFragment> mReference;
+		/**
+		 * @name 메세지 종류
+		 * ChatSendThread로부터 넘겨받는 Message 객체의 msg.what에 설정되어 있는 값에 대한 구분\n
+		 * msg.what의 값을 이용해 어떤 상황에서 메세지를 보낸건지 구별하여 핸들러는 해당되는 액션을 취한다.
+		 * {@
+		 */
+		//! 채팅 전송 전에 DB에 STATE_SENDING 상태로 저장
+		public static final int REFRESH = 1;
+		
+		//! 채팅 전송 성공
+		public static final int SENDING_SUCCEED= 2;
+				
+		//! 채팅 전송 실패
+		public static final int SENDING_FAILED = 3;
+		
+		/**@}*/
+	
+		public RoomHandler(RoomFragment roomFragment) {
+			this.mReference = new WeakReference<RoomFragment>(roomFragment);
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			RoomFragment roomFragment = mReference.get();
+			
+			if ( roomFragment != null ) {
+				
+				switch(msg.what) {
+				case REFRESH:
+					roomFragment.getListView().increaseNumberOfItemsBy(1);
+					roomFragment.getListView().refresh((Cursor)msg.obj);
+					roomFragment.getListView().scrollToBottom();
+					break;
+				case SENDING_SUCCEED:
+					roomFragment.getListView().refresh((Cursor)msg.obj);
+					roomFragment.getListView().scrollToBottom();
+					break;
+				case SENDING_FAILED:
+					break;
+				}
+	
+			}
+			super.handleMessage(msg);
+		}
+	}
+
+	private class ChatSendThread extends Thread {
+		private Chat chat;
+		private String filePath;
+		public ChatSendThread(Chat chat) {
+			this.chat = chat;
+		}
+		public ChatSendThread(Chat chat, String filePath) {
+			this.chat = chat;
+			this.filePath = filePath;
+		}
+		
+		@Override
+		public void run() {
+			
+			//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
+			String chatHash = DBProcManager.sharedManager(getActivity())
+								.chat()
+								.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
+	
+			//채팅해쉬를 채팅 객체에 설정함
+			chat.idx = chatHash;
+			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
+				chat.content = chatHash;
+			}
+			
+			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
+			Message msgOnNewCursor = mHandler.obtainMessage();
+			msgOnNewCursor.what = RoomHandler.REFRESH; 
+			msgOnNewCursor.obj = getListView().query( getListView().getNumberOfItems() );
+			mHandler.sendMessage(msgOnNewCursor);
+			
+			Data reqData = new Data().add(0, KEY._MESSAGE, chat);
+			Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
+			Connection conn = new Connection().requestPayload(request).async(false);
+			
+			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
+				conn.attachFile(filePath).contentType(MimeType.jpeg);
+			}
+			
+			conn.request();
+			
+			//응답 받아와서 성공여부를 핸들러에 알림
+			Payload response = conn.getResponsePayload();
+			if ( response != null && response.getStatusCode() == StatusCode.SUCCESS ) {
+				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_SUCCESS);
+				Message msgOnSucceed = mHandler.obtainMessage();
+				msgOnSucceed.what = RoomHandler.SENDING_SUCCEED; 
+				msgOnSucceed.obj = getListView().query( getListView().getNumberOfItems() );
+				mHandler.sendMessage(msgOnSucceed);
+			} else {
+				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_FAIL);
+				Message msgOnFail = mHandler.obtainMessage();
+				msgOnFail.what = RoomHandler.SENDING_FAILED; 
+				msgOnFail.obj = getListView().query( getListView().getNumberOfItems() );
+				mHandler.sendMessage(msgOnFail);
+			}			
+			super.run();
+		}
+	}
+
+	private void startCreateRoomThread() {
 		Thread newRoomThread = new Thread() {
 			@Override
 			public void run() {
@@ -393,17 +392,8 @@ public class RoomFragment extends RomeoFragment {
 					}
 				});
 				
-				// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
-				room.roomCode = Room.makeRoomCode(getActivity());
-				DBProcManager.sharedManager(getActivity()).chat().createRoom(room.usersIdx, room.type, room.roomCode);
-				
-				Data reqData = new Data();
-				reqData.add(0,KEY.CHAT.ROOM_CODE,room.roomCode);
-				reqData.add(0,KEY.CHAT.ROOM_MEMBER, room.usersIdx);
-				Payload request = new Payload().setEvent(Event.Message.Chat.createRoom()).setData(reqData);
-				Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
-
-				if ( response == null ) {
+				//방 생성
+				if ( room.create() == false ) {
 					mHandler.post(new Runnable(){
 						@Override
 						public void run() {
@@ -430,6 +420,8 @@ public class RoomFragment extends RomeoFragment {
 			e.printStackTrace();
 		}
 	}
+
+	private Uri mImageCaptureUri;
 	
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
@@ -484,7 +476,52 @@ public class RoomFragment extends RomeoFragment {
 		default:
 			return;
       }
+      Cursor c = getActivity().getContentResolver().query(mImageCaptureUri,null,null,null,null);
+      c.moveToNext();
       
-      
+      String filePath = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+      c.close();
+      sendImage(filePath);
     }
+    
+	public void sendImage(String filePath) {
+		
+		if ( room.getChatters().size() == 1 ) {
+			return;
+		}
+		
+		//만약 roomCode가 없다면 새로 만들어진 방이므로 방 생성 루틴 실행
+		//다른 쓰레드에서 통신과 DB작업을 하는동안 UI 쓰레드는 다이얼로그
+		//띄워놓고 대기함
+		if(room.isCreated() == false) {
+			startCreateRoomThread();
+		}
+		
+		String senderIdx = UserInfo.getUserIdx(getActivity());
+		ArrayList<String> receivers = new ArrayList<String>(room.getChatters().size()-1);
+		
+		for( int i=0; i<room.getChatters().size(); i++ ) {
+			if ( room.getChatters().get(i).equals(senderIdx) == false ) {
+				receivers.add(room.getChatters().get(i));
+			}
+		}
+		
+		Chat newChat = new Chat(
+							null,
+							room.getType(), 
+							null, 
+							senderIdx, 
+							receivers, 
+							false,
+							System.currentTimeMillis(),
+							true,
+							System.currentTimeMillis(),
+							room.getRoomCode(), 
+							Chat.CONTENT_TYPE_PICTURE);
+		
+		new ChatSendThread(newChat,filePath).start();
+		
+		// 채팅방목록 refresh
+		ChatFragment.chatFragment(room.getType()).listView.refresh();
+	}
 }

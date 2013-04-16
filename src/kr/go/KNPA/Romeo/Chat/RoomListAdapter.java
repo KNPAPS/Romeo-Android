@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
@@ -61,8 +62,9 @@ class RoomListAdapter extends CursorAdapter {
 		TextView rankNameTV = (TextView)v.findViewById(R.id.rankName);
 		TextView contentTV = (TextView)v.findViewById(R.id.content);
 		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
-
-		ArrayList<User> roomUsers = Room.getUsers(ctx, roomIdx); 
+		
+		Room room = new Room(ctx, type, roomIdx);
+		ArrayList<User> roomUsers = MemberManager.sharedManager().getUsers( room.getChatters() );
 		
 		if(roomUsers.size() > 1) {
 			if(title == null || title.trim().length() == 0) { 

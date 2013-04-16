@@ -446,7 +446,7 @@ public class DBProcManager {
 		 * @param includeMe 자기자신을 포함하는지 여부
 		 * @return
 		 */
-		public Cursor getRoomMember( String hash , boolean includeMe ) {
+		public Cursor getRoomChatters( String hash , boolean includeMe ) {
 			
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, hash);
 			
@@ -460,6 +460,48 @@ public class DBProcManager {
 			}
 			
 			return db.rawQuery(sql,null);
+		}
+		
+		/**
+		 * 1:1채팅인 경우(리시버가 1명) 새로 방을 생성하기 전에 기존에 그 사람과 채팅하고 있는 방이 있는 지 검사한다.\n 
+		 * @param receiverHash
+		 * @return
+		 */
+		public String getRoomCode( int roomType, String receiverHash ) {
+			String userIdx = UserInfo.getUserIdx(context);
+			
+			//채팅방에 자기자신과 receiverHash에 해당하는 유저만 있는 경우를 선택해서 roomId를 가져온다.
+			String sql =
+				"select "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" roomId, group_concat("+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+") users " +
+				" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
+				" group by "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+
+				" having count( _id ) =2 and " +
+				" ( users like \"%"+receiverHash+","+userIdx+"%\" or users like \"%"+userIdx+","+receiverHash+"%\" )";
+			Cursor c = db.rawQuery(sql, null);
+			
+			//만약 있으면 그 roomId로 ROOM 테이블에 쿼리를 날려서 인자로 받은 roomType의 방이 있는지 검사한다.
+			if ( c.moveToNext() ) {
+				
+				long roomId = c.getInt(0);
+				c.close();
+				sql = "select "+DBSchema.ROOM.COLUMN_IDX+" roomCode from "+DBSchema.ROOM.TABLE_NAME+
+						" where _id = "+String.valueOf(roomId)+" and "+DBSchema.ROOM.COLUMN_TYPE+" = "+String.valueOf(roomType);
+				Cursor cursor = db.rawQuery(sql, null);
+
+				// 만약 있다면 roomCode를 리턴하고 없으면 return null
+				if ( cursor.moveToNext() ) {
+					String roomCode = cursor.getString(0);
+					cursor.close();
+					return roomCode;
+				} else {
+					return null;
+				}
+				
+			//그런 방이 없으면 걍 리턴 null
+			} else {
+				c.close();
+				return null;
+			}
 		}
 		
 		/**
@@ -493,6 +535,35 @@ public class DBProcManager {
 					" limit "+String.valueOf(start)+", "+String.valueOf(count)+
 					") tmp order by "+COLUMN_CHAT_TS+" asc ";
 			return db.rawQuery(sql, null);
+		}
+		
+		public Cursor getRoomInfo(String roomHash) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+			
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return null;
+			}
+			
+			String sql=
+					"select _id, "+
+							DBSchema.ROOM.COLUMN_IDX+COLUMN_ROOM_IDX+", "+
+							DBSchema.ROOM.COLUMN_TITLE+COLUMN_ROOM_TITLE+
+					" from "+DBSchema.ROOM.TABLE_NAME+
+					" where _id = "+String.valueOf(roomId);
+			return db.rawQuery(sql, null);
+		}
+		
+		public void updateRoomTitle(String roomHash, String title) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+			
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			String sql = 
+					"update "+DBSchema.ROOM.TABLE_NAME+" set "+DBSchema.ROOM.COLUMN_TITLE+" = ? where _id = "+String.valueOf(roomId);
+			String[] val = {title};
+			db.execSQL(sql,val);
 		}
 		
 		public static final String COLUMN_ROOM_IDX = "room_idx";
