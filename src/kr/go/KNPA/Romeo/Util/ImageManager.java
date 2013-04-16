@@ -7,9 +7,7 @@ import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
-import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
@@ -19,74 +17,107 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.util.Pair;
 import android.widget.ImageView;
 
 /**
- *  이미지 파일 관리\n
- *  uri에서 이미지 가져오거나, 로컬 파일 시스템에서 이미지파일을 삭제하거나 로드\n
- *  또는 파일을 byte array로 또는 그 반대로 변환한다
+ *  이미지 파일 관리
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ImageManager {
 	private static final String TAG = ImageManager.class.getName();
-	public static final int PROFILE_IMG_SIZE_SMALL = 1;
-	public static final int PROFILE_IMG_SIZE_MEDIUM = 2;
-	public static final int PROFILE_IMG_SIZE_ORIGINAL = 3;
 	
-	private CallbackEvent callBack = new CallbackEvent();
-	
-	public ImageManager callBack(CallbackEvent callBack) { this.callBack = callBack; return this; }
 	/**
-	 * 프로필 사진을 서버에 업로드\n
-	 * 원본을 업로드 한다.\n
+	 * @name 프로필 사진
+	 * 프로필 사진은 일반 리스트에서 사용하는 small\n
+	 * MemberDetailActivity에서 사용하는 medium\n
+	 * 그리고 원본 original의 세 사이즈로 저장한다.
+	 * @{
+	 */
+	public static final int PROFILE_SIZE_SMALL = 1;
+	public static final int PROFILE_SIZE_MEDIUM = 2;
+	public static final int PROFILE_SIZE_ORIGINAL = 3;
+	/**@}*/
+	/**
+	 * @name 채팅방 내 이미지
+	 * 채팅방 내 채팅목록에서 보일 small 사이즈\n
+	 * 원본 파일의 두 가지로 저장한다
+	 * @{
+	 */
+	public static final int CHAT_SIZE_SMALL = 4;
+	public static final int CHAT_SIZE_ORIGINAL = 5;
+	/**@}*/
+	
+	private CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload,Integer,Payload>();
+	
+	/**
+	 * 백그라운드에서 프로필 사진을 서버에 업로드\n
+	 * 원본을 업로드 하면 세 가지 썸네일을 만든다.\n
 	 * @b callBackType CallBackEvent<Payload,Integer,Payload>
-	 * @param userHash
-	 * @param fileName
+	 * @param imageType ImageManager에 상수로 설정된 이미지 타입 값들
+	 * @param imageHash 이미지에 할당된 해쉬값. 프로필사진이면 그냥 유저해쉬, 채팅사진이면 content에 들어있는 해쉬
+	 * @param fileName 업로드할 파일의 로컬 디렉토리
 	 * @return
 	 */
-	public ImageManager uploadProfileImg( String userHash, String fileName){//, CallbackEvent<Payload,Integer,Payload> callBack) {
-		Payload requestPayload = new Payload().setEvent(Event.USER_UPLOAD_PROFILE_IMG);
-		Data reqData = new Data();
-		reqData.add(0,KEY.USER.IDX,userHash);
+	public ImageManager upload( int imageType, String imageHash, String fileName ){
 		
+		switch(imageType) {
+		case PROFILE_SIZE_ORIGINAL:
+		case CHAT_SIZE_ORIGINAL:
+			break;
+		default:
+			Log.e(TAG,"업로드 시 파일 타입은 원본만 가능");
+			return this;
+		}
+		
+		Payload requestPayload = new Payload().setEvent(Event.Upload.image());
+		Data reqData = new Data();
+		reqData.add(0,KEY.UPLOAD.FILE_IDX,imageHash);
+		reqData.add(0,KEY.UPLOAD.FILE_TYPE,imageType);
 		new Connection().requestPayload(requestPayload).attachFile(fileName).callBack(callBack).request();
 		return this;
 	}
 	
 	/**
-	 * 프로필 사진을 가져온다\n
-	 * 먼저 캐시된 파일이 있는지 검사하고, 없으면 서버에서 가져와서 캐싱까지 함
-	 * @b callBackType CallBackEvent< Pair<String,Integer> ,Integer, Bitmap>
-	 * @param userHash
-	 * @param sizeType
-	 */
-	public void loadProfileImg( String userHash, int sizeType) {//, CallbackEvent<Pair<String,Integer>,Integer,Bitmap> callBack) {
-	    Pair<String,Integer> pair = new Pair<String,Integer>(userHash,sizeType);
-	    callBack.onPreExecute(pair);
-	    
-	    String imageKey = getImageCacheKey(userHash,sizeType);
-		final Bitmap bitmap = ImageCache.getBitmapFromMemCache(imageKey);
-	    if (bitmap != null) {
-	    	callBack.onPostExecute(bitmap);
-	    } else {
-	    	ImageManagerTask task = new ImageManagerTask(ImageManagerTask.TASK_LOAD_PROFILE_IMAGE);
-	        task.execute(pair);
-	    }
-	}
-
-	public void loadProfileImgToImageView( String userHash, int sizeType, ImageView img ) {
-		
-	}
-	
-	/**
 	 * 로컬 캐시나 서버로부터 사진을 불러와서 imageview에 설정 
-	 * @param imageIdx
-	 * @param sizeType
-	 * @param img
+	 * @param imageType ImageManager에 상수로 설정된 이미지 타입 값들
+	 * @param imageHash 이미지에 할당된 해쉬값. 프로필사진이면 그냥 유저해쉬, 채팅사진이면 content에 들어있는 해쉬
+	 * @param imageView 로딩된 이미지를 삽입할 이미지뷰 객체
 	 */
-	public void loadImage( String imageIdx, int sizeType, ImageView img ) { 
+	public void loadToImageView( int imageType, String imageHash, ImageView imageView ) { 
 		
+		//이미지 타입에 따라 경로 설정
+		String path = null;
+		switch(imageType) {
+		case PROFILE_SIZE_SMALL:
+			path = ConnectionConfig.UploadPath.PROFILE_IMG_SMALL+imageHash+".jpg";
+			break;
+		case PROFILE_SIZE_MEDIUM:
+			path = ConnectionConfig.UploadPath.PROFILE_IMG_MEDIUM+imageHash+".jpg";
+			break;
+		case PROFILE_SIZE_ORIGINAL:
+			path = ConnectionConfig.UploadPath.PROFILE_IMG_ORIGINAL+imageHash+".jpg";
+			break;
+		case CHAT_SIZE_SMALL:
+			path = ConnectionConfig.UploadPath.CHAT_IMG_SMALL+imageHash+".jpg";
+			break;
+		case CHAT_SIZE_ORIGINAL:
+			path = ConnectionConfig.UploadPath.CHAT_IMG_ORIGINAL+imageHash+".jpg";
+			break;
+		default:
+			Log.e(TAG,"잘못된 이미지 타입 :"+String.valueOf(imageType));
+			return;
+		}
+		
+		//캐시에서 먼저 검사
+	    String imageKey = getImageCacheKey(imageHash,imageType);
+		final Bitmap bitmap = ImageCache.getBitmapFromMemCache(imageKey);
+		
+		if ( bitmap == null ) {
+			//없으면 서버에서 가져오고 캐싱
+			LoadImageTask task = new LoadImageTask(imageView);
+			task.execute(path, imageKey);
+		} else {
+			imageView.setImageBitmap(bitmap);
+		}
 	}
 	
 	/**
@@ -98,49 +129,33 @@ public class ImageManager {
 	 */
 	protected String getImageCacheKey(String userHash, int size) { return userHash+size; }
 
-	/**
-	 * Callback을 받아 작동하는 함수들에 대한 일반적인 AsyncTask \n
-	 * 콜백을 따로 받지 않고 작동하는 함수들은 이걸 활용하지 않고 각자 다른 AsyncTask 클래스를 따로 만들어서 사용함
-	 */
-	class ImageManagerTask extends AsyncTask {
-		private int taskType = Constants.NOT_SPECIFIED; 
-		static final int TASK_LOAD_PROFILE_IMAGE = 1;
-		
-		public ImageManagerTask( int taskType ) { this.taskType = taskType; }
-		
-		@Override
-	    protected Object doInBackground(Object... params) {
-	        switch ( this.taskType ) {
-	        case TASK_LOAD_PROFILE_IMAGE:
-	        	return downloadProfileImg((Pair<String,Integer>) params[0]);
-	        }
-	        
-	        return null;
-	    }
-	    
-	    @Override
-	    protected void onProgressUpdate(Object... values){ callBack.onProgressUpdate(values[0]); }
-	    
-	    @Override
-	    protected void onPostExecute (Object result){ callBack.onPostExecute(result); }
-	}
 	
 	/**
-	 * loadProfileImgToImageView에서 사용하는 asynctask
+	 * 이미지 사진을 로드해서 ImageView에 삽입하는 task를 수행
 	 */
-	class loadImageTask extends AsyncTask<Pair<String,Integer>,Void,Bitmap> {
+	class LoadImageTask extends AsyncTask<String,Void,Bitmap> {
 		
 		private WeakReference<ImageView> imageViewReference = null;
 		
-		public loadImageTask(ImageView imageView) {
-			
+		/**
+		 * 비트맵을 삽입할 이미지뷰에 대한 reference를 생성자에서 입력받음
+		 * @param imageView
+		 */
+		public LoadImageTask(ImageView imageView) {
 			imageViewReference = new WeakReference<ImageView>(imageView);
 		}
 		
 		@Override
-	    protected Bitmap doInBackground(Pair<String,Integer>... params) {
-			Bitmap bitmap = downloadProfileImg(params[0]);
-	        ImageCache.addBitmapToMemoryCache(getImageCacheKey(params[0].first,params[0].second),bitmap);
+	    protected Bitmap doInBackground(String... params) {
+			
+			String path = params[0];
+			String imageKey = params[1];
+			Bitmap bitmap = downloadImage(path);
+			
+			if ( bitmap != null ) {
+				ImageCache.addBitmapToMemoryCache(imageKey, bitmap);
+			}
+			
 	        return bitmap;
 	    }
 		
@@ -153,39 +168,30 @@ public class ImageManager {
 	        if (imageViewReference != null) {
 	            ImageView imageView = imageViewReference.get();
 	            if (imageView != null) {
-	                imageView.setImageBitmap(bitmap);
+	            	
+	            	if ( bitmap!=null ) {
+	            		//비트맵을 성공적으로 가져왔으면 이미지뷰에 설정
+	            		imageView.setImageBitmap(bitmap);
+	            	} else {
+	            		//아니면 걍 기본이미지로
+	            		imageView.setImageResource(kr.go.KNPA.Romeo.R.drawable.user_pic_default);
+	            	}
+	            	
 	            }
 	        }
-	        
     	}
 	}
 	
 	/**
-	 * 서버로부터 프로필사진을 가져옴
-	 * @param pair
-	 * @return
+	 * 서버로부터 이미지를 다운로드
+	 * @param download path
+	 * @return 이미지 비트맵
 	 */
-	protected Bitmap downloadProfileImg( Pair<String,Integer> pair ) {
+	protected Bitmap downloadImage( String path ) {
     	Bitmap bitmap = null;
-    	String sUrl = null;
-    	switch( pair.second ) {
-    	case PROFILE_IMG_SIZE_SMALL:
-    		sUrl = ConnectionConfig.PROFILE_PIC_SMALL_URL+pair.first+".jpg";
-    		break;
-    	case PROFILE_IMG_SIZE_MEDIUM:
-    		sUrl = ConnectionConfig.PROFILE_PIC_MEDIUM_URL+pair.first+".jpg";
-    		break;
-    	case PROFILE_IMG_SIZE_ORIGINAL:
-    		sUrl = ConnectionConfig.PROFILE_PIC_URL+pair.first+".jpg";
-    		break;
-		default:
-			sUrl = ConnectionConfig.PROFILE_PIC_URL+pair.first+".jpg";
-			break;
-    	}
-    	
     	URL url = null;
 		try {
-			url = new URL(sUrl);
+			url = new URL(path);
 		} catch (MalformedURLException e) {
 			Log.d(TAG,e.getMessage());
 			callBack.onError("잘못된 url로 요청을 했습니다.", e);
@@ -206,7 +212,6 @@ public class ImageManager {
 			return null;
 		}
 		
-		ImageCache.addBitmapToMemoryCache(getImageCacheKey(pair.first,pair.second),bitmap);
     	return bitmap;
     }
 }

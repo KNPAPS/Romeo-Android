@@ -1,6 +1,9 @@
 package kr.go.KNPA.Romeo.Config;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.apache.http.protocol.HTTP;
 
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
@@ -15,14 +18,23 @@ public class ConnectionConfig {
 	public static final String SERVER_HOST = "http://116.67.94.11:80/";
 	//! event request url
 	public static final String REQUEST_URL = SERVER_HOST+"juliet/index.php/handler/call";
-	//! 업로드된 파일 url
-	public static final String UPLOAD_URL = SERVER_HOST+"juliet/uploaded/";
-	//! 원본 크기의 프로필 사진이 저장되어 있는 곳
-	public static final String PROFILE_PIC_URL = UPLOAD_URL+"pic/profile/";
-	//! 작은 크기의 프로필 사진이 저장되어 있는 곳
-	public static final String PROFILE_PIC_SMALL_URL = PROFILE_PIC_URL+"small/";
-	//! 중간 크기의 프로필 사진이 저장되어 있는 곳
-	public static final String PROFILE_PIC_MEDIUM_URL = PROFILE_PIC_URL+"medium/";
+	
+	public class UploadPath {
+		
+		//! 업로드된 파일 url
+		public static final String BASE = SERVER_HOST+"juliet/uploaded/";
+		//! 원본 크기의 프로필 사진이 저장되어 있는 곳
+		public static final String PROFILE_IMG_ORIGINAL = BASE+"pic/profile/";
+		//! 작은 크기의 프로필 사진이 저장되어 있는 곳
+		public static final String PROFILE_IMG_SMALL = PROFILE_IMG_ORIGINAL+"small/";
+		//! 중간 크기의 프로필 사진이 저장되어 있는 곳
+		public static final String PROFILE_IMG_MEDIUM = PROFILE_IMG_ORIGINAL+"medium/";
+		//! 채팅방 이미지 파일 원본 사이즈
+		public static final String CHAT_IMG_ORIGINAL = BASE+"pic/chat/";
+		//! 채팅방 이미지 파일 작은 사이즈
+		public static final String CHAT_IMG_SMALL = CHAT_IMG_ORIGINAL+"small/";
+		
+	}
 	
 	public static final String HTTP_TYPE_GET = "GET";
 	public static final String HTTP_TYPE_POST = "POST";

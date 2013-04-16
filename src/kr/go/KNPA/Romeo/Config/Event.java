@@ -24,11 +24,20 @@ public class Event {
 	public static final String DEVICE_REGISTER="DEVICE:REGISTER";/*!<기기 정보 등록*/
 	public static final String DEVICE_IS_REGISTERED="DEVICE:IS_REGISTERED";/*!<기기가 등록되어 있는지, 활성화 되어 있는지 확인*/
 	public static final String DEVICE_UNREGISTER="DEVICE:UNREGISTER";/*!<기기 등록 해제*/
-	;
+	
+	//! 유저 검색
+	public static final String SEARCH_USER="SERACH:USER";
+	
+	//! 이미지 파일 업로드
+	public static final String UPLOAD_IMAGE="UPLOAD:IMAGE";
+	
 	
 	public static String User()						{	return "USER";							}
 	public static String Message()					{	return "MESSAGE";						}
 	public static String Device()					{	return "DEVICE";						}
+	public static String Search()					{	return "SEARCH";						}
+	public static String Upload()					{	return "UPLOAD";						}
+	
 	public static class User {
 		
 		public static String register() 			{	return USER_REGISTER;					}
@@ -58,5 +67,13 @@ public class Event {
 		public static String register()				{	return DEVICE_REGISTER;					}
 		public static String isRegistered()			{	return DEVICE_IS_REGISTERED;			}
 		public static String unRegister()			{	return DEVICE_UNREGISTER;				}
+	}
+	
+	public static class Search {
+		public static String user()			{	return SEARCH_USER;				}		
+	}
+	
+	public static class Upload {
+		public static String image()		{	return UPLOAD_IMAGE;				}		
 	}
 }

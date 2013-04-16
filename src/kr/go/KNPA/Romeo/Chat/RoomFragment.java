@@ -252,8 +252,18 @@ public class RoomFragment extends RomeoFragment {
 				rbbOnClickListener);
 		
 		// Room Setting
+		final Button addApendix = (Button)view.findViewById(R.id.addAppendix);
 		final EditText inputET = (EditText)view.findViewById(R.id.edit);
 		final Button submitBT = (Button)view.findViewById(R.id.submit);
+		
+		addApendix.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_PICK);
+				intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+				//startActivityForResult(intent, REQUEST_PIC_PICKER);
+			}
+		});
 		
 		// 채팅 입력 창에 글씨 숫자에 따라 전송 버튼을 활성화/비활성화 하기 위한 Listener
 		inputET.addTextChangedListener(new TextWatcher() {

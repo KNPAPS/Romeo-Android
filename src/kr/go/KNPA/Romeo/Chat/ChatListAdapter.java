@@ -15,6 +15,7 @@ import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
@@ -29,7 +30,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,7 +69,7 @@ public class ChatListAdapter extends CursorAdapter {
 		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
 		int 	contentType	= c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
 		
-		//ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
+		ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
 		TextView 	departmentTV	= (TextView) 	v.findViewById(R.id.department);
 		TextView 	rankNameTV		= (TextView) 	v.findViewById(R.id.rankName);
 		TextView 	contentTV	= (TextView) 	v.findViewById(R.id.content);
@@ -79,6 +79,8 @@ public class ChatListAdapter extends CursorAdapter {
 		final Button goUncheckedBT = (Button) v.findViewById(R.id.goUnchecked);
 		
 		User sender = User.getUserWithIdx(senderIdx);
+		ImageManager im = new ImageManager();
+		im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
 		
 		departmentTV.setText( sender.department.nameFull );
 		rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );

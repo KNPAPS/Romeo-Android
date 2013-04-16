@@ -143,10 +143,14 @@ public class KEY {
 		public static final String TYPE = "deviceType";
 		public static final String IS_REGISTERED = "isDeviceRegistered";
 		public static final String IS_ENABLED = "isDeviceEnabled";
-		
 	}
 	
 	public static class SEARCH {
 		public static final String QUERY = "query";
+	}
+	
+	public static class UPLOAD {
+		public static final String FILE_IDX = "fileHash";
+		public static final String FILE_TYPE = "fileType";
 	}
 }

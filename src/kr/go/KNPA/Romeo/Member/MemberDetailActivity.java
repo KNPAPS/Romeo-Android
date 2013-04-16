@@ -108,7 +108,7 @@ public class MemberDetailActivity extends Activity {
 			nameTV.setText(user.name);
 			
 			ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
-			new ImageManager().loadProfileImgToImageView(idx, ImageManager.PROFILE_IMG_SIZE_MEDIUM, userPicIV);
+			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, idx, userPicIV);
 		} else if(idxType == IDX_TYPE_GROUP) {
 			
 			if( title == null || title.trim().length() == 0) {

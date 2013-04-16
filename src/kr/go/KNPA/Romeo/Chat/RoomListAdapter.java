@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -77,7 +78,7 @@ class RoomListAdapter extends CursorAdapter {
 			} else {
 				rankNameTV.setText(title);
 			}
-			// TODO : departmentTV
+			departmentTV.setText("그룹 회의");
 		} else if ( roomUsers.size() > 0 ) {
 			
 			User user = roomUsers.get(0);
@@ -88,6 +89,8 @@ class RoomListAdapter extends CursorAdapter {
 			// department
 			String department = user.department.nameFull;
 			departmentTV.setText(department);
+			ImageManager im = new ImageManager();
+			im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, user.idx, userPicIV);
 		} else {
 			rankNameTV.setText("빈 방");
 			departmentTV.setText("");
@@ -102,9 +105,6 @@ class RoomListAdapter extends CursorAdapter {
 		
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 		arrivalDTTV.setText(arrivalDT);
-		
-		// user Pic : TODO
-		userPicIV.setImageResource(android.R.drawable.ic_popup_disk_full);
 	}
 
 	@Override
