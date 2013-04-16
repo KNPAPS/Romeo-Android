@@ -10,6 +10,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -190,11 +191,12 @@ public class ChatFragment extends RomeoFragment {
 			if(resultCode != MemberSearch.RESULT_OK) {
 				// onError
 			} else {
-				//data.getExtras().get;
 				
 				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
 				ArrayList<String> newUsersIdx = receiversIdxs;
+				newUsersIdx.add(UserInfo.getUserIdx(getActivity()));
+				
 				RoomFragment fragment = new RoomFragment(new Room(this.subType, null, newUsersIdx));
 				MainActivity.sharedActivity().pushContent(fragment);
 			}

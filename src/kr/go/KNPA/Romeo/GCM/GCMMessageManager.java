@@ -70,7 +70,6 @@ public class GCMMessageManager {
 		
 		// Context Setting
 		this.context = context;
-
         
 		// Payload 
 		Bundle b = intent.getExtras();        
@@ -80,7 +79,6 @@ public class GCMMessageManager {
 		// Specify Event
         String event = payload.getEvent();
         events = event.split(":");
-        
         
         if(events[0].trim().equalsIgnoreCase(Event.Message())) {	// MESSAGE
         	if(events[1].trim().equalsIgnoreCase("RECEIVED")) {	// RECEIVED
@@ -108,11 +106,17 @@ public class GCMMessageManager {
 		
 		// 방이 존재하지 않으면 DB상에 새로 만든다.
 		if(DBProcManager.sharedManager(context).chat().roomExists(chat.roomCode) == false) {
+			ArrayList<String> users = new ArrayList<String>();
+			users.add(chat.senderIdx);
+			users.addAll(chat.receiversIdx);
+			
 			DBProcManager.sharedManager(context)
-				.chat().createRoom(Room.getUsersIdx(context, chat.senderIdx, chat.receiversIdx), chat.type(), chat.roomCode);	// TODO chat.type
+				.chat().createRoom(users, chat.type(), chat.roomCode);
+			
+			
 		}
 		
-		// DB상 방에 Chat 저장
+		// Chat 저장
 		DBProcManager.sharedManager(context)
 			.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
 		

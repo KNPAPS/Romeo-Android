@@ -11,6 +11,7 @@ import kr.go.KNPA.Romeo.DB.DBManager.DBSchema;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Encrypter;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -408,7 +409,7 @@ public class DBProcManager {
 					
 					" (select count(rc._id) " +
 						"from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" rc " +
-						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id )+1 "+
+						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id ) "+
 						COLUMN_ROOM_NUM_CHATTER+", " +
 					
 					" (select count(c._id) " +
@@ -442,9 +443,10 @@ public class DBProcManager {
 		 * @b 커서구조
 		 * @b COLUMN_USER_IDX 리시버 해쉬
 		 * @param hash 채팅방 해쉬
+		 * @param includeMe 자기자신을 포함하는지 여부
 		 * @return
 		 */
-		public Cursor getReceiverList( String hash ) {
+		public Cursor getRoomMember( String hash , boolean includeMe ) {
 			
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, hash);
 			
@@ -452,6 +454,11 @@ public class DBProcManager {
 					"select _id, "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+COLUMN_USER_IDX+
 					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
 					" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"="+String.valueOf(roomId);
+			
+			if ( includeMe == false ) {
+				sql += " and "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != "+UserInfo.getUserIdx(context);
+			}
+			
 			return db.rawQuery(sql,null);
 		}
 		

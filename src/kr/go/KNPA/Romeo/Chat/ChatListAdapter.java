@@ -1,36 +1,22 @@
 package kr.go.KNPA.Romeo.Chat;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Config.Event;
-import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Config.StatusCode;
-import kr.go.KNPA.Romeo.Config.KEY.CHAT;
-import kr.go.KNPA.Romeo.Connection.Connection;
-import kr.go.KNPA.Romeo.Connection.Data;
-import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.widget.CursorAdapter;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,123 +40,97 @@ public class ChatListAdapter extends CursorAdapter {
 		ChatListAdapter.waiterViews = new HashMap<String, WaiterView>();
 	}
 
+	/**
+	 * 리스트뷰의 각 행을 만든다.
+	 * @param listItem 리스트뷰의 각 행을 이루는 ViewGroup
+	 * @param context context
+	 * @param c 리스트뷰의 각 행에 해당하는 정보를 담고 있는 커서
+	 */
 	@Override
-	public void bindView(final View v, final Context context, Cursor c) {
+	public void bindView(final View listItem, final Context context, Cursor c) {
 		
-		final String	messageIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
-		//챗 해쉬로 태그 설정
-		v.setTag(messageIdx);
+		/**
+		 * 커서에서 정보 가져오기
+		 * {{{
+		 */
+		
+		final String messageIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
+		// 채팅 해쉬로 태그 설정
+		listItem.setTag(messageIdx);
 		
 		// 센더해쉬
-		String 	senderIdx	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
+		String senderIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
 		// 채팅TS
-		long 	arrivalTS	= c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_TS));
+		long arrivalTS = c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_TS));
 		// 내용
-		String 	content 	= c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
+		String content = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
 		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
-		int 	contentType	= c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+		int contentType = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
 		
-		ImageView 	userPicIV		= (ImageView) 	v.findViewById(R.id.userPic);
-		TextView 	departmentTV	= (TextView) 	v.findViewById(R.id.department);
-		TextView 	rankNameTV		= (TextView) 	v.findViewById(R.id.rankName);
-		TextView 	contentTV	= (TextView) 	v.findViewById(R.id.content);
-		ImageView	contentIV	= (ImageView)	v.findViewById(R.id.contentImage);
-		TextView 	arrivalDTTV		= (TextView) 	v.findViewById(R.id.arrivalDT);
+		/**
+		 * }}}
+		 */
 		
-		final Button goUncheckedBT = (Button) v.findViewById(R.id.goUnchecked);
+		/**
+		 * listItem 내 하위 View들 참조
+		 * {{{
+		 */
+		ImageView 	userPicIV		= (ImageView) 	listItem.findViewById(R.id.userPic);
+		TextView 	departmentTV	= (TextView) 	listItem.findViewById(R.id.department);
+		TextView 	rankNameTV		= (TextView) 	listItem.findViewById(R.id.rankName);
+		TextView 	arrivalDTTV		= (TextView) 	listItem.findViewById(R.id.arrivalDT);
 		
+		TextView 	contentTV		= (TextView) 	listItem.findViewById(R.id.content);
+		ImageView	contentIV		= (ImageView)	listItem.findViewById(R.id.contentImage);
+		
+		final Button goUncheckedBT 	= (Button) 		listItem.findViewById(R.id.goUnchecked);
+		/** }}} */
+		
+		/**
+		 * 각 view에 적절한 정보를 삽입함.
+		 * {{{
+		 */
+		//유저 idx를 유저 객체로 변환
 		User sender = User.getUserWithIdx(senderIdx);
+		
+		//프로필 사진 load
 		ImageManager im = new ImageManager();
 		im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
 		
+		//부서,계급, 채팅 도착 시간 text 삽입
 		departmentTV.setText( sender.department.nameFull );
 		rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
-
-		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
-		
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 		arrivalDTTV.setText(arrivalDT);
+		
+		//채팅의 content type에 따라 content 설정
+		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
 		
 		if(contentType == Chat.CONTENT_TYPE_TEXT) {
 			contentTV.setText(content);
 			contentIV.setVisibility(View.GONE);
-			
 		} else if(contentType == Chat.CONTENT_TYPE_PICTURE) {
-			if ( chatStatus == Chat.STATE_SUCCESS ) {
-				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, content, contentIV);
-				
-			}
+			im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, content, contentIV);
 			contentTV.setVisibility(View.GONE);
 		}
-
+		/** }}} */
+		
+		/**
+		 * 채팅의 상태에 따라 WatierView, UnChecker 버튼, 재전송 버튼을 설정한다
+		 */
 		switch(chatStatus){
 		case Chat.STATE_SENDING:
 			WaiterView wv = new WaiterView(context);
 			wv.substituteView(goUncheckedBT);
 			DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-
 			LayoutParams params = new LayoutParams( (int)((26 * displayMetrics.density) + 0.5), (int)((26 * displayMetrics.density) + 0.5));
 			params.gravity = Gravity.BOTTOM;
 			params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
 			wv.setLayoutParams(params);
-			waiterViews.put(v.getTag().toString(),wv);
+			waiterViews.put(listItem.getTag().toString(),wv);
 			break;
 		case Chat.STATE_SUCCESS:
-
-			final Handler handler = new Handler(){
-				@SuppressWarnings("unchecked")
-				@Override
-				public void handleMessage(Message msg) {
-					final ArrayList<String> uncheckersIdxs = (ArrayList<String>) msg.obj;
-					
-					goUncheckedBT.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							Intent intent = new Intent(context, UserListActivity.class);
-							
-							Bundle b = new Bundle();
-							b.putStringArrayList(UserListActivity.KEY_USERS_IDX, uncheckersIdxs);
-							intent.putExtras(b);
-							
-							context.startActivity(intent);
-							
-						}
-					});
-					goUncheckedBT.setText( String.valueOf(uncheckersIdxs.size()) );
-					super.handleMessage(msg);
-				}
-			};
 			
-			new Thread(){
-				@Override
-				public void run() {
-					if ( waiterViews.get(v.getTag().toString()) != null ) {
-						waiterViews.get(v.getTag().toString()).restoreView();
-					}
-					
-					Payload request = new Payload().setEvent(Event.Message.getUncheckers()).setData(new Data().add(0, KEY.MESSAGE.TYPE, chatType).add(0, KEY.MESSAGE.IDX, messageIdx));
-					Connection conn = new Connection().requestPayload(request).async(false).request();
-					Payload response = conn.getResponsePayload();
-					if ( response == null ) {
-						return;
-					}
-					ArrayList<String> uncheckers = new ArrayList<String>();
-					if ( response.getStatusCode() == StatusCode.SUCCESS ){
-						Data respData = response.getData();
-						int nUncheckers = respData.size();
-						for(int i=0; i<nUncheckers; i++) {
-							uncheckers.add( (String)respData.get(i, KEY.USER.IDX) );
-						}	
-					}
-					Message msg = handler.obtainMessage();
-					msg.obj = uncheckers;
-					handler.sendMessage(msg);
-					
-					super.run();
-				}
-			}.start();
-			//TODO 확인안한사람 목록 가져오는거 백그라운드에서 실행하기
 			
 			break;
 		case Chat.STATE_FAIL:
@@ -198,9 +158,7 @@ public class ChatListAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor c, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-
 		String userIdx = UserInfo.getUserIdx(context);
-
 		// 유저 해시를 비교하여 자기가 전송한건지 받은건지 구별
 		int rId = R.layout.chat_bubble_received;
 		if ( userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))) ) {

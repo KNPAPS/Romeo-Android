@@ -74,13 +74,11 @@ public class ChatListView extends RomeoListView {
 
 	@Override
 	protected Cursor query() {
-		return query(NUMBER_OF_INITIAL_RECENT_ITEM);
+		return query(getNumberOfItems());
 	}
 	
 	protected Cursor query( int nItems ) {
-		return DBProcManager.sharedManager(getContext())
-					.chat()
-					.getChatList(room.roomCode, 0, nItems);
+		return DBProcManager.sharedManager(getContext()).chat().getChatList(room.roomCode, 0, nItems);
 	}
 
 	@Override

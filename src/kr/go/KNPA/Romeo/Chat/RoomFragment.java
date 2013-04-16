@@ -1,12 +1,11 @@
 package kr.go.KNPA.Romeo.Chat;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
@@ -19,16 +18,14 @@ import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Util.Encrypter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,12 +35,11 @@ import android.preference.PreferenceActivity;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +50,8 @@ import android.widget.Toast;
  * ChatFragment의 RoomListView 중 하나의 Cell을 누르면 RoomFragment로 진입하게 된다.
  */
 public class RoomFragment extends RomeoFragment {
+	private static final String TAG = RoomFragment.class.getSimpleName();
+	
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	private Handler mHandler;
 	
@@ -62,37 +60,21 @@ public class RoomFragment extends RomeoFragment {
 	 * @name Constructor
 	 * @{
 	 */
-	public RoomFragment(Room room) { 
-		
+	public RoomFragment(Room room) {
 		this.room = room; 
 		mHandler = new RoomHandler(RoomFragment.this);
-		
 	}
 	/** @} */
-
-	public void toast(int i) {
-		if ( i==1) {
-			Toast.makeText(getActivity(), "메세지 전송 성공", Toast.LENGTH_LONG).show();
-		}else {
-			Toast.makeText(getActivity(), "메세지 전송 실패", Toast.LENGTH_LONG).show();
-		}
-	}
 	
 	/**
 	 * @name View Life-Cycle
 	 * @{
 	 */
-	
-	    
 	@Override
 	public void onResume() {
 		super.onResume();
 		ChatFragment.setCurrentRoom(this);
 
-        getListView().refresh();
-        getListView().scrollToBottom();
-		// 방에 입장하는 순간 리스트 뷰 내의 모든 챗들 다 checked로..
-		// 방에 입장하면 메시지들을 화면에 출력하게 될 것이고, 출력하는 순간 setChecked로 바꾸기로 한다. (ChatListAdatper)
 	}
 
 	@Override
@@ -141,9 +123,7 @@ public class RoomFragment extends RomeoFragment {
 	}
 
 	/** @} */
-	
-
-	
+		
 	private static class RoomHandler extends Handler {
 		private final WeakReference<RoomFragment> mReference;
 		/**
@@ -152,14 +132,15 @@ public class RoomFragment extends RomeoFragment {
 		 * msg.what의 값을 이용해 어떤 상황에서 메세지를 보낸건지 구별하여 핸들러는 해당되는 액션을 취한다.
 		 * {@
 		 */
-		//! 메세지 전송 전에 DB에 STATE_SENDING 상태로 저장
+		//! 채팅 전송 전에 DB에 STATE_SENDING 상태로 저장
 		public static final int REFRESH = 1;
 		
-		//! 메세지 전송 성공
+		//! 채팅 전송 성공
 		public static final int SENDING_SUCCEED= 2;
 				
-		//! 메세지 전송 실패
+		//! 채팅 전송 실패
 		public static final int SENDING_FAILED = 3;
+		
 		/**@}*/
 
 		public RoomHandler(RoomFragment roomFragment) {
@@ -183,7 +164,6 @@ public class RoomFragment extends RomeoFragment {
 					roomFragment.getListView().scrollToBottom();
 					break;
 				case SENDING_FAILED:
-					roomFragment.toast(2);
 					break;
 				}
 
@@ -270,6 +250,10 @@ public class RoomFragment extends RomeoFragment {
 	public ChatListView getListView() {
 		return (ChatListView) listView;
 	}
+	
+	/**
+	 * onCreateView 역할
+	 */
 	@Override
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.chat_room_fragment, container, false);
@@ -289,6 +273,7 @@ public class RoomFragment extends RomeoFragment {
 				startActivity(intent);
 			}
 		};
+		
 		initNavigationBar(
 				view, 
 				this.room.type==Chat.TYPE_COMMAND?R.string.commandTitle:R.string.meetingTitle, 
@@ -333,7 +318,6 @@ public class RoomFragment extends RomeoFragment {
 			    
 			    chooseDlg.setCancelable(true);
 			    chooseDlg.show();
-			    
 			}
 		});
         
@@ -349,8 +333,11 @@ public class RoomFragment extends RomeoFragment {
 			
 			@Override
 			public void afterTextChanged(Editable s) {	/* 결과 */		
-				if(s.length() > 0) submitBT.setEnabled(true);
-				else	submitBT.setEnabled(false);
+				if(s.length() > 0) {
+					submitBT.setEnabled(true);
+				} else {
+					submitBT.setEnabled(false);
+				}
 			}
 		});
 		
@@ -364,21 +351,14 @@ public class RoomFragment extends RomeoFragment {
 				EditText et = inputET;
 				
 				if ( room.usersIdx.size() == 0 ) {
-					//TODO 리시버가 한 명도 없는 상태에서는 메세지 못 보냄
 					return;
 				}
 				
-				
+				//만약 roomCode가 없다면 새로 만들어진 방이므로 방 생성 루틴 실행
+				//다른 쓰레드에서 통신과 DB작업을 하는동안 UI 쓰레드는 다이얼로그
+				//띄워놓고 대기함
 				if(room.roomCode ==null) {
-					// 만약 roomCode가 없다면 새로 만들어진 방이다.
-					ArrayList<String> userIdxs = new ArrayList<String>(room.usersIdx.size());
-					for(int i=0; i<room.usersIdx.size(); i++) {
-						userIdxs.add(room.usersIdx.get(i));
-					}
-					
-					// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
-					room.roomCode = Room.makeRoomCode(getActivity());
-					DBProcManager.sharedManager(getActivity()).chat().createRoom(userIdxs, room.type, room.roomCode);
+					createRoom();
 				}
 				
 				String sender = UserInfo.getUserIdx(getActivity());
@@ -401,15 +381,63 @@ public class RoomFragment extends RomeoFragment {
 		return view;
 	}
 	
+	private void createRoom() {
+		Thread newRoomThread = new Thread() {
+			@Override
+			public void run() {
+				super.run();
+				mHandler.post(new Runnable(){
+					@Override
+					public void run() {
+						WaiterView.showDialog(getActivity());
+					}
+				});
+				
+				// 새로 만드는 방에 대한 roomCode를 생성하고, local DB에 방을 생성한다.
+				room.roomCode = Room.makeRoomCode(getActivity());
+				DBProcManager.sharedManager(getActivity()).chat().createRoom(room.usersIdx, room.type, room.roomCode);
+				
+				Data reqData = new Data();
+				reqData.add(0,KEY.CHAT.ROOM_CODE,room.roomCode);
+				reqData.add(0,KEY.CHAT.ROOM_MEMBER, room.usersIdx);
+				Payload request = new Payload().setEvent(Event.Message.Chat.createRoom()).setData(reqData);
+				Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
+
+				if ( response == null ) {
+					mHandler.post(new Runnable(){
+						@Override
+						public void run() {
+							WaiterView.dismissDialog(getActivity());
+							Toast.makeText(getActivity(), "방 생성 실패", Toast.LENGTH_SHORT).show();
+						}
+					});
+				} else {
+					mHandler.post(new Runnable(){
+						@Override
+						public void run() {
+							WaiterView.dismissDialog(getActivity());
+						}
+					});
+				}
+			}
+		};
+		
+		newRoomThread.start();
+		try {
+			newRoomThread.join();
+		} catch (InterruptedException e) {
+			Log.e(TAG,"쓰레드 interrupt로 인한 방 생성 실패 "+e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
-    private static final int CROP_FROM_CAMERA = 2;
     
     /**
      * 카메라에서 이미지 가져오기
      */
-    private void doTakePhotoAction()
-    {
+	private void doTakePhotoAction() {
       /*
        * 참고 해볼곳
        * http://2009.hfoss.org/Tutorial:Camera_and_Gallery_Demo
@@ -419,22 +447,23 @@ public class RoomFragment extends RomeoFragment {
        */
 
       Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+      // 찍은 사진을 저장할 경로를 설정함
+      Date now = new Date();
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.KOREA);
       
-      // 임시로 사용할 파일의 경로를 생성
-      String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+      String url = "sdcard/DCIM/Camera/DAON_" + format.format(now) + ".jpg";
+      
       mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
-      
       intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-      // 특정기기에서 사진을 저장못하는 문제가 있어 다음을 주석처리 합니다.
-      //intent.putExtra("return-data", true);
+      
       startActivityForResult(intent, PICK_FROM_CAMERA);
     }
     
     /**
      * 앨범에서 이미지 가져오기
      */
-    private void doTakeAlbumAction()
-    {
+    private void doTakeAlbumAction() {
       // 앨범 호출
       Intent intent = new Intent(Intent.ACTION_PICK);
       intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
@@ -442,81 +471,20 @@ public class RoomFragment extends RomeoFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-      if(resultCode != Activity.RESULT_OK)
-      {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+      if(resultCode != Activity.RESULT_OK) {
         return;
       }
 
-      switch(requestCode)
-      {
-        case CROP_FROM_CAMERA:
-        {
-          // 크롭이 된 이후의 이미지를 넘겨 받습니다.
-          // 이미지뷰에 이미지를 보여준다거나 부가적인 작업 이후에
-          // 임시 파일을 삭제합니다.
-          final Bundle extras = data.getExtras();
-    
-          if(extras != null)
-          {
-            Bitmap bitmap = extras.getParcelable("data");
-            String fileIdx = Encrypter.sharedEncrypter().md5(UserInfo.getUserIdx(getActivity())+System.currentTimeMillis());
-            
-            File file = new File("sdcard/DCIM/"+fileIdx+".jpg");
-            
-           try {
-               file.createNewFile();
-               FileOutputStream fos = new FileOutputStream(file);
-               final BufferedOutputStream bos = new BufferedOutputStream(fos, 8192);
-               bitmap.compress(CompressFormat.JPEG, 100, bos);
-               bos.flush();
-               bos.close();
-               fos.close();
-           } catch (FileNotFoundException e) {
-               e.printStackTrace();
-           } catch (IOException e) {
-
-           }
-            sendImage(fileIdx);
-          }
-    
-          // 임시 파일 삭제
-          File f = new File(mImageCaptureUri.getPath());
-          if(f.exists())
-          {
-            f.delete();
-          }
-    
-          break;
-        }
-    
+      switch(requestCode) {
         case PICK_FROM_ALBUM:
-        {
-          // 이후의 처리가 카메라와 같으므로 일단  break없이 진행합니다.
-          // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
-          
           mImageCaptureUri = data.getData();
-        }
-        
-        case PICK_FROM_CAMERA:
-        {
-          // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
-          // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
-    
-          Intent intent = new Intent("com.android.camera.action.CROP");
-          intent.setDataAndType(mImageCaptureUri, "image/*");
-    
-          intent.putExtra("outputX", 90);
-          intent.putExtra("outputY", 90);
-          intent.putExtra("aspectX", 1);
-          intent.putExtra("aspectY", 1);
-          intent.putExtra("scale", true);
-          intent.putExtra("return-data", true);
-          startActivityForResult(intent, CROP_FROM_CAMERA);
-    
-          break;
-        }
+		case PICK_FROM_CAMERA:
+		  break;
+		default:
+			return;
       }
+      
+      
     }
 }
