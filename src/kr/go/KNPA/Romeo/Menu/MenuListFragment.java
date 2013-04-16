@@ -20,6 +20,7 @@ import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.graphics.Color;
@@ -54,7 +55,8 @@ public class MenuListFragment extends ListFragment {
 		//userLL.setBackgroundResource(android.R.color.transparent);
 		userLL.setBackgroundResource(R.drawable.menu_user_info_box);
 		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
-		userPicIV.setImageResource(R.drawable.user_pic_default);
+		//userPicIV.setImageResource(R.drawable.user_pic_default);
+		new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, UserInfo.getUserIdx(getActivity()), userPicIV);
 		TextView rankTV = (TextView)v.findViewById(R.id.rank);
 		rankTV.setTextColor(Color.WHITE);
 		rankTV.setText(User.RANK[UserInfo.getRank(getActivity())]);

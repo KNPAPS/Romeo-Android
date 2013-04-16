@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class WaiterView extends ImageView {
 	
@@ -57,6 +58,14 @@ public class WaiterView extends ImageView {
     	_waiterDialog.dismiss();
     }
     
+    public void setProgress(int percent) {
+		TextView progressTV = (TextView)this.findViewById(R.id.progress);
+		if(progressTV.getVisibility() != View.VISIBLE) {
+			progressTV.setVisibility(View.VISIBLE);
+		}
+		progressTV.setText(percent+" %");
+	}
+
     private void setAnimation(Context context, AttributeSet attrs) {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WaiterView);
         int fps = a.getInt(R.styleable.WaiterView_fps, 50);  
