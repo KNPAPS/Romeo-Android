@@ -55,11 +55,17 @@ public class WaiterView extends ImageView {
     public static void dismissDialog(Context context) {
     	if(_waiterDialog == null)
     		return;
+    	
+    	TextView progressTV = (TextView)_waiterDialog.findViewById(R.id.progress);
+    	progressTV.setText("");
+    	if(progressTV.getVisibility() == View.VISIBLE) {
+			progressTV.setVisibility(View.INVISIBLE);
+		}
     	_waiterDialog.dismiss();
     }
     
-    public void setProgress(int percent) {
-		TextView progressTV = (TextView)this.findViewById(R.id.progress);
+    public static void setProgress(int percent) {
+		TextView progressTV = (TextView)_waiterDialog.findViewById(R.id.progress);
 		if(progressTV.getVisibility() != View.VISIBLE) {
 			progressTV.setVisibility(View.VISIBLE);
 		}

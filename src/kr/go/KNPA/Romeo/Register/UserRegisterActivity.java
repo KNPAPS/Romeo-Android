@@ -12,7 +12,10 @@ import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Util.CallbackEvent;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -176,35 +179,68 @@ public class UserRegisterActivity extends Activity {
 	 */
 	public void goSubmit() {
 
+		
 		// TODO : register 성공할 때 까지 반복
 		boolean registered = registerUser();
 		
 		if(registered == true) {
-			//Shared Preference
-			Context context = UserRegisterActivity.this;
-			UserInfo.setUserIdx(context, userIdx);
-			UserInfo.setName(context, name);
-			UserInfo.setDepartment(context, department.nameFull);
-			UserInfo.setDepartmentIdx(context, department.idx);
-			UserInfo.setRankIdx(context, rank);
-			UserInfo.setRank(context, rank);
-			UserInfo.setPassword(context, password);
-			// TODO : 사진
+			if(picURI == null) {
+				WaiterView.showDialog(UserRegisterActivity.this);
+				ImageManager im = new ImageManager().upload(ImageManager.PROFILE_SIZE_ORIGINAL, userIdx, picURI.getPath()).callBack(userPicCallback);
+			} else {
+				saveAndFinish();
+			}
 			
-			Intent intent = new Intent();
-			Bundle resultBundle = new Bundle();
-			resultBundle.putBoolean("status", true);
-			intent.putExtras(resultBundle);
-			setResult(RESULT_OK, intent);
-			finish();
 		} else {
-			Intent intent = new Intent();
-			Bundle resultBundle = new Bundle();
-			resultBundle.putBoolean("status", false);
-			intent.putExtras(resultBundle);
-			setResult(RESULT_CANCELED, intent);
-			finish();
+			cancelAndFinish();
 		} 
+	}
+	private CallbackEvent<Payload, Integer, Payload> userPicCallback = new CallbackEvent<Payload, Integer, Payload>() {
+		@Override
+		public void onError(String errorMsg, Exception e) {
+			super.onError(errorMsg, e);
+			WaiterView.dismissDialog(UserRegisterActivity.this);
+		}
+		
+		@Override
+		public void onProgressUpdate(Integer progress) {
+			if(progress != null)
+				WaiterView.setProgress(progress);
+		};
+		
+		@Override
+		public void onPostExecute(Payload result) {
+			super.onPostExecute(result);
+			WaiterView.dismissDialog(UserRegisterActivity.this);
+		}
+	};
+	
+	private void saveAndFinish() {
+		//Shared Preference
+		Context context = UserRegisterActivity.this;
+		UserInfo.setUserIdx(context, userIdx);
+		UserInfo.setName(context, name);
+		UserInfo.setDepartment(context, department.nameFull);
+		UserInfo.setDepartmentIdx(context, department.idx);
+		UserInfo.setRankIdx(context, rank);
+		UserInfo.setRank(context, rank);
+		UserInfo.setPassword(context, password);
+		
+		Intent intent = new Intent();
+		Bundle resultBundle = new Bundle();
+		resultBundle.putBoolean("status", true);
+		intent.putExtras(resultBundle);
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+	
+	private void cancelAndFinish() {
+		Intent intent = new Intent();
+		Bundle resultBundle = new Bundle();
+		resultBundle.putBoolean("status", false);
+		intent.putExtras(resultBundle);
+		setResult(RESULT_CANCELED, intent);
+		finish();
 	}
 	
 	/**

@@ -57,7 +57,10 @@ public class ImageManager {
 	/**@}*/
 		
 	private CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload,Integer,Payload>();
-	
+	public ImageManager callBack(CallbackEvent<Payload,Integer,Payload> callback){
+		this.callBack = callback;
+		return this;
+	}
 	/**
 	 * 백그라운드에서 프로필 사진을 서버에 업로드\n
 	 * 원본을 업로드 하면 세 가지 썸네일을 만든다.\n
