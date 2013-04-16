@@ -15,6 +15,7 @@ import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.UserProfileFragment;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
@@ -27,6 +28,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -66,6 +68,14 @@ public class MenuListFragment extends ListFragment {
 		roleTV.setText("");
 		roleTV.setTextColor(Color.WHITE);
 		
+		userLL.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				UserProfileFragment profile = new UserProfileFragment();
+				MainActivity.sharedActivity().switchContent(profile);
+			}
+		});
 		
 		List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
         List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
