@@ -5,7 +5,7 @@
     android:background="#B21E1E1E"
     android:layout_height="22dp" >
   <TextView
-        android:id="@+id/cell_title"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/section_header_height"
         android:gravity="center_vertical"

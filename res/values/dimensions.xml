@@ -36,12 +36,14 @@
    	<dimen name="menu_list_cell_height">48dp</dimen>
    	<dimen name="menu_list_cell_width">170dp</dimen>
    	<dimen name="menu_list_cell_padding">10dp</dimen>
-   	<dimen name="menu_list_cell_icon_padding">14dp</dimen>
+   	<dimen name="menu_list_icon_padding">14dp</dimen>
 
    	<dimen name="menu_list_cell_fontsize">15dp</dimen>
-		<dimen name="menu_list_cell_icon_width">48dp</dimen>
-		<dimen name="menu_list_cell_icon_height">48dp</dimen>
-		<dimen name="menu_list_cell_icon_padding">10dp</dimen>				
-		
-		<dimen name="survey_result_webview_height_default">200dp</dimen>
+	<dimen name="menu_list_icon_width">48dp</dimen>
+	<dimen name="menu_list_icon_height">48dp</dimen>
+	<dimen name="menu_list_icon_padding">10dp</dimen>				
+	
+	<dimen name="survey_result_webview_height_default">200dp</dimen>
+	
+	<dimen name="settings_cell_height">60dp</dimen>
 </resources>

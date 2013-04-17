@@ -54,7 +54,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		
 		listAdapter = new RoomListAdapter(getContext(), null, false, this.subType);
 		SimpleSectionAdapter<Cursor> sectionAdapter
-			= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.cell_title, sectionizer);
+			= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.title, sectionizer);
 		this.setAdapter(sectionAdapter);
 		this.setOnItemClickListener(this);
 		

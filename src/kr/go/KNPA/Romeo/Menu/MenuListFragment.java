@@ -181,12 +181,12 @@ public class MenuListFragment extends ListFragment {
 						R.layout.menu_list_cell_section_unfolded, 
 						R.layout.menu_list_cell_section_folded, 
 						new String[] {"section"},//, "iconImage"}, 
-						new int[] { R.id.cell_title },//, R.id.cell_icon}, 
+						new int[] { R.id.title },//, R.id.cell_icon}, 
 						
 						childData, 
 						R.layout.menu_list_cell_item, 
 						new String[] {"title", "code"},// "iconImage" } , 
-						new int[] {R.id.cell_title, R.id.cell_code}// R.id.cell_icon,}
+						new int[] {R.id.title, R.id.code}// R.id.cell_icon,}
 					);
 		
 
@@ -372,7 +372,7 @@ public class MenuListFragment extends ListFragment {
 					new SimpleSectionAdapter<Object>(
 														getActivity(), 
 														listAdapter, 
-														R.layout.section_header, R.id.cell_title,
+														R.layout.section_header, R.id.title,
 														sectionizer
 													);
 		getActivity().runOnUiThread(new Runnable() {
@@ -525,7 +525,7 @@ public class MenuListFragment extends ListFragment {
 		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			View view = super.getGroupView(groupPosition, isExpanded, convertView, parent);
 			Map<String,String> item = (Map<String, String>) getGroup(groupPosition);
-			ImageView iconView = (ImageView)view.findViewById(R.id.cell_icon);
+			ImageView iconView = (ImageView)view.findViewById(R.id.icon);
 			iconView.setImageResource(Integer.parseInt(item.get("iconImage")));
 			return view;
 		}
@@ -534,7 +534,7 @@ public class MenuListFragment extends ListFragment {
 		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 			View view = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
 			Map<String,String> item = (Map<String, String>) getChild(groupPosition, childPosition);
-			ImageView iconView = (ImageView)view.findViewById(R.id.cell_icon);
+			ImageView iconView = (ImageView)view.findViewById(R.id.icon);
 			iconView.setImageResource(Integer.parseInt(item.get("iconImage")));
 			return view;
 		}
