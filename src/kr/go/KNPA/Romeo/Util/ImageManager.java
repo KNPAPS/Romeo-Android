@@ -2,7 +2,6 @@ package kr.go.KNPA.Romeo.Util;
 
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
@@ -63,18 +62,18 @@ public class ImageManager {
 	 * @param fileName 업로드할 파일의 로컬 디렉토리
 	 * @return
 	 */
-	public ImageManager upload( int imageType, String imageHash, String fileName ){
+	public boolean upload( int imageType, String imageHash, String fileName ){
 		return upload(imageType, imageHash, fileName, true);
 	}
 	
-	public ImageManager upload( int imageType, String imageHash, String fileName, boolean async ) {
+	public boolean upload( int imageType, String imageHash, String fileName, boolean async ) {
 		switch(imageType) {
 		case PROFILE_SIZE_ORIGINAL:
 		case CHAT_SIZE_ORIGINAL:
 			break;
 		default:
 			Log.e(TAG,"업로드 시 파일 타입은 원본만 가능");
-			return this;
+			return false;
 		}
 		
 		String ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
@@ -88,8 +87,9 @@ public class ImageManager {
 		reqData.add(0,KEY.UPLOAD.FILE_IDX,imageHash);
 		reqData.add(0,KEY.UPLOAD.FILE_TYPE,imageType);
 		requestPayload.setData(reqData);
-		new Connection().requestPayload(requestPayload).async(async).contentType(contentType).attachFile(fileName).callBack(callBack).request();
-		return this;
+		Connection conn = new Connection().requestPayload(requestPayload).async(async).contentType(contentType).attachFile(fileName).callBack(callBack);
+		conn.request();
+		return conn.successful;
 	}
 	
 	/**

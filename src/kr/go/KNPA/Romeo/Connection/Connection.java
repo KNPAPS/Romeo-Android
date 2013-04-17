@@ -77,6 +77,7 @@ public class Connection {
 	private int HTTPStatusCode = ConnectionConfig.HTTPStatusCode;
 	private int timeout = ConnectionConfig.timeout;
 	private String type = ConnectionConfig.type;
+	public boolean successful = false;
 	/** @} */
 	
 	/**
@@ -152,7 +153,8 @@ public class Connection {
 			}
 			
 			if ( HTTPStatusCode == HttpURLConnection.HTTP_OK ) { //성공
-				callBack.onPostExecute(responsePayload);	
+				callBack.onPostExecute(responsePayload);
+				successful = true;
 			} else { //HTTP 에러
 				callBack.onError("서버와 통신 중 오류가 발생했습니다", 
 						new Exception("HTTP response Code : "+HTTPStatusCode));
@@ -187,6 +189,7 @@ public class Connection {
 			
 			mThread.start();
 		}
+		
 		return this;
 	}
 	
@@ -366,7 +369,7 @@ public class Connection {
 					Pair<Integer,Payload> pair = (Pair<Integer,Payload>)msg.obj;
 					connection.HTTPStatusCode = pair.first;
 					connection.responsePayload = pair.second;
-					
+					connection.successful = true;
 					connection.callBack.onPostExecute(connection.responsePayload);
 				}
 			} else {

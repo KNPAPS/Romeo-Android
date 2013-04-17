@@ -27,7 +27,7 @@ import android.widget.TextView;
 public class ChatListAdapter extends CursorAdapter {
 
 	public static HashMap<String,WaiterView> waiterViews;
-	
+	private Room room;
 	int chatType = Chat.NOT_SPECIFIED;
 	
 	/**
@@ -40,7 +40,11 @@ public class ChatListAdapter extends CursorAdapter {
 		this.chatType = chatType;
 		ChatListAdapter.waiterViews = new HashMap<String, WaiterView>();
 	}
-
+	public ChatListAdapter setRoom(Room room) { 
+		this.room = room; 
+		return this; 
+	}
+	public Room getRoom(){ return this.room; } 
 	/**
 	 * 리스트뷰의 각 행을 만든다.
 	 * @param listItem 리스트뷰의 각 행을 이루는 ViewGroup

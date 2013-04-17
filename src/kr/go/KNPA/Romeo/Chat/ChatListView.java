@@ -31,7 +31,11 @@ public class ChatListView extends RomeoListView {
 	
 	/**@}*/
 	
-	public ChatListView setRoom(Room room) { this.room = room; return this; }
+	public ChatListView setRoom(Room room) { 
+		this.room = room; 
+		((ChatListAdapter)this.listAdapter).setRoom(room);
+		return this; 
+	}
 	public Room getRoom(){ return this.room; } 
 	
 	public void increaseNumberOfItemsBy(int nItem) {

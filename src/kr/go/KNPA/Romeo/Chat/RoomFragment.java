@@ -341,10 +341,16 @@ public class RoomFragment extends RomeoFragment {
 	
 			//채팅해쉬를 채팅 객체에 설정함
 			chat.idx = chatHash;
+
+			//사진을 보내는거면 사진 업로드
 			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
 				chat.content = "";
 				ImageManager im = new ImageManager();
-				im.upload(ImageManager.CHAT_SIZE_ORIGINAL, chatHash, filePath, false);
+				
+				//업로드 실패시 해당 채팅 다시 삭제
+				if ( im.upload(ImageManager.CHAT_SIZE_ORIGINAL, chatHash, filePath, false) == false ){
+					DBProcManager.sharedManager(getActivity()).chat().deleteChat(chatHash);
+				}
 			}
 			
 			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가

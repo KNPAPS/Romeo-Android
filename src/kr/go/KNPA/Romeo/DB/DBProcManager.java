@@ -566,6 +566,32 @@ public class DBProcManager {
 			db.execSQL(sql,val);
 		}
 		
+		/**
+		 * 개별채팅삭제
+		 * @param chatHash
+		 */
+		public void deleteChat(String chatHash) {
+			String sql = "delete from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_IDX+" = ?";
+			String[] val = {chatHash};
+			db.execSQL(sql,val);
+		}
+		
+		/**
+		 * 채팅방 나가기
+		 * @param chatHash
+		 */
+		public void deleteRoom(String roomHash) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+			
+			String sql = "delete from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
+			db.execSQL(sql);
+			sql = "delete from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
+			db.execSQL(sql);
+			sql = "delete from "+DBSchema.ROOM.TABLE_NAME+" where _id = "+String.valueOf(roomId);
+			db.execSQL(sql);
+			
+		}
+		
 		public static final String COLUMN_ROOM_IDX = "room_idx";
 		public static final String COLUMN_ROOM_TITLE = "room_title";
 		public static final String COLUMN_ROOM_NUM_CHATTER = "num_chatter";

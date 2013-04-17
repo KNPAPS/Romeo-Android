@@ -186,7 +186,8 @@ public class UserRegisterActivity extends Activity {
 		if(registered == true) {
 			if(picURI == null) {
 				WaiterView.showDialog(UserRegisterActivity.this);
-				ImageManager im = new ImageManager().upload(ImageManager.PROFILE_SIZE_ORIGINAL, userIdx, picURI.getPath()).callBack(userPicCallback);
+				ImageManager im = new ImageManager().callBack(userPicCallback);
+				im.upload(ImageManager.PROFILE_SIZE_ORIGINAL, userIdx, picURI.getPath());
 			} else {
 				saveAndFinish();
 			}

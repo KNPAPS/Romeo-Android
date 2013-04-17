@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
@@ -24,6 +25,7 @@ public class Room {
 	private String title;
 	private int type;
 	private ArrayList<String> chatters;
+	private HashMap<String,Long> lastReadTS; 
 	private boolean created = false;
 	private Context mContext;
 	
@@ -31,6 +33,7 @@ public class Room {
 		this.mContext = context;
 		setType(type);
 		setRoomCode(roomCode);
+		syncLastReadTS();
 		created(true);
 	}
 	
@@ -133,7 +136,23 @@ public class Room {
 		this.title = title;
 		DBProcManager.sharedManager(mContext).chat().updateRoomTitle(getRoomCode(), title);
 	}
-
+	
+	public void syncLastReadTS(){
+		
+	}
+	
+	
+	public void setLastReadTS(String userHash, long TS ) {
+		lastReadTS.put(userHash, TS);
+	}
+	
+	public HashMap<String,Long> getLastReadTS(){
+		if ( lastReadTS == null || lastReadTS.size() != chatters.size() ){
+			syncLastReadTS();
+		}
+		return lastReadTS;
+	}
+	
 	public boolean isCreated() {
 		return created;
 	}
@@ -157,6 +176,7 @@ public class Room {
 		} else {
 			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
 				DBProcManager.sharedManager(mContext).chat().createRoom(this.getChatters(), this.getType(), this.getRoomCode());
+				syncLastReadTS();
 				created(true);
 				return true;
 			}
