@@ -29,7 +29,7 @@
     <dimen name="section_header_padding_left">15dp</dimen>
     <dimen name="section_header_fontsize">15sp</dimen>
 
-    <dimen name="menu_searchbar_height">40dp</dimen>
+    <dimen name="menu_searchbar_height">50dp</dimen>
     <dimen name="menu_searchbar_width">170dp</dimen>
     <dimen name="menu_searchbar_margin">2dp</dimen>
     

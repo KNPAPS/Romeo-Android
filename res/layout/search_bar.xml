@@ -17,7 +17,7 @@
 	        android:layout_margin="@dimen/gapSmall"
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentTop="true"
-	        android:background="@drawable/round_shadow_white_stroked"
+	        android:background="@drawable/round_shadow_white"
 	        android:hint="이름 검색"
 	        android:ems="10" />
 	
@@ -37,7 +37,7 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="match_parent"
 	    android:textColor="@color/gray"
-        android:background="@color/lighter"
+        android:background="@drawable/round_shadow_gray"
         android:layout_marginTop="@dimen/gapSmall"
         android:layout_marginBottom="@dimen/gapSmall"
         android:layout_marginRight="@dimen/gapSmall"
@@ -49,7 +49,7 @@
 	    android:id="@+id/cancel"
 	    android:layout_width="wrap_content"
 	    android:layout_height="match_parent"
-	    android:textColor="@color/gray"
+	    android:textColor="@drawable/round_shadow_gray"
         android:background="@color/lighter"
         android:layout_marginTop="@dimen/gapSmall"
         android:layout_marginBottom="@dimen/gapSmall"

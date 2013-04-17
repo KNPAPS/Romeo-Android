@@ -17,7 +17,7 @@
 	    android:layout_width="0dp"
 	    android:layout_height="@dimen/menu_searchbar_height"
 	    android:hint="@string/search"
-	    android:background="@drawable/round_shadow_white_stroked"
+	    android:background="@drawable/round_shadow_white"
 	    android:textSize="@dimen/menu_list_cell_fontsize" >
 	</EditText>
 
