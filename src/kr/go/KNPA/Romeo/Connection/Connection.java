@@ -49,13 +49,10 @@ import android.util.Pair;
  *	};
  *	
  *	new Connection(this)
- *					.requestPayloadJSON(requestJson) // 필수/request json
- *					.accepts(acceptContentType) // 선택/응답받을 콘텐츠타입/default json
+ *					.requestPayload(request) // 필수/request json
  *					.async(true) // 선택/비동기로 처리할 지 여부/ default true
  *					.callBack(callBack) // 선택/ 콜백함수/ default 아무것도안함
  *					.contentType(contentType) // 선택/ 요청 데이터타입/ default json
- *					.timeout(timeout) // 선택/ 응답 타임아웃/ default 10초 
- *					.type(requestMethod) // 선택/ 요청 http method / default post
  *					.attachFile(filePath) // 선택 / 첨부할 파일 / default 없음
  *					.request();
  * @endcode
@@ -248,10 +245,7 @@ public class Connection {
 		conn.setRequestProperty("Charset", "UTF-8");
 		conn.setRequestProperty("Cache-Control", "no-cache, no-store");
 		conn.setRequestProperty("Accept", accepts);
-
-		//첨부파일이 있을 때에는 무조건 multipart/form-data로 전송하고 keepalive를 사용한다
-		//request byte를 쓸 때 설정된 contentType을 따른다
-		conn.setRequestProperty("Connection","Keep-Alive");
+		System.setProperty("http.keepAlive", "false");
 		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+BOUNDARY);
 		
 		try {
@@ -331,23 +325,12 @@ public class Connection {
 					resp.append(line);
 				}
 				br.close();
+				is.close();
 				responsePayloadJSON = resp.toString();
 				responsePayload = new Payload(responsePayloadJSON);
 			} else {
 				Log.e(TAG, "HTTP response code : "+statusCode+ " " + requestPayloadJSON );
 			}
-			
-			/*
-			 StringBuffer b = new StringBuffer();
-			InputStream is = conn.getInputStream();
-			byte[] data = new byte[bufferSize];
-			int leng = -1;
-			while((leng = is.read(data)) != -1) {
-			  b.append(new String(data, 0, leng));
-			}
-			String result = b.toString();
-			 */
-			
 		} catch ( IOException e ){
 			Log.e(TAG, e.getMessage() );
 			throw new RuntimeException(e);

@@ -12,12 +12,12 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
@@ -342,7 +342,9 @@ public class RoomFragment extends RomeoFragment {
 			//채팅해쉬를 채팅 객체에 설정함
 			chat.idx = chatHash;
 			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
-				chat.content = chatHash;
+				chat.content = "";
+				ImageManager im = new ImageManager();
+				im.upload(ImageManager.CHAT_SIZE_ORIGINAL, chatHash, filePath, false);
 			}
 			
 			//핸들러에 새 커서를 넘겨서 채팅 목록에 보내고 있는 채팅 추가
@@ -354,11 +356,6 @@ public class RoomFragment extends RomeoFragment {
 			Data reqData = new Data().add(0, KEY._MESSAGE, chat);
 			Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
 			Connection conn = new Connection().requestPayload(request).async(false);
-			
-			if ( chat.contentType == Chat.CONTENT_TYPE_PICTURE ) {
-				conn.attachFile(filePath).contentType(MimeType.jpeg);
-			}
-			
 			conn.request();
 			
 			//응답 받아와서 성공여부를 핸들러에 알림
@@ -438,17 +435,29 @@ public class RoomFragment extends RomeoFragment {
        * http://www.firstclown.us/tag/android/
        */
 
-      Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
       // 찍은 사진을 저장할 경로를 설정함
       Date now = new Date();
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.KOREA);
       
-      String url = "sdcard/DCIM/Camera/DAON_" + format.format(now) + ".jpg";
-      
-      mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+      // 카메라 촬영을 할 수 있는 액티비티를 실행할 수 있도록 인텐트 객체를 생성한다.
+      Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+      // 외장 메모리에서 공유를 목적으로 하는 사진을 저장할 수 있는 폴더 경로를 
+      // File 객체로 얻는다.
+      File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+      String fileName = "DAON_" + format.format(now) + ".jpg";
+
+      // 폴더 경로에 해당하는 폴더가 존재하지 않으면 폴더를 생성한다.
+      if(!path.exists()) path.mkdirs();
+
+      File file = new File(path, fileName+".jpg");
+      // 파일 경로가 저장된 File 객체의 URI 를 얻는다.
+      mImageCaptureUri = Uri.fromFile(file);
+      // 인텐트에 URI 정보를 저장한다.
+      // 카메라 액티비티는 이 URI 에 입력된 경로에 촬영한 이미지를 저장한다.
       intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-      
+
+      // 인텐트 정보에 맞는 액티비티를 실행한다.   
       startActivityForResult(intent, PICK_FROM_CAMERA);
     }
     
@@ -467,20 +476,22 @@ public class RoomFragment extends RomeoFragment {
       if(resultCode != Activity.RESULT_OK) {
         return;
       }
-
+      String filePath = null;
       switch(requestCode) {
         case PICK_FROM_ALBUM:
-          mImageCaptureUri = data.getData();
+        	mImageCaptureUri = data.getData();
+        	Cursor c = getActivity().getContentResolver().query(mImageCaptureUri,null,null,null,null);
+            c.moveToNext();
+            filePath = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+            c.close();
+            break;
 		case PICK_FROM_CAMERA:
-		  break;
+			filePath = mImageCaptureUri.getPath();
+			break;
 		default:
 			return;
       }
-      Cursor c = getActivity().getContentResolver().query(mImageCaptureUri,null,null,null,null);
-      c.moveToNext();
       
-      String filePath = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
-      c.close();
       sendImage(filePath);
     }
     

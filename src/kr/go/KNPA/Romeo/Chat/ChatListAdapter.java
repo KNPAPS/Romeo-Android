@@ -3,9 +3,9 @@ package kr.go.KNPA.Romeo.Chat;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Config.KEY.CHAT;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
@@ -92,7 +92,7 @@ public class ChatListAdapter extends CursorAdapter {
 		 * {{{
 		 */
 		//유저 idx를 유저 객체로 변환
-		User sender = User.getUserWithIdx(senderIdx);
+		User sender = MemberManager.sharedManager().getUser(senderIdx);
 		
 		//프로필 사진 load
 		ImageManager im = new ImageManager();

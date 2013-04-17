@@ -77,12 +77,12 @@ public class MemberManager {
 				HashMap<String,Object> hm = response.getData().get(0);
 				
 				Department dep = new Department(
-													(String)hm.get(KEY.DEPT.IDX), 
-													(String)hm.get(KEY.DEPT.NAME), 
-													(String)hm.get(KEY.DEPT.FULL_NAME), 
-													null, 
-													Department.NOT_SPECIFIED
-												);
+											(String)hm.get(KEY.DEPT.IDX), 
+											(String)hm.get(KEY.DEPT.NAME), 
+											(String)hm.get(KEY.DEPT.FULL_NAME), 
+											null, 
+											Department.NOT_SPECIFIED
+										);
 				
 				user = new User.Builder()
 									.idx((String)hm.get(KEY.USER.IDX))

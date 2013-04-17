@@ -906,6 +906,39 @@ public class DBProcManager {
 			return db.rawQuery(sql,null);
 		}
 		
+		/**
+		 * 문서검색
+		 * @b 커서구조
+		 * @b COLUMN_DOC_TITLE str 제목\n
+		 * @b COLUMN_DOC_CONTENT str 내용\n
+		 * @b COLUMN_SENDER_IDX str 발신자\n
+		 * @b COLUMN_DOC_TS long 발신일시\n
+		 * @b COLUMN_DOC_TYPE int 문서카테고리 Document.TYPE_DEPARTED, Document.TYPE_RECEIVED, Document.TYPE_FAVORITE\n
+		 * @b COLUMN_IS_FAVORITE int 즐겨찾기여부
+		 * @b COLUMN_IS_CHECKED int 자기가확인했는지\n
+		 * @b COLUMN_CHECKED_TS long 확인한시간
+		 * @param query
+		 * @return
+		 */
+		public Cursor search(String query) {
+			String sql
+				= "select "+DBSchema.DOCUMENT.COLUMN_CATEGORY+COLUMN_DOC_TYPE+", "+
+						DBSchema.DOCUMENT.COLUMN_CHECKED_TS+COLUMN_CHECKED_TS+", "+
+						DBSchema.DOCUMENT.COLUMN_IS_CHECKED+COLUMN_IS_CHECKED+", "+
+						DBSchema.DOCUMENT.COLUMN_IS_FAVORITE+COLUMN_IS_FAVORITE+", "+
+						DBSchema.DOCUMENT.COLUMN_CONTENT+COLUMN_DOC_CONTENT+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATED_TS+COLUMN_CREATED_TS+", "+
+						DBSchema.DOCUMENT.COLUMN_CREATOR_IDX+COLUMN_SENDER_IDX+", "+
+						DBSchema.DOCUMENT.COLUMN_IDX+COLUMN_DOC_IDX+", "+
+						DBSchema.DOCUMENT.COLUMN_TITLE+COLUMN_DOC_TITLE+
+						" FROM "+DBSchema.DOCUMENT.TABLE_NAME+
+						" where "+DBSchema.DOCUMENT.COLUMN_TITLE+ " LIKE ? or "
+						+DBSchema.DOCUMENT.COLUMN_CONTENT+" like ? ";
+			String bind = "%"+query+"%";
+			String[] val = { bind, bind };
+			return db.rawQuery(sql, val);
+		}
+		
 		public static final String COLUMN_DOC_IDX = "doc_idx";
 		public static final String COLUMN_DOC_TITLE = "doc_title";
 		public static final String COLUMN_DOC_CONTENT = "doc_content";

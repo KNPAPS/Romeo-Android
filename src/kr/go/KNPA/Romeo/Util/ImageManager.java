@@ -16,18 +16,11 @@ import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
 
 /**
  *  이미지 파일 관리
@@ -71,7 +64,10 @@ public class ImageManager {
 	 * @return
 	 */
 	public ImageManager upload( int imageType, String imageHash, String fileName ){
-		
+		return upload(imageType, imageHash, fileName, true);
+	}
+	
+	public ImageManager upload( int imageType, String imageHash, String fileName, boolean async ) {
 		switch(imageType) {
 		case PROFILE_SIZE_ORIGINAL:
 		case CHAT_SIZE_ORIGINAL:
@@ -81,11 +77,18 @@ public class ImageManager {
 			return this;
 		}
 		
+		String ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+		String contentType = MimeType.jpeg;
+		if ( ext.equals("png") ) {
+			contentType = MimeType.png;
+		}
+		
 		Payload requestPayload = new Payload().setEvent(Event.Upload.image());
 		Data reqData = new Data();
 		reqData.add(0,KEY.UPLOAD.FILE_IDX,imageHash);
 		reqData.add(0,KEY.UPLOAD.FILE_TYPE,imageType);
-		new Connection().requestPayload(requestPayload).contentType(MimeType.jpeg).attachFile(fileName).callBack(callBack).request();
+		requestPayload.setData(reqData);
+		new Connection().requestPayload(requestPayload).async(async).contentType(contentType).attachFile(fileName).callBack(callBack).request();
 		return this;
 	}
 	
