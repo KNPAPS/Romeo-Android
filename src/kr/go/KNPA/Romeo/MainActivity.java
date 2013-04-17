@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
 		ChatFragment chatFragment = ChatFragment.chatFragment(subType);
 		switchContent(chatFragment);
 		
-		Room room = new Room(MainActivity.this, subType, roomCode);
+		Room room = new Room(MainActivity.this, roomCode);
 		RoomFragment roomFragment = new RoomFragment(room);
 		pushContent(roomFragment);
 	}

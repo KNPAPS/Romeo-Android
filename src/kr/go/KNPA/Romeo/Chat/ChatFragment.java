@@ -11,14 +11,15 @@ import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 /**
  * 메뉴에서 Chat 종류의 기능을 선택했을 때 만날 수 있는 Fragment. \n
@@ -27,12 +28,15 @@ import android.widget.Toast;
 public class ChatFragment extends RomeoFragment {
 
 	private static final String TAG = ChatFragment.class.getSimpleName();
+	private Handler mHandler;
 	/**
 	 * @name Constructors
 	 * @{
 	 */
-	public ChatFragment() 			{	this(Chat.TYPE_MEETING);	}
-	public ChatFragment(int subType) 	{	super(subType);				}
+	public ChatFragment(int subType) {
+		super(subType);
+		
+	}
 	/** @} */
 	
 	/**
@@ -73,14 +77,7 @@ public class ChatFragment extends RomeoFragment {
 	
 	// Manage List View
 	public RoomListView getListView() {
-		View view = ((ViewGroup)getView());
-		RoomListView lv = null;
-		
-		if(view!=null) {
-			lv = (RoomListView)view.findViewById(R.id.roomListView);
-		}
-		
-		return lv;
+		return (RoomListView)this.listView;
 	}
 	
 	// Manage Fragment Life-cycle
@@ -94,13 +91,12 @@ public class ChatFragment extends RomeoFragment {
 		}
 	}
 	
+	//onCreateView
 	@Override
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = null;
-
-
+		
 		OnClickListener lbbOnClickListener = new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				MainActivity.sharedActivity().toggle();
@@ -108,7 +104,6 @@ public class ChatFragment extends RomeoFragment {
 		};
 		
 		OnClickListener rbbOnClickListener = new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), MemberSearch.class);
@@ -194,43 +189,67 @@ public class ChatFragment extends RomeoFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MemberSearch.REQUEST_CODE) {
-			if(resultCode != MemberSearch.RESULT_OK) {
-				
-			} else {
-				
+			if(resultCode == MemberSearch.RESULT_OK) {
+
+				WaiterView.showDialog(getActivity());
 				//채팅을 할 사람들 목록을 받음 
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
+				final ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
 				
 				if ( receiversIdxs.size() == 0 ) {
 					return;
 				}
 				
-				//일단 roomCode가 없는 빈 room 객체를 만듬
-				Room room = null;
-				String roomCode = null;
-				//만약 리시버가 1명이라면 기존에 있는 방이 있는지 검사
-				if ( receiversIdxs.size() == 1 ) {
-					 
-					roomCode = DBProcManager.sharedManager(getActivity())
-							 				.chat().getRoomCode(this.subType, receiversIdxs.get(0));
-					 
-					
-				} 
-				//기존에 있는 방이 있다면 roomCode를 지정해 생성함
-				if ( roomCode != null ) {
-					room = new Room(getActivity(),this.subType,roomCode);
-				} else {
-					ArrayList<String> chatters = new ArrayList<String>();
-					chatters.addAll(receiversIdxs);
-					chatters.add( UserInfo.getUserIdx(getActivity()) );
-					room = new Room(getActivity(),this.subType,chatters);
-				}
+				mHandler = new ChatFragmentHandler();
 				
-				RoomFragment fragment = new RoomFragment(room);
-				MainActivity.sharedActivity().pushContent(fragment);
+				new Thread(){
+					@Override
+					public void run() {
+						super.run();
+						
+						
+						//일단 roomCode가 없는 빈 room 객체를 만듬
+						Room room = null;
+						String roomCode = null;
+						//만약 리시버가 1명이라면 기존에 있는 방이 있는지 검사
+						if ( receiversIdxs.size() == 1 ) {
+							 
+							roomCode = DBProcManager.sharedManager(getActivity())
+									 				.chat().getRoomCode(subType, receiversIdxs.get(0));
+							
+						} 
+						//기존에 있는 방이 있다면 roomCode를 지정해 생성함
+						if ( roomCode != null ) {
+							room = new Room(getActivity(), roomCode);
+						} else {
+							ArrayList<String> chatters = new ArrayList<String>();
+							chatters.addAll(receiversIdxs);
+							chatters.add( UserInfo.getUserIdx(getActivity()) );
+							room = new Room(getActivity(),subType,chatters);
+						}
+						Message msg = mHandler.obtainMessage();
+						msg.what = ChatFragmentHandler.ENTER_ROOM;
+						msg.obj = room;
+						mHandler.sendMessage(msg);
+
+					}
+				}.start();
+				
+
 			}
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+	static class ChatFragmentHandler extends Handler {
+		public static final int ENTER_ROOM = 1;
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == ENTER_ROOM ) {
+				RoomFragment fragment = new RoomFragment((Room)msg.obj);
+				MainActivity.sharedActivity().pushContent(fragment);
+				WaiterView.dismissDialog(MainActivity.sharedActivity());
+			}
+			super.handleMessage(msg);
 		}
 	}
 }

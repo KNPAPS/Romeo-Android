@@ -22,6 +22,11 @@ public class Event {
 	public static final String MESSAGE_SURVEY_ANSWER_SURVEY="MESSAGE:SURVEY:ANSWER_SURVEY";/*!<설문조사 응답*/
 	public static final String MESSAGE_SURVEY_GET_RESULT="MESSAGE:SURVEY:GET_RESULT";/*!<설문조사 결과 가져오기*/
 	public static final String MESSAGE_SURVEY_GET_CONTENT="MESSAGE:SURVEY:GET_CONTENT";/*!<설문조사 상세 내용 가져오기*/
+	
+	public static final String MESSAGE_CHAT_PULL_LAST_READ_TS ="MESSAGE:CHAT:PULL_LAST_READ_TS";
+	public static final String MESSAGE_CHAT_UPDATE_LAST_READ_TS ="MESSAGE:CHAT:UPDATE_LAST_READ_TS";
+
+	
 	public static final String DEVICE_REGISTER="DEVICE:REGISTER";/*!<기기 정보 등록*/
 	public static final String DEVICE_IS_REGISTERED="DEVICE:IS_REGISTERED";/*!<기기가 등록되어 있는지, 활성화 되어 있는지 확인*/
 	public static final String DEVICE_UNREGISTER="DEVICE:UNREGISTER";/*!<기기 등록 해제*/
@@ -64,6 +69,8 @@ public class Event {
 		}
 		public static class Chat {
 			public static String createRoom()		{	return MESSAGE_CHAT_CREATE_ROOM;		}
+			public static String pullLastReadTS()	{	return MESSAGE_CHAT_PULL_LAST_READ_TS;	}
+			public static String updateLastReadTS()	{	return MESSAGE_CHAT_UPDATE_LAST_READ_TS;	}
 		}
 	}
 	

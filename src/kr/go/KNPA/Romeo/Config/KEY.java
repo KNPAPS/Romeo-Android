@@ -60,6 +60,7 @@ public class KEY {
 		public static final String IMAGE_SIZE = "imageSize";
 		
 		public static final String ROOM_MEMBER = "roomMember";
+		public static final String LAST_READ_TS = "lastReadTS";
 	}
 
 	public static class DOCUMENT {

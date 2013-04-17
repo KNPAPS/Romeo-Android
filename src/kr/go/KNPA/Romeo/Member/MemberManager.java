@@ -101,12 +101,24 @@ public class MemberManager {
 	}
 	
 	public ArrayList<User> getUsers(ArrayList<String> idxs) {
-
+		
+		ArrayList<User> users = new ArrayList<User>();
 		Data data = new Data();
 		for(int i=0; i< idxs.size(); i++) {
-			data.add(i, KEY.USER.IDX, idxs.get(i));
+			User cachedUser = cachedUsers.get(idxs.get(i));
+			if ( cachedUser != null ) {
+				users.add(cachedUser);
+			} else {
+				data.add(i, KEY.USER.IDX, idxs.get(i));
+			}
 		}
 		
+		//새로 서버에서 가져올 사람이 없으면 걍 리턴
+		if ( data.size() == 0 ) {
+			return users;
+		}
+		
+		//캐시되어있지 않은 사람들은 서버에서 정보를 가져옴
 		Payload request = new Payload().setEvent(Event.User.getUserInfo())
 								.setData( data );
 		
@@ -114,7 +126,6 @@ public class MemberManager {
 		Payload response = conn.getResponsePayload();
 		
 		if ( response.getStatusCode() == StatusCode.SUCCESS ) {
-			ArrayList<User> users = new ArrayList<User>();
 			Data responseData = response.getData();
 			
 			for(int i=0; i<responseData.size(); i++) {

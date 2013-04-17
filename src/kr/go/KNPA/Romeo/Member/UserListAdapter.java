@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class UserListAdapter extends BaseAdapter {
@@ -60,6 +62,7 @@ public class UserListAdapter extends BaseAdapter {
 		TextView nameTV = null;
 		TextView rankTV = null;
 		TextView roleTV = null;
+		ImageView userPIC = null;
 		if ( convertView == null ) {
 			v = inflater.inflate(R.layout.user_list_cell, parent, false);
 			
@@ -67,11 +70,14 @@ public class UserListAdapter extends BaseAdapter {
 			v = convertView;			
 		}
 		
+		userPIC = (ImageView)v.findViewById(R.id.uesr_pic);
 		departmentTV = (TextView)v.findViewById(R.id.department);
 		nameTV = (TextView)v.findViewById(R.id.name);
 		rankTV = (TextView)v.findViewById(R.id.rank);
 		roleTV = (TextView)v.findViewById(R.id.role);
 		
+		ImageManager im = new ImageManager();
+		im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, mArray.get(position).idx, userPIC);
 		departmentTV.setText(mArray.get(position).department.nameFull);
 		nameTV.setText(mArray.get(position).name);
 		rankTV.setText(Constants.POLICE_RANK[mArray.get(position).rank]);

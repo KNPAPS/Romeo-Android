@@ -17,6 +17,7 @@ import android.widget.TextView;
 public class UserListActivity extends Activity {
 
 	public static final String KEY_USERS_IDX = "idxs";
+	public static final String KEY_TITLE = "title";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,29 +29,26 @@ public class UserListActivity extends Activity {
 		
 		ListView lv = (ListView)view.findViewById(R.id.listView);
 		ArrayList<String> userIdxs = getIntent().getExtras().getStringArrayList(KEY_USERS_IDX);
+		String title = getIntent().getExtras().getString(KEY_TITLE);
 		ArrayList<User> users = User.getUsersWithIdxs(userIdxs);
 		UserListAdapter adapter = new UserListAdapter(this, users);
 		lv.setAdapter(adapter);
 		
-	}
-
-
-
-	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
+		Button lbb = (Button)view.findViewById(R.id.left_bar_button);
+		Button rbb = (Button)view.findViewById(R.id.right_bar_button);
 		
-		Button lbb = (Button)parentView.findViewById(R.id.left_bar_button);
-		Button rbb = (Button)parentView.findViewById(R.id.right_bar_button);
+		rbb.setVisibility(View.INVISIBLE);
+		lbb.setText("취소");
 		
-		lbb.setVisibility((lbbVisible?View.VISIBLE:View.INVISIBLE));
-		rbb.setVisibility((rbbVisible?View.VISIBLE:View.INVISIBLE));
+		TextView titleView = (TextView)view.findViewById(R.id.title);
+		titleView.setText(title);
 		
-		if(lbb.getVisibility() == View.VISIBLE) { lbb.setText(lbbTitle);	}
-		if(rbb.getVisibility() == View.VISIBLE) { rbb.setText(rbbTitle);	}
-		
-		TextView titleView = (TextView)parentView.findViewById(R.id.title);
-		titleView.setText(titleText);
-		
-		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
-		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
+		lbb.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
 	}
 }

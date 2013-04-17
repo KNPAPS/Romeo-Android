@@ -1,23 +1,29 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,7 +32,7 @@ import android.widget.TextView;
 
 public class ChatListAdapter extends CursorAdapter {
 
-	public static HashMap<String,WaiterView> waiterViews;
+	public HashMap<String,WaiterView> waiterViews;
 	private Room room;
 	int chatType = Chat.NOT_SPECIFIED;
 	
@@ -38,7 +44,7 @@ public class ChatListAdapter extends CursorAdapter {
 	public ChatListAdapter(Context context, Cursor c, int chatType) {
 		super(context, c, 0);
 		this.chatType = chatType;
-		ChatListAdapter.waiterViews = new HashMap<String, WaiterView>();
+		this.waiterViews = new HashMap<String, WaiterView>();
 	}
 	public ChatListAdapter setRoom(Room room) { 
 		this.room = room; 
@@ -136,7 +142,11 @@ public class ChatListAdapter extends CursorAdapter {
 			break;
 		case Chat.STATE_SUCCESS:
 			
+			if ( waiterViews.get(messageIdx) != null ) {
+				waiterViews.get(messageIdx).restoreView();
+			}
 			
+			setUncheckerInfo(goUncheckedBT,arrivalTS);
 			
 			break;
 		case Chat.STATE_FAIL:
@@ -155,10 +165,18 @@ public class ChatListAdapter extends CursorAdapter {
 	        throw new IllegalStateException("couldn't move cursor to position " + position);
 	    }
 	    
-	    View v = newView(mContext,mCursor,parent);
-	    
-	    bindView(v, mContext, mCursor);
-	    return v;
+		Cursor c = (Cursor)getItem(position);
+		String chatIdx = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_IDX));
+		
+		View v = null;
+		if ( convertView != null && convertView.getTag() != null && chatIdx.equals(convertView.getTag())) {
+			v = convertView;
+		} else {
+			v = newView(mContext,mCursor,parent);
+			
+		}
+		bindView(v, mContext, mCursor);
+		return v;
 	}
 	
 	@Override
@@ -191,5 +209,31 @@ public class ChatListAdapter extends CursorAdapter {
 		return false;
 	}
 	
-	
+	public void setUncheckerInfo(final Button goUncheckedBT,final long arrivalTS) {
+		HashMap<String,Long> lastReadTS = room.getLastReadTS();
+		int numUncheckers= 0;
+		ArrayList<String> uncheckers = new ArrayList<String>();
+		
+		Iterator<String> itr = lastReadTS.keySet().iterator();
+		while (itr.hasNext()) {
+		    String key = (String)itr.next();
+		    if ( lastReadTS.get(key) < arrivalTS && !key.equals(UserInfo.getUserIdx(mContext))){
+		    	numUncheckers++;
+		    	uncheckers.add(key);
+		    }
+		}
+		
+		final ArrayList<String> unchks = uncheckers;
+		goUncheckedBT.setText(String.valueOf(numUncheckers));
+		goUncheckedBT.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.sharedActivity(),UserListActivity.class);
+				intent.putExtra(UserListActivity.KEY_USERS_IDX, unchks);
+				intent.putExtra(UserListActivity.KEY_TITLE, "미확인자 명단");
+				mContext.startActivity(intent);
+			}
+		});
+	}				
 }

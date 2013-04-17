@@ -318,6 +318,13 @@ public class DBProcManager {
 						String.valueOf(createdTS)+")";
 			String[] val = { chatHash, senderHash, content };
 			db.execSQL(sql, val);
+			
+			long chatId = lastInsertId();
+			
+			sql = "update "+DBSchema.ROOM.TABLE_NAME
+					+" set last_chat_id = "+String.valueOf(chatId)+
+					" where _id = "+String.valueOf(roomId);
+			db.execSQL(sql);
 		}
 		
 		/**
@@ -420,6 +427,10 @@ public class DBProcManager {
 					" lc."+DBSchema.CHAT.COLUMN_CREATED_TS+
 						COLUMN_ROOM_LAST_CHAT_TS+", " +
 				
+					" ( select chatter."+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+
+					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" chatter where chatter."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = r._id and "
+					+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != ? limit 1) "+COLUMN_ROOM_CHATTER_IDX+", "+
+						
 					" (CASE lc."+DBSchema.CHAT.COLUMN_CONTENT_TYPE+" " +
 					"WHEN "+CHAT_CONTENT_TYPE_TEXT+" " +
 					"THEN lc."+DBSchema.CHAT.COLUMN_CONTENT+" " +
@@ -430,11 +441,16 @@ public class DBProcManager {
 						
 					" from "+DBSchema.ROOM.TABLE_NAME+" r " +
 					" left join "+DBSchema.CHAT.TABLE_NAME+" lc " +
-						"on lc._id = r."+DBSchema.ROOM.COLUMN_LAST_CHAT_ID+
+						" on lc._id = r."+DBSchema.ROOM.COLUMN_LAST_CHAT_ID+
+						
+					" left join "+DBSchema.ROOM_CHATTER.TABLE_NAME+" chatter " +
+						" on chatter."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = r._id and chatter."+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != ? "+
+						
 					" where "+DBSchema.ROOM.COLUMN_TYPE+" = "+String.valueOf(roomType)+
 					
 					" order by lc."+DBSchema.CHAT.COLUMN_CREATED_TS+" desc ";
-			Cursor c = db.rawQuery(sql, null);
+			String[] val = { UserInfo.getUserIdx(context) };
+			Cursor c = db.rawQuery(sql, val);
 			return c;
 		}
 		
@@ -537,22 +553,37 @@ public class DBProcManager {
 			return db.rawQuery(sql, null);
 		}
 		
+		/**
+		 * 채팅방 정보를 담고 있는 커서를 반환
+		 * @b 커서구조
+		 * @b COLUMN_ROOM_TYPE 채팅방 타입\n
+		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
+		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
+		 * @b COLUMN_ROOM_NUM_NEW_CHAT 읽지 않은 채팅 수\n
+		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
+		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
+		 * @param roomType 
+		 * @return cursor
+		 */
 		public Cursor getRoomInfo(String roomHash) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
-			
-			if ( roomId == Constants.NOT_SPECIFIED ) {
-				return null;
-			}
-			
-			String sql=
-					"select _id, "+
-							DBSchema.ROOM.COLUMN_IDX+COLUMN_ROOM_IDX+", "+
-							DBSchema.ROOM.COLUMN_TITLE+COLUMN_ROOM_TITLE+
-					" from "+DBSchema.ROOM.TABLE_NAME+
-					" where _id = "+String.valueOf(roomId);
-			return db.rawQuery(sql, null);
+			String sql = 
+					"select r._id ," +
+					" r."+DBSchema.ROOM.COLUMN_TYPE+
+						COLUMN_ROOM_TYPE+"," +
+					
+					" r."+DBSchema.ROOM.COLUMN_TITLE+
+						COLUMN_ROOM_TITLE+"," +
+					
+					" (select count(rc._id) " +
+						"from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" rc " +
+						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id ) "+
+						COLUMN_ROOM_NUM_CHATTER+
+					" from "+DBSchema.ROOM.TABLE_NAME+" r " +
+					" where "+DBSchema.ROOM.COLUMN_IDX+" = ?";
+			String[] val = { roomHash };
+			Cursor c = db.rawQuery(sql, val);
+			return c;
 		}
-		
 		public void updateRoomTitle(String roomHash, String title) {
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			
@@ -593,11 +624,14 @@ public class DBProcManager {
 		}
 		
 		public static final String COLUMN_ROOM_IDX = "room_idx";
+		public static final String COLUMN_ROOM_TYPE = "room_type";
 		public static final String COLUMN_ROOM_TITLE = "room_title";
 		public static final String COLUMN_ROOM_NUM_CHATTER = "num_chatter";
 		public static final String COLUMN_ROOM_NUM_NEW_CHAT = "num_new_chat";
 		public static final String COLUMN_ROOM_LAST_CHAT_TS = "last_chat_ts";
 		public static final String COLUMN_ROOM_LAST_CHAT_CONTENT = "last_chat_content";
+		public static final String COLUMN_ROOM_CHATTER_IDX = "chatter_idx";
+		
 		public static final String COLUMN_USER_IDX = "user_idx";
 		public static final String COLUMN_CHAT_SENDER_IDX = "sender_idx";
 		public static final String COLUMN_CHAT_IDX = "chat_idx";

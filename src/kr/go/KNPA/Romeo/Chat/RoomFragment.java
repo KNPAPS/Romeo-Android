@@ -73,7 +73,10 @@ public class RoomFragment extends RomeoFragment {
 	public void onResume() {
 		super.onResume();
 		ChatFragment.setCurrentRoom(this);
-
+		if ( room.isCreated() ) {
+			room.updateLastReadTS(System.currentTimeMillis());
+		}
+		getListView().scrollToBottom();
 	}
 
 	@Override

@@ -67,8 +67,8 @@
         <activity
             android:name="kr.go.KNPA.Romeo.Member.UserListActivity"
             android:configChanges="keyboardHidden"
-            android:theme="@android:style/Theme.Dialog"
             android:windowSoftInputMode="stateHidden"
+            android:theme="@android:style/Theme.NoTitleBar"
             android:label="@string/title_activity_user_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
