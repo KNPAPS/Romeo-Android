@@ -16,8 +16,8 @@
 	    android:layout_weight="1"
 	    android:layout_width="0dp"
 	    android:layout_height="@dimen/menu_searchbar_height"
-	    android:layout_margin="@dimen/menu_searchbar_margin"
-	    android:hint="@string/placehold_search"
+	    android:hint="@string/search"
+	    android:background="@drawable/round_shadow_white_stroked"
 	    android:textSize="@dimen/menu_list_cell_fontsize" >
 	</EditText>
 

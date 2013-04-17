@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
 	private static int lastKeyCode = Constants.NOT_SPECIFIED;
 	
 	public MainActivity() {		// 생성자 
-		super(R.string.changing_fragments);
+		super(R.string.app_name);
 		_sharedActivity = this;
 	}
 	

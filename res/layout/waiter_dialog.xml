@@ -6,7 +6,7 @@
     android:background="@drawable/waiter_dialog_background"
     android:orientation="vertical" >
     
-<RelativeLayout
+	<RelativeLayout
         android:layout_margin="0dp"
         android:layout_width="140dp"
         android:layout_height="140dp" >

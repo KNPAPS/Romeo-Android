@@ -46,7 +46,7 @@ public class HandBookFragment extends Fragment {
 	private ViewPager pager;
 	private HashMap<Integer, ArrayList<String>> book;
 	private static int nPages = 0; 
-	
+	private AlertDialog contents; 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -107,13 +107,13 @@ public class HandBookFragment extends Fragment {
 				contentsView.setAdapter(contentsAapter);
 				contentsView.setOnGroupClickListener(contentsAapter);
 				contentsView.setOnChildClickListener(contentsAapter);
-				AlertDialog contents = new AlertDialog.Builder(getActivity())
+				contents = new AlertDialog.Builder(getActivity())
 													  .setCancelable(true)
 													  .setTitle("집회시위 현장매뉴얼")
 													  .setView(contentsView)
 													  //.setAdapter((ListAdapter) contentsAapter, contentsAapter)
 													  .show();
-				
+				//contents.requestWindowFeature(Window.Fe)
 			}
 		};
 		initNavigationBar(view, "현장매뉴얼", true, true, "메뉴", "목자", lbbOnClickListener, rbbOnClickListener);
@@ -241,7 +241,8 @@ public class HandBookFragment extends Fragment {
 				case 1 :	// 제2장 유형별 법규 적용		(14)
 				case 2 :	// 제3장 관련법령 요약 해설	(6)
 				case 5 :	// 참고 (3)
-					pager.setCurrentItem(count+childPosition+childPosition);
+					pager.setCurrentItem(count+childPosition);
+					contents.dismiss();
 					return true;
 			}
 			
@@ -264,6 +265,7 @@ public class HandBookFragment extends Fragment {
 			case 4 :	// 제5장 집회시위 관리 지침	(0)
 			default:
 				pager.setCurrentItem(count, true);
+				contents.dismiss();
 				return true;	
 			}
 			
@@ -272,7 +274,7 @@ public class HandBookFragment extends Fragment {
 		private int getCountUntilGroup(int groupPosition) {
 			int count = 0;
 			for(int i=0; i<groupPosition; i++) {
-				count += childData.get(groupPosition).size();
+				count += childData.get(i).size();
 			}
 			return count;
 		}
