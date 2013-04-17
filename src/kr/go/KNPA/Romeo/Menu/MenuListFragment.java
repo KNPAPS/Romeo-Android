@@ -116,39 +116,39 @@ public class MenuListFragment extends ListFragment {
 		List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
         List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
         
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"조직도", 		"iconImage", ""+R.drawable.icon_people,					"code", "member") );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"지시와 보고", 	"iconImage", ""+R.drawable.icon_arrow_side,					"code",	"chat:Command") );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"회의", 			"iconImage", ""+R.drawable.icon_circle,					"code", "chat:Meeting" ) );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"업무연락", 		"iconImage", ""+R.drawable.icon_document,		"code",	"document") );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"설문",		 	"iconImage", ""+R.drawable.icon_pie_graph,		"code",	"survey") );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"자료실", 		"iconImage", ""+R.drawable.icon_folder,			"code", "library") );
-        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	"설정", 			"iconImage", ""+R.drawable.icon_gear,	"code",	"settings") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.memberListTitle), 		"iconImage", ""+R.drawable.icon_people,					"code", "member") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.commandTitle), 			"iconImage", ""+R.drawable.icon_arrow_side,					"code",	"chat:Command") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.meetingTitle), 			"iconImage", ""+R.drawable.icon_circle,					"code", "chat:Meeting" ) );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.documentTitle), 			"iconImage", ""+R.drawable.icon_document,		"code",	"document") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.surveyTitle),		 	"iconImage", ""+R.drawable.icon_pie_graph,		"code",	"survey") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.libraryTitle), 			"iconImage", ""+R.drawable.icon_folder,			"code", "library") );
+        groupData.add( CollectionFactory.hashMapWithKeysAndStrings("section",	getString(R.string.settingsTitle), 			"iconImage", ""+R.drawable.icon_gear,	"code",	"settings") );
         
         
         List<Map<String, String>> l = null;
         
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"조직도",		 	"iconImage", ""+R.drawable.icon_people, 					"code", "member:MemberList"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"즐겨찾기",	 	"iconImage", ""+R.drawable.icon_star, 						"code", "member:Favorite"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		getString(R.string.memberListTitle),		 	"iconImage", ""+R.drawable.icon_people, 					"code", "member:MemberList"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		getString(R.string.memberFavoriteTitle),	 	"iconImage", ""+R.drawable.icon_star, 						"code", "member:Favorite"));
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"지시와 보고", 	"iconImage", ""+R.drawable.icon_chat, 						"code", "chat:Command")); 
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		getString(R.string.commandTitle), 				"iconImage", ""+R.drawable.icon_chat, 						"code", "chat:Command")); 
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"회의",	 		"iconImage", ""+R.drawable.icon_circle, 						"code", "chat:Meeting")); 
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		getString(R.string.meetingTitle),	 			"iconImage", ""+R.drawable.icon_circle, 						"code", "chat:Meeting")); 
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"중요 업무연락", 	"iconImage", ""+R.drawable.icon_document_star, 						"code", "document:Favorite"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"받은 업무연락", 	"iconImage", ""+R.drawable.icon_document_received, 			"code", "document:Received"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"보낸 업무연락", 	"iconImage", ""+R.drawable.icon_document_departed, 			"code", "document:Departed"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"중요 " + getString(R.string.documentFavoriteTitle), 		"iconImage", ""+R.drawable.icon_document_star, 						"code", "document:Favorite"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"받은 " + getString(R.string.documentReceivedTitle), 		"iconImage", ""+R.drawable.icon_document_received, 			"code", "document:Received"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"보낸 " + getString(R.string.documentDepartedTitle), 		"iconImage", ""+R.drawable.icon_document_departed, 			"code", "document:Departed"));
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"받은 설문",	 	"iconImage", ""+R.drawable.icon_pie_graph_received, 			"code", "survey:Received"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"보낸 설문",	 	"iconImage", ""+R.drawable.icon_pie_graph_departed, 			"code", "survey:Departed"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"받은 " + getString(R.string.surveyReceivedTitle),	 	"iconImage", ""+R.drawable.icon_pie_graph_received, 			"code", "survey:Received"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"보낸 " + getString(R.string.surveyDepartedTitle),	 	"iconImage", ""+R.drawable.icon_pie_graph_departed, 			"code", "survey:Departed"));
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();

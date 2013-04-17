@@ -19,7 +19,7 @@
 
     
 
-		<style name="customtheme" parent="@android:style/Theme.Light">
+	<style name="customtheme" parent="@android:style/Theme.Light">
         <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem</item>
     </style>
