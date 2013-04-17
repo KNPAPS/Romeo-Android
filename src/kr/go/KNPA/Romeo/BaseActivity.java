@@ -47,7 +47,7 @@ public class BaseActivity extends SlidingFragmentActivity {
 		// customize the SlidingMenu(뭔진 모르겠지만, SlideingMenu안에 정의되어있다.)
 		SlidingMenu sm = getSlidingMenu();
 		sm.setShadowWidthRes(R.dimen.shadow_width);
-		sm.setShadowDrawable(R.drawable.shadow);	// res/drawble/shadow.xml은 그라디언트 정보를 담고있다.
+		sm.setShadowDrawable(R.drawable.shade);	// res/drawble/shadow.xml은 그라디언트 정보를 담고있다.
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		sm.setFadeDegree(0.35f);
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
