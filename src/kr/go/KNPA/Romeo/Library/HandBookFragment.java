@@ -101,19 +101,7 @@ public class HandBookFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				// AlertDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
-				ContentsListAdapter contentsAapter = new ContentsListAdapter();
-				ExpandableListView contentsView = new ExpandableListView(getActivity());
-				contentsView.setAdapter(contentsAapter);
-				contentsView.setOnGroupClickListener(contentsAapter);
-				contentsView.setOnChildClickListener(contentsAapter);
-				contents = new AlertDialog.Builder(getActivity())
-													  .setCancelable(true)
-													  .setTitle("집회시위 현장매뉴얼")
-													  .setView(contentsView)
-													  //.setAdapter((ListAdapter) contentsAapter, contentsAapter)
-													  .show();
-				//contents.requestWindowFeature(Window.Fe)
+				showContentsListDialog();
 			}
 		};
 		initNavigationBar(view, "현장매뉴얼", true, true, "메뉴", "목자", lbbOnClickListener, rbbOnClickListener);
@@ -130,6 +118,28 @@ public class HandBookFragment extends Fragment {
 		
 		
 		return view;
+	}
+	
+	private void showContentsListDialog() {
+		// AlertDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
+		ContentsListAdapter contentsAapter = new ContentsListAdapter();
+		ExpandableListView contentsView = new ExpandableListView(getActivity());
+		contentsView.setAdapter(contentsAapter);
+		contentsView.setOnGroupClickListener(contentsAapter);
+		contentsView.setOnChildClickListener(contentsAapter);
+		contents = new AlertDialog.Builder(getActivity())
+											  .setCancelable(true)
+											  .setTitle("집회시위 현장매뉴얼")
+											  .setView(contentsView)
+											  //.setAdapter((ListAdapter) contentsAapter, contentsAapter)
+											  .show();
+		//contents.requestWindowFeature(Window.Fe)
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		showContentsListDialog();
 	}
 	
 	private class ContentsListAdapter implements ExpandableListAdapter, OnGroupClickListener, OnChildClickListener {
@@ -226,6 +236,11 @@ public class HandBookFragment extends Fragment {
 					.inflate(R.layout.dialog_menu_cell, parent, false);
 			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
 			titleTV.setText(group.get("section"));
+			
+			//TODO
+			//ViewGroup.LayoutParams lp = titleTV.getLayoutParams();
+			//lp.
+			
 			return convertView;
 		}
 		
