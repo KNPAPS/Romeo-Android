@@ -308,7 +308,12 @@ public class Room {
 							System.currentTimeMillis()/1000,
 							getRoomCode(), 
 							Chat.CONTENT_TYPE_USER_LEAVE);
-		
+		//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
+		String chatHash = DBProcManager.sharedManager(mContext)
+							.chat()
+							.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
+		//채팅해쉬를 채팅 객체에 설정함
+		chat.idx = chatHash;
 		Data reqData = new Data();
 		reqData.add(0,KEY._MESSAGE, chat);
 		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
