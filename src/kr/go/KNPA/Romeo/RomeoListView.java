@@ -54,24 +54,11 @@ public abstract class RomeoListView extends ListView {
 	// DB에 쿼리를 날린다. 추상메소드.
 	abstract protected Cursor query();
 	
-	// 리스트를 다시 불러온다.
+	/**
+	 * 각 리스트뷰 별로 정의된 query()를 통해 새 커서를 불러와\n
+	 * 새 쓰레드에서 리스트를 refresh한다.
+	 */
 	public void refresh() {
-//		if(listAdapter == null) return;
-// 
-//		if(listAdapter instanceof CursorAdapter) {
-//			// TODO : DB Loading
-//			Cursor c = query();
-//			
-//			setListBackground(c);
-//			if(c != null) {
-//				listAdapter.changeCursor(c);
-//			}
-//		} else {
-//			listAdapter.notifyDataSetChanged();
-//		}
-//		
-//		if(this.getAdapter() instanceof SimpleSectionAdapter && this.getAdapter() != listAdapter)
-//			((SimpleSectionAdapter)this.getAdapter()).notifyDataSetChanged();
 		onPreExecute();
 		
 		if ( mHandler == null ) {
@@ -89,6 +76,27 @@ public abstract class RomeoListView extends ListView {
 			}
 		};
 		thread.start();
+	}
+
+	/**
+	 * 입력된 cursor를 활용해 refresh한다\n
+	 * 새 쓰레드를 만들지 않음(일반 쓰레드 내에서 호출하기 위함)
+	 * @param c
+	 */
+	public void refresh(Cursor c) {
+		if(listAdapter == null) return;
+			 
+		if(listAdapter instanceof CursorAdapter) {
+			setListBackground( c );
+			if(c != null) {
+				listAdapter.changeCursor(c);
+			}
+		} else {
+			listAdapter.notifyDataSetChanged();
+		}
+		
+		if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
+			((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
 	}
 	
 	abstract public void onPreExecute();
@@ -124,19 +132,7 @@ public abstract class RomeoListView extends ListView {
 			
 			if ( listView != null ) {
 				Cursor c = (Cursor)msg.obj;
-				if(listView.listAdapter == null) return;
-					 
-				if(listView.listAdapter instanceof CursorAdapter) {
-					listView.setListBackground( c );
-					if(c != null) {
-						listView.listAdapter.changeCursor(c);
-					}
-				} else {
-					listView.listAdapter.notifyDataSetChanged();
-				}
-				
-				if(listView.getAdapter() instanceof SimpleSectionAdapter && listView.getAdapter() != listView.listAdapter)
-					((SimpleSectionAdapter)listView.getAdapter()).notifyDataSetChanged();
+				listView.refresh(c);
 			}
 			
 			listView.onPostExecute( msg.arg1==1?true:false );
@@ -144,6 +140,7 @@ public abstract class RomeoListView extends ListView {
 		}
 	}
 	
+
 /*	/// abstract
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {

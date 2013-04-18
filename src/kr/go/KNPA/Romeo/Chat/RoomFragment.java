@@ -109,8 +109,12 @@ public class RoomFragment extends RomeoFragment {
 		
 		if ( isForeGround == true ) {
 			room.updateLastReadTS(System.currentTimeMillis()/1000);
-			room.pullLastReadTS();
 		}
+		
+		if ( chat.contentType == Chat.CONTENT_TYPE_USER_LEAVE ) {
+			room.removeChatter(chat.senderIdx);
+		}
+		
 		Cursor c = getListView().query(getListView().getNumberOfItems());
 		Message msg = mHandler.obtainMessage();
 		msg.what = RoomHandler.REFRESH;
@@ -255,13 +259,7 @@ public class RoomFragment extends RomeoFragment {
 				}
 				
 				String senderIdx = UserInfo.getUserIdx(getActivity());
-				ArrayList<String> receivers = new ArrayList<String>(room.getChatters().size()-1);
-				
-				for( int i=0; i<room.getChatters().size(); i++ ) {
-					if ( room.getChatters().get(i).equals(senderIdx) == false ) {
-						receivers.add(room.getChatters().get(i));
-					}
-				}
+				ArrayList<String> receivers = room.getReceivers();
 				
 				Chat newChat = new Chat(
 									null,

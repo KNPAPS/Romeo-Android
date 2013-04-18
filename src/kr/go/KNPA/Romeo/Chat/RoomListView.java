@@ -29,7 +29,7 @@ import android.widget.Toast;
 /**
  * ChatFragment로 진입하면 보게되는 ListView이다. 방 목록을 포함하고 있다.
  */
-public class RoomListView extends RomeoListView implements OnItemClickListener {
+public class RoomListView extends RomeoListView implements OnItemClickListener, OnItemLongClickListener {
 
 	private RoomListHandler roomListHandler;
 	private Context mContext;
@@ -84,7 +84,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 			= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.title, sectionizer);
 		this.setAdapter(sectionAdapter);
 		this.setOnItemClickListener(this);
-		
+		this.setOnItemLongClickListener(this);
 		return this;
 	}
 	/** @} */
@@ -129,6 +129,62 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		}.start();
 	}
 	
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+	    AlertDialog.Builder chooseDlg = new AlertDialog.Builder(mContext);
+	    chooseDlg.setTitle("옵션");
+	    
+	    ArrayList<String> array = new ArrayList<String>();
+	    array.add("채팅방 이름 설정");
+	    array.add("알림 켜기");
+	    array.add("나가기");
+	    
+	    ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell, array);
+	    
+	    chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener(){
+	    	@Override
+	    	public void onClick(DialogInterface dialog, int which) {
+	    		switch(which){
+	    		case 0://채팅방 이름 설정
+	    			Toast.makeText(mContext, "이름설정", Toast.LENGTH_LONG).show();
+	    			break;
+	    		case 1://알림 켜기
+	    			Toast.makeText(mContext, "알림", Toast.LENGTH_LONG).show();
+	    			break;
+	    		case 2://나가기
+	    			
+	    			new Thread(){
+	    				public void run() {
+	    					Message startMsg = roomListHandler.obtainMessage();
+	    					startMsg.what = RoomListHandler.SHOW_WAITER_DIALOG;
+	    					roomListHandler.sendMessage(startMsg);
+	    					
+	    					Room room = new Room(mContext, (String) view.getTag());
+	    					room.leaveRoom();
+	    					
+	    					Message endMsg = roomListHandler.obtainMessage();
+	    					endMsg.what = RoomListHandler.DISMISS_WAITER_DIALOG;
+	    					roomListHandler.sendMessage(endMsg);
+	    					
+	    					Message msg = roomListHandler.obtainMessage();
+	    					msg.what = RoomListHandler.REFRESH;
+	    					msg.obj = query();
+	    					roomListHandler.sendMessage(msg);
+	    					
+	    				};
+	    			}.start();
+	    			
+	    			break;
+	    		}
+	    	}
+	    });
+	    
+	    chooseDlg.setCancelable(true);
+	    chooseDlg.show();
+		return false;
+	}
+
+	
 	/** @} */
 	@Override
 	public void onPreExecute() {
@@ -148,6 +204,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 		private static final int ENTER_ROOM = 1;
 		private static final int SHOW_WAITER_DIALOG = 2;
 		private static final int DISMISS_WAITER_DIALOG = 3;
+		private static final int REFRESH = 4;
 		@Override
 		public void handleMessage(Message msg) {
 			RoomListView roomListView = mReference.get();
@@ -164,11 +221,15 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 				case DISMISS_WAITER_DIALOG:
 					WaiterView.dismissDialog( MainActivity.sharedActivity() );
 					break;
+				case REFRESH:
+					roomListView.refresh((Cursor)msg.obj);
+					break;
 				}
 				
 			}
 			super.handleMessage(msg);
 		}
 	}
+
 
 }

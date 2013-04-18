@@ -611,7 +611,7 @@ public class DBProcManager {
 		 * 채팅방 나가기
 		 * @param chatHash
 		 */
-		public void deleteRoom(String roomHash) {
+		public void leaveRoom(String roomHash) {
 			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
 			
 			String sql = "delete from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);

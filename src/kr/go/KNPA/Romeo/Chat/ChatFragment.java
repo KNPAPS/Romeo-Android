@@ -214,8 +214,7 @@ public class ChatFragment extends RomeoFragment {
 						//만약 리시버가 1명이라면 기존에 있는 방이 있는지 검사
 						if ( receiversIdxs.size() == 1 ) {
 							 
-							roomCode = DBProcManager.sharedManager(getActivity())
-									 				.chat().getRoomCode(subType, receiversIdxs.get(0));
+							roomCode = Room.find(getActivity(), subType, receiversIdxs.get(0));
 							
 						} 
 						//기존에 있는 방이 있다면 roomCode를 지정해 생성함

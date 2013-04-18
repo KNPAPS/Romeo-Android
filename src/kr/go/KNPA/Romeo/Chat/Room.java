@@ -103,17 +103,15 @@ public class Room {
 	
 	public void addChatter(String userIdx) {
 		chatters.add(userIdx);
-		DBProcManager.sharedManager(mContext).chat().addUserToRoom(userIdx, getRoomCode());
 	}
 	
 	public void addChatters(ArrayList<String> userIdxs) {
 		chatters.addAll(userIdxs);
-		DBProcManager.sharedManager(mContext).chat().addUsersToRoom(userIdxs, getRoomCode());		
 	}
 	
 	public void removeChatter(String userIdx) {
 		chatters.remove(userIdx);
-		DBProcManager.sharedManager(mContext).chat().removeUserFromRoom(userIdx, getRoomCode());
+		lastReadTS.remove(userIdx);
 	}
 	
 	/**
@@ -275,5 +273,47 @@ public class Room {
 			Log.e(TAG,"response status code : "+response.getStatusCode());
 			return false;
 		}
+	}
+	
+	/**
+	 * 해당 유저와 1:1채팅을 하고 있는 게 있는 지 검색해서 있으면 룸코드, 없으면 null 반환
+	 * @param roomType 룸타입
+	 * @param userIdx 1:1채팅하고 있는 상대방 useridx
+	 * @return 룸코드 or null
+	 */
+	public static String find(Context context, int roomType, String userIdx) {
+		return DBProcManager.sharedManager(context).chat().getRoomCode(roomType, userIdx);
+	}
+	
+	/**
+	 * 방에서 나가기\n
+	 * 로컬디비에서 해당 방의 정보를 삭제하고 서버에도 알림을 보낸다
+	 * @param context
+	 * @param roomHash
+	 */
+	public void leaveRoom() {
+		
+		String senderIdx = UserInfo.getUserIdx(mContext);
+		ArrayList<String> receivers = getReceivers();
+		
+		Chat chat = new Chat(
+							null,
+							getType(), 
+							"", 
+							senderIdx, 
+							receivers, 
+							false,
+							System.currentTimeMillis()/1000,
+							true,
+							System.currentTimeMillis()/1000,
+							getRoomCode(), 
+							Chat.CONTENT_TYPE_USER_LEAVE);
+		
+		Data reqData = new Data();
+		reqData.add(0,KEY._MESSAGE, chat);
+		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
+		new Connection().async(false).requestPayload(request).request();
+		
+		DBProcManager.sharedManager(mContext).chat().leaveRoom(getRoomCode());
 	}
 }

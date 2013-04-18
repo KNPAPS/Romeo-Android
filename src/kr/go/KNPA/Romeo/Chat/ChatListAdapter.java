@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberManager;
@@ -81,81 +82,100 @@ public class ChatListAdapter extends CursorAdapter {
 		/**
 		 * }}}
 		 */
-		
-		/**
-		 * listItem 내 하위 View들 참조
-		 * {{{
-		 */
-		ImageView 	userPicIV		= (ImageView) 	listItem.findViewById(R.id.userPic);
-		TextView 	departmentTV	= (TextView) 	listItem.findViewById(R.id.department);
-		TextView 	rankNameTV		= (TextView) 	listItem.findViewById(R.id.rankName);
-		TextView 	arrivalDTTV		= (TextView) 	listItem.findViewById(R.id.arrivalDT);
-		
-		TextView 	contentTV		= (TextView) 	listItem.findViewById(R.id.content);
-		ImageView	contentIV		= (ImageView)	listItem.findViewById(R.id.contentImage);
-		
-		final Button goUncheckedBT 	= (Button) 		listItem.findViewById(R.id.goUnchecked);
-		/** }}} */
-		
-		/**
-		 * 각 view에 적절한 정보를 삽입함.
-		 * {{{
-		 */
+
 		//유저 idx를 유저 객체로 변환
 		User sender = MemberManager.sharedManager().getUser(senderIdx);
 		
-		//프로필 사진 load
-		ImageManager im = new ImageManager();
-		im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
-		
-		//부서,계급, 채팅 도착 시간 text 삽입
-		departmentTV.setText( sender.department.nameFull );
-		rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
-		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
-		arrivalDTTV.setText(arrivalDT);
-		
-		//채팅의 content type에 따라 content 설정
-		int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
-		
-		if(contentType == Chat.CONTENT_TYPE_TEXT) {
-			contentTV.setText(content);
-			contentIV.setVisibility(View.GONE);
-		} else if(contentType == Chat.CONTENT_TYPE_PICTURE) {
-			im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
-			contentTV.setVisibility(View.GONE);
-		}
-		/** }}} */
-		
-		/**
-		 * 채팅의 상태에 따라 WatierView, UnChecker 버튼, 재전송 버튼을 설정한다
-		 */
-		switch(chatStatus){
-		case Chat.STATE_SENDING:
+		if ( contentType == Chat.CONTENT_TYPE_USER_LEAVE ) {
 			
-			if ( goUncheckedBT.getVisibility() != View.GONE ) {
-				WaiterView wv = new WaiterView(context);
-				wv.substituteView(goUncheckedBT);
-				DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-				LayoutParams params = new LayoutParams( (int)((26 * displayMetrics.density) + 0.5), (int)((26 * displayMetrics.density) + 0.5));
-				params.gravity = Gravity.BOTTOM;
-				params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
-				wv.setLayoutParams(params);
-				waiterViews.put(listItem.getTag().toString(),wv);
+			String text = Constants.POLICE_RANK[sender.rank]+" "+sender.name+"님이 나가셨습니다.";
+			
+			((TextView)listItem).setText(text);
+			
+		} else if ( contentType == Chat.CONTENT_TYPE_USER_JOIN ) {
+			
+			
+		} else {
+		
+			/**
+			 * listItem 내 하위 View들 참조
+			 * {{{
+			 */
+			ImageView 	userPicIV		= (ImageView) 	listItem.findViewById(R.id.userPic);
+			TextView 	departmentTV	= (TextView) 	listItem.findViewById(R.id.department);
+			TextView 	rankNameTV		= (TextView) 	listItem.findViewById(R.id.rankName);
+			TextView 	arrivalDTTV		= (TextView) 	listItem.findViewById(R.id.arrivalDT);
+			
+			TextView 	contentTV		= (TextView) 	listItem.findViewById(R.id.content);
+			ImageView	contentIV		= (ImageView)	listItem.findViewById(R.id.contentImage);
+			
+			final Button goUncheckedBT 	= (Button) 		listItem.findViewById(R.id.goUnchecked);
+			/** }}} */
+			
+			/**
+			 * 각 view에 적절한 정보를 삽입함.
+			 * {{{
+			 */
+			
+			//프로필 사진 load
+			ImageManager im = new ImageManager();
+			im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
+			
+			//부서,계급, 채팅 도착 시간 text 삽입
+			departmentTV.setText( sender.department.nameFull );
+			rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
+			String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
+			arrivalDTTV.setText(arrivalDT);
+			
+			//채팅의 content type에 따라 content 설정
+			int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
+			
+			switch( contentType ) {
+			case Chat.CONTENT_TYPE_TEXT:
+				contentTV.setText(content);
+				contentIV.setVisibility(View.GONE);
+				break;
+			case Chat.CONTENT_TYPE_PICTURE:
+				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
+				contentTV.setVisibility(View.GONE);
+				break;
+			default:
+				break;
 			}
-			break;
-		case Chat.STATE_SUCCESS:
+			/** }}} */
 			
-			if ( waiterViews.get(messageIdx) != null ) {
-				waiterViews.get(messageIdx).restoreView();
+			/**
+			 * 채팅의 상태에 따라 WatierView, UnChecker 버튼, 재전송 버튼을 설정한다
+			 */
+			switch(chatStatus){
+			case Chat.STATE_SENDING:
+				
+				if ( goUncheckedBT.getVisibility() != View.GONE ) {
+					WaiterView wv = new WaiterView(context);
+					wv.substituteView(goUncheckedBT);
+					DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+					LayoutParams params = new LayoutParams( (int)((26 * displayMetrics.density) + 0.5), (int)((26 * displayMetrics.density) + 0.5));
+					params.gravity = Gravity.BOTTOM;
+					params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
+					wv.setLayoutParams(params);
+					waiterViews.put(listItem.getTag().toString(),wv);
+				}
+				break;
+			case Chat.STATE_SUCCESS:
+				
+				if ( waiterViews.get(messageIdx) != null ) {
+					waiterViews.get(messageIdx).restoreView();
+				}
+				
+				setUncheckerInfo(goUncheckedBT,arrivalTS);
+				
+				break;
+			case Chat.STATE_FAIL:
+				break;
+			default:
+				break;
 			}
-			
-			setUncheckerInfo(goUncheckedBT,arrivalTS);
-			
-			break;
-		case Chat.STATE_FAIL:
-			break;
-		default:
-			break;
+
 		}
 	}
 	
@@ -172,10 +192,13 @@ public class ChatListAdapter extends CursorAdapter {
 		String chatIdx = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_IDX));
 		
 		View v = null;
+		
 		if ( convertView != null && convertView.getTag() != null && chatIdx.equals(convertView.getTag())) {
 		
 			v = convertView;
+			
 		} else {
+			
 			v = newView(mContext,mCursor,parent);
 			
 		}
@@ -187,14 +210,27 @@ public class ChatListAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor c, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		String userIdx = UserInfo.getUserIdx(context);
-		// 유저 해시를 비교하여 자기가 전송한건지 받은건지 구별
+
 		int rId = R.layout.chat_bubble_received;
-		if ( userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))) ) {
-			rId = R.layout.chat_bubble_departed;
+		
+		int contentType = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+			
+		if ( contentType == Chat.CONTENT_TYPE_USER_LEAVE || contentType == Chat.CONTENT_TYPE_USER_JOIN) {
+			
+			rId = R.layout.chat_info;
+			
 		} else {
-			rId = R.layout.chat_bubble_received;
+
+			// 유저 해시를 비교하여 자기가 전송한건지 받은건지 구별
+			String userIdx = UserInfo.getUserIdx(context);
+			if ( userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))) ) {
+				rId = R.layout.chat_bubble_departed;
+			} else {
+				rId = R.layout.chat_bubble_received;
+			}
+			
 		}
+
 		View v = inflater.inflate(rId, parent, false);
 		return v;
 	}

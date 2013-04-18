@@ -99,7 +99,8 @@ public class MainActivity extends BaseActivity {
 				int subType = type % Message.MESSAGE_TYPE_DIVIDER;
 				switch(mainType) {
 				case Message.MESSAGE_TYPE_CHAT :
-					goRoomFragment(subType, b.getString(KEY.CHAT.ROOM_CODE));
+					Room room = new Room(getApplicationContext(), b.getString(KEY.CHAT.ROOM_CODE));
+					goRoomFragment(subType, room);
 					break;
 				case Message.MESSAGE_TYPE_DOCUMENT :
 					goDocumentFragment();
@@ -124,11 +125,9 @@ public class MainActivity extends BaseActivity {
 				
 	}
 	
-	public void goRoomFragment(int subType, String roomCode) {
+	public void goRoomFragment(int subType, Room room) {
 		ChatFragment chatFragment = ChatFragment.chatFragment(subType);
 		switchContent(chatFragment);
-		
-		Room room = new Room(MainActivity.this, roomCode);
 		RoomFragment roomFragment = new RoomFragment(room);
 		pushContent(roomFragment);
 	}

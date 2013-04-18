@@ -1,16 +1,22 @@
 package kr.go.KNPA.Romeo.Member;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
 import kr.go.KNPA.Romeo.Util.ImageManager;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,7 +33,7 @@ public class MemberDetailActivity extends Activity {
 	static final String KEY_IDX_TYPE = "idx_type";
 	static final int IDX_TYPE_USER = 0; 
 	static final int IDX_TYPE_GROUP = 1;
-	
+	private Handler mHandler; 
 	private Button background;
 	private Button  close;
 	private Button favorite;
@@ -169,16 +175,35 @@ public class MemberDetailActivity extends Activity {
 	private final OnClickListener goMessage = new OnClickListener() {
 		
 		@Override
-		public void onClick(View btn) {
-			if (goDocument == btn) {
-				android.widget.Toast.makeText(MemberDetailActivity.this, "goDocument", android.widget.Toast.LENGTH_SHORT).show();
-			} else if (goSurvey == btn) {
-				android.widget.Toast.makeText(MemberDetailActivity.this, "goSurvey", android.widget.Toast.LENGTH_SHORT).show();
-			} else if (goMeeting == btn) {
-				
-			} else if (goCommand == btn) {
-				android.widget.Toast.makeText(MemberDetailActivity.this, "goCommand", android.widget.Toast.LENGTH_SHORT).show();
-			}
+		public void onClick(final View btn) {	
+			new Thread(){
+				public void run() {
+					super.run();
+					final int roomType = btn==goCommand ? Chat.TYPE_COMMAND : Chat.TYPE_MEETING;
+					
+					String roomCode = Room.find(getApplicationContext(), roomType, idx);
+					Room room = null;
+					if ( roomCode != null ) {
+						room = new Room(getApplicationContext(), roomCode);
+					} else {
+						ArrayList<String> chatters = new ArrayList<String>();
+						chatters.add( idx );
+						chatters.add( UserInfo.getUserIdx(getApplicationContext()) );
+						room = new Room(getApplicationContext(),roomType,chatters);
+					}
+
+					final Room fRoom = room;
+					
+					mHandler.post(new Runnable(){
+						public void run() {
+							MainActivity.sharedActivity().goRoomFragment(roomType, fRoom);
+							
+						};
+					});
+					
+				};
+			}.start();
+			
 			
 		}
 	};

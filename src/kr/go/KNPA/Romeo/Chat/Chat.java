@@ -18,6 +18,8 @@ public class Chat extends Message {
 	
 	public static final int CONTENT_TYPE_TEXT = 1;
 	public static final int CONTENT_TYPE_PICTURE = 2;
+	public static final int CONTENT_TYPE_USER_LEAVE = 3;
+	public static final int CONTENT_TYPE_USER_JOIN = 4;
 
 	public static final int STATE_SUCCESS = 1;
 	public static final int STATE_FAIL = 2;
@@ -66,20 +68,7 @@ public class Chat extends Message {
 	public Chat clone() {
 		Chat chat = (Chat)this.clone(new Chat());
 		chat.roomCode = this.roomCode;
-		chat.contentType = this.contentType;
-		
+		chat.contentType = this.contentType;	
 		return chat;
 	}
-
-	@Override
-	public void afterSend(Context context, boolean successful) {
-		if(successful) {
-			// Success
-			//DBProcManager.sharedManager(context).chat().saveChatOnSend(this.roomCode, this.idx, this.senderIdx, this.content, this.contentType, this.TS);
-		}  else {
-			// Failure
-		}
-		// TODO : Animation 처리
-	}
-
 }

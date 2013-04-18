@@ -143,6 +143,10 @@ public class GCMMessageManager {
 		DBProcManager.sharedManager(context)
 			.chat().saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
 		
+		if ( chat.contentType == Chat.CONTENT_TYPE_USER_LEAVE ) {
+			DBProcManager.sharedManager(context).chat().removeUserFromRoom(chat.senderIdx, chat.roomCode);
+		}
+		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
 		
