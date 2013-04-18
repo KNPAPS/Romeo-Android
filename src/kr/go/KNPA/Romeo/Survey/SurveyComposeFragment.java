@@ -5,6 +5,7 @@ import java.util.GregorianCalendar;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
@@ -20,8 +21,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -66,8 +67,10 @@ public class SurveyComposeFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView().refresh();
-		SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED).getListView().refresh();
+		RomeoListView received = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView();
+		if(received != null) received.refresh();
+		RomeoListView departed = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED).getListView(); 
+		if(departed != null) departed.refresh();
 	}
 	
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -393,11 +396,10 @@ public class SurveyComposeFragment extends Fragment {
 		InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		im.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 		
-		WaiterView.dismissDialog(getActivity());
+		//WaiterView.dismissDialog(getActivity());
 		
 		MainActivity.sharedActivity().popContent();
 	}
-
 	
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
 		

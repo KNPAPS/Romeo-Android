@@ -80,7 +80,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		WaiterView.showDialog(getContext());
+		WaiterView.dismissDialog(getContext());
 		
 	}
 

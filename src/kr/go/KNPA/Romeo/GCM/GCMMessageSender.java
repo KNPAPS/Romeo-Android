@@ -15,6 +15,7 @@ import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.Survey.AnswerSheet;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 
 public class GCMMessageSender {
@@ -109,6 +110,9 @@ public class GCMMessageSender {
 					}
 				}
 				
+				// for survey TODO
+				WaiterView.dismissDialog(context);
+				
 			}
 			
 			@Override
@@ -118,6 +122,10 @@ public class GCMMessageSender {
 				} else if(_message.mainType() == Message.MESSAGE_TYPE_SURVEY) {
 					((Survey)_message).afterSend(context, false);
 				}
+				
+				// for survey TODO
+				WaiterView.dismissDialog(context);
+				
 			}
 		};
 		

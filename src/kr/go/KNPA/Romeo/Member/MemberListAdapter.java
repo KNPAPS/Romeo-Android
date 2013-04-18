@@ -111,7 +111,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			Department uDepartment = user.department;
 			String uIdx = user.idx;
 			String uName = user.name; 
-			String uRole = user.role;
+			String uRole = user.role; uRole = ( uRole != null ) ? uRole : "";  
 			int uRank = user.rank;
 
 			if(this.type == User.TYPE_MEMBERLIST) {
