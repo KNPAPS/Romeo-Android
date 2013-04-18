@@ -54,6 +54,7 @@ public class RoomFragment extends RomeoFragment {
 	
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	private Handler mHandler;
+	private boolean isForeGround = false;
 	
 	/**
 	 * @name Constructor
@@ -72,6 +73,7 @@ public class RoomFragment extends RomeoFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		isForeGround = true;
 		ChatFragment.setCurrentRoom(this);
 		if ( room.isCreated() ) {
 			new Thread(){
@@ -90,6 +92,12 @@ public class RoomFragment extends RomeoFragment {
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();
+		isForeGround = false;
+	}
+	
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		ChatFragment.unsetCurrentRoom();
@@ -98,8 +106,11 @@ public class RoomFragment extends RomeoFragment {
 	// Message Receiving
 	public void receive(Chat chat) {
 		getListView().increaseNumberOfItemsBy(1);
-		room.updateLastReadTS(System.currentTimeMillis());
-		room.pullLastReadTS();
+		
+		if ( isForeGround == true ) {
+			room.updateLastReadTS(System.currentTimeMillis());
+			room.pullLastReadTS();
+		}
 		Cursor c = getListView().query(getListView().getNumberOfItems());
 		Message msg = mHandler.obtainMessage();
 		msg.what = RoomHandler.REFRESH;
