@@ -214,6 +214,7 @@ public class Room {
 		setLastReadTS(userIdx, TS);
 		Data reqData = new Data();
 		reqData.add(0,KEY.USER.IDX,userIdx);
+		reqData.add(0,KEY.CHAT.ROOM_CODE,getRoomCode());
 		reqData.add(0,KEY.CHAT.LAST_READ_TS,(Long)TS);
 		
 		Payload request = new Payload().setEvent(Event.Message.Chat.updateLastReadTS()).setData(reqData);

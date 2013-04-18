@@ -19,11 +19,12 @@
         android:layout_weight="0"
         android:text="@string/subTitle" />
  -->
+
     <kr.go.KNPA.Romeo.Chat.RoomListView
         android:id="@+id/roomListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/lighter"
-        />
+        android:background="@color/lighter" android:longClickable="true"/>
+
 </LinearLayout>

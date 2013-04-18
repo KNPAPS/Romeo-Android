@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
@@ -9,7 +10,9 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.WaiterView;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +20,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * ChatFragment로 진입하면 보게되는 ListView이다. 방 목록을 포함하고 있다.
@@ -25,18 +32,22 @@ import android.widget.ListAdapter;
 public class RoomListView extends RomeoListView implements OnItemClickListener {
 
 	private RoomListHandler roomListHandler;
+	private Context mContext;
 	/** 
 	 * @name Constructors
 	 * @{
 	 */
-	public RoomListView(Context context){	
+	public RoomListView(Context context){
 		this(context, null);
+		mContext = context;
 	}
 	public RoomListView(Context context, AttributeSet attrs){	
 		this(context, attrs, 0);
+		mContext = context;
 	}
 	public RoomListView(Context context, AttributeSet attrs, int defStyle){	
 		super(context, attrs, defStyle);
+		mContext = context;
 	}
 	/** @} */
 	
@@ -117,6 +128,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener {
 			};
 		}.start();
 	}
+	
 	/** @} */
 	@Override
 	public void onPreExecute() {

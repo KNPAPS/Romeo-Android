@@ -10,6 +10,7 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Chat.Room;
+import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.KEY.MESSAGE;
@@ -80,6 +81,15 @@ public class GCMMessageManager {
         String event = payload.getEvent();
         events = event.split(":");
         
+        if(event.equals(Event.Message.Chat.updateLastReadTS())) {
+        	
+        	onUpdateLastReadTS(
+        			payload.getData().get(0,KEY.USER.IDX).toString(),
+        			payload.getData().get(0,KEY.CHAT.ROOM_CODE).toString(),
+        			Long.parseLong( payload.getData().get(0,KEY.CHAT.LAST_READ_TS).toString() )
+        		);
+        }
+        
         if(events[0].trim().equalsIgnoreCase(Event.Message())) {	// MESSAGE
         	if(events[1].trim().equalsIgnoreCase("RECEIVED")) {	// RECEIVED
         		
@@ -97,9 +107,22 @@ public class GCMMessageManager {
         
         
         // Destroy
-        payload = null;			events = null;
-     
+        payload = null;
+        events = null;
     }
+	
+	private void onUpdateLastReadTS(String userIdx, String roomCode, long lastReadTS) {
+		if(isRunningProcess(context)) {
+			RoomFragment currentRoomFragment = ChatFragment.getCurrentRoom();
+			
+			if(	currentRoomFragment !=null && 
+				currentRoomFragment.room != null && 
+				currentRoomFragment.room.getRoomCode() !=null &&
+				currentRoomFragment.room.getRoomCode().equals(roomCode)){
+				currentRoomFragment.room.setLastReadTS(userIdx, lastReadTS);
+			}
+		}
+	}
 	
 	// on Message in cases
 	private void onChat (Chat chat) {
@@ -112,8 +135,6 @@ public class GCMMessageManager {
 			
 			DBProcManager.sharedManager(context)
 				.chat().createRoom(users, chat.type(), chat.roomCode);
-			
-			
 		}
 		
 		// Chat 저장

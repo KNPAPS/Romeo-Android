@@ -139,6 +139,7 @@ public class ChatFragment extends RomeoFragment {
 				
 		listView = (RoomListView)initListViewWithType(this.subType, R.id.roomListView, view);
 
+		
 		return view;
 	}
 	
