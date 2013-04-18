@@ -14,6 +14,7 @@ import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.KEY.MESSAGE;
+import kr.go.KNPA.Romeo.Config.VibrationPattern;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
@@ -21,6 +22,7 @@ import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Notification;
@@ -197,11 +199,17 @@ public class GCMMessageManager {
 		
 		Notification nt = new Notification(R.drawable.icon, ticker, System.currentTimeMillis());
 		nt.setLatestEventInfo(context, title, content, contentIntent);
-		nt.defaults = Notification.DEFAULT_SOUND;
+		//nt.defaults = Notification.DEFAULT_SOUND;
+		nt.defaults = Notification.DEFAULT_LIGHTS;
+		//http://stackoverflow.com/questions/14195067/android-gcm-turn-on-lights
+		nt.sound = UserInfo.getRingtone(context);
 		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
 		
+		// TODO : 방별
 		Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
-		vibrator.vibrate(1000);
+		String patternKey = UserInfo.getVibrationPattern(context);
+		long[] pattern = VibrationPattern.getPattern(patternKey);
+		vibrator.vibrate(pattern, 1);
 		
 		return nt;
 	}
