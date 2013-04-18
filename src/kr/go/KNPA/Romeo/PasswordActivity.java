@@ -4,6 +4,7 @@ import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,9 +22,14 @@ public class PasswordActivity extends Activity {
 	
 	private static int errorCount = 0;
 	
+	private Bundle targetModuleInfo;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Intent intent = getIntent();
+		targetModuleInfo = intent.getExtras();
+		
 		parent = (ViewGroup)((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.password_activity, null, false);
 		
 		for(int i=0; i<NUM_DIGIT; i++) {
@@ -121,7 +127,12 @@ public class PasswordActivity extends Activity {
 		String encResult = enc.encryptString(result);
 		if(encResult == UserInfo.getPassword(PasswordActivity.this)) {
 			Toast.makeText(PasswordActivity.this, "비밀번호가 일치합니다.", Toast.LENGTH_SHORT).show();
-			// TODO : go Next Activity
+
+			Intent intent = new Intent(PasswordActivity.this, MainActivity.class);
+			intent.putExtras(targetModuleInfo);
+
+			startActivity(intent);
+
 		} else {
 			errorCount++;
 			Toast.makeText(PasswordActivity.this, "비밀번호를 "+ errorCount +"회 틀렸습니다.", Toast.LENGTH_SHORT).show();
