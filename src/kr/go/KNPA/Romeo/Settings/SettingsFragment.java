@@ -183,7 +183,7 @@ public class SettingsFragment extends Fragment {
 								vibrator.vibrate(
 										VibrationPattern.getPattern(
 												patternKey
-										), 1
+										), -1
 									);
 								
 								

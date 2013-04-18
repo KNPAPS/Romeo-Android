@@ -209,7 +209,7 @@ public class GCMMessageManager {
 		Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		String patternKey = UserInfo.getVibrationPattern(context);
 		long[] pattern = VibrationPattern.getPattern(patternKey);
-		vibrator.vibrate(pattern, 1);
+		vibrator.vibrate(pattern, -1);
 		
 		return nt;
 	}
