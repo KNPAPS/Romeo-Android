@@ -82,11 +82,12 @@ public class GCMMessageManager {
         events = event.split(":");
         
         if(event.equals(Event.Message.Chat.updateLastReadTS())) {
+        	Long lastReadTS = Math.round((Double)payload.getData().get(0,KEY.CHAT.LAST_READ_TS));
         	
         	onUpdateLastReadTS(
         			payload.getData().get(0,KEY.USER.IDX).toString(),
         			payload.getData().get(0,KEY.CHAT.ROOM_CODE).toString(),
-        			Long.parseLong( payload.getData().get(0,KEY.CHAT.LAST_READ_TS).toString() )
+        			lastReadTS
         		);
         }
         

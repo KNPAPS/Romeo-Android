@@ -74,9 +74,19 @@ public class RoomFragment extends RomeoFragment {
 		super.onResume();
 		ChatFragment.setCurrentRoom(this);
 		if ( room.isCreated() ) {
-			room.updateLastReadTS(System.currentTimeMillis());
+			new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					room.updateLastReadTS(System.currentTimeMillis());
+					room.pullLastReadTS();
+					Message msg = mHandler.obtainMessage();
+					msg.what = RoomHandler.REFRESH;
+					msg.obj = getListView().query( getListView().getNumberOfItems() );
+					mHandler.sendMessage(msg);
+				}
+			};
 		}
-		getListView().scrollToBottom();
 	}
 
 	@Override
@@ -87,8 +97,10 @@ public class RoomFragment extends RomeoFragment {
 	
 	// Message Receiving
 	public void receive(Chat chat) {
-
-		Cursor c = getListView().query(getListView().getNumberOfItems()+1);
+		getListView().increaseNumberOfItemsBy(1);
+		room.updateLastReadTS(System.currentTimeMillis());
+		room.pullLastReadTS();
+		Cursor c = getListView().query(getListView().getNumberOfItems());
 		Message msg = mHandler.obtainMessage();
 		msg.what = RoomHandler.REFRESH;
 		msg.obj = c;
@@ -126,7 +138,7 @@ public class RoomFragment extends RomeoFragment {
 		
 		String title = room.getTitle();
 		
-		if ( title == null ) {
+		if ( room.isCreated()==false ) {
 			title = subType==Chat.TYPE_COMMAND?getString(R.string.command):getString(R.string.meeting); 
 		} else {
 			if ( room.getChatters().size() > 2 ) {
@@ -313,7 +325,6 @@ public class RoomFragment extends RomeoFragment {
 				
 				switch(msg.what) {
 				case REFRESH:
-					roomFragment.getListView().increaseNumberOfItemsBy(1);
 					roomFragment.getListView().refresh((Cursor)msg.obj);
 					roomFragment.getListView().scrollToBottom();
 					break;
@@ -348,7 +359,8 @@ public class RoomFragment extends RomeoFragment {
 			String chatHash = DBProcManager.sharedManager(getActivity())
 								.chat()
 								.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
-	
+			getListView().increaseNumberOfItemsBy(1);
+
 			//채팅해쉬를 채팅 객체에 설정함
 			chat.idx = chatHash;
 
