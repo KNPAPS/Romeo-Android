@@ -21,9 +21,9 @@ public class Formatter {
 	 * @param formatString 포맷으로 사용할 예시 문자열 (ex. 2011.3.12)
 	 * @return formatted date string
 	 */
-	public static String timeStampToStringWithFormat(long timestamp, String formatString) {
+	public static String timeStampToStringWithFormat(long secTS, String formatString) {
 		String result= null;
-		Date date = new Date(timestamp);
+		Date date = new Date(secTS*1000);
 		try {
 			SimpleDateFormat format = new SimpleDateFormat(formatString, Locale.KOREA);
 			result = format.format(date);
@@ -40,8 +40,8 @@ public class Formatter {
 	 * @param context 애플리케이션 context. R을 참조할 수 있어야 함
 	 * @return formatted date string
 	 */
-	public static String timeStampToStringInRegularFormat(long timestamp, Context context) {
-		return timeStampToStringWithFormat(timestamp, context.getString(R.string.formatString_regular));
+	public static String timeStampToStringInRegularFormat(long secTS, Context context) {
+		return timeStampToStringWithFormat(secTS, context.getString(R.string.formatString_regular));
 	}
 	
 	/**
@@ -49,12 +49,12 @@ public class Formatter {
 	 * @param timestamp
 	 * @return 오늘이면 HH시 mm분, 어제면 '어제', x일 전, 일주일 전, mm월 dd일\n hh시 mm분 
 	 */
-	public static String timeStampToRecentString(long timestamp) {
+	public static String timeStampToRecentString(long secTS) {
 		//StringBuilder sb = new StringBuilder();
 		String result= null;
-		long now = System.currentTimeMillis()/1000;
+		long now = System.currentTimeMillis();
 		long dayInMils = 24*60*60*1000;
-		int dayDif = (int)Math.floor((now - timestamp)+1.0/dayInMils);
+		int dayDif = (int)Math.floor((now - secTS*1000)+1.0/dayInMils);
 	
 		String formatString = null;
 		
@@ -77,7 +77,7 @@ public class Formatter {
 		}
 		
 		if(!(dayDif > 0 && dayDif <= 7)) {
-			Date date = new Date(timestamp);
+			Date date = new Date(secTS*1000);
 			SimpleDateFormat format = new SimpleDateFormat(formatString, Locale.KOREA);
 			result = format.format(date);
 		}
