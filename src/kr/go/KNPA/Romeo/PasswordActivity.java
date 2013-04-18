@@ -63,6 +63,7 @@ public class PasswordActivity extends Activity {
 			
 			digitET.addTextChangedListener(watcher);
 			digitET.setOnKeyListener(keyListener);
+			digitET.setOnClickListener(new OnClickListener() {	@Override	public void onClick(View arg0) {	onClickEditText(digitET);	}	});
 		}
 		
 		setContentView(parent);
@@ -86,14 +87,30 @@ public class PasswordActivity extends Activity {
 				
 				if(getDigitNumber(et) == 3) {
 					submit();
-					Log.d("", "true");
 					return true;
 				} else {
 					et.focusSearch(View.FOCUS_RIGHT).requestFocus();
 					return true;
 				}
+			} else if(event.getAction() == KeyEvent.ACTION_UP &&
+					keyCode == KeyEvent.KEYCODE_DEL) {
+					
+				if(et.getSelectionEnd() > 0) {
+					// 커서가 글자 뒤에 놓여있는 경우
+					return false; // default Function(delete/Backspace)
+				} else {
+					// 커서가 글자 앞에 놓여있는 경우
+						
+					if(et != null){
+						View nextFocusView = et.focusSearch(View.FOCUS_LEFT);
+						if(nextFocusView != null) {
+							nextFocusView.requestFocus();
+							((EditText)nextFocusView).setText("");
+						}
+					}
+					return false; // default Function(delete(Backspace))
+				}
 			}
-			Log.d("", "false");
 			return false;
 		}
 	};
@@ -121,14 +138,31 @@ public class PasswordActivity extends Activity {
 		return null;
 	}
 	
-	private EditText nextDigitView(EditText digitET) {
+	private EditText previousDigitView(EditText digitET) {
 		switch (getDigitNumber(digitET)) {
 			case 0 : return (EditText)parent.findViewById(R.id.digit0);
-			case 1 : return (EditText)parent.findViewById(R.id.digit1);
-			case 2 : return (EditText)parent.findViewById(R.id.digit2);
+			case 1 : return (EditText)parent.findViewById(R.id.digit0);
+			case 2 : return (EditText)parent.findViewById(R.id.digit1);
+			case 3 : return (EditText)parent.findViewById(R.id.digit2);
+		}
+		return null;
+	}
+	
+	private EditText nextDigitView(EditText digitET) {
+		switch (getDigitNumber(digitET)) {
+			case 0 : return (EditText)parent.findViewById(R.id.digit1);
+			case 1 : return (EditText)parent.findViewById(R.id.digit2);
+			case 2 : return (EditText)parent.findViewById(R.id.digit3);
 			case 3 : return (EditText)parent.findViewById(R.id.digit3);
 		}
 		return null;
+	}
+	
+	private void onClickEditText(EditText digitET) {
+		if(digitET.length() > 0)
+			digitET.setSelection(0, digitET.length());
+		else 
+			digitET.setSelection(digitET.length());
 	}
 	
 	private int getDigitContent(int digitNumber) {
@@ -151,7 +185,7 @@ public class PasswordActivity extends Activity {
 		}
 		Encrypter enc = new Encrypter();
 		String encResult = enc.encryptString(result);
-		if(encResult == UserInfo.getPassword(PasswordActivity.this)) {
+		if(encResult.trim().equals( UserInfo.getPassword(PasswordActivity.this).trim() )) {
 			Toast.makeText(PasswordActivity.this, "비밀번호가 일치합니다.", Toast.LENGTH_SHORT).show();
 
 			Intent intent = new Intent(PasswordActivity.this, MainActivity.class);

@@ -61,6 +61,12 @@ public class MainActivity extends BaseActivity {
 	*/
 	
 	@Override
+	protected void onResume() {
+		super.onResume();
+		// TODO 비밀번호 설정
+	}
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		// 부모 클래스의 온크리에잇
 		
