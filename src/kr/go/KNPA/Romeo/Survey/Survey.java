@@ -42,7 +42,7 @@ public class Survey extends Message {// implements Parcelable{
 		cursor_surveyInfo.moveToFirst();
 		
 		
-		Data reqData = new Data().add(0, KEY.SURVEY.IDX, surveyIdx);
+		Data reqData = new Data().add(0, KEY.MESSAGE.IDX, surveyIdx);
 		Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
 		Connection conn = new Connection().async(false).requestPayload(request).request();
 		Payload response = conn.getResponsePayload();
@@ -86,9 +86,10 @@ public class Survey extends Message {// implements Parcelable{
 	*/
 	public Survey(Context context, String surveyIdx) {
 		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
-		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
+		Cursor cursor_surveyInfo = spm.getSurveyInfo(surveyIdx);
 		
 		String idx = surveyIdx;
+		cursor_surveyInfo.moveToFirst();
 		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
 		
 		Survey fromServer = surveyFromServer(

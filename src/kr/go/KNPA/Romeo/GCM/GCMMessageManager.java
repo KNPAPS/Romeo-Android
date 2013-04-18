@@ -152,7 +152,8 @@ public class GCMMessageManager {
 		
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
-		
+		// TODO : 챗방안에 들어있지 않을때만 보내긔
+		//if(ChatFragment.getCurrentRoom() == null)
 		notifyMessage(chat);
 	}
 	
@@ -208,15 +209,19 @@ public class GCMMessageManager {
 		//nt.defaults = Notification.DEFAULT_SOUND;
 		nt.defaults = Notification.DEFAULT_LIGHTS;
 		//http://stackoverflow.com/questions/14195067/android-gcm-turn-on-lights
-		nt.sound = UserInfo.getRingtone(context);
+		
 		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
+		boolean isAlarmEnabled = UserInfo.getAlarmEnabled(context);
+		if(isAlarmEnabled)
+			nt.sound = UserInfo.getRingtone(context);
 		
 		// TODO : 방별
-		Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
-		String patternKey = UserInfo.getVibrationPattern(context);
-		long[] pattern = VibrationPattern.getPattern(patternKey);
-		vibrator.vibrate(pattern, -1);
-		
+		if(isAlarmEnabled) {
+			Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+			String patternKey = UserInfo.getVibrationPattern(context);
+			long[] pattern = VibrationPattern.getPattern(patternKey);
+			vibrator.vibrate(pattern, -1);
+		}
 		return nt;
 	}
 	

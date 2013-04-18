@@ -111,7 +111,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			Department uDepartment = user.department;
 			String uIdx = user.idx;
 			String uName = user.name; 
-			String uRole = user.role;
+			String uRole = user.role; uRole = ( uRole != null ) ? uRole : "";  
 			int uRank = user.rank;
 
 			if(this.type == User.TYPE_MEMBERLIST) {
@@ -135,7 +135,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			TextView nameTV = (TextView)convertView.findViewById(R.id.name);
 			nameTV.setText(uName);
 			TextView roleTV = (TextView)convertView.findViewById(R.id.role);
-			roleTV.setText("ROLE");
+			roleTV.setText("("+ uRole +")");
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
 			departmentTV.setText(uDepartment.nameFull);
 		}

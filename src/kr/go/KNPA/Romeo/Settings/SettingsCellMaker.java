@@ -2,6 +2,7 @@ package kr.go.KNPA.Romeo.Settings;
 
 import kr.go.KNPA.Romeo.R;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,5 +125,18 @@ public class SettingsCellMaker {
 		ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(parent.getLayoutParams().width, px);
 		im.setLayoutParams(lp);
 		return im;
+	}
+	
+	
+	public static void setEnabled(RelativeLayout cell, boolean willEnabled) {
+		cell.setEnabled(willEnabled);
+		TextView titleTV = (TextView)cell.findViewById(R.id.title);
+		TextView contentTV = (TextView)cell.findViewById(R.id.content);
+		
+		if(titleTV != null)
+			titleTV.setTextColor( (willEnabled)? Color.BLACK : Color.GRAY);
+		if(contentTV != null)
+			titleTV.setTextColor( (willEnabled)? Color.DKGRAY : Color.GRAY);
+		
 	}
 }

@@ -12,20 +12,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,6 +73,8 @@ public class SettingsFragment extends Fragment {
 		final RelativeLayout cDevInfo 	= SettingsCellMaker.makeCell(inflater, container, SettingsCellMaker.ONE_LINE, SettingsCellMaker.CONTROL_ARROW);
 		view.addView(cDevInfo);
 		
+		
+		
 		SettingsCellMaker.setTitle(cWillNoti, "알림");
 		SettingsCellMaker.setOnCheckedChangeListener(
 				SettingsCellMaker.getCheckBox(cWillNoti),
@@ -79,12 +82,14 @@ public class SettingsFragment extends Fragment {
 					
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						cNotiBell.setEnabled(isChecked);
-						cNotiVib.setEnabled(isChecked);
-						
+						UserInfo.setAlarmEnabled(getActivity(), isChecked);
+						SettingsCellMaker.setEnabled(cNotiBell, isChecked);
+						SettingsCellMaker.setEnabled(cNotiVib, isChecked);
 					}
 				});
 		
+		boolean isAlarmEnabled = UserInfo.getAlarmEnabled(getActivity());
+		((CheckBox)SettingsCellMaker.getCheckBox(cWillNoti)).setChecked(isAlarmEnabled);
 		SettingsCellMaker.setTitle(cNotiBell, "알림 소리 선택");
 		
 		final RingtoneManager rm = new RingtoneManager(getActivity());
@@ -93,11 +98,12 @@ public class SettingsFragment extends Fragment {
 		Uri ringtoneUri = UserInfo.getRingtone(getActivity());
 		int rtPos = rm.getRingtonePosition(ringtoneUri);
 		
-		Cursor cRingtone = rm.getCursor();
-		cRingtone.moveToPosition(rtPos);
-		
-		String ringtoneTitle = cRingtone.getString(RingtoneManager.TITLE_COLUMN_INDEX);
-		
+		String ringtoneTitle = "";
+		if(rtPos >= 0) {
+			Cursor cRingtone = rm.getCursor();
+			cRingtone.moveToPosition(rtPos);
+			ringtoneTitle = cRingtone.getString(RingtoneManager.TITLE_COLUMN_INDEX);
+		}
 		
 		SettingsCellMaker.setContent(cNotiBell, ringtoneTitle);
 		SettingsCellMaker.setOnClickListner(cNotiBell, 
@@ -108,20 +114,30 @@ public class SettingsFragment extends Fragment {
 						
 						Cursor cRingtone = rm.getCursor();
 						
-						CursorAdapter rtAdapter = new CursorAdapter(getActivity(), cRingtone, false) {
-							
-							@Override
-							public View newView(Context context, Cursor c, ViewGroup parent) {	
-								return 	((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-												.inflate(android.R.layout.simple_list_item_1, parent);	
-							}
-							
-							@Override
-							public void bindView(View convertView, Context context, Cursor c) {
-									TextView titleTV = (TextView)convertView.findViewById(android.R.id.text1);
-									titleTV.setText(c.getString(RingtoneManager.TITLE_COLUMN_INDEX));
-							}
-						};
+						ArrayList<String> rtTitleArray = new ArrayList<String>();
+						cRingtone.moveToFirst();
+						while( !cRingtone.isAfterLast() ) {
+							rtTitleArray.add(cRingtone.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+							cRingtone.moveToNext();
+						}
+						
+						
+						ArrayAdapter<String> rtAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, android.R.id.text1, rtTitleArray);
+						
+//						CursorAdapter rtAdapter = new CursorAdapter(getActivity(), cRingtone, false) {
+//							
+//							@Override
+//							public View newView(Context context, Cursor c, ViewGroup parent) {	
+//								return 	((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+//												.inflate(android.R.layout.simple_list_item_1, parent);	
+//							}
+//							
+//							@Override
+//							public void bindView(View convertView, Context context, Cursor c) {
+//									TextView titleTV = (TextView)convertView.findViewById(android.R.id.text1);
+//									titleTV.setText(c.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+//							}
+//						};
 						
 
 						DialogInterface.OnClickListener rtClicked = new DialogInterface.OnClickListener() {
@@ -136,12 +152,16 @@ public class SettingsFragment extends Fragment {
 								cRington.moveToPosition(which);
 								String title = cRington.getString(RingtoneManager.TITLE_COLUMN_INDEX);
 								SettingsCellMaker.setContent(cNotiBell, title);
+								
+								Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), rtUri);
+								ringtone.play();
+								
 								dialog.dismiss();
 							}
 						};
 						
 						AlertDialog adRington = new AlertDialog.Builder(getActivity())
-															   .setIcon(R.drawable.icon)
+															   .setIcon(R.drawable.icon_dialog)
 															   .setTitle("알림 소리 선택")
 															   .setAdapter(rtAdapter, rtClicked)
 															   .show();
@@ -157,7 +177,7 @@ public class SettingsFragment extends Fragment {
 					@Override
 					public void onClick(View v) {
 						
-						ArrayList<HashMap<String, String>> vibs = new ArrayList<HashMap<String, String>> ();
+						ArrayList<HashMap<String, String>> vibs = VibrationPattern.getDictionary();
 						
 						final ArrayAdapter<HashMap<String, String>> vbAdapter = 
 								new ArrayAdapter<HashMap<String, String>>(
@@ -192,7 +212,7 @@ public class SettingsFragment extends Fragment {
 						};
 						
 						AlertDialog adVibration = new AlertDialog.Builder(getActivity())
-															   .setIcon(R.drawable.icon)
+															   .setIcon(R.drawable.icon_dialog)
 															   .setTitle("진동 패턴 선택")
 															   .setAdapter(vbAdapter, vbClicked)
 															   .show();
@@ -225,6 +245,7 @@ public class SettingsFragment extends Fragment {
 
 		return view;
 	}
+
 	
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
 		
