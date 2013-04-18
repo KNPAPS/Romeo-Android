@@ -112,13 +112,15 @@ public class Message implements Parcelable{
 			message.title = jo.getString(KEY.MESSAGE.TITLE);
 			message.content = jo.getString(KEY.MESSAGE.CONTENT);
 			message.senderIdx = jo.getString(KEY.MESSAGE.SENDER_IDX);
-			
-			JSONArray __receivers = jo.getJSONArray(KEY.MESSAGE.RECEIVERS_IDX);
-			ArrayList<String> _receivers = new ArrayList<String>(__receivers.length()); 
-			for(int i=0; i<__receivers.length(); i++) {
-				_receivers.add(__receivers.getString(i));
+			 
+			if ( jo.has(KEY.MESSAGE.RECEIVERS_IDX) ){
+				JSONArray __receivers = jo.getJSONArray(KEY.MESSAGE.RECEIVERS_IDX);
+				ArrayList<String> _receivers = new ArrayList<String>(__receivers.length()); 
+				for(int i=0; i<__receivers.length(); i++) {
+					_receivers.add(__receivers.getString(i));
+				}
+				message.receiversIdx = _receivers;
 			}
-			message.receiversIdx = _receivers;
 			message.TS = jo.getLong(KEY.MESSAGE.CREATED_TS);
 		} catch (JSONException e) {
 			message = null;

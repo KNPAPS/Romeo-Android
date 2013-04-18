@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 public class Survey extends Message {// implements Parcelable{
 	
@@ -34,7 +35,7 @@ public class Survey extends Message {// implements Parcelable{
 	public Survey(String json) throws JSONException {
 		JSONObject jo = new JSONObject(json);
 		if(jo.has(KEY.SURVEY.FORM))
-			this.form = Form.parseForm(jo.toString());
+			this.form = Form.parseForm(jo.getJSONObject(KEY.SURVEY.FORM).toString());
 	}
 	
 	public static Survey surveyFromServer(Context context, String surveyIdx, int subType) {
@@ -206,6 +207,8 @@ public class Survey extends Message {// implements Parcelable{
 	}
 	
 	public static class Form extends HashMap<String, Object>{
+		private static final String TAG = Form.class.getName();
+
 		/*
 		X public static final String TITLE = KEY.SURVEY.QUESTION_TITLE;
 		X public static final String CONTENT = KEY.SURVEY.QUESTION_CONTENT;
@@ -250,6 +253,7 @@ public class Survey extends Message {// implements Parcelable{
 			
 			return form;
 			} catch (JSONException e) {
+				Log.e(TAG,e.getMessage());
 				return null;
 			}
 		}

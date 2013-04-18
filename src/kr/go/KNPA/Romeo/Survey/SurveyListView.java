@@ -40,7 +40,11 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 			Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
 				@Override
 				public String getSectionTitleForItem(Cursor c) {
-					boolean checked = c.getLong(c.getColumnIndex(KEY.SURVEY.IS_CHECKED)) > 0 ? true : false;
+					boolean checked= false;
+					if ( c.moveToFirst() == true ) {
+						checked = c.getLong(c.getColumnIndex(DBProcManager.SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0 ? true : false;
+						return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
+					}
 					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 				}
 			};

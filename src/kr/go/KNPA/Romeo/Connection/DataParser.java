@@ -43,10 +43,11 @@ public class DataParser {
 		if ( event.equals( Event.Message.send() )) {
 			dataNative = parse_on_msg_send(dataJSONArray);					
 		} else if ( event.equals( Event.Message.received() ) ) {
+
 			dataNative = parse_on_msg_receive(dataJSONArray);	
 			
 		} else if ( event.equals( Event.Message.Survey.getContent() ) ) {
-			dataNative = parse_on_msg_send(dataJSONArray);
+			dataNative = parse_on_msg_receive(dataJSONArray);	
 		} else {
 			dataNative = basicParse(dataJSONArray);
 		}
