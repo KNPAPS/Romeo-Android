@@ -1,12 +1,15 @@
 package kr.go.KNPA.Romeo.Settings;
 
 import kr.go.KNPA.Romeo.R;
+import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -92,6 +95,10 @@ public class SettingsCellMaker {
 		return cell;
 	}
 	
+	public static CheckBox setOnCheckedChangeListener(CheckBox checkBox, OnCheckedChangeListener listener) {
+		checkBox.setOnCheckedChangeListener(listener);
+		return checkBox;
+	}
 	public static Button getButton(RelativeLayout cell) {
 		return (Button)cell.findViewById(R.id.button);
 	}
@@ -109,5 +116,13 @@ public class SettingsCellMaker {
 		RelativeLayout sectionHeader = (RelativeLayout)inflater.inflate(R.layout.section_header, parent, false);
 		((TextView)sectionHeader.findViewById(R.id.title)).setText(title);
 		return sectionHeader;
+	}
+	
+	public static ImageView makeListCellDivider(Context context, ViewGroup parent) {
+		ImageView im = new ImageView(context);
+		int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
+		ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(parent.getLayoutParams().width, px);
+		im.setLayoutParams(lp);
+		return im;
 	}
 }

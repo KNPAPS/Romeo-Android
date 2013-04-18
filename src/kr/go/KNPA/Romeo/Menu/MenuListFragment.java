@@ -24,6 +24,7 @@ import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserProfileFragment;
+import kr.go.KNPA.Romeo.Settings.SettingsFragment;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
@@ -558,7 +559,7 @@ public class MenuListFragment extends ListFragment {
 			} else if (codes[0].toUpperCase().equals("MEMBER") ) {
 				// do nothing, expand
 			} else if (codes[0].toUpperCase().equals("SETTINGS")) {
-				// do nothing, expand
+				fragment = new SettingsFragment();
 			}
 			
 			if (fragment != null) {
@@ -611,6 +612,7 @@ public class MenuListFragment extends ListFragment {
 					fragment = new HandBookFragment();
 				}
 			} else if (codes[0].toUpperCase().equals("SETTINGS")) {
+				// NOTHING
 			}
 			
 			if(fragment == null) {
