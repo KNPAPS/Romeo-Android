@@ -170,11 +170,13 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		View v = null;
 		if ( convertView != null && convertView.getTag() != null && chatIdx.equals(convertView.getTag())) {
+		
 			v = convertView;
 		} else {
 			v = newView(mContext,mCursor,parent);
 			
 		}
+
 		bindView(v, mContext, mCursor);
 		return v;
 	}

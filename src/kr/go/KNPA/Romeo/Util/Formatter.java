@@ -52,7 +52,7 @@ public class Formatter {
 	public static String timeStampToRecentString(long timestamp) {
 		//StringBuilder sb = new StringBuilder();
 		String result= null;
-		long now = System.currentTimeMillis();
+		long now = System.currentTimeMillis()/1000;
 		long dayInMils = 24*60*60*1000;
 		int dayDif = (int)Math.floor((now - timestamp)+1.0/dayInMils);
 	

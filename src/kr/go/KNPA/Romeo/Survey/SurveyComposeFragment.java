@@ -373,7 +373,7 @@ public class SurveyComposeFragment extends Fragment {
 		 
 		form.put(KEY.SURVEY.QUESTIONS, questions);
 		
-		long currentTS = System.currentTimeMillis();
+		long currentTS = System.currentTimeMillis()/1000;
 		Survey survey = new Survey(
 				null, 
 				Message.makeType(Message.MESSAGE_TYPE_SURVEY, Survey.TYPE_DEPARTED) , // TODO 

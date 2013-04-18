@@ -184,7 +184,7 @@ public class Survey extends Message {// implements Parcelable{
 	}
 	
 	public void afterSendAnswerSheet(Context context, AnswerSheet answerSheet, boolean status) {
-		DBProcManager.sharedManager(context).survey().updateAnsweredTS(this.idx, System.currentTimeMillis());
+		DBProcManager.sharedManager(context).survey().updateAnsweredTS(this.idx, System.currentTimeMillis()/1000);
 		// TODO : animation
 	}
 	

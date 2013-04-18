@@ -113,7 +113,7 @@ public class DocumentForwardFragment extends Fragment {
 		
 		HashMap<String,Object> forward = new HashMap<String,Object>();
 		forward.put(KEY.DOCUMENT.FORWARDER_IDX, UserInfo.getUserIdx( getActivity() ));
-		forward.put(KEY.DOCUMENT.FORWARD_TS, 	(Long)System.currentTimeMillis());
+		forward.put(KEY.DOCUMENT.FORWARD_TS, 	(Long)System.currentTimeMillis()/1000);
 		forward.put(KEY.DOCUMENT.FORWARDER_IDX, contentET.getText().toString());
 		
 		if(fwdDocument.forwards == null)

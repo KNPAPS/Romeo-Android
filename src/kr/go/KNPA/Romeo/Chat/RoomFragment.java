@@ -80,7 +80,7 @@ public class RoomFragment extends RomeoFragment {
 				@Override
 				public void run() {
 					super.run();
-					room.updateLastReadTS(System.currentTimeMillis());
+					room.updateLastReadTS(System.currentTimeMillis()/1000);
 					room.pullLastReadTS();
 					Message msg = mHandler.obtainMessage();
 					msg.what = RoomHandler.REFRESH;
@@ -108,7 +108,7 @@ public class RoomFragment extends RomeoFragment {
 		getListView().increaseNumberOfItemsBy(1);
 		
 		if ( isForeGround == true ) {
-			room.updateLastReadTS(System.currentTimeMillis());
+			room.updateLastReadTS(System.currentTimeMillis()/1000);
 			room.pullLastReadTS();
 		}
 		Cursor c = getListView().query(getListView().getNumberOfItems());
@@ -260,9 +260,9 @@ public class RoomFragment extends RomeoFragment {
 									senderIdx, 
 									receivers, 
 									false,
-									System.currentTimeMillis(),
+									System.currentTimeMillis()/1000,
 									true,
-									System.currentTimeMillis(),
+									System.currentTimeMillis()/1000,
 									room.getRoomCode(), 
 									Chat.CONTENT_TYPE_TEXT);
 				
@@ -563,9 +563,9 @@ public class RoomFragment extends RomeoFragment {
 							senderIdx, 
 							receivers, 
 							false,
-							System.currentTimeMillis(),
+							System.currentTimeMillis()/1000,
 							true,
-							System.currentTimeMillis(),
+							System.currentTimeMillis()/1000,
 							room.getRoomCode(), 
 							Chat.CONTENT_TYPE_PICTURE);
 		

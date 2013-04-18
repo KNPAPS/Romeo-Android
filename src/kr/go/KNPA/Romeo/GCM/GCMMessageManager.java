@@ -84,7 +84,7 @@ public class GCMMessageManager {
         events = event.split(":");
         
         if(event.equals(Event.Message.Chat.updateLastReadTS())) {
-        	Long lastReadTS = Math.round((Double)payload.getData().get(0,KEY.CHAT.LAST_READ_TS));
+        	Long lastReadTS = Long.valueOf( (Integer)payload.getData().get(0,KEY.CHAT.LAST_READ_TS) );
         	
         	onUpdateLastReadTS(
         			payload.getData().get(0,KEY.USER.IDX).toString(),

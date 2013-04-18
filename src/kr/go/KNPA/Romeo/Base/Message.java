@@ -286,16 +286,16 @@ public class Message implements Parcelable{
 	
 	private static void setCheckedOnLocal(Context context, Message message) {
 		if(message.mainType() == MESSAGE_TYPE_DOCUMENT)  {
-			DBProcManager.sharedManager(context).document().updateCheckedTS(message.idx, System.currentTimeMillis());
+			DBProcManager.sharedManager(context).document().updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
 			message.checked = true;
 		} else if(message.mainType() == MESSAGE_TYPE_SURVEY) {
-			DBProcManager.sharedManager(context).survey().updateCheckedTS(message.idx, System.currentTimeMillis());
+			DBProcManager.sharedManager(context).survey().updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
 			message.checked = true;
 		} else if(message.mainType() == MESSAGE_TYPE_CHAT){
 			ArrayList<String> chatIdxs = new ArrayList<String>(1);
 			chatIdxs.add(message.idx);
 			message.checked = true;
-			DBProcManager.sharedManager(context).chat().updateCheckedTS(chatIdxs, System.currentTimeMillis());
+			DBProcManager.sharedManager(context).chat().updateCheckedTS(chatIdxs, System.currentTimeMillis()/1000);
 		}
 	}
 	
