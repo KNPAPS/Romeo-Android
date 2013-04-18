@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -85,14 +86,26 @@ public class SettingsFragment extends Fragment {
 				});
 		
 		SettingsCellMaker.setTitle(cNotiBell, "알림 소리 선택");
-		SettingsCellMaker.setContent(cNotiBell, "");	// TODO : 설정값 세팅
+		
+		final RingtoneManager rm = new RingtoneManager(getActivity());
+		rm.setType(RingtoneManager.TYPE_NOTIFICATION);
+		
+		Uri ringtoneUri = UserInfo.getRingtone(getActivity());
+		int rtPos = rm.getRingtonePosition(ringtoneUri);
+		
+		Cursor cRingtone = rm.getCursor();
+		cRingtone.moveToPosition(rtPos);
+		
+		String ringtoneTitle = cRingtone.getString(RingtoneManager.TITLE_COLUMN_INDEX);
+		
+		
+		SettingsCellMaker.setContent(cNotiBell, ringtoneTitle);
 		SettingsCellMaker.setOnClickListner(cNotiBell, 
 				new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						final RingtoneManager rm = new RingtoneManager(getActivity());
-						rm.setType(RingtoneManager.TYPE_NOTIFICATION);
+						
 						Cursor cRingtone = rm.getCursor();
 						
 						CursorAdapter rtAdapter = new CursorAdapter(getActivity(), cRingtone, false) {
@@ -116,7 +129,9 @@ public class SettingsFragment extends Fragment {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								Uri rtUri = rm.getRingtoneUri(which);
-								// TODO : 저장
+								
+								UserInfo.setRingtone(getActivity(), rtUri);
+								
 								Cursor cRington = rm.getCursor();
 								cRington.moveToPosition(which);
 								String title = cRington.getString(RingtoneManager.TITLE_COLUMN_INDEX);
@@ -142,10 +157,10 @@ public class SettingsFragment extends Fragment {
 					@Override
 					public void onClick(View v) {
 						
-						ArrayList<HashMap<String, Object>> vibs = new ArrayList<HashMap<String, Object>> ();
+						ArrayList<HashMap<String, String>> vibs = new ArrayList<HashMap<String, String>> ();
 						
-						final ArrayAdapter<HashMap<String, Object>> vbAdapter = 
-								new ArrayAdapter<HashMap<String, Object>>(
+						final ArrayAdapter<HashMap<String, String>> vbAdapter = 
+								new ArrayAdapter<HashMap<String, String>>(
 										getActivity(), 
 										android.R.layout.simple_list_item_1, 
 										android.R.id.text1, 
@@ -156,18 +171,29 @@ public class SettingsFragment extends Fragment {
 							
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								HashMap<String, Object> vibObj = vbAdapter.getItem(which);
+								HashMap<String, String> vibObj = vbAdapter.getItem(which);
 								
-								// TODO : 저장
-								String title = (String)vibObj.get("");	// TODO : 키값
+								String patternKey = vibObj.get( VibrationPattern.DICTIONARY_KEY);
+								String title = vibObj.get(VibrationPattern.DICTIONARY_TITLE);
+								
+								UserInfo.setVibrationPattern(getActivity(), patternKey);
 								SettingsCellMaker.setContent(cNotiVib, title);
+								
+								Vibrator vibrator = (Vibrator)getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+								vibrator.vibrate(
+										VibrationPattern.getPattern(
+												patternKey
+										), 1
+									);
+								
+								
 								dialog.dismiss();
 							}
 						};
 						
-						AlertDialog adRington = new AlertDialog.Builder(getActivity())
+						AlertDialog adVibration = new AlertDialog.Builder(getActivity())
 															   .setIcon(R.drawable.icon)
-															   .setTitle("알림 소리 선택")
+															   .setTitle("진동 패턴 선택")
 															   .setAdapter(vbAdapter, vbClicked)
 															   .show();
 					}

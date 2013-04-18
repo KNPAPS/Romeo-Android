@@ -6,6 +6,7 @@ import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.VibrationPattern;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
 
@@ -139,7 +140,7 @@ public class UserInfo {
 	public static Uri getRingtone(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		String enc = prefs.getString("ringtone", null);
-		if(enc == null) return null;
+		if(enc == null) return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);//return null;
 		return Uri.parse( Encrypter.sharedEncrypter().decryptString(enc) );
 	}
 	

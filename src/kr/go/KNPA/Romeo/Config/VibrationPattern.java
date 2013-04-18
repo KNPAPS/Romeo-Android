@@ -2,6 +2,8 @@ package kr.go.KNPA.Romeo.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class VibrationPattern {
 	private final static long[] VP_NONE				= {0,0};
@@ -16,7 +18,7 @@ public class VibrationPattern {
 	
 	private static HashMap<String, long[]> PATTERNS = null;
 	private static HashMap<String, String> PATTERNS_TITLE = null;
-	private static ArrayList<HashMap<String, String>> PATTERNS_DICTIONARY = null;
+	private static ArrayList<HashMap<String,String>> PATTERNS_DICTIONARY = null;
 	
 	public final static String NONE				= "NONE";
 	public final static String DEFAULT			= "DEFAULT";
@@ -38,6 +40,8 @@ public class VibrationPattern {
 	private final static String TITLE_CRESCENDO			= "점점 세게";
 	private final static String TITLE_DECRESCENDO		= "점점 약하게";
 	
+	public final static String DICTIONARY_KEY = "KEY";
+	public final static String DICTIONARY_TITLE = "TITLE";
 	private static void init() {
 		PATTERNS = new HashMap<String, long[]>();
 		PATTERNS.put(NONE, VP_NONE);
@@ -74,9 +78,19 @@ public class VibrationPattern {
 		return PATTERNS_TITLE.get(patternKey);
 	}
 	
-//	public static ArrayList<HashMap<String, String>> getDictionary() {
-//		if(PATTERNS_DICTIONARY != null && PATTERNS_DICTIONARY.size() > 0) return PATTERNS_DICTIONARY;
-//		PATTERNS_DICTIONARY = new ArrayList<HashMap<String, String>>();
-//		for(int i=0; i<)
-//	}
+	public static ArrayList<HashMap<String,String>> getDictionary() {
+		if(PATTERNS_DICTIONARY != null && PATTERNS_DICTIONARY.size() > 0) return PATTERNS_DICTIONARY;
+		PATTERNS_DICTIONARY = new ArrayList<HashMap<String,String>>();
+		
+		Iterator<String> iterator = PATTERNS.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			HashMap<String, String> dic = new HashMap<String, String>();
+			dic.put("TITLE", PATTERNS_TITLE.get(key));
+			dic.put("KEY", key);
+			
+			PATTERNS_DICTIONARY.add(dic);
+		}
+		return PATTERNS_DICTIONARY;
+	}
 }
