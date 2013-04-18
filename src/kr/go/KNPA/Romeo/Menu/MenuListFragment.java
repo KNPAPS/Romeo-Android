@@ -232,8 +232,8 @@ public class MenuListFragment extends ListFragment {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				
-				if(keyCode == KeyEvent.KEYCODE_ENTER) {
-					// TODO : 왜 엔터는 한번 쳤는데 두번 실행되지??
+				if(event.getAction() == KeyEvent.ACTION_UP && 
+						keyCode == KeyEvent.KEYCODE_ENTER) {
 					if(searchET.getText().toString().trim().length() == 0) {
 						searchList.setAdapter(emptyAdapter);
 					} else {

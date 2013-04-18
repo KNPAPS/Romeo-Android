@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +39,19 @@ public class PasswordActivity extends Activity {
 			TextWatcher watcher = new TextWatcher() {
 				@Override	public void onTextChanged(CharSequence s, int start, int before, int count) {}
 				@Override	public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-				@Override	public void afterTextChanged(Editable s) {	if(s.length() == 1)	digitET.focusSearch(View.FOCUS_RIGHT).requestFocus();	}
+				@Override	public void afterTextChanged(Editable s) {	
+					if(s.length() == 1) {	
+						if(digitET != null){
+							View nextFocusView = digitET.focusSearch(View.FOCUS_RIGHT);
+							if(nextFocusView != null)
+								nextFocusView.requestFocus();
+						}
+					}
+				}
 			};
+			
+			digitET.addTextChangedListener(watcher);
+			digitET.setOnKeyListener(keyListener);
 		}
 		
 		setContentView(parent);
@@ -50,7 +62,8 @@ public class PasswordActivity extends Activity {
 		@Override
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			EditText et = (EditText)v;
-			if(keyCode == KeyEvent.KEYCODE_ENTER) {
+			if(event.getAction() == KeyEvent.ACTION_UP && 
+					keyCode == KeyEvent.KEYCODE_ENTER) {
 				/*
 				switch(getDigitNumber(et)){
 					case 0: getDigitView(1).requestFocus();
@@ -62,12 +75,14 @@ public class PasswordActivity extends Activity {
 				
 				if(getDigitNumber(et) == 3) {
 					submit();
+					Log.d("", "true");
 					return true;
 				} else {
 					et.focusSearch(View.FOCUS_RIGHT).requestFocus();
 					return true;
 				}
 			}
+			Log.d("", "false");
 			return false;
 		}
 	};
