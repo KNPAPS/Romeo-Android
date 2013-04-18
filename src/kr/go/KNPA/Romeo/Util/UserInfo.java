@@ -3,9 +3,10 @@ package kr.go.KNPA.Romeo.Util;
 import java.util.UUID;
 
 import kr.go.KNPA.Romeo.Config.Constants;
-import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Config.VibrationPattern;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.telephony.TelephonyManager;
 
 public class UserInfo {
@@ -46,7 +47,7 @@ public class UserInfo {
 	public static String getDepartmentIdx(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		String enc = prefs.getString("departmentIdx", null);
-		if(enc == null) return null;
+		if(enc == null) return null; 
 		return Encrypter.sharedEncrypter().decryptString(enc);
 	}
 	
@@ -126,6 +127,34 @@ public class UserInfo {
 		e.putString("uuid", Encrypter.sharedEncrypter().encryptString(deviceId));
 		e.commit();
 
+	}
+	
+	public static void setRingtone(Context context, Uri ringtoneUri) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor e = prefs.edit();
+		e.putString("ringtone", Encrypter.sharedEncrypter().encryptString(ringtoneUri.toString()));
+		e.commit();
+	}
+	
+	public static Uri getRingtone(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		String enc = prefs.getString("ringtone", null);
+		if(enc == null) return null;
+		return Uri.parse( Encrypter.sharedEncrypter().decryptString(enc) );
+	}
+	
+	public static void setVibrationPattern(Context context, String vibPatternKey) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor e = prefs.edit();
+		e.putString("vibrationPattern", Encrypter.sharedEncrypter().encryptString( vibPatternKey ));
+		e.commit();
+	}
+	
+	public static String getVibrationPattern(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		String enc = prefs.getString("vibrationPattern", null);
+		if(enc == null) return VibrationPattern.DEFAULT;//return null;
+		return Encrypter.sharedEncrypter().decryptString(enc);
 	}
 	
 	public static String getUUID(Context context) {			

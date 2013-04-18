@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.VibrationPattern;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -132,14 +134,14 @@ public class SettingsFragment extends Fragment {
 				});
 		
 		SettingsCellMaker.setTitle(cNotiVib, "진동 패턴 선택");
-		SettingsCellMaker.setContent(cNotiVib, "");
+		String vibPatternKey = UserInfo.getVibrationPattern(getActivity());
+		SettingsCellMaker.setContent(cNotiVib, VibrationPattern.getTitle(vibPatternKey));
 		SettingsCellMaker.setOnClickListner(cNotiVib, 
 				new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
 						
-						// TODO : get Vibrator options 
 						ArrayList<HashMap<String, Object>> vibs = new ArrayList<HashMap<String, Object>> ();
 						
 						final ArrayAdapter<HashMap<String, Object>> vbAdapter = 
