@@ -85,7 +85,7 @@ public class RoomFragment extends RomeoFragment {
 					msg.obj = getListView().query( getListView().getNumberOfItems() );
 					mHandler.sendMessage(msg);
 				}
-			};
+			}.start();
 		}
 	}
 
