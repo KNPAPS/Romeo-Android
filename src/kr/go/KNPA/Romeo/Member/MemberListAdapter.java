@@ -135,7 +135,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			TextView nameTV = (TextView)convertView.findViewById(R.id.name);
 			nameTV.setText(uName);
 			TextView roleTV = (TextView)convertView.findViewById(R.id.role);
-			roleTV.setText("ROLE");
+			roleTV.setText("("+ uRole +")");
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
 			departmentTV.setText(uDepartment.nameFull);
 		}
