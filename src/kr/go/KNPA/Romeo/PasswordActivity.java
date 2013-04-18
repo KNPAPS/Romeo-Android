@@ -7,14 +7,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class PasswordActivity extends Activity {
@@ -30,11 +35,17 @@ public class PasswordActivity extends Activity {
 		
 		Intent intent = getIntent();
 		targetModuleInfo = intent.getExtras();
-		
+	  
 		parent = (ViewGroup)((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.password_activity, null, false);
+		
+		OnClickListener rbbOnClickListener = new OnClickListener() {	@Override	public void onClick(View v) {	submit();	}	};
+		initNavigationBar(parent, "비밀번호 입력", false, true, null, getString(R.string.submit), null, rbbOnClickListener);
 		
 		for(int i=0; i<NUM_DIGIT; i++) {
 			final EditText digitET = getDigitView(i);
+			
+			digitET.setInputType(InputType.TYPE_CLASS_NUMBER);
+		    digitET.setTransformationMethod(PasswordTransformationMethod.getInstance());
 			
 			TextWatcher watcher = new TextWatcher() {
 				@Override	public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -156,5 +167,23 @@ public class PasswordActivity extends Activity {
 				// TODO : 잠금 && 보고
 			}
 		}
+	}
+	
+	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
+		
+		Button lbb = (Button)parentView.findViewById(R.id.left_bar_button);
+		Button rbb = (Button)parentView.findViewById(R.id.right_bar_button);
+		
+		lbb.setVisibility((lbbVisible?View.VISIBLE:View.INVISIBLE));
+		rbb.setVisibility((rbbVisible?View.VISIBLE:View.INVISIBLE));
+		
+		if(lbb.getVisibility() == View.VISIBLE) { lbb.setText(lbbTitle);	}
+		if(rbb.getVisibility() == View.VISIBLE) { rbb.setText(rbbTitle);	}
+		
+		TextView titleView = (TextView)parentView.findViewById(R.id.title);
+		titleView.setText(titleText);
+		
+		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
+		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
 	}
 }

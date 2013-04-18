@@ -18,11 +18,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.Display;
 import android.view.KeyEvent;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
-import android.widget.ImageView;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.slidingmenu.lib.SlidingMenu;
 
@@ -180,6 +178,17 @@ public class MainActivity extends BaseActivity {
 		getSupportFragmentManager().popBackStack();
 	}
 		
+	@Override
+	public void toggle() {
+		super.toggle();
+		
+		View focusedView = getCurrentFocus();
+		if(focusedView != null) {
+			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(focusedView.getApplicationWindowToken(), 0);
+		}
+	  
+	}
 	 
 	@Override 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
