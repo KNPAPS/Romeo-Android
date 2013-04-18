@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
@@ -408,6 +409,8 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 							
 							ArrayList<User> users = MemberManager.sharedManager().getDeptMembers(deptIdx, false);
 							for(int i=0; i<users.size(); i++) {
+								if(users.get(i).idx.equalsIgnoreCase(UserInfo.getUserIdx(context)) == true)
+									continue;
 								CellNode node = new CellNode().type(CellNode.CN_USER).idx( users.get(i).idx ).status(status).isRoot(false).isUnfolded(false).index( nodeClicked.children().size() ).parent(nodeClicked);
 								nodeClicked.append(node);
 							}
