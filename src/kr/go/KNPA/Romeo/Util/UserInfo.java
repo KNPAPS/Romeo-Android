@@ -62,19 +62,7 @@ public class UserInfo {
 		if(enc == null) return null;
 		return Encrypter.sharedEncrypter().decryptString(enc); 
 	}
-	
-	public static void setRankIdx(Context context, int rank) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor e = prefs.edit();
-		e.putString("rankIdx", Encrypter.sharedEncrypter().encryptString(""+rank));
-		e.commit();
-	}
-	public static int getRankIdx(Context context, int rank) {
-		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String _var = Encrypter.sharedEncrypter().decryptString(prefs.getString("rankIdx", Encrypter.sharedEncrypter().encryptString(""+User.NOT_SPECIFIED)));
-		return Integer.parseInt(_var);
-	}
-	
+
 	public static void setRank(Context context, int rank) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
@@ -93,6 +81,7 @@ public class UserInfo {
 		}
 	}
 	
+	/*
 	public static void setPicPath(Context context, String path) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor e = prefs.edit();
@@ -104,7 +93,7 @@ public class UserInfo {
 		String enc = prefs.getString("picPath", null);
 		if(enc == null) return null;
 		return Encrypter.sharedEncrypter().decryptString(enc);
-	}
+	}*/
 	
 	public static void setPassword(Context context, String password) {
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
