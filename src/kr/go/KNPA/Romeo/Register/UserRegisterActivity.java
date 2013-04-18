@@ -222,7 +222,6 @@ public class UserRegisterActivity extends Activity {
 		UserInfo.setName(context, name);
 		UserInfo.setDepartment(context, department.nameFull);
 		UserInfo.setDepartmentIdx(context, department.idx);
-		UserInfo.setRankIdx(context, rank);
 		UserInfo.setRank(context, rank);
 		UserInfo.setPassword(context, password);
 		
