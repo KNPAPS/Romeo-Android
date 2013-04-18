@@ -162,6 +162,18 @@ public class UserInfo {
 		return Encrypter.sharedEncrypter().decryptString(enc);
 	}
 	
+	public static void setAlarmEnabled(Context context, boolean willEnabled) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor e = prefs.edit();
+		e.putBoolean("alarmEnabled", willEnabled);
+		e.commit();
+	}
+	
+	public static boolean getAlarmEnabled(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		return prefs.getBoolean("alarmEnabled", true);
+	}
+	
 	public static String getUUID(Context context) {			
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		String enc = prefs.getString("uuid", null);

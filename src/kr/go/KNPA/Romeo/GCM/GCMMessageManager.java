@@ -205,15 +205,19 @@ public class GCMMessageManager {
 		//nt.defaults = Notification.DEFAULT_SOUND;
 		nt.defaults = Notification.DEFAULT_LIGHTS;
 		//http://stackoverflow.com/questions/14195067/android-gcm-turn-on-lights
-		nt.sound = UserInfo.getRingtone(context);
+		
 		nt.flags = nt.flags | Notification.FLAG_AUTO_CANCEL;
+		boolean isAlarmEnabled = UserInfo.getAlarmEnabled(context);
+		if(isAlarmEnabled)
+			nt.sound = UserInfo.getRingtone(context);
 		
 		// TODO : 방별
-		Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
-		String patternKey = UserInfo.getVibrationPattern(context);
-		long[] pattern = VibrationPattern.getPattern(patternKey);
-		vibrator.vibrate(pattern, -1);
-		
+		if(isAlarmEnabled) {
+			Vibrator vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+			String patternKey = UserInfo.getVibrationPattern(context);
+			long[] pattern = VibrationPattern.getPattern(patternKey);
+			vibrator.vibrate(pattern, -1);
+		}
 		return nt;
 	}
 	
