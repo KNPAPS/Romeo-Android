@@ -192,7 +192,7 @@ public class PasswordActivity extends Activity {
 			intent.putExtras(targetModuleInfo);
 
 			startActivity(intent);
-
+			finish();
 		} else {
 			errorCount++;
 			Toast.makeText(PasswordActivity.this, "비밀번호를 "+ errorCount +"회 틀렸습니다.", Toast.LENGTH_SHORT).show();

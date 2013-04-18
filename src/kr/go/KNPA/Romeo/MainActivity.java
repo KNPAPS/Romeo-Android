@@ -11,6 +11,7 @@ import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -59,12 +60,7 @@ public class MainActivity extends BaseActivity {
 		
 	}
 	*/
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// TODO 비밀번호 설정
-	}
+
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -183,17 +179,17 @@ public class MainActivity extends BaseActivity {
 		getSupportFragmentManager().popBackStack();
 	}
 		
-	@Override
-	public void toggle() {
-		super.toggle();
-		
-		View focusedView = getCurrentFocus();
-		if(focusedView != null) {
-			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(focusedView.getApplicationWindowToken(), 0);
-		}
-	  
-	}
+//	@Override
+//	public void toggle() {
+//		super.toggle();
+//		
+//		View focusedView = getCurrentFocus();
+//		if(focusedView != null) {
+//			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//			imm.hideSoftInputFromWindow(focusedView.getApplicationWindowToken(), 0);
+//		}
+//	  
+//	}
 	 
 	@Override 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
