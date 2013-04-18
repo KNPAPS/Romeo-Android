@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -151,6 +152,10 @@ public class SettingsFragment extends Fragment {
 								cRington.moveToPosition(which);
 								String title = cRington.getString(RingtoneManager.TITLE_COLUMN_INDEX);
 								SettingsCellMaker.setContent(cNotiBell, title);
+								
+								Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), rtUri);
+								ringtone.play();
+								
 								dialog.dismiss();
 							}
 						};
