@@ -1,5 +1,6 @@
 package kr.go.KNPA.Romeo.Config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VibrationPattern {
@@ -15,6 +16,7 @@ public class VibrationPattern {
 	
 	private static HashMap<String, long[]> PATTERNS = null;
 	private static HashMap<String, String> PATTERNS_TITLE = null;
+	private static ArrayList<HashMap<String, String>> PATTERNS_DICTIONARY = null;
 	
 	public final static String NONE				= "NONE";
 	public final static String DEFAULT			= "DEFAULT";
@@ -72,5 +74,9 @@ public class VibrationPattern {
 		return PATTERNS_TITLE.get(patternKey);
 	}
 	
-	//public static ArrayList<String> getArrayList
+//	public static ArrayList<HashMap<String, String>> getDictionary() {
+//		if(PATTERNS_DICTIONARY != null && PATTERNS_DICTIONARY.size() > 0) return PATTERNS_DICTIONARY;
+//		PATTERNS_DICTIONARY = new ArrayList<HashMap<String, String>>();
+//		for(int i=0; i<)
+//	}
 }
