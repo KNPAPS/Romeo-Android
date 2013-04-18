@@ -237,10 +237,6 @@ public class HandBookFragment extends Fragment {
 			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
 			titleTV.setText(group.get("section"));
 			
-			//TODO
-			//ViewGroup.LayoutParams lp = titleTV.getLayoutParams();
-			//lp.
-			
 			return convertView;
 		}
 		

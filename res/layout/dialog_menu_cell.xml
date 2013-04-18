@@ -5,7 +5,9 @@
     android:layout_height="fill_parent"
     android:padding="5dp"
     android:text="메뉴"
-    android:textColor="@color/black"
+    android:background="@color/white"
+    android:layout_marginLeft="12dp"
+    android:textColor="@color/text"
     android:textSize="20dp" >
 
 </TextView>
