@@ -104,10 +104,14 @@ public class UserInfo {
 		e.commit();
 	}
 	public static String getPassword(Context context) {
+		
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		/*
 		String enc = prefs.getString("password", null);
 		if(enc == null) return null;
 		return Encrypter.sharedEncrypter().decryptString(enc);
+		*/
+		return prefs.getString("password", null);
 	}
 	
 	public static void setUUID(Context context) {
