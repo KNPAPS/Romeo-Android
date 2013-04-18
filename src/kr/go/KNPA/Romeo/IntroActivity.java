@@ -203,10 +203,17 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 				
 				Intent intent = null;
 
-				intent = new Intent(IntroActivity.this, MainActivity.class);
+//				intent = new Intent(IntroActivity.this, MainActivity.class);
+//				intent.putExtras(targetModuleInfo);
+//
+//				startActivity(intent);
+				
+				// GO TO PASSWORD ACTIVITY
+				intent = new Intent(IntroActivity.this, PasswordActivity.class);
 				intent.putExtras(targetModuleInfo);
-
+				
 				startActivity(intent);
+				
 				finish();
 				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 

@@ -49,7 +49,7 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name="kr.go.KNPA.Romeo.Base.PasswordActivity"
+            android:name="kr.go.KNPA.Romeo.PasswordActivity"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden" >
         </activity>
