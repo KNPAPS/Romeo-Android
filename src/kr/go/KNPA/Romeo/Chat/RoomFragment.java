@@ -125,10 +125,14 @@ public class RoomFragment extends RomeoFragment {
 		};
 		
 		String title = room.getTitle();
-		if ( room.getChatters().size() > 2 ) {
-			title += " ("+String.valueOf(room.getChatters().size())+")명";
+		
+		if ( title == null ) {
+			title = subType==Chat.TYPE_COMMAND?getString(R.string.command):getString(R.string.meeting); 
+		} else {
+			if ( room.getChatters().size() > 2 ) {
+				title += " ("+String.valueOf(room.getChatters().size())+"명)";
+			}			
 		}
-
 		initNavigationBar(
 			view, 
 			title, 
