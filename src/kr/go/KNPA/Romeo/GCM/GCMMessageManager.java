@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
@@ -137,6 +138,8 @@ public class GCMMessageManager {
 			
 			DBProcManager.sharedManager(context)
 				.chat().createRoom(users, chat.type(), chat.roomCode);
+			Room room = new Room(context,chat.roomCode);
+			room.setBaseTitle();
 		}
 		
 		// Chat 저장

@@ -31,12 +31,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -157,7 +161,7 @@ public class RoomFragment extends RomeoFragment {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
-				startActivity(intent);
+				startActivityForResult(intent, ROOM_ACTION);
 			}
 		};
 		
@@ -287,28 +291,6 @@ public class RoomFragment extends RomeoFragment {
 		((ChatListView)listView).setRoom(room);
 
 		return view;
-	}
-	
-	public static class RoomSettingActivity extends PreferenceActivity {
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.room);
-		}
-		
-		@Override
-		public SharedPreferences getSharedPreferences(String name, int mode) {
-			// TODO Auto-generated method stub
-			return super.getSharedPreferences(name, mode);
-		}
-		
-		
-		@Override
-		protected void onListItemClick(ListView l, View v, int position, long id) {
-			// TODO Auto-generated method stub
-			super.onListItemClick(l, v, position, id);
-			Toast.makeText(this, "선택", Toast.LENGTH_LONG).show();
-		}
 	}
 
 	/** @} */
@@ -469,7 +451,7 @@ public class RoomFragment extends RomeoFragment {
 	
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
-    
+    private static final int ROOM_ACTION = 2;
     /**
      * 카메라에서 이미지 가져오기
      */
@@ -582,4 +564,6 @@ public class RoomFragment extends RomeoFragment {
 		// 채팅방목록 refresh
 		ChatFragment.chatFragment(room.getType()).listView.refresh();
 	}
+	
+	
 }
