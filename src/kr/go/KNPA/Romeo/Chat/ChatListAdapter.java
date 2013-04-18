@@ -131,14 +131,17 @@ public class ChatListAdapter extends CursorAdapter {
 		 */
 		switch(chatStatus){
 		case Chat.STATE_SENDING:
-			WaiterView wv = new WaiterView(context);
-			wv.substituteView(goUncheckedBT);
-			DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-			LayoutParams params = new LayoutParams( (int)((26 * displayMetrics.density) + 0.5), (int)((26 * displayMetrics.density) + 0.5));
-			params.gravity = Gravity.BOTTOM;
-			params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
-			wv.setLayoutParams(params);
-			waiterViews.put(listItem.getTag().toString(),wv);
+			
+			if ( goUncheckedBT.getVisibility() != View.GONE ) {
+				WaiterView wv = new WaiterView(context);
+				wv.substituteView(goUncheckedBT);
+				DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+				LayoutParams params = new LayoutParams( (int)((26 * displayMetrics.density) + 0.5), (int)((26 * displayMetrics.density) + 0.5));
+				params.gravity = Gravity.BOTTOM;
+				params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
+				wv.setLayoutParams(params);
+				waiterViews.put(listItem.getTag().toString(),wv);
+			}
 			break;
 		case Chat.STATE_SUCCESS:
 			

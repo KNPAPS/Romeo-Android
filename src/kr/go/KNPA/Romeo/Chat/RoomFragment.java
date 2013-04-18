@@ -119,6 +119,16 @@ public class RoomFragment extends RomeoFragment {
 		
 	}
 
+	public void onUpdateLastTS(String userIdx, long lastReadTS){
+
+		room.setLastReadTS(userIdx, lastReadTS);
+		Cursor c = getListView().query(getListView().getNumberOfItems());
+		Message msg = mHandler.obtainMessage();
+		msg.what = RoomHandler.REFRESH;
+		msg.obj = c;
+		mHandler.sendMessage(msg);
+	}
+	
 	@Override
 	public ChatListView getListView() {
 		return (ChatListView) listView;
@@ -371,7 +381,7 @@ public class RoomFragment extends RomeoFragment {
 								.chat()
 								.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
 			getListView().increaseNumberOfItemsBy(1);
-
+			room.updateLastReadTS(System.currentTimeMillis()/1000);
 			//채팅해쉬를 채팅 객체에 설정함
 			chat.idx = chatHash;
 

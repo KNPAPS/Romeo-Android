@@ -9,13 +9,10 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
-import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Config.KEY.MESSAGE;
 import kr.go.KNPA.Romeo.Config.VibrationPattern;
-import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
@@ -30,6 +27,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Vibrator;
 
@@ -122,7 +120,8 @@ public class GCMMessageManager {
 				currentRoomFragment.room != null && 
 				currentRoomFragment.room.getRoomCode() !=null &&
 				currentRoomFragment.room.getRoomCode().equals(roomCode)){
-				currentRoomFragment.room.setLastReadTS(userIdx, lastReadTS);
+				currentRoomFragment.onUpdateLastTS(userIdx, lastReadTS);
+				
 			}
 		}
 	}
