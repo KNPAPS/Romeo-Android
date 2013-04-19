@@ -204,6 +204,7 @@ public class Survey extends Message {// implements Parcelable{
 			// Failure
 		}
 		// TODO : Animation 처리
+		super.afterSend(context, successful);
 	}
 	
 	public static class Form extends HashMap<String, Object>{
