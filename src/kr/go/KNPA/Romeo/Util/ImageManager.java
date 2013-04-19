@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
@@ -15,9 +16,13 @@ import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -65,6 +70,14 @@ public class ImageManager {
 	public boolean upload( int imageType, String imageHash, String fileName ){
 		return upload(imageType, imageHash, fileName, true);
 	}
+	
+	public boolean upload( int imageType, String imageHash, Uri picUri) {
+    	Cursor c = MainActivity.sharedActivity().getContentResolver().query(picUri,null,null,null,null);
+        c.moveToNext();
+        String filePath = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+        return upload(imageType, imageHash, filePath);
+	}
+	
 	
 	public boolean upload( int imageType, String imageHash, String fileName, boolean async ) {
 		switch(imageType) {

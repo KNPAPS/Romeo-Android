@@ -14,6 +14,9 @@ public class Constants {
 	public static final String MIME_BOUNDARY = "32wif*9vk4*kdlsfv4*";
 	public static final String TAG = "daonCustomLog";
 	public static final int MAX_BUFFER_SIZE = 1024;
+	
 	public static boolean DEVELOPMENT = true;
 	public static boolean DEBUG = true;
+	
+	public static final int REQUEST_PIC_PICKER = 300;
 }

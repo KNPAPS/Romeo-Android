@@ -11,9 +11,11 @@ import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -249,6 +251,11 @@ public class MainActivity extends BaseActivity {
 		
 		return super.onKeyDown(keyCode, event); 
 	} 
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }
 
 

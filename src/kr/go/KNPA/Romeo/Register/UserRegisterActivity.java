@@ -3,7 +3,9 @@ package kr.go.KNPA.Romeo.Register;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
@@ -19,8 +21,10 @@ import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
@@ -111,6 +115,7 @@ public class UserRegisterActivity extends Activity {
 			
 		case UserRegisterEditView.KEY_PIC :				
 			view = getView(key, "pic");	
+			if(picURI != null) view.setImage(picURI);
 			im.hideSoftInputFromWindow(view.getImageView().getWindowToken(), 0);
 			break;
 			
@@ -142,7 +147,7 @@ public class UserRegisterActivity extends Activity {
 			}
 			
 					
-			//if(pic != null) view.setImage(pic);
+			
 			if(picURI != null) view.setImage(picURI);
 			((TextView)view.findViewById(R.id.footer1)).setText(dep1+"\n"+dep23456);
 			((TextView)view.findViewById(R.id.footer2)).setText(User.RANK[rank]+" "+name);
@@ -186,8 +191,13 @@ public class UserRegisterActivity extends Activity {
 		if(registered == true) {
 			if(picURI != null) {
 				WaiterView.showDialog(UserRegisterActivity.this);
+				
+				Cursor c = UserRegisterActivity.this.getContentResolver().query(picURI,null,null,null,null);
+		        c.moveToNext();
+		        String filePath = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
+				
 				ImageManager im = new ImageManager().callBack(userPicCallback);
-				im.upload(ImageManager.PROFILE_SIZE_ORIGINAL, userIdx, picURI.getPath());
+				im.upload(ImageManager.PROFILE_SIZE_ORIGINAL, userIdx, filePath);
 			} 
 			saveAndFinish();
 			
@@ -280,7 +290,7 @@ public class UserRegisterActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode == RESULT_OK) {
-			if(requestCode == UserRegisterEditView.REQUEST_PIC_PICKER) {
+			if(requestCode == Constants.REQUEST_PIC_PICKER) {
 				UserRegisterEditView picEditView = (UserRegisterEditView) screens.get("pic");
 				picEditView.imagePicked(data);
 			}

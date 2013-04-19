@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
@@ -48,7 +49,7 @@ public class UserRegisterEditView extends LinearLayout {
 	public static final int KEY_CONFIRM			= 6;
 	/** @} */
 	
-	public static final int REQUEST_PIC_PICKER = 300;
+	
 	private static final int DROPDOWN_MAX_LENGTH = 6;
 	
 	private static final String MAKE_DUMMY_SET	= "MAKE_DUMMY_SET";
@@ -191,7 +192,7 @@ public class UserRegisterEditView extends LinearLayout {
 				public void onClick(View v) {
 					Intent intent = new Intent(Intent.ACTION_PICK);
 					intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-					context.startActivityForResult(intent, REQUEST_PIC_PICKER);
+					context.startActivityForResult(intent, Constants.REQUEST_PIC_PICKER);
 				}
 			});
 			break;
@@ -358,9 +359,12 @@ public class UserRegisterEditView extends LinearLayout {
 	private	void 		setImage(Bitmap b) 		{	getImageView().setImageBitmap(b);					}
 	private	void 		setImage(Matrix m) 		{	getImageView().setImageMatrix(m);					}
 	public void 		setImage(Uri uri) 		{
-		//Bitmap b = ImageManager.bitmapFromURI(context, uri);
-		//if(b!= null) setImage(b);
-		//getImageView().setImageURI(uri);
+//		try {
+//			Bitmap b = Images.Media.getBitmap(getContext().getContentResolver(), uri);
+//		} catch (IOException e) {
+//			setImage(b);
+//		}
+		getImageView().setImageURI(uri);
 	}
 	private	Drawable 	getDrawable() 			{	return getImageView().getDrawable();				}
 	private	Bitmap 		getBitmap() {

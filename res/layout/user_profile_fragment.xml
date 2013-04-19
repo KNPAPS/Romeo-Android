@@ -11,20 +11,6 @@
         android:src="@drawable/user_profile_background"
         android:scaleType="centerCrop" 
         android:layout_centerHorizontal="true" />
- 
-    <Button 
-        android:id="@+id/menu"
-        android:text="메뉴"
-        android:textColor="#CCFFFFFF"
-        android:layout_alignLeft="@id/background"
-        android:layout_alignTop="@id/background"
-        android:layout_width = "wrap_content"
-        android:layout_height= "wrap_content"
-        android:minWidth="40dp"
-        android:minHeight="20dp"
-        android:layout_margin= "10dp" />
-    
-
 
     <LinearLayout
         android:layout_centerHorizontal="true" 
@@ -39,7 +25,9 @@
 		    android:layout_marginTop="80dp"
 		    android:layout_width="140dp"
 		    android:layout_height="140dp"
-		    android:background="@color/transparent"
+		    android:background="@drawable/box_shadow"
+		    android:padding="5dp"
+		    android:scaleType="centerCrop"
 		    android:layout_gravity="center_horizontal" />
 	
 		<TextView
@@ -71,4 +59,18 @@
 		    android:layout_gravity="center_horizontal"
 		    android:textSize="36sp"	     />
 	</LinearLayout>
+	
+   	<Button 
+        android:id="@+id/menu"
+        android:text="메뉴"
+        android:textColor="#CCFFFFFF"
+        android:layout_alignLeft="@id/background"
+        android:layout_alignTop="@id/background"
+        android:layout_width = "wrap_content"
+        android:layout_height= "wrap_content"
+        android:background="@drawable/round_transparent_80"
+        android:minWidth="40dp"
+        android:minHeight="20dp"
+        android:layout_margin= "10dp" />
+        
 </RelativeLayout>
