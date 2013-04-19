@@ -1,5 +1,7 @@
 package kr.go.KNPA.Romeo.Util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -84,6 +86,30 @@ public class Formatter {
 		
 		return result;//sb.toString();
 	}
+	
+	public static String encodeURIComponent(String s)
+	  {
+	    String result = null;
+	 
+	    try
+	    {
+	      result = URLEncoder.encode(s, "UTF-8")
+	                         .replaceAll("\\+", "%20")
+	                         .replaceAll("\\%21", "!")
+	                         .replaceAll("\\%27", "'")
+	                         .replaceAll("\\%28", "(")
+	                         .replaceAll("\\%29", ")")
+	                         .replaceAll("\\%7E", "~");
+	    }
+	 
+	    // This exception should never occur.
+	    catch (UnsupportedEncodingException e)
+	    {
+	      result = s;
+	    }
+	 
+	    return result;
+	  }
 }
 /*
 

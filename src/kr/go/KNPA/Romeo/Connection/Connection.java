@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
+import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -257,13 +258,7 @@ public class Connection {
 			dos.writeBytes(RN+"Content-Disposition: form-data; name=" + "\"payload\"" + ";"+RN);
 			dos.writeBytes("Content-Type: application/x-www-form-urlencoded;"+RN);
 			String encoded = null;
-			try {
-				encoded = URLEncoder.encode(requestPayloadJSON, "UTF-8");
-				encoded = encoded.replaceAll("[+]", "%20");
-			} catch (UnsupportedEncodingException e) {
-				encoded = requestPayloadJSON;
-				Log.d("urlEncoder", e.getMessage());
-			}
+			encoded = Formatter.encodeURIComponent(requestPayloadJSON);
 			dos.writeBytes(RN+ encoded +RN);
 			
 			for(int fi=0; fi< nAttachedFiles; fi++) {

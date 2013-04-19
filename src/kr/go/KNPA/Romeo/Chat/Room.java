@@ -253,6 +253,7 @@ public class Room {
 		
 		Data reqData = new Data();
 		reqData.add(0,KEY.CHAT.ROOM_CODE,this.getRoomCode());
+		reqData.add(0,KEY.CHAT.TYPE,this.getType());
 		reqData.add(0,KEY.CHAT.ROOM_MEMBER, this.getChatters());
 		
 		Payload request = new Payload().setEvent(Event.Message.Chat.createRoom()).setData(reqData);

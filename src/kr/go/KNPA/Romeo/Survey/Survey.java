@@ -39,8 +39,8 @@ public class Survey extends Message {// implements Parcelable{
 	}
 	
 	public static Survey surveyFromServer(Context context, String surveyIdx, int subType) {
-		Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
-		cursor_surveyInfo.moveToFirst();
+		//Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
+		//cursor_surveyInfo.moveToFirst();
 		
 		
 		Data reqData = new Data().add(0, KEY.MESSAGE.IDX, surveyIdx);
@@ -115,6 +115,8 @@ public class Survey extends Message {// implements Parcelable{
 		this.TS			= fromServer.TS;
 		this.checked 	= cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
 		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
+		
+		this.form 		= fromServer.form;
 	}
 
 	/*
