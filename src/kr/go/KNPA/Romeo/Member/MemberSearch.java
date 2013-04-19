@@ -3,14 +3,10 @@ package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
 
-import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBManager;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +15,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 

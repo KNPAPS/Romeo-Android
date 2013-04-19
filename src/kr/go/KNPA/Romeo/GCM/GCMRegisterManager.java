@@ -1,23 +1,15 @@
 package kr.go.KNPA.Romeo.GCM;
 
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.util.Log;
+
 import com.google.android.gcm.GCMRegistrar;
 
 /**

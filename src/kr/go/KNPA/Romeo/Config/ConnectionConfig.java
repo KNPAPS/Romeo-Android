@@ -1,9 +1,6 @@
 package kr.go.KNPA.Romeo.Config;
 
-import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.apache.http.protocol.HTTP;
 
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
@@ -17,12 +14,17 @@ public class ConnectionConfig {
 	//! 서버호스트
 	public static final String SERVER_HOST = "http://116.67.94.11:80/";
 	//! event request url
-	public static final String REQUEST_URL = SERVER_HOST+"juliet/index.php/handler/call";
+	public static final String REQUEST_URL = Constants.DEVELOPMENT == true ? 
+												SERVER_HOST+"juliette/index.php/handler/call" : 
+												SERVER_HOST+"juliet/index.php/handler/call";
 	
-	public class UploadPath {
+	public static class UploadPath {
 		
 		//! 업로드된 파일 url
-		public static final String BASE = SERVER_HOST+"juliet/uploaded/";
+		public static final String BASE = Constants.DEVELOPMENT == true ? 
+											SERVER_HOST+"juliette/uploaded/" : 
+											SERVER_HOST+"juliet/uploaded/";
+		
 		//! 원본 크기의 프로필 사진이 저장되어 있는 곳
 		public static final String PROFILE_IMG_ORIGINAL = BASE+"pic/profile/";
 		//! 작은 크기의 프로필 사진이 저장되어 있는 곳

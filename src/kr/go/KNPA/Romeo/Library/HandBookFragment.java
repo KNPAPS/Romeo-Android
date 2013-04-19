@@ -12,7 +12,6 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.DataSetObserver;
@@ -38,7 +37,6 @@ import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class HandBookFragment extends Fragment {
 	private final static String BASE_PATH = "handbook"; 

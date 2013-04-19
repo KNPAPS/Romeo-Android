@@ -3,7 +3,6 @@ package kr.go.KNPA.Romeo.Document;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;

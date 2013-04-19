@@ -3,7 +3,6 @@ package kr.go.KNPA.Romeo;
 import java.lang.ref.WeakReference;
 
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
 import android.database.Cursor;

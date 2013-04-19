@@ -3,7 +3,6 @@ package kr.go.KNPA.Romeo.GCM;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;

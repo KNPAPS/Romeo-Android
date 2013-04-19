@@ -8,8 +8,6 @@ import kr.go.KNPA.Romeo.Config.KEY;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-
 public class Chat extends Message {
 	
 	// Message Sub Type Constants

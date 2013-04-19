@@ -1,21 +1,11 @@
 package kr.go.KNPA.Romeo.Chat;
 
-import java.util.ArrayList;
-
-import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 public class ChatListView extends RomeoListView {
 	// Constants

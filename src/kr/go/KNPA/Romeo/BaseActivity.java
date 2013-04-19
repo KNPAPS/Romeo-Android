@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

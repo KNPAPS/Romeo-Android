@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;

@@ -1,11 +1,10 @@
 package kr.go.KNPA.Romeo.Member;
 
+import kr.go.KNPA.Romeo.RomeoListView;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
-import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
 
 public class MemberFavoriteListView extends RomeoListView {
 

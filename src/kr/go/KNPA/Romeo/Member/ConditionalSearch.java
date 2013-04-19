@@ -6,9 +6,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ConditionalSearch extends LinearLayout implements OnItemSelectedListener{
 

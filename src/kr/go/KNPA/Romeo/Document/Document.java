@@ -15,7 +15,6 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Parcel;
-import android.os.Parcelable;
 
 public class Document extends Message {// implements Parcelable{
 	

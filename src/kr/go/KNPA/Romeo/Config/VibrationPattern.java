@@ -3,7 +3,6 @@ package kr.go.KNPA.Romeo.Config;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 public class VibrationPattern {
 	private final static long[] VP_NONE				= {0,0};

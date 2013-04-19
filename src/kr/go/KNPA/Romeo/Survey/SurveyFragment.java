@@ -3,12 +3,11 @@ package kr.go.KNPA.Romeo.Survey;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 
 public class SurveyFragment extends RomeoFragment {
 

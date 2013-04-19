@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;

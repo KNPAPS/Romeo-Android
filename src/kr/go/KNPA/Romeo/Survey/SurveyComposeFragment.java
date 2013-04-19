@@ -5,7 +5,6 @@ import java.util.GregorianCalendar;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
