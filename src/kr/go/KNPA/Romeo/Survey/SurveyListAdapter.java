@@ -10,7 +10,6 @@ import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
-import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -40,8 +39,6 @@ class SurveyListAdapter extends CursorAdapter {
 	@Override
 	public void bindView(final View v, final Context context, final Cursor c) {
 		// Animation	// TODO
-		
-		WaiterView.showDialog(context);
 		
 		final Handler surveyHandler = new SurveyHandler(subType);
 		
@@ -148,7 +145,6 @@ class SurveyListAdapter extends CursorAdapter {
 				
 				// Departed : set Uncheckers Button
 				if(this.subType == Survey.TYPE_DEPARTED) {
-					WaiterView.showDialog(context);
 					new Thread(new Runnable() {
 						
 						@Override
@@ -225,14 +221,12 @@ class SurveyListAdapter extends CursorAdapter {
 			
 			
 			} else if (msg.what == WHAT_SENDER ) {
-				WaiterView.showDialog(context);
 				User sender = (User)obj.get("sender");
 				TextView senderTV = (TextView)v.findViewById(R.id.sender);
 				String senderInfo = sender.department.nameFull +" "+User.RANK[sender.rank]+" " +sender.name;
 				senderTV.setText(senderInfo);
 			}
 			
-		WaiterView.dismissDialog(context);
 		}
 	}
 	
