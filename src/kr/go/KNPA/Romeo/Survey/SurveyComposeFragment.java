@@ -303,7 +303,7 @@ public class SurveyComposeFragment extends Fragment {
 		
 		GregorianCalendar openGC = new GregorianCalendar(
 				Integer.parseInt(yearET.getText().toString()), 
-				Integer.parseInt(monthET.getText().toString()), 
+				(Integer.parseInt(monthET.getText().toString()) -1), 	//http://widyou.net/299 Month만 -1을 해줘야 한다.
 				Integer.parseInt(dayET.getText().toString()));
 		return (openGC.getTimeInMillis()/1000);
 	}

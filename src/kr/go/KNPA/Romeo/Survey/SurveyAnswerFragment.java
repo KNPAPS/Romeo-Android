@@ -41,7 +41,7 @@ public class SurveyAnswerFragment extends Fragment  {
 	public void onResume() {
 		super.onResume();
 		survey.setChecked(getActivity());
-		SurveyFragment.surveyFragment(survey.subType()).getListView().refresh();
+		//SurveyFragment.surveyFragment(survey.subType()).getListView().refresh();
 	}
 	
 	@Override
@@ -84,18 +84,32 @@ public class SurveyAnswerFragment extends Fragment  {
 		
 		
 		TextView openDTTV = (TextView)view.findViewById(R.id.openDT);
-		String openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_openDT));
+		String openDT = "";
+		try {
+			openDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_openDT));
+		} catch (Exception e) {
+			openDT = "-";
+		}
 		openDTTV.setText(openDT);
 
 		TextView closeDTTV = (TextView)view.findViewById(R.id.closeDT);
-		String closeDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_closeDT));
+		String closeDT = "";
+		try {
+			closeDT = Formatter.timeStampToStringWithFormat((Long)this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_closeDT));
+		} catch(Exception e) {
+			closeDT = "-";
+		}
 		closeDTTV.setText(closeDT);
 
 		TextView contentTV = (TextView)view.findViewById(R.id.content);
-		String content = this.survey.content;
+		String content = "";
+		try {
+			content = this.survey.content; 
+		} catch(Exception e) {
+			content = "-";
+		}
+				
 		contentTV.setText(content);
-
-		
 		
 		questionsLL = (LinearLayout)view.findViewById(R.id.questions);
 		ArrayList<Question> questions = survey.form.questions();
