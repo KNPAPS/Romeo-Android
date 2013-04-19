@@ -41,7 +41,7 @@ public class SurveyAnswerFragment extends Fragment  {
 	public void onResume() {
 		super.onResume();
 		survey.setChecked(getActivity());
-		SurveyFragment.surveyFragment(survey.subType()).getListView().refresh();
+		//SurveyFragment.surveyFragment(survey.subType()).getListView().refresh();
 	}
 	
 	@Override
