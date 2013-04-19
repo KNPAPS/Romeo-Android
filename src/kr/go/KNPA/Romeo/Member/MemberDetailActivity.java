@@ -175,7 +175,8 @@ public class MemberDetailActivity extends Activity {
 	private final OnClickListener goMessage = new OnClickListener() {
 		
 		@Override
-		public void onClick(final View btn) {	
+		public void onClick(final View btn) {
+			mHandler = new Handler();
 			new Thread(){
 				public void run() {
 					super.run();
@@ -196,6 +197,7 @@ public class MemberDetailActivity extends Activity {
 					
 					mHandler.post(new Runnable(){
 						public void run() {
+							finish();
 							MainActivity.sharedActivity().goRoomFragment(roomType, fRoom);
 							
 						};

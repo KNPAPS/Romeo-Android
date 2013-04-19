@@ -99,7 +99,7 @@ public class MainActivity extends BaseActivity {
 				int subType = type % Message.MESSAGE_TYPE_DIVIDER;
 				switch(mainType) {
 				case Message.MESSAGE_TYPE_CHAT :
-					Room room = new Room(getApplicationContext(), b.getString(KEY.CHAT.ROOM_CODE));
+					Room room = new Room(MainActivity.this, b.getString(KEY.CHAT.ROOM_CODE));
 					goRoomFragment(subType, room);
 					break;
 				case Message.MESSAGE_TYPE_DOCUMENT :
@@ -127,8 +127,8 @@ public class MainActivity extends BaseActivity {
 	
 	public void goRoomFragment(int subType, Room room) {
 		ChatFragment chatFragment = ChatFragment.chatFragment(subType);
-		switchContent(chatFragment);
 		RoomFragment roomFragment = new RoomFragment(room);
+		switchContent(chatFragment);
 		pushContent(roomFragment);
 	}
 	
@@ -142,12 +142,12 @@ public class MainActivity extends BaseActivity {
 		switchContent(survFragment);
 	}
 	
-//	@Override
-//	public void onSaveInstanceState(Bundle outState) {
-//		super.onSaveInstanceState(outState);
-//		getSupportFragmentManager().putFragment(outState, "currentFragment", currentFragment);	// 키 값으로 저
-//	}
-//	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		//super.onSaveInstanceState(outState);
+		//getSupportFragmentManager().putFragment(outState, "currentFragment", currentFragment);	// 키 값으로 저
+	}
+	
 	public void switchContent(Fragment fragment) {		// 이 소스 내에서는 쓰이지 않았다.
 														// 바꿀 프레그먼트를 fragment 변수로 받아, 이 객체의 전역 변수로 할당한다.
 		getSupportFragmentManager()						// 프레그멘트 매니저를 호출하여 교체한다.
@@ -163,8 +163,10 @@ public class MainActivity extends BaseActivity {
 		getSupportFragmentManager()				
 		.beginTransaction()
 		.setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
+		.replace(R.id.content_frame, fragment)
 		.addToBackStack(null)
-		.add(R.id.content_frame, fragment)
+		// DO NOT USE (http://killins.egloos.com/3005780)
+		// .add(R.id.content_frame, fragment)
 		.commit();
 	}
 	

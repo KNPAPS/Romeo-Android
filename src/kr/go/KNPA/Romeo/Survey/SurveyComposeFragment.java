@@ -63,16 +63,28 @@ public class SurveyComposeFragment extends Fragment {
 		receiversIdx = new ArrayList<String>();
 		return view;
 	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
 	
 	@Override
 	public void onPause() {
+		// TODO Auto-generated method stub
 		super.onPause();
-		RomeoListView received = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView();
-		if(received != null) received.refresh();
-		RomeoListView departed = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED).getListView(); 
-		if(departed != null) departed.refresh();
 	}
 	
+//	@Override
+//	public void onStop() {
+//		super.onStop();
+//		RomeoListView received = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView();
+//		if(received != null) received.refresh();
+//		RomeoListView departed = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED).getListView(); 
+//		if(departed != null) departed.refresh();
+//	}
+
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		// Bar Button 리스너
@@ -98,7 +110,7 @@ public class SurveyComposeFragment extends Fragment {
 						true, 
 						R.string.menu, 
 						R.string.send, 
-						lbbOnClickListener, rbbOnClickListener);
+						lbbOnClickListener, null);//rbbOnClickListener);
 
 		ViewGroup rootLayout = (ViewGroup)view.findViewById(R.id.rootLayout);
 		

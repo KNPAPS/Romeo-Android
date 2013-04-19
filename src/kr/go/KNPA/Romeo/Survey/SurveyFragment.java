@@ -15,7 +15,8 @@ public class SurveyFragment extends RomeoFragment {
 	// Managed Fragments
 	public static SurveyFragment _departedFragment = null;
 	public static SurveyFragment _receivedFragment = null;
-
+	private boolean isForeGround=false;
+	
 	// Constructor
 	public SurveyFragment() {
 		this(Survey.TYPE_RECEIVED);
@@ -32,7 +33,7 @@ public class SurveyFragment extends RomeoFragment {
 			if(_departedFragment == null) 
 				_departedFragment = new SurveyFragment(type);
 			f = _departedFragment;
-		} else {
+		} else if( type == Survey.TYPE_RECEIVED){
 			if(_receivedFragment == null) 
 				_receivedFragment = new SurveyFragment(type);
 			f = _receivedFragment;
@@ -41,6 +42,20 @@ public class SurveyFragment extends RomeoFragment {
 		return f;
 	}
 
+	@Override
+	public void onResume() {
+		// if call super.onResume(), 
+		// cannot edit EditTexts in ComposeFrag
+		super.onResume();
+		isForeGround = true;
+	}
+	
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+	
 	// Manage List View
 	public SurveyListView getListView() {
 		View view = ((ViewGroup)getView());

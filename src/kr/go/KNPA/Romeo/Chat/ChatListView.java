@@ -121,7 +121,7 @@ public class ChatListView extends RomeoListView  implements OnItemLongClickListe
 	    	public void onClick(DialogInterface dialog, int which) {
 	    		switch(which){
 	    		case 0://채팅방 이름 설정
-	    			Toast.makeText(getContext(), "이름설정", Toast.LENGTH_LONG).show();
+	    			
 	    			break;
 	    		case 1://삭제
 	    			new Thread(){

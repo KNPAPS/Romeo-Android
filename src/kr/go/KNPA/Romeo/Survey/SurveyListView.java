@@ -31,7 +31,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 		
 		switch(this.subType) {
 		case Survey.TYPE_DEPARTED :
-			listAdapter = new SurveyListAdapter(getContext(), null, false, this.subType);
+			listAdapter = new SurveyListAdapter(getContext(), query(), false, this.subType);
 			this.setAdapter(listAdapter);
 			this.setOnItemClickListener(this);
 			break;
@@ -79,12 +79,12 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	}
 	@Override
 	public void onPreExecute() {
-		WaiterView.showDialog(getContext());
+		//WaiterView.showDialog(getContext());
 		
 	}
 	@Override
 	public void onPostExecute(boolean isValidCursor) {
-		WaiterView.dismissDialog(getContext());
+		//WaiterView.dismissDialog(getContext());
 		
 	}
 
