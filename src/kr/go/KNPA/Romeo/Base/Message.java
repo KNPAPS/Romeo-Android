@@ -8,7 +8,6 @@ import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
@@ -16,17 +15,17 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class Message implements Parcelable{
 
@@ -183,7 +182,11 @@ public class Message implements Parcelable{
 		GCMMessageSender.sendMessage(context, this);
 	}
 	
-	public void afterSend(Context context, boolean successful) {}
+	public void afterSend(Context context, boolean successful) {
+		Log.d("afterSendSurvey",successful?"success":"not success");
+		// WaiterView Show : Survey Compose Frag
+		WaiterView.dismissDialog(context);
+	}
 	
 	
 	// Implements Parcelable

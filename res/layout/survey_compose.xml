@@ -115,6 +115,7 @@
 				            android:nextFocusDown="@+id/open_month"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
+				            android:maxLength="4"
 				            android:textSize="12sp" />
 				
 				        <EditText
@@ -129,6 +130,7 @@
 				            android:nextFocusDown="@+id/open_day"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
+				            android:maxLength="2"
 				            android:textSize="12sp" />
 				
 				        <EditText
@@ -143,6 +145,7 @@
 				            android:nextFocusDown="@+id/close_year"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
+				            android:maxLength="2"
 				            android:textSize="12sp" />
 				
 				        <TextView
@@ -163,6 +166,7 @@
 				            android:nextFocusDown="@+id/close_month"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
+				            android:maxLength="4"
 				            android:textSize="12sp" />
 				
 				        <EditText
@@ -177,6 +181,7 @@
 				            android:nextFocusDown="@+id/close_day"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
+				            android:maxLength="2"
 				            android:textSize="12sp" />
 				
 				        <EditText
@@ -191,6 +196,7 @@
 				            android:nextFocusDown="@+id/content"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
+				            android:maxLength="2"
 				            android:textSize="12sp" />
 				
 				    </LinearLayout>

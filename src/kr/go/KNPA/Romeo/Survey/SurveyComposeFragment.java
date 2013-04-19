@@ -110,7 +110,7 @@ public class SurveyComposeFragment extends Fragment {
 						true, 
 						R.string.menu, 
 						R.string.send, 
-						lbbOnClickListener, null);//rbbOnClickListener);
+						lbbOnClickListener, rbbOnClickListener);
 
 		ViewGroup rootLayout = (ViewGroup)view.findViewById(R.id.rootLayout);
 		
@@ -297,13 +297,15 @@ public class SurveyComposeFragment extends Fragment {
 	}
 	
 	private long getTSFrom(EditText yearET, EditText monthET, EditText dayET) {
+		//// Second Unit ////
+		
 		// TODO , input validation
 		
 		GregorianCalendar openGC = new GregorianCalendar(
 				Integer.parseInt(yearET.getText().toString()), 
 				Integer.parseInt(monthET.getText().toString()), 
 				Integer.parseInt(dayET.getText().toString()));
-		return openGC.getTimeInMillis();
+		return (openGC.getTimeInMillis()/1000);
 	}
 
 	
@@ -321,6 +323,7 @@ public class SurveyComposeFragment extends Fragment {
 			form.put(KEY.SURVEY.TITLE, 	title);
 		} else {
 			Toast.makeText(getActivity(), "설문 제목이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			WaiterView.dismissDialog(getActivity());
 			return;
 		}
 		
@@ -328,11 +331,13 @@ public class SurveyComposeFragment extends Fragment {
 			form.put(KEY.SURVEY.CONTENT, 	content);
 		} else {
 			Toast.makeText(getActivity(), "설문 요지가 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			WaiterView.dismissDialog(getActivity());
 			return;
 		}
 		
 		if(receiversIdx == null || receiversIdx.size() == 0 ) {
 			Toast.makeText(getActivity(), "설문 수신자가 지정되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			WaiterView.dismissDialog(getActivity());
 			return;
 		}
 		
@@ -355,6 +360,7 @@ public class SurveyComposeFragment extends Fragment {
 			form.put(KEY.SURVEY.CLOSE_TS, getTSFrom(closeETs));
 		} else {
 			Toast.makeText(getActivity(), "설문 기간이 정확히 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+			WaiterView.dismissDialog(getActivity());
 			// TODO : NumberFormatException
 			return;
 		}
@@ -402,13 +408,13 @@ public class SurveyComposeFragment extends Fragment {
 				currentTS,
 				form
 				);
-		
+		survey.form = form;
 		survey.send(getActivity());	  
 		
 		InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		im.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 		
-		//WaiterView.dismissDialog(getActivity());
+		// WaiterView.dismissDialog(getActivity()); : Survey.AfterSend();
 		
 		MainActivity.sharedActivity().popContent();
 	}
