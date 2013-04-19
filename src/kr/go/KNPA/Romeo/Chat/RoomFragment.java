@@ -166,6 +166,7 @@ public class RoomFragment extends RomeoFragment {
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
 				startActivityForResult(intent, RoomSettingActivity.REQUEST_CODE);
+
 			}
 		};
 		
