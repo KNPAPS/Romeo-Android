@@ -10,6 +10,7 @@ import java.util.Locale;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.Chat.ChatFragment.ChatFragmentHandler;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
@@ -59,6 +60,9 @@ public class RoomFragment extends RomeoFragment {
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
 	private Handler mHandler;
 	private boolean isForeGround = false;
+	public static final int ACTION_LEAVE_ROOM = 1;
+	public static final int ACTION_JOIN_ROOM = 2;
+	public static final int ACTION_SET_TITLE = 3;
 	
 	/**
 	 * @name Constructor
@@ -161,7 +165,7 @@ public class RoomFragment extends RomeoFragment {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
-				startActivityForResult(intent, ROOM_ACTION);
+				startActivityForResult(intent, RoomSettingActivity.REQUEST_CODE);
 			}
 		};
 		
@@ -517,6 +521,36 @@ public class RoomFragment extends RomeoFragment {
 		case PICK_FROM_CAMERA:
 			filePath = mImageCaptureUri.getPath();
 			break;
+		case RoomSettingActivity.REQUEST_CODE:
+			Bundle b = data.getExtras();
+			
+			int action = b.getInt(RoomSettingActivity.KEY_ACTION);
+			
+			switch( action ) {
+			
+			case ACTION_LEAVE_ROOM:
+				WaiterView.showDialog(getActivity());
+				new Thread(){
+					public void run() {
+						room.leaveRoom();
+						
+						final Cursor c = ChatFragment.chatFragment(subType).getListView().query();
+						
+						ChatFragment.unsetCurrentRoom();
+						
+						mHandler.post(new Runnable(){
+							public void run() {
+								ChatFragment.chatFragment(subType).getListView().refresh(c);
+								MainActivity.sharedActivity().popContent();
+								WaiterView.dismissDialog(getActivity());
+							};
+						});
+					}
+				}.start();
+				
+				
+				break;
+			}
 		default:
 			return;
       }
