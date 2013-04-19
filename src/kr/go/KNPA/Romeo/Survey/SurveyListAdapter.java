@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,12 +27,10 @@ import android.widget.TextView;
 class SurveyListAdapter extends CursorAdapter {
 	// Variables
 	public int subType = Survey.NOT_SPECIFIED;
-	private final int WHAT_TITLE = 0;
-	private final int WHAT_SENDER = 1;
-	private final int WHAT_OPENDT = 2;
-	private final int WHAT_CLOSEDT = 3;
-	private final int WHAT_UNCHECKERS = 4;
-	private final int WHAT_IS_ANSWERED = 5;
+	
+	private static final int WHAT_SURVEY = 0;
+	private static final int WHAT_SENDER = 1;
+	private static final int WHAT_UNCHECKERS = 2;
 	
 	// Constructor
 	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);						}
@@ -38,185 +38,205 @@ class SurveyListAdapter extends CursorAdapter {
 	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);							}
 
 	@Override
-	public void bindView(View v, final Context ctx, final Cursor c) {
-		
+	public void bindView(final View v, final Context context, final Cursor c) {
 		// Animation	// TODO
 		
-		final View _v = v;
-		WaiterView.showDialog(ctx);
+		WaiterView.showDialog(context);
+		
+		final Handler surveyHandler = new SurveyHandler(subType);
+		
 		new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				final Survey survey = new Survey(ctx, c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX)));
-				
-				// USER Thread
-				new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						User user = User.getUserWithIdx(survey.senderIdx);
-						
-						android.os.Message message = surveyHandler.obtainMessage();
-						message.what = WHAT_SENDER;
-						message.obj = _v;
-						Bundle b = new Bundle();
-						b.putString("senderInfo", user.department.nameFull +" "+User.RANK[user.rank]+" " +user.name );
-						surveyHandler.sendMessage(message);
-					}
-				});
-				
-				// Other
+				Survey survey = new Survey(context, c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX)));
 				android.os.Message message = surveyHandler.obtainMessage();
-				message.obj = _v;
-				
-				Bundle b = new Bundle();
-				
-				message.what = WHAT_TITLE;
-				message.setData(b);
-				b.putString("title", survey.title);
+				message.what = WHAT_SURVEY;
+				HashMap<String, Object> obj = new HashMap<String, Object>();
+				obj.put("survey", survey);
+				obj.put("view", v);
+				obj.put("context", context);
+				message.obj = obj;
 				surveyHandler.sendMessage(message);
-				b.clear();
-				
-				message.what = WHAT_OPENDT;
-				message.setData(b);
-				b.putString("openDT", Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.OPEN_TS), ctx.getString(R.string.formatString_openDT)) );
-				surveyHandler.sendMessage(message);
-				b.clear();
-				
-				message.what = WHAT_CLOSEDT;
-				message.setData(b);
-				b.putString("closeDT", Formatter.timeStampToStringWithFormat((Long)survey.form.get(KEY.SURVEY.CLOSE_TS), ctx.getString(R.string.formatString_closeDT)) );
-				surveyHandler.sendMessage(message);
-				b.clear();
-				
-				
-
-				if(subType == Survey.TYPE_DEPARTED) {
-					//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_departed);
-					Button goUnchecked = (Button)_v.findViewById(R.id.goUnchecked);
-					// TODO
-					final ArrayList<String> idxs = 
-							Survey.getUncheckersIdxsWithMessageTypeAndIndex(IGNORE_ITEM_VIEW_TYPE, survey.idx);
-					goUnchecked.setText(""+idxs.size());
-					goUnchecked.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View view) {					
-							Intent intent = new Intent(ctx, UserListActivity.class);
-							Bundle b = new Bundle();
-							b.putStringArrayList(UserListActivity.KEY_USERS_IDX, idxs);
-							
-							intent.putExtras(b);
-							ctx.startActivity(intent);
-						}
-					});
-					
-				} else if(subType == Survey.TYPE_RECEIVED) {
-					boolean isAnswered = survey.isAnswered(ctx);
-					
-					int answeredColor = ctx.getResources().getColor(R.color.black);
-					String answeredStatus = null;
-
-					if(isAnswered) {
-						answeredStatus 	= ctx.getString(R.string.statusAnswered);
-						answeredColor 	= ctx.getResources().getColor(R.color.grayDark);
-					} else {
-						answeredStatus 	= ctx.getString(R.string.statusNotAnswered);
-						answeredColor 	= ctx.getResources().getColor(R.color.maroon);
-					}
-					
-					b.clear();
-					b.putBoolean("isAnswered", isAnswered);
-					b.putInt("answeredColor", answeredColor);
-					b.putString("answeredStatus", answeredStatus);
-					b.putParcelable("survey", survey);
-					surveyHandler.sendMessage(message);
-					b.clear();
-				}
-		
-		
-		
+						
 			}
-		});
+		}).start();
 		
 		
-		WaiterView.dismissDialog(ctx);
+		
 	}
 
 	@Override
-	public View newView(Context ctx, Cursor c, ViewGroup parent) {
-		LayoutInflater inflater = LayoutInflater.from(ctx);
+	public View newView(Context context, Cursor c, ViewGroup parent) {
+		LayoutInflater inflater = LayoutInflater.from(context);
 		View v = null;
 		switch(this.subType) {
-		case Survey.TYPE_DEPARTED :	v = inflater.inflate(R.layout.survey_list_cell_departed, parent,false);		break;
-		case Survey.TYPE_RECEIVED :	v = inflater.inflate(R.layout.survey_list_cell_received, parent,false);		break;
-			
-		default :
-		case Survey.NOT_SPECIFIED :	break;	
+			case Survey.TYPE_DEPARTED :	v = inflater.inflate(R.layout.survey_list_cell_departed, parent,false);		break;
+			case Survey.TYPE_RECEIVED :	v = inflater.inflate(R.layout.survey_list_cell_received, parent,false);		break;
+				
+			default :
+			case Survey.NOT_SPECIFIED :	break;	
 			// ListView 에서 tableName이 정해진 경우에만 넘어오므로, 이 지점에 도닳할 수 없다.
 		}
 		
 		return v;
 	}
 
-	Handler surveyHandler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			View v = (View) msg.obj;
+	private static class SurveyHandler extends Handler {
+		private int subType;
+		public SurveyHandler(int subType) {
+			super();
+			this.subType = subType;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
 			
-			switch(msg.what) {
-			case WHAT_TITLE : 
-				String title = msg.getData().getString("title"); 
+			super.handleMessage(msg);
+			
+			HashMap<String, Object> obj = (HashMap<String, Object>)msg.obj; 
+			final View v = (View)obj.get("view") ;
+			final Context context = (Context)obj.get("context");
+			
+			if(msg.what == WHAT_SURVEY) {
+				
+				final Survey survey = (Survey)obj.get("survey");
+				Survey.Form form = survey.form; 
+		
+				// Title
 				TextView titleTV = (TextView)v.findViewById(R.id.title);
-				titleTV.setText(title);
-				break;
-			case WHAT_SENDER :
-				String senderInfo = msg.getData().getString("senderInfo");
-				TextView senderTV = (TextView)v.findViewById(R.id.sender);
-				senderTV.setText(senderInfo);
-				break;
-			case WHAT_OPENDT :
-				String openDT = msg.getData().getString("openDT");
-				TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
-				openDTTV.setText(openDT);
-				break;
-			case WHAT_CLOSEDT :
-				String closeDT = msg.getData().getString("closeDT");
-				TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
-				closeDTTV.setText(closeDT);
-				break;
-				
-			case WHAT_UNCHECKERS : 
-				break;
-			case WHAT_IS_ANSWERED : 
-				//LinearLayout layout = (LinearLayout)v.findViewById(R.id.survey_list_cell_received);
-				boolean isAnswered = msg.getData().getBoolean("isAnswered");
-				String answeredStatus = msg.getData().getString("answeredStatus");
-				int answeredColor = msg.getData().getInt("answeredColor");
-				final Survey survey = msg.getData().getParcelable("survey");
-				Button goResultBT = (Button)v.findViewById(R.id.goResult);
+				titleTV.setText(survey.title);
 
-				if(isAnswered) {
+				// USER Thread
+				new Thread(new Runnable() {
 					
-					goResultBT.setOnClickListener( new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							SurveyResultFragment f = new SurveyResultFragment(survey, subType);
-							MainActivity.sharedActivity().pushContent(f);
-						}
-					});
-					
-				} else {	
+					@Override
+					public void run() {
+						User sender = User.getUserWithIdx(survey.senderIdx);
+						
+						android.os.Message message = obtainMessage();
+						message.what = WHAT_SENDER;
+						HashMap<String, Object> obj = new HashMap<String, Object>();
+						obj.put("view", v);
+						obj.put("context", context);
+						obj.put("sender", sender);
+						message.obj = obj;
+						sendMessage(message);
+					}
+				}).start();
+
+				
+				// Open ~ Close Date Time
+				TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
+				String openDT = "";
+				try {
+					openDT = Formatter.timeStampToStringWithFormat((Long)form.get(KEY.SURVEY.OPEN_TS), context.getString(R.string.formatString_openDT)); 
+				} catch(Exception e) {
+					openDT = "-";
 				}
+				openDTTV.setText(openDT);
+	
+				TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
+				String closeDT = "";
+				try {
+					closeDT = Formatter.timeStampToStringWithFormat((Long)form.get(KEY.SURVEY.CLOSE_TS), context.getString(R.string.formatString_closeDT));
+				} catch(Exception e) {
+					closeDT = "-";
+				}
+				closeDTTV.setText(closeDT);
 				
-				goResultBT.setText(answeredStatus);
-				goResultBT.setTextColor(answeredColor);
 				
-				break;
+				// Departed : set Uncheckers Button
+				if(this.subType == Survey.TYPE_DEPARTED) {
+					WaiterView.showDialog(context);
+					new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(IGNORE_ITEM_VIEW_TYPE, survey.idx);
+							
+							android.os.Message message = obtainMessage();
+							message.what = WHAT_UNCHECKERS;
+							HashMap<String, Object> obj = new HashMap<String, Object>();
+							obj.put("view", v);
+							obj.put("uncheckers", idxs);
+							obj.put("context", context);
+							message.obj = obj;
+							sendMessage(message);
+						}
+					}).start();
+	
+				// Received : go Result	
+				} else if(this.subType == Survey.TYPE_RECEIVED) {
+					boolean isAnswered = survey.isAnswered(context);
+					
+					int answeredColor = context.getResources().getColor(R.color.black);
+					String answeredStatus = null;
+	
+					if(isAnswered) {
+						answeredStatus 	= context.getString(R.string.statusAnswered);
+						answeredColor 	= context.getResources().getColor(R.color.grayDark);
+					} else {
+						answeredStatus 	= context.getString(R.string.statusNotAnswered);
+						answeredColor 	= context.getResources().getColor(R.color.maroon);
+					}
+					
+					Button goResultBT = (Button)v.findViewById(R.id.goResult);
+	
+					if(isAnswered) {
+						
+						goResultBT.setOnClickListener( new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								SurveyResultFragment f = new SurveyResultFragment(survey, subType);
+								MainActivity.sharedActivity().pushContent(f);
+							}
+						});
+	
+					
+					} else {	
+					}
+					
+					goResultBT.setText(answeredStatus);
+					goResultBT.setTextColor(answeredColor);
+	
+				}
+		
+			} else if (msg.what == WHAT_UNCHECKERS ) {
+				final ArrayList<String> idxs = (ArrayList<String>)obj.get("uncheckers");
+				
+				Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
+				goUnchecked.setText(""+idxs.size());
+				goUnchecked.setOnClickListener(new OnClickListener() {
+				
+					@Override
+					public void onClick(View view) {
+						
+						if(idxs != null) {
+							Intent intent = new Intent(context, UserListActivity.class);
+							Bundle b = new Bundle();
+							b.putStringArrayList(UserListActivity.KEY_USERS_IDX, idxs);
+							
+							intent.putExtras(b);
+							context.startActivity(intent);
+						}
+					}
+				});
+			
+			
+			} else if (msg.what == WHAT_SENDER ) {
+				WaiterView.showDialog(context);
+				User sender = (User)obj.get("sender");
+				TextView senderTV = (TextView)v.findViewById(R.id.sender);
+				String senderInfo = sender.department.nameFull +" "+User.RANK[sender.rank]+" " +sender.name;
+				senderTV.setText(senderInfo);
 			}
 			
-			
-		};
-	};
+		WaiterView.dismissDialog(context);
+		}
+	}
+	
+	
 	
 	@Override
 	public boolean areAllItemsEnabled() {

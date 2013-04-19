@@ -160,8 +160,8 @@ public class RoomFragment extends RomeoFragment {
 		OnClickListener rbbOnClickListener = new OnClickListener() {		
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
-				startActivityForResult(intent, ROOM_ACTION);
+//				Intent intent = new Intent(getActivity(), RoomSettingActivity.class);//MemberSearch.class);
+//				startActivityForResult(intent, ROOM_ACTION);
 			}
 		};
 		
