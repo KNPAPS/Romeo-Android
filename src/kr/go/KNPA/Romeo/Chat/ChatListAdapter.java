@@ -16,7 +16,9 @@ import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -25,7 +27,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
@@ -133,10 +138,12 @@ public class ChatListAdapter extends CursorAdapter {
 			switch( contentType ) {
 			case Chat.CONTENT_TYPE_TEXT:
 				contentTV.setText(content);
+				contentTV.setOnLongClickListener(new ChatMenu());
 				contentIV.setVisibility(View.GONE);
 				break;
 			case Chat.CONTENT_TYPE_PICTURE:
 				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
+				contentIV.setOnLongClickListener(new ChatMenu());
 				contentTV.setVisibility(View.GONE);
 				break;
 			default:
@@ -276,5 +283,50 @@ public class ChatListAdapter extends CursorAdapter {
 				mContext.startActivity(intent);
 			}
 		});
-	}				
+	}
+
+	class ChatMenu implements OnLongClickListener{
+		@Override
+		public boolean onLongClick(final View view) {
+		    AlertDialog.Builder chooseDlg = new AlertDialog.Builder(mContext);
+		    chooseDlg.setTitle("작업선택");
+		    
+		    ArrayList<String> array = new ArrayList<String>();
+		    array.add("복사");
+		    array.add("삭제");
+		    
+		    ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell, array);
+		    
+		    chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener(){
+		    	@Override
+		    	public void onClick(DialogInterface dialog, int which) {
+		    		switch(which){
+		    		case 0://채팅방 이름 설정
+		    			
+		    			break;
+		    		case 1://삭제
+		    			new Thread(){
+		    				public void run() {
+		    					String chatHash = (String) ((View)view.getParent().getParent()).getTag();
+		    					DBProcManager.sharedManager(mContext).chat().deleteChat(chatHash);
+		    					final Cursor c = ChatFragment.getCurrentRoom().getListView().query();
+		    					ChatFragment.getCurrentRoom().mHandler.post(new Runnable(){
+		    						@Override
+		    						public void run() {
+		    							ChatFragment.getCurrentRoom().getListView().refresh(c);
+		    						}
+		    					});
+		    				};
+		    			}.start();
+		    			
+		    			break;
+		    		}
+		    	}
+		    });
+		    
+		    chooseDlg.setCancelable(true);
+		    chooseDlg.show();
+			return false;
+		}
+	}
 }

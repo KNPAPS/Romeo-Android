@@ -58,7 +58,7 @@ public class RoomFragment extends RomeoFragment {
 	private static final String TAG = RoomFragment.class.getSimpleName();
 	
 	public Room room;		//< 하나의 Room에 대한 Model 이다.
-	private Handler mHandler;
+	public Handler mHandler;
 	private boolean isForeGround = false;
 	public static final int ACTION_LEAVE_ROOM = 1;
 	public static final int ACTION_JOIN_ROOM = 2;

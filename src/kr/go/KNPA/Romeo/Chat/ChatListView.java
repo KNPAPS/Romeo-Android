@@ -17,7 +17,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-public class ChatListView extends RomeoListView  implements OnItemLongClickListener {
+public class ChatListView extends RomeoListView {
 	// Constants
 	private final int NUMBER_OF_INITIAL_RECENT_ITEM = 10;
 	// Variables
@@ -105,48 +105,7 @@ public class ChatListView extends RomeoListView  implements OnItemLongClickListe
 		
 	}
 
-	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
-	    AlertDialog.Builder chooseDlg = new AlertDialog.Builder(getContext());
-	    chooseDlg.setTitle("작업선택");
-	    
-	    ArrayList<String> array = new ArrayList<String>();
-	    array.add("복사");
-	    array.add("삭제");
-	    
-	    ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(getContext(), R.layout.dialog_menu_cell, array);
-	    
-	    chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener(){
-	    	@Override
-	    	public void onClick(DialogInterface dialog, int which) {
-	    		switch(which){
-	    		case 0://채팅방 이름 설정
-	    			
-	    			break;
-	    		case 1://삭제
-	    			new Thread(){
-	    				public void run() {
-	    					String chatHash = (String) view.getTag();
-	    					DBProcManager.sharedManager(getContext()).chat().deleteChat(chatHash);
-	    					final Cursor c = query();
-	    					mHandler.post(new Runnable(){
-	    						@Override
-	    						public void run() {
-	    							refresh(c);
-	    						}
-	    					});
-	    				};
-	    			}.start();
-	    			
-	    			break;
-	    		}
-	    	}
-	    });
-	    
-	    chooseDlg.setCancelable(true);
-	    chooseDlg.show();
-		return false;
-	}
+
 	
 	
 }
