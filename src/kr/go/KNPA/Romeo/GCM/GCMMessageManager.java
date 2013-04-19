@@ -76,7 +76,7 @@ public class GCMMessageManager {
 		// Payload 
 		Bundle b = intent.getExtras();        
 		String _payload = b.getString("payload");
-		payload = new Payload(_payload);
+		Payload payload = new Payload(_payload);
         
 		// Specify Event
         String event = payload.getEvent();

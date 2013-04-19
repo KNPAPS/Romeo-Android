@@ -255,16 +255,17 @@ public class Connection {
 			DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
 			dos.writeBytes(TH + BOUNDARY);
 			dos.writeBytes(RN+"Content-Disposition: form-data; name=" + "\"payload\"" + ";"+RN);
-			
+			dos.writeBytes("Content-Type: application/x-www-form-urlencoded;"+RN);
 			String encoded = null;
 			try {
-				 encoded = URLEncoder.encode(requestPayloadJSON, "UTF-8");
+				encoded = URLEncoder.encode(requestPayloadJSON, "UTF-8");
+				encoded = encoded.replaceAll("[+]", "%20");
 			} catch (UnsupportedEncodingException e) {
 				encoded = requestPayloadJSON;
 				Log.d("urlEncoder", e.getMessage());
 			}
 			dos.writeBytes(RN+ encoded +RN);
-
+			
 			for(int fi=0; fi< nAttachedFiles; fi++) {
 				//개별 파일인풋스트림 열기
 				File f = new File(attachedFiles.get(fi));
