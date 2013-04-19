@@ -115,6 +115,7 @@ public class Survey extends Message {// implements Parcelable{
 		this.TS			= fromServer.TS;
 		this.checked 	= cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
 		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
+		this.form = fromServer.form;
 	}
 
 	/*
