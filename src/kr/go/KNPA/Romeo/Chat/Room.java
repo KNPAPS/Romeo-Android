@@ -106,7 +106,46 @@ public class Room {
 	}
 	
 	public void addChatters(ArrayList<String> userIdxs) {
+		
+		
+		String senderIdx = UserInfo.getUserIdx(mContext);
+		ArrayList<String> receivers = getReceivers();
+		
+		String newbies = "";
+		
+		for ( int i = 0 ; i < userIdxs.size(); i++ ) {
+			newbies += userIdxs.get(i)+":";
+			setLastReadTS(userIdxs.get(i),System.currentTimeMillis()/1000);
+		}
+		newbies = newbies.substring(0,newbies.length()-2);
+		Chat chat = new Chat(
+							null,
+							getType(), 
+							newbies, 
+							senderIdx, 
+							receivers, 
+							false,
+							System.currentTimeMillis()/1000,
+							true,
+							System.currentTimeMillis()/1000,
+							getRoomCode(), 
+							Chat.CONTENT_TYPE_USER_JOIN);
+		
+		//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
+		String chatHash = DBProcManager.sharedManager(mContext)
+							.chat()
+							.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
+
+		//채팅해쉬를 채팅 객체에 설정함
+		chat.idx = chatHash;
+		Data reqData = new Data();
+		reqData.add(0,KEY._MESSAGE, chat);
+		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
+		new Connection().async(false).requestPayload(request).request();
+		
+		DBProcManager.sharedManager(mContext).chat().addUsersToRoom(userIdxs, getRoomCode());
 		chatters.addAll(userIdxs);
+		
 	}
 	
 	public void removeChatter(String userIdx) {
@@ -253,7 +292,7 @@ public class Room {
 		
 		Data reqData = new Data();
 		reqData.add(0,KEY.CHAT.ROOM_CODE,this.getRoomCode());
-		reqData.add(0,KEY.CHAT.TYPE,this.getType());
+		reqData.add(0,KEY.MESSAGE.TYPE,this.getType());
 		reqData.add(0,KEY.CHAT.ROOM_MEMBER, this.getChatters());
 		reqData.add(0,KEY.USER.IDX, UserInfo.getUserIdx(mContext) );
 		

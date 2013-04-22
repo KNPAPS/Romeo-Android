@@ -14,6 +14,7 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
+import kr.go.KNPA.Romeo.Util.ImageViewActivity;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.AlertDialog;
@@ -21,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -97,7 +99,17 @@ public class ChatListAdapter extends CursorAdapter {
 			((TextView)listItem).setText(text);
 			
 		} else if ( contentType == Chat.CONTENT_TYPE_USER_JOIN ) {
+			String text = Constants.POLICE_RANK[sender.rank]+" "+sender.name+"님이 ";
 			
+			String[] userIdxs = content.split(":");
+			
+			for(int i=0; i<userIdxs.length; i++) {
+				User u = MemberManager.sharedManager().getUser(userIdxs[i]);
+				text += Constants.POLICE_RANK[u.rank]+" "+u.name+"님,";
+			}
+			text = text.substring(0,text.length()-2);
+			text += "을 초대하였습니다";
+			((TextView)listItem).setText(text);
 			
 		} else {
 		
@@ -143,6 +155,19 @@ public class ChatListAdapter extends CursorAdapter {
 			case Chat.CONTENT_TYPE_PICTURE:
 				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
 				contentIV.setOnLongClickListener(new ChatMenu());
+				final String imageHash = messageIdx;
+				contentIV.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						Bundle b = new Bundle();
+						b.putInt("imageType", ImageManager.CHAT_SIZE_ORIGINAL);
+						b.putString("imageHash", imageHash);
+						Intent intent = new Intent(mContext, ImageViewActivity.class);
+						intent.putExtras(b);
+						mContext.startActivity(intent);
+						
+					}
+				});
 				contentTV.setVisibility(View.GONE);
 				break;
 			default:

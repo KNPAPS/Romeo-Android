@@ -89,6 +89,11 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden" >
         </activity>
+                <activity
+            android:name="kr.go.KNPA.Romeo.Util.ImageViewActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
         <activity
             android:name="kr.go.KNPA.Romeo.IntroActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >

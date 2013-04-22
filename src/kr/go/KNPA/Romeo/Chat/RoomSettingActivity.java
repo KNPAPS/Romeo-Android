@@ -1,10 +1,17 @@
 package kr.go.KNPA.Romeo.Chat;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Chat.ChatFragment.ChatFragmentHandler;
+import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Settings.SettingsCellMaker;
+import kr.go.KNPA.Romeo.Util.UserInfo;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +27,7 @@ import android.widget.TextView;
 public class RoomSettingActivity extends Activity {
 	public static final int REQUEST_CODE = 101;
 	public static final String KEY_ACTION = "action";
+	public static final String KEY_IDXS = "idxs";
 	
 	ListView listView;
 	
@@ -93,8 +101,15 @@ public class RoomSettingActivity extends Activity {
 		
 		
 		SettingsCellMaker.setTitle(cInviteUser, "그룹대화 초대하기");
-		SettingsCellMaker.setTitle(cUserList, "그룹대화 참여자 목록");
+		cInviteUser.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(RoomSettingActivity.this, MemberSearch.class);
+				startActivityForResult(intent, MemberSearch.REQUEST_CODE);
+			}
+		});
 		
+		SettingsCellMaker.setTitle(cUserList, "그룹대화 참여자 목록");
 		
 		setContentView(view);
 	}
@@ -115,5 +130,30 @@ public class RoomSettingActivity extends Activity {
 		
 		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
 		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
+	}
+	
+	//채팅방 초대 시 MemberSearchActivity를 실행하여 그 결과를 받아옴
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == MemberSearch.REQUEST_CODE) {
+			if(resultCode == MemberSearch.RESULT_OK) {
+				final ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
+				
+				if ( receiversIdxs.size() == 0 ) {
+					return;
+				}
+				
+				Bundle b = new Bundle();
+				b.putInt(KEY_ACTION, RoomFragment.ACTION_JOIN_ROOM);
+				b.putStringArray(KEY_IDXS, (String[]) receiversIdxs.toArray());
+				Intent intent = new Intent();
+				intent.putExtras(b);
+				setResult(RESULT_OK, intent);
+				finish();
+
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 }

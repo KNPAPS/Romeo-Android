@@ -16,7 +16,7 @@ public class Event {
 	public static final String MESSAGE_SEND="MESSAGE:SEND";/*!<메세지 보내기*/
  
 	public static final String MESSAGE_RECEIVED = "MESSAGE:RECEIVED";/*!<GCM으로부터 메세지를 받음*/
-	public static final String MESSAGE_SET_CHECKED="MESSAGE:SET_CHECKCED";/*!<메세지를 확인했을 때 호출*/
+	public static final String MESSAGE_SET_CHECKED="MESSAGE:SET_CHECKED";/*!<메세지를 확인했을 때 호출*/
 	public static final String MESSAGE_GET_UNCHECKERS="MESSAGE:GET_UNCHECKERS";/*!<메세지 확인 안 한 사람 목록 */
 	public static final String MESSAGE_CHAT_CREATE_ROOM = "MESSAGE:CHAT:CREATE_ROOM";
 	public static final String MESSAGE_SURVEY_ANSWER_SURVEY="MESSAGE:SURVEY:ANSWER_SURVEY";/*!<설문조사 응답*/

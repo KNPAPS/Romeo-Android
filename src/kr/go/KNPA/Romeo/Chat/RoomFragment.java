@@ -544,7 +544,25 @@ public class RoomFragment extends RomeoFragment {
 				}.start();
 				
 				break;
+			case ACTION_JOIN_ROOM:
+				final ArrayList<String> newChatters = b.getStringArrayList(RoomSettingActivity.KEY_IDXS);
+				new Thread(){
+					@Override
+					public void run() {
+						room.addChatters(newChatters);
+						final Cursor c = ChatFragment.chatFragment(subType).getListView().query();
+						mHandler.post(new Runnable(){
+							public void run() {
+								ChatFragment.chatFragment(subType).getListView().refresh(c);
+							}
+						});
+						super.run();
+					}
+				};
+				
+				break;
 			}
+		
 		default:
 			return;
       }

@@ -152,8 +152,9 @@ public class GCMMessageManager {
 		if(isRunningProcess(context))		// 실행중인지 아닌지. 판단.
 			ChatFragment.receive(chat); 	// 현재 챗방에 올리기. 및 알림
 		// TODO : 챗방안에 들어있지 않을때만 보내긔
-		//if(ChatFragment.getCurrentRoom() == null)
-		notifyMessage(chat);
+		if(ChatFragment.getCurrentRoom() == null){
+			notifyMessage(chat);
+		}
 	}
 	
 	private void onDocument(Document document) {

@@ -16,7 +16,6 @@ import kr.go.KNPA.Romeo.Config.MimeType;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -88,7 +87,7 @@ public class ImageManager {
 			Log.e(TAG,"업로드 시 파일 타입은 원본만 가능");
 			return false;
 		}
-		
+
 		String ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
 		String contentType = MimeType.jpeg;
 		if ( ext.equals("png") ) {
@@ -112,7 +111,10 @@ public class ImageManager {
 	 * @param imageView 로딩된 이미지를 삽입할 이미지뷰 객체
 	 */
 	public void loadToImageView( int imageType, String imageHash, ImageView imageView ) { 
-		
+		loadToImageView(imageType, imageHash, imageView, false);
+	}
+	
+	public void loadToImageView( int imageType, String imageHash, ImageView imageView, boolean showDialog ) {
 		//이미지 타입에 따라 경로 설정
 		String path = null;
 		switch(imageType) {
@@ -142,11 +144,11 @@ public class ImageManager {
 		
 		if ( bitmap == null ) {
 			//없으면 서버에서 가져오고 캐싱
-			LoadImageTask task = new LoadImageTask(imageView);
+			LoadImageTask task = new LoadImageTask(imageView,showDialog);
 			task.execute(path, imageKey);
 		} else if (imageView != null) {
 			imageView.setImageBitmap(bitmap);
-		}
+		}		
 	}
 	
 	/**
@@ -165,13 +167,20 @@ public class ImageManager {
 	class LoadImageTask extends AsyncTask<String,Void,Bitmap> {
 		
 		private WeakReference<ImageView> imageViewReference = null;
-		
+		private boolean showDialog = false;
 		/**
 		 * 비트맵을 삽입할 이미지뷰에 대한 reference를 생성자에서 입력받음
 		 * @param imageView
 		 */
-		public LoadImageTask(ImageView imageView) {
+		public LoadImageTask(ImageView imageView, boolean showDialog) {
 			imageViewReference = new WeakReference<ImageView>(imageView);
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			if ( showDialog==true ) {
+				WaiterView.showDialog(imageViewReference.get().getContext());
+			}
 		}
 		
 		@Override
@@ -190,6 +199,10 @@ public class ImageManager {
 		
 	    @Override
 	    protected void onPostExecute (Bitmap bitmap){ 
+			if ( showDialog==true ) {
+				WaiterView.dismissDialog(imageViewReference.get().getContext());
+			}
+			
 	        if (isCancelled()) {
 	            bitmap = null;
 	        }

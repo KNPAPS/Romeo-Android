@@ -48,6 +48,8 @@ public class DataParser {
 			
 		} else if ( event.equals( Event.Message.Survey.getContent() ) ) {
 			dataNative = parse_on_msg_receive(dataJSONArray);	
+		} else if ( event.equals(Event.Message.Survey.getResult()) ) {
+			dataNative = parse_on_msg_survey_result(dataJSONArray);
 		} else {
 			dataNative = basicParse(dataJSONArray);
 		}
@@ -133,13 +135,7 @@ public class DataParser {
 			Document document = (Document) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
 			dataNative.add(0,KEY._MESSAGE,document);
 			
-//			HashMap<String,String> af = new HashMap<String, String>();
-//			
-//			af.put(KEY.DOCUMENT.FILE_IDX, jo.getString(KEY.DOCUMENT.FILE_IDX) );
-//			af.put(KEY.DOCUMENT.FILE_TYPE, jo.getString(KEY.DOCUMENT.FILE_TYPE) );
-//			af.put(KEY.DOCUMENT.FILE_SIZE, jo.getString(KEY.DOCUMENT.FILE_SIZE) );
-//			
-//			dataNative.add(0,KEY.DOCUMENT.FILES,af);
+
 			break;
 		case Message.MESSAGE_TYPE_SURVEY:
 			Survey svy = (Survey) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
@@ -150,6 +146,27 @@ public class DataParser {
 		}
 		
 		return dataNative;
+	}
+	
+	private static Data parse_on_msg_survey_result(JSONArray dataJSONArray) throws JSONException {
+		JSONObject jo = dataJSONArray.getJSONObject(0);
+		Data data = new Data();
+		data.add(0,KEY.SURVEY.NUM_RECEIVERS,jo.getInt(KEY.SURVEY.NUM_RECEIVERS));
+		data.add(0,KEY.SURVEY.NUM_UNCHECKERS,jo.getInt(KEY.SURVEY.NUM_UNCHECKERS));
+		data.add(0,KEY.SURVEY.NUM_CHECKERS,jo.getInt(KEY.SURVEY.NUM_CHECKERS));
+		data.add(0,KEY.SURVEY.NUM_RESPONDERS,jo.getInt(KEY.SURVEY.NUM_RESPONDERS));
+		data.add(0,KEY.SURVEY.NUM_RESPONDERS,jo.getInt(KEY.SURVEY.NUM_RESPONDERS));
+		ArrayList<ArrayList<Integer>> ar = new ArrayList<ArrayList<Integer>>();
+		JSONArray ja = jo.getJSONArray(KEY.SURVEY.RESULT);
+		for ( int i=0; i<ja.length(); i++ ) {
+			ArrayList<Integer> iar = new ArrayList<Integer>();
+			for ( int j=0; j<ja.getJSONArray(i).length(); j++ ) {
+				iar.add( ja.getJSONArray(i).getInt(j) );
+			}
+			ar.add(iar);
+		}
+		data.add(0,KEY.SURVEY.RESULT,ar);
+		return data;
 	}
 	
 	private static <T> ArrayList<T> JSONArrayToArrayList(JSONArray jsonArray) throws JSONException {
