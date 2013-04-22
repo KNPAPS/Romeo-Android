@@ -41,12 +41,12 @@ class SurveyListAdapter extends CursorAdapter {
 		// Animation	// TODO
 		
 		final Handler surveyHandler = new SurveyHandler(subType);
+		final Survey survey = new Survey(context, c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX)));
 		
 		new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				Survey survey = new Survey(context, c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX)));
 				android.os.Message message = surveyHandler.obtainMessage();
 				message.what = WHAT_SURVEY;
 				HashMap<String, Object> obj = new HashMap<String, Object>();

@@ -38,20 +38,30 @@ public class Survey extends Message {// implements Parcelable{
 			this.form = Form.parseForm(jo.getJSONObject(KEY.SURVEY.FORM).toString());
 	}
 	
-	public static Survey surveyFromServer(Context context, String surveyIdx, int subType) {
+	private static Survey surveyFromServer;
+	public static Survey surveyFromServer(Context context, final String surveyIdx, int subType) {
 		//Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
 		//cursor_surveyInfo.moveToFirst();
 		
+		Thread t = new Thread() {
+			public void run() {
+				Data reqData = new Data().add(0, KEY.MESSAGE.IDX, surveyIdx);
+				Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
+				Connection conn = new Connection().async(false).requestPayload(request).request();
+				Payload response = conn.getResponsePayload();
+				Data respData = response.getData();
+				surveyFromServer = (Survey)respData.get(0, KEY._MESSAGE);
+			}
+		};
 		
-		Data reqData = new Data().add(0, KEY.MESSAGE.IDX, surveyIdx);
-		Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
-		Connection conn = new Connection().async(false).requestPayload(request).request();
-		Payload response = conn.getResponsePayload();
-		Data respData = response.getData();
-		
-		Survey s = (Survey)respData.get(0, KEY._MESSAGE);
-		
-		return s;
+		t.start();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return surveyFromServer;
 	}
 	/*
 	public Survey(Context context, Cursor c) {
