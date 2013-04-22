@@ -138,7 +138,7 @@ public class GCMMessageSender {
 								.add(0, KEY.USER.IDX, UserInfo.getUserIdx(context))
 								.add(0, KEY.SURVEY.IDX, survey.idx)
 								.add(0, KEY.SURVEY.ANSWER_SHEET, answerSheet);
-		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
+		Payload request = new Payload().setEvent(Event.Message.Survey.answerSurvey()).setData(reqData);
 		
 		CallbackEvent<Payload,Integer,Payload> callBack = new CallbackEvent<Payload, Integer, Payload>(){
 			@Override

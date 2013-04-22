@@ -118,7 +118,8 @@ public class SurveyAnswerFragment extends Fragment  {
 			Question question = questions.get(qi);
 			View questionView = inflater.inflate(R.layout.survey_question_answer, questionsLL, false);
 			
-			if( question.isMultiple() ) {
+			final boolean qIsMultiple = question.isMultiple(); 
+			if( qIsMultiple ) {
 				TextView qIsMultipleTV = (TextView)questionView.findViewById(R.id.isMultiple);
 				qIsMultipleTV.setVisibility(View.VISIBLE);
 			} else {
@@ -127,7 +128,7 @@ public class SurveyAnswerFragment extends Fragment  {
 			}
 			
 			TextView qIndexTV = (TextView)questionView.findViewById(R.id.index);
-			qIndexTV.setText(qi+".");
+			qIndexTV.setText((qi+1)+".");
 			
 			TextView qTitleTV = (TextView)questionView.findViewById(R.id.title);
 			qTitleTV.setText(question.title());
@@ -135,16 +136,16 @@ public class SurveyAnswerFragment extends Fragment  {
 			final LinearLayout optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
 			for(int oi=0; oi<question.options().size(); oi++) {
 				String option = question.options().get(oi);
-				View optionView = inflater.inflate(R.layout.survey_option_result, questionsLL, false);
+				View optionView = inflater.inflate(R.layout.survey_option_answer, questionsLL, false);
 				Button oControlBT = (Button)optionView.findViewById(R.id.control);
 				
-				final boolean _qIsMultiple = question.isMultiple(); 
+				
 				oControlBT.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View button) {
 						
-						if(_qIsMultiple) {
+						if(qIsMultiple) {
 							// TODO : 배경 그림으로 boolean 판별을 하고 있음....
 							if( button.getBackground().equals(getActivity().getResources().getDrawable(R.drawable.circle_check_active)) )
 								button.setBackgroundResource(R.drawable.circle_check_gray);
@@ -202,7 +203,8 @@ public class SurveyAnswerFragment extends Fragment  {
 				View optionView = optionsLL.getChildAt(oi);
 				Button control = (Button)optionView.findViewById(R.id.control);
 				
-				if(control.getBackground().equals(getActivity().getResources().getDrawable(R.drawable.circle_check_active)))
+				//if(control.getBackground().equals(getActivity().getResources().getDrawable(R.drawable.circle_check_active)))
+				if(control.getBackground().getConstantState()==getActivity().getResources().getDrawable(R.drawable.circle_check_active).getConstantState())
 					selected.add(oi);
 			}
 			

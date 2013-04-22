@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -72,8 +73,16 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 		
 		Cursor c = (Cursor)adapter.getItem(position);
 		String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
-		SurveyAnswerFragment f = new SurveyAnswerFragment(surveyIdx);
-		MainActivity.sharedActivity().pushContent(f);
+		
+		Fragment f = null;
+		if(this.subType == Survey.TYPE_RECEIVED) {
+			f = new SurveyAnswerFragment(surveyIdx);
+		} else if(this.subType == Survey.TYPE_DEPARTED){
+			f = new SurveyResultFragment(surveyIdx);
+		}
+		
+		if(f != null)
+			MainActivity.sharedActivity().pushContent(f);
 	}
 	@Override
 	public void onPreExecute() {
