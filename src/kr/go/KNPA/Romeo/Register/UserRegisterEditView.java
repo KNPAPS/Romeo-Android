@@ -16,6 +16,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,25 +129,16 @@ public class UserRegisterEditView extends LinearLayout {
 		case KEY_DEPARTMENT:
 		{
 			// 초기 목록 정보 할당
-			Spinner dd1 = getDropdown(0);
-			ArrayList<Department> level1Set = getDepartment(null);
+			final Spinner dd1 = getDropdown(0);
+			
+			final ArrayList<Department> level1Set = getDepartment(null);
 			DepartmentDropdownAdapter adapter1 = new DepartmentDropdownAdapter(context, level1Set);
-			// TODO _adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
+
 			dd1.setAdapter(adapter1);
 			dd1.setOnItemSelectedListener(deptListener);
 			dd1.setPrompt(context.getString(R.string.department)+" 선택");
 			
-/*			// 2~6번의 DropDown에도 Listener 할당
-			for(int i=1; i<DROPDOWN_MAX_LENGTH; i++) {
-				Spinner dd = getDropdown(i);
-				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(context, dummySet);
-				// TODO adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
-				dd.setAdapter(adapter);
-				dd.setPrompt(context.getString(R.string.department)+" 선택");
-				if(i != DROPDOWN_MAX_LENGTH-1 )
-					dd.setOnItemSelectedListener(deptListener);
-			}
-*/		}
+		}
 			setHeaderTitle("본인 소속 부서를 선택해주세요.");
 			setFooterTitle("");
 			break;
@@ -223,46 +215,43 @@ public class UserRegisterEditView extends LinearLayout {
 	 */
 	private OnItemSelectedListener deptListener = new OnItemSelectedListener() {
 		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+		public void onItemSelected(AdapterView<?> parent, final View view, int pos, long id) {
 			
 			// 몇 번째 DropDown인지
-			int ddIdx = Integer.parseInt((String)parent.getTag());
+			final int ddIdx = Integer.parseInt((String)parent.getTag());
 			
 			// 현재 선택한 Department
-			Department dep = ((Department)parent.getSelectedItem());
+			final Department dep = ((Department)parent.getSelectedItem());
+			// 선택된 정보를 가지고 서버에 하위 부서들을 요청한다.
+			ArrayList<Department> depts = null;
 			
+			if( !dep.equals(dummy) && dep.idx != null ) {
+				depts =getDepartment( dep.idx );
+			} else {
+				// 선택된 Department가 dummy일 경우
+				//  "해당 없음" 아이템이 선택된 경우(자신이 실제로는 빈 집합을 받은 경우) 아래 스피너에 빈 어댑터를 할당한다.
+				depts = dummySet;
+			}
 			
-				// 선택된 정보를 가지고 서버에 하위 부서들을 요청한다.
-				ArrayList<Department> deps = null;
-				
-				if( !dep.equals(dummy) && dep.idx != null ) {
-					deps =getDepartment( dep.idx );
-				} else {
-					// 선택된 Department가 dummy일 경우
-					//  "해당 없음" 아이템이 선택된 경우(자신이 실제로는 빈 집합을 받은 경우) 아래 스피너에 빈 어댑터를 할당한다.
-					deps = dummySet;
-				}
-				
-				String depName = dep.name;
-				((TextView)view).setText(depName);
-				
-				// 선택된 스피너의 다음 스피너를 위한 새 어댑터를 생성한다.
-				DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
-				
+			final String depName = dep.name;
+			final ArrayList<Department> deps = depts;
+			((TextView)view).setText(depName);
+			
+			// 선택된 스피너의 다음 스피너를 위한 새 어댑터를 생성한다.
+			DepartmentDropdownAdapter adapter = new DepartmentDropdownAdapter(getContext(), deps);
+			
 
-				if(ddIdx != DROPDOWN_MAX_LENGTH-1) {
-					// 다음 스피너에 조금 전에 생성한 어댑터를 할당한다.
-					Spinner ddNext = getDropdown((ddIdx+1));
-					ddNext.setAdapter(adapter);
-					ddNext.setPrompt(context.getString(R.string.department)+" 선택");
-					//  스피너에 어댑터를 할당하게 되면 스피너 내의 리스트가 업데이트 되면서, 자동으로 첫 번째 아이템이 선택되게 되므로,
-					//  어댑터를 할당하는 것만으로도 이벤트 전파 효과가 난다.
-					if(ddNext.getOnItemSelectedListener() == null)
-						ddNext.setOnItemSelectedListener(deptListener);
-				
-				}
+			if(ddIdx != DROPDOWN_MAX_LENGTH-1) {
+				// 다음 스피너에 조금 전에 생성한 어댑터를 할당한다.
+				Spinner ddNext = getDropdown((ddIdx+1));
+				ddNext.setAdapter(adapter);
+				ddNext.setPrompt(context.getString(R.string.department)+" 선택");
+				//  스피너에 어댑터를 할당하게 되면 스피너 내의 리스트가 업데이트 되면서, 자동으로 첫 번째 아이템이 선택되게 되므로,
+				//  어댑터를 할당하는 것만으로도 이벤트 전파 효과가 난다.
+				if(ddNext.getOnItemSelectedListener() == null)
+					ddNext.setOnItemSelectedListener(deptListener);
 			
-				
+			}
 		}
 
 		@Override

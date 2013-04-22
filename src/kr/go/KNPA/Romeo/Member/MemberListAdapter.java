@@ -37,22 +37,23 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 	
 	public MemberListAdapter() {}
 	
-	public MemberListAdapter(Context context, int type) {
+	public MemberListAdapter(final Context context, int type) {
 		this.context = context;
 		this.type = type;
 		
 		this._rootNode = new CellNode().isRoot(true).isUnfolded(true).parent((CellNode)null);
 		
 		WaiterView.showDialog(context);
-		
-		ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(null);
-		
+
+		final ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(null);
+
 		for(int i=0; i< deps.size(); i++) {
-			CellNode node = new CellNode().index(i).isRoot(false).isUnfolded(false).parent(this.rootNode()).type(CellNode.CN_DEPARTMENT).idx(deps.get(i).idx);
-			this.rootNode().append(node);
+			CellNode node = new CellNode().index(i).isRoot(false).isUnfolded(false).parent(rootNode()).type(CellNode.CN_DEPARTMENT).idx(deps.get(i).idx);
+			rootNode().append(node);
 		}
-		
 		WaiterView.dismissDialog(context);
+		
+		
 	}
 	
 	public CellNode rootNode() 	{	return _rootNode;						}
@@ -386,13 +387,13 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 							notifyDataSetChanged();
 						}
 					};
+
+					final ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(deptIdx);
 					
 					new Thread(new Runnable() {
 						
 						@Override
 						public void run() {
-							ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(deptIdx);
-							
 							int status;
 							switch(nodeClicked.status()) {
 								case CellNode.HCHECK : status = CellNode.NCHECK; break;	// NEVER REACH

@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import android.os.Handler;
 
 
 public class MemberManager {
@@ -61,42 +62,50 @@ public class MemberManager {
 	}
 	
 	
-	public User getUser(String idx) {
+	public User getUser(final String idx) {
 		User user = cachedUsers.get(idx);
 		if ( user != null ) {
 			return user;
 		} else {
-			Payload request = new Payload().setEvent(Event.User.getUserInfo())
-									.setData( new Data().add(0, KEY.USER.IDX, idx) );
-			
-			//Connection conn = new Connection(this).callBack(callBackEvent).requestPayloadJSON(request).request();
-			Connection conn = new Connection().requestPayload(request).async(false).request();
-			Payload response = conn.getResponsePayload();
-			
-			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
-				HashMap<String,Object> hm = response.getData().get(0);
-				
-				Department dep = new Department(
-											(String)hm.get(KEY.DEPT.IDX), 
-											(String)hm.get(KEY.DEPT.NAME), 
-											(String)hm.get(KEY.DEPT.FULL_NAME), 
-											null, 
-											Department.NOT_SPECIFIED
-										);
-				
-				user = new User.Builder()
-									.idx((String)hm.get(KEY.USER.IDX))
-									.name((String)hm.get(KEY.USER.NAME))
-									.rank(Integer.parseInt((String)hm.get(KEY.USER.RANK)))
-									.role((String)hm.get(KEY.USER.ROLE))
-									.department(dep)
-									.build();
+			Thread t = new Thread(){
+				public void run() {
+					Payload request = new Payload().setEvent(Event.User.getUserInfo())
+							.setData( new Data().add(0, KEY.USER.IDX, idx) );
+					Connection conn = new Connection().requestPayload(request).async(false).request();
+					Payload response = conn.getResponsePayload();
+					
+					if ( response.getStatusCode() == StatusCode.SUCCESS ) {
+						HashMap<String,Object> hm = response.getData().get(0);
+						
+						Department dep = new Department(
+													(String)hm.get(KEY.DEPT.IDX), 
+													(String)hm.get(KEY.DEPT.NAME), 
+													(String)hm.get(KEY.DEPT.FULL_NAME), 
+													null, 
+													Department.NOT_SPECIFIED
+												);
+						
+						User userFromServer = new User.Builder()
+											.idx((String)hm.get(KEY.USER.IDX))
+											.name((String)hm.get(KEY.USER.NAME))
+											.rank(Integer.parseInt((String)hm.get(KEY.USER.RANK)))
+											.role((String)hm.get(KEY.USER.ROLE))
+											.department(dep)
+											.build();
 
-				cacheUser(user);
-				return user;
-			} else {
-				return null;
+						cacheUser(userFromServer);
+					}
+				}
+			};
+
+			t.start();
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			User u = cachedUsers.get(idx);
+			return u;
 		}
 	}
 	
@@ -175,38 +184,53 @@ public class MemberManager {
 	 * @param deptHash
 	 * @return
 	 */
-	public Department getDeptartment(String deptIdx) {
+	public Department getDeptartment(final String deptIdx) {
 		Department department = cachedDepartment.get(deptIdx);
 		if ( department != null )
 			return department;
 		
-			
-		//setting request payload
-		Payload request = new Payload().setEvent(Event.User.getDepartmentInfo());
-		Data reqData = new Data();
-		reqData.add(0,KEY.DEPT.IDX,deptIdx);
+		Thread t = new Thread(){
+			@Override
+			public void run() {
+				//setting request payload
+				Payload request = new Payload().setEvent(Event.User.getDepartmentInfo());
+				Data reqData = new Data();
+				reqData.add(0,KEY.DEPT.IDX,deptIdx);
+				
+				request.setData(reqData);
+				
+				Connection conn = new Connection().async(false).requestPayload(request).request();
+
+				Payload response = conn.getResponsePayload();
+				if ( response.getStatusCode() == StatusCode.SUCCESS ){
+					
+					Data respData = response.getData();
+					
+					Department dept = new Department(
+													(String)reqData.get(0, KEY.DEPT.IDX), 
+													(String)reqData.get(0, KEY.DEPT.NAME), 
+													(String)reqData.get(0, KEY.DEPT.FULL_NAME), 
+													(String)reqData.get(0, KEY.DEPT.PARENT_IDX), 
+													(String)respData.get(0, KEY.DEPT.SEQUENCE));
+					cacheDepartment(dept);
+				} else {
+					//TODO status 코드에 따라서 상황 처리	
+				}
+				super.run();
+			}
+		};
+
+		t.start();
 		
-		request.setData(reqData);
-		
-		Connection conn = new Connection().requestPayload(request).request();
-		
-		Payload response = conn.getResponsePayload();
-		if ( response.getStatusCode() == StatusCode.SUCCESS ){
-			
-			Data respData = response.getData();
-			
-			department = new Department(
-											(String)reqData.get(0, KEY.DEPT.IDX), 
-											(String)reqData.get(0, KEY.DEPT.NAME), 
-											(String)reqData.get(0, KEY.DEPT.FULL_NAME), 
-											(String)reqData.get(0, KEY.DEPT.PARENT_IDX), 
-											(String)respData.get(0, KEY.DEPT.SEQUENCE));
-											
-		} else {
-			//TODO status 코드에 따라서 상황 처리	
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		return department;
+
+		Department d = cachedDepartment.get(deptIdx);
+		return d;
 		
 	}
 	
@@ -215,47 +239,68 @@ public class MemberManager {
 	 * @param parentHash
 	 * @return
 	 */
-	public ArrayList<Department> getChildDepts(String deptIdx) {
-		//setting request payload
-		Payload request = new Payload().setEvent(Event.User.getChildDepartments());
-		
-		Data reqData = new Data();
-		
-		if(deptIdx == null || deptIdx.trim().length() < 1 || deptIdx.trim().equals(""))
-			deptIdx = "";
-		reqData.add(0,KEY.DEPT.IDX, deptIdx);
-		request.setData(reqData);
-		
-		Connection conn = new Connection().requestPayload(request).async(false).request();
-		
-		Payload response = conn.getResponsePayload();
-		if ( response.getStatusCode() == StatusCode.SUCCESS ){
-			Data respData = response.getData();
-			int nDeps = respData.size();
-			
-			//결과로 리턴할 객체
-			ArrayList<Department> children = new ArrayList<Department>(nDeps);
-			
-			
-			for ( int i=0; i<nDeps; i++ ) {
-				Department dep = new Department(
-													(String)respData.get(i, KEY.DEPT.IDX), 
-													(String)respData.get(i, KEY.DEPT.NAME), 
-													(String)respData.get(i, KEY.DEPT.FULL_NAME), 
-													(String)respData.get(i, KEY.DEPT.PARENT_IDX), 
-													(String)respData.get(i, KEY.DEPT.SEQUENCE)
-												);
-
-				cacheDepartment(dep);
+	private static ArrayList<Department> children;
+	public ArrayList<Department> getChildDepts(final String deptIdx) {
+		Thread t = new Thread(){
+			@Override
+			public void run() {
+				//setting request payload
+				Payload request = new Payload().setEvent(Event.User.getChildDepartments());
 				
-				children.add(dep);
+				Data reqData = new Data();
+				
+				if(deptIdx == null || deptIdx.trim().length() < 1 || deptIdx.trim().equals("")) {
+					reqData.add(0,KEY.DEPT.IDX, "");
+				} else {
+					reqData.add(0,KEY.DEPT.IDX, deptIdx);
+				}
+				
+				
+				request.setData(reqData);
+				
+				Connection conn = new Connection().requestPayload(request).async(false).request();
+				
+				Payload response = conn.getResponsePayload();
+				
+				if ( response.getStatusCode() == StatusCode.SUCCESS ){
+					Data respData = response.getData();
+					int nDeps = respData.size();
+					
+					//결과로 리턴할 객체
+					children = new ArrayList<Department>(nDeps);
+					
+					
+					for ( int i=0; i<nDeps; i++ ) {
+						Department dep = new Department(
+															(String)respData.get(i, KEY.DEPT.IDX), 
+															(String)respData.get(i, KEY.DEPT.NAME), 
+															(String)respData.get(i, KEY.DEPT.FULL_NAME), 
+															(String)respData.get(i, KEY.DEPT.PARENT_IDX), 
+															(String)respData.get(i, KEY.DEPT.SEQUENCE)
+														);
+
+						cacheDepartment(dep);
+						
+						children.add(dep);
+					}
+					
+					
+				}else {
+					//TODO status 코드에 따라서 상황 처리
+				}
+				
+				super.run();
 			}
-			
-			return children;
-		}else {
-			//TODO status 코드에 따라서 상황 처리
-			return null;
+		};
+
+		t.start();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return children;
 	}
 	
 	public ArrayList<User> getDeptMembers(String depIdx, boolean doRecursive) {

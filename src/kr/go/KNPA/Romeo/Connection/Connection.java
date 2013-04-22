@@ -71,7 +71,6 @@ public class Connection {
 	private boolean async = ConnectionConfig.async;
 	private CallbackEvent<Payload, Integer, Payload> callBack = ConnectionConfig.callBack;
 	private String contentType = ConnectionConfig.contentType;
-	private Context context = ConnectionConfig.context;
 	private String requestPayloadJSON = ConnectionConfig.requestPayloadJSON;
 	private int HTTPStatusCode = ConnectionConfig.HTTPStatusCode;
 	private int timeout = ConnectionConfig.timeout;
@@ -102,9 +101,7 @@ public class Connection {
 	public Connection async( boolean v ) { this.async = v; return this; }
 	public Connection callBack(CallbackEvent<Payload, Integer, Payload> v) { this.callBack = v; return this; }
 	public Connection contentType( String v ) { this.contentType = v; return this; }
-	public Connection context( Context v ) { this.context = v; return this; }
-	
-	
+
 	public Connection requestPayload( Payload payload ) { 
 		this.requestPayload = payload;
 		this.requestPayloadJSON = payload.toJSON();
@@ -132,7 +129,12 @@ public class Connection {
 	 * @{
 	 */
 	public String getResponsePayloadJSON() { return this.responsePayloadJSON; }
-	public Payload getResponsePayload(){ return this.responsePayload; }
+	public Payload getResponsePayload(){
+		if ( this.responsePayload == null ) {
+			return new Payload().setEvent(requestPayload.getEvent()).setStatusCode(Constants.NOT_SPECIFIED);
+		}
+		return this.responsePayload; 
+	}
 	/** @} */
 	
 	/**

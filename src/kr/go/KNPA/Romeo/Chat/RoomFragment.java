@@ -510,9 +510,11 @@ public class RoomFragment extends RomeoFragment {
             c.moveToNext();
             filePath = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA));
             c.close();
+            sendImage(filePath);
             break;
 		case PICK_FROM_CAMERA:
 			filePath = mImageCaptureUri.getPath();
+			sendImage(filePath);
 			break;
 		case RoomSettingActivity.REQUEST_CODE:
 			Bundle b = data.getExtras();
@@ -541,14 +543,11 @@ public class RoomFragment extends RomeoFragment {
 					}
 				}.start();
 				
-				
 				break;
 			}
 		default:
 			return;
       }
-      
-      sendImage(filePath);
     }
     
 	public void sendImage(String filePath) {

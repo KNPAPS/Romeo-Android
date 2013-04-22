@@ -180,7 +180,7 @@ public class MemberSearch extends Activity {
 		}
 		
 		container.bringChildToFront(targetView);
-		targetView.invalidate();
+		targetView.requestLayout();
 	}
 	
 	private View viewInContainer(int viewId) {
