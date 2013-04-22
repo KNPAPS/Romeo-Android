@@ -327,11 +327,11 @@ public class ChatListAdapter extends CursorAdapter {
 		    	@Override
 		    	public void onClick(DialogInterface dialog, int which) {
 		    		switch(which){
-		    		case 0://복사
-		    			ClipboardManager clipboardManager =  (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-		    			ClipData clip = ClipData.newPlainText("txt",((TextView)view).getText() );
-		    			clipboardManager.setPrimaryClip(clip);
-		    			
+		    		case 0://복사 TODO
+//		    			ClipboardManager clipboardManager =  (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+//		    			ClipData clip = ClipData.newPlainText("txt",((TextView)view).getText() );
+//		    			clipboardManager.setPrimaryClip(clip);
+//		    			
 		    			break;
 		    		case 1://삭제
 		    			new Thread(){

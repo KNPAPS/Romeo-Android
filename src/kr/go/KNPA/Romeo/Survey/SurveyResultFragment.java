@@ -2,6 +2,8 @@ package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
 
+import com.google.gson.Gson;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Event;
@@ -18,10 +20,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -121,106 +126,7 @@ public class SurveyResultFragment extends Fragment {
 				Connection conn = new Connection().async(false).callBack(gotResult).requestPayload(request).request();
 			}
 		}).start();
-		// parsing Start TODO
-		/*
-		String json = adx.getAttachmentWithKey(Message.MESSAGE_KEY_SURVEY).getJSON();
-		
-		JSONObject s = null;
-		try {
-			s = new JSONObject(json);
-		} catch (JSONException e) {
-		}
-		if(s != null) {
-			// 위에서 이미 Survey Message Object를 통해 처리된 것들 
-			//s.getString("title");
-			//s.getString("content");
-			//s.getLong("openTS");
-			//s.getLong("closeTS");
-			//s.getString("receivers");
-			JSONObject q = null;
-			JSONArray os = null;
-			JSONObject o = null;
-			JSONArray qs = null;
-			
-			String qTitle = null;
-			boolean qIsMultiple = false;
-			String oTitle = null;
-			
-			LinearLayout questionsLL = (LinearLayout)view.findViewById(R.id.questions);
-			View questionView = null;
-			LinearLayout optionsLL = null;
-			View optionView = null;
-			
-			try {
-				qs = s.getJSONArray("questions");
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-			if(qs != null) {
-			
-				
-				for(int qi=0; qi<qs.length(); qi++) {
-					try {
-						q = qs.getJSONObject(qi);
-						qTitle = q.getString("title");
-						qIsMultiple = (q.getInt("isMultiple") == 1 ? true : false);
-						os = q.getJSONArray("options");
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
 
-					questionView = inflater.inflate(R.layout.survey_question_result, questionsLL, false);
-					
-					if( qIsMultiple) {
-						TextView isMultipleTV = (TextView)questionView.findViewById(R.id.isMultiple);
-						isMultipleTV.setVisibility(View.VISIBLE);
-					} else {
-						TextView isMultipleTV = (TextView)questionView.findViewById(R.id.isMultiple);
-						isMultipleTV.setVisibility(View.INVISIBLE);
-					}
-					
-					TextView qTV = (TextView)questionView.findViewById(R.id.title);
-					qTV.setText(qTitle);
-					
-					WebView graphWV = (WebView)questionView.findViewById(R.id.graphView);
-					graphWV.getSettings().setJavaScriptEnabled(true);
-					graphWV.loadUrl("file:///android_asset/www/result.html");
-					graphWV.addJavascriptInterface(new graphPlugin(), "GraphPlugin");
-							// window.GraphPlugin. functionName(ARG); in webview html javascript
-					//graphWV.setWebChromeClient(new WebChromeClient(){});
-					
-					// JAVASCRIPT 호출 :  loadURL("javascript::callJS("arg");
-					optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
-//					
-//					// Options Level로 진입
-//					for(int oi=0; oi<os.length(); oi++) {
-//						try {
-//							//o = os.getJSONObject(oi);
-//							oTitle = os.getString(oi);
-//						} catch (JSONException e) {
-//							e.printStackTrace();
-//						}
-//
-//						// Option Level의 Manipulating
-//						optionView = inflater.inflate(R.layout.survey_option_result, optionsLL, false);
-//						Button optionControl = (Button)optionView.findViewById(R.id.control);
-//						
-//						optionControl.setTag(qi+":"+oi);
-//						
-//						TextView oTV = (TextView) optionView.findViewById(R.id.title);
-//						oTV.setText(oTitle);
-//						optionsLL.addView(optionView);
-//					} // for oi END
-//					
-					questionsLL.addView(questionView);
-				} // for qi END
-				
-				
-			}// qs != null END
-			
-		}// s != null END
-		*/
 		return view;
 		
 	}
@@ -249,7 +155,7 @@ public class SurveyResultFragment extends Fragment {
 		int nCheckers 	= (Integer)resData.get(0, KEY.SURVEY.NUM_CHECKERS);		// 확인한 사람 수 (응답자+기권자)
 		int nResponders	= (Integer)resData.get(0, KEY.SURVEY.NUM_RESPONDERS);	// 응답자수
 		int nBlank 		= (Integer)resData.get(0, KEY.SURVEY.NUM_GIVE_UP);		// 기권자 수 (확인후 응답X)
-		//int[][] vote = (Integer)resData.get(0, KEY.SURVEY.RESULT);			// 문항/선택지별 투표 수를 담고 있는 배열
+		ArrayList<ArrayList<Integer>> _votes = (ArrayList<ArrayList<Integer>>)resData.get(0, KEY.SURVEY.RESULT);			// 문항/선택지별 투표 수를 담고 있는 배열
 		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
@@ -268,18 +174,30 @@ public class SurveyResultFragment extends Fragment {
 			TextView qIsMultipleTV = (TextView)questionLL.findViewById(R.id.isMultiple);
 			qIsMultipleTV.setVisibility((question.isMultiple() ? View.VISIBLE : View.INVISIBLE));
 			
-			LinearLayout optionsLL = (LinearLayout)questionLL.findViewById(R.id.options);
 			
+			// Graph with WebView
+			ArrayList<Integer> qVote = _votes.get(qi);
+			WebView qGraphWV = (WebView)questionLL.findViewById(R.id.graphView);
+			GraphPlugin graphPlugin = new GraphPlugin(qGraphWV, qVote);
+			
+			
+			LinearLayout _optionsLL = (LinearLayout)questionLL.findViewById(R.id.options);
 			ArrayList<String> options = question.options();
 			for(int oi = 0; oi<options.size(); oi++) {
 				String option = options.get(oi);
-				LinearLayout optionLL = (LinearLayout)inflater.inflate(R.layout.survey_option_result, optionsLL, true);
+				LinearLayout optionLL = (LinearLayout)inflater.inflate(R.layout.survey_option_result, _optionsLL, false);
 				TextView optionTitleTV = (TextView)optionLL.findViewById(R.id.title);
 				optionTitleTV.setText(option);
 				
-				TextView optionContentTV = (TextView)optionsLL.findViewById(R.id.content);
+				TextView optionContentTV = (TextView)_optionsLL.findViewById(R.id.content);
+				int nThisOption = qVote.get(oi);
+				float percent = ((float)nThisOption / nResponders);
+				optionContentTV.setText( ((int)Math.round(percent)) + " %");
 				
+				_optionsLL.addView(optionLL);
 			}
+			
+			_questionsLL.addView(questionLL);
 		}
 		
 	}
@@ -316,14 +234,53 @@ public class SurveyResultFragment extends Fragment {
 	
 
 	/** Object exposed to JavaScript */
-    private class graphPlugin {
-       public void callAndroid(final String json) { // must be final
- //         handler.post(new Runnable() {
- //            public void run() {
- //               Log.d(TAG, "callAndroid(" + arg + ")");
-  //              textView.setText(arg);
-  //           }
-   //       });
-       }
+    private class GraphPlugin extends WebViewClient {
+    	private WebView qGraphWV = null;
+    	private String jsCommand = "";
+    	private ArrayList<Integer> arg = null;
+    	public void callAndroid(final String json) { // must be final
+    		getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Log.i("Javascript", json);
+				}
+			});
+		}
+       
+    	public GraphPlugin(WebView wv, ArrayList<Integer> arg, int width, int height) {
+    		init(wv);
+			willExecute("javascript::makeGraph('"+new Gson().toJson(arg)+","+width+","+height+"');");
+			
+		}
+    	
+    	public GraphPlugin(WebView wv, ArrayList<Integer> arg) {
+    		init(wv);
+			willExecute("javascript::makeGraph('"+new Gson().toJson(arg)+"');");
+			
+		}
+    	
+    	private void init(WebView wv) {
+    		this.qGraphWV = wv;
+    		
+    		qGraphWV.getSettings().setJavaScriptEnabled(true);
+			qGraphWV.addJavascriptInterface(this, "GraphPlugin");
+			qGraphWV.setWebViewClient(this);
+			qGraphWV.loadUrl("file:///android_asset/www/result.html");
+    	}
+
+    	@Override
+    	public void onPageFinished(WebView view, String url) {
+    		super.onPageFinished(view, url);
+    	}
+
+    	public void willExecute(String jsCommand) {
+    		this.jsCommand = jsCommand;
+    	}
+    	
+    	public void execute() {
+    		// JAVASCRIPT 호출 :
+    		qGraphWV.loadUrl(jsCommand);
+    	}
     }
+    
 }
