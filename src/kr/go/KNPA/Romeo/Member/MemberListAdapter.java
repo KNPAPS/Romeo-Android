@@ -43,8 +43,8 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		
 		this._rootNode = new CellNode().isRoot(true).isUnfolded(true).parent((CellNode)null);
 		
-		WaiterView.showDialog(context);
 
+		WaiterView.showDialog(context);
 		final ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(null);
 
 		for(int i=0; i< deps.size(); i++) {
@@ -52,7 +52,6 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 			rootNode().append(node);
 		}
 		WaiterView.dismissDialog(context);
-		
 		
 	}
 	
@@ -337,7 +336,7 @@ public class MemberListAdapter extends BaseAdapter implements OnItemClickListene
 		// 클릭된 셀의 position을 이용하여 indexpath를 알아낸다.
 		
 		//final WaiterView waiter = (WaiterView)view.findViewById(R.id.waiter);
-		
+	
 		if(type == User.TYPE_MEMBERLIST ){// || type == User.TYPE_MEMBERLIST_SEARCH) {
 			position = position-1;
 		}

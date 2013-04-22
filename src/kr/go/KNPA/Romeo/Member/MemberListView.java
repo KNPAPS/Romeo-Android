@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.Event;
@@ -43,9 +44,12 @@ public class MemberListView extends RomeoListView {
 	
 	private Context context;
 	// Constructor
-	public MemberListView(Context context) 										{	this(context, null);				}
-	public MemberListView(Context context, AttributeSet attrs) 					{	this(context, attrs, 0);			}
-	public MemberListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle);	}
+	public MemberListView(Context context) {	
+		this(context, null);
+		this.context = context;
+	}
+	public MemberListView(Context context, AttributeSet attrs) 					{	this(context, attrs, 0); this.context = context; }
+	public MemberListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle); this.context = context; }
 
 	// Database management
 	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).member().getFavoriteList();	}
@@ -53,6 +57,7 @@ public class MemberListView extends RomeoListView {
 	// View management
 	@Override
 	public MemberListView initWithType (int subType) {
+		
 		this.subType = subType;
 
 		if(!(subType == User.TYPE_FAVORITE || subType==User.TYPE_MEMBERLIST || subType==User.TYPE_FAVORITE_SEARCH || subType==User.TYPE_MEMBERLIST_SEARCH)) return null;
@@ -108,7 +113,7 @@ public class MemberListView extends RomeoListView {
 		switch(this.subType) {
 			case User.TYPE_MEMBERLIST_SEARCH :
 			case User.TYPE_MEMBERLIST :
-				listAdapter = new MemberListAdapter(getContext(), subType);
+				listAdapter = new MemberListAdapter(context, subType);
 				this.setOnItemClickListener(listAdapter);
 				this.setAdapter(listAdapter);
 				break;		

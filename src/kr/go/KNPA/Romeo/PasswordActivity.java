@@ -34,7 +34,15 @@ public class PasswordActivity extends Activity {
 		
 		Intent intent = getIntent();
 		targetModuleInfo = intent.getExtras();
-	  
+
+		if ( Constants.DEVELOPMENT == true ) {
+			Intent newIntent = new Intent(PasswordActivity.this, MainActivity.class);
+			newIntent.putExtras(targetModuleInfo);
+
+			startActivity(newIntent);
+			finish();
+		}
+		
 		parent = (ViewGroup)((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.password_activity, null, false);
 		
 		OnClickListener rbbOnClickListener = new OnClickListener() {	@Override	public void onClick(View v) {	submit();	}	};
