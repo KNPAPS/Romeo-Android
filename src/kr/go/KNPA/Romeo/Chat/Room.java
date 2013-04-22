@@ -112,12 +112,11 @@ public class Room {
 		ArrayList<String> receivers = getReceivers();
 		
 		String newbies = "";
-		
-		for ( int i = 0 ; i < userIdxs.size(); i++ ) {
-			newbies += userIdxs.get(i)+":";
+		for (int i=0; i<userIdxs.size(); i++ ) {
+			newbies += userIdxs.get(i)+":"; 
 			setLastReadTS(userIdxs.get(i),System.currentTimeMillis()/1000);
 		}
-		newbies = newbies.substring(0,newbies.length()-2);
+		newbies = newbies.substring(0,newbies.length()-1);
 		Chat chat = new Chat(
 							null,
 							getType(), 

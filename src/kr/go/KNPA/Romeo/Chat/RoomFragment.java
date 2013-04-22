@@ -558,7 +558,7 @@ public class RoomFragment extends RomeoFragment {
 						});
 						super.run();
 					}
-				};
+				}.start();
 				
 				break;
 			}
@@ -592,7 +592,7 @@ public class RoomFragment extends RomeoFragment {
 		
 		Chat newChat = new Chat(
 							null,
-							room.getType(), 
+							room.getType(),
 							null, 
 							senderIdx, 
 							receivers, 

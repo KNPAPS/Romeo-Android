@@ -1,0 +1,813 @@
+android.support.v4.app.BackStackState
+android.support.v4.app.BackStackState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.Fragment: Fragment()
+android.support.v4.app.Fragment$SavedState
+android.support.v4.app.Fragment$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentActivity: FragmentActivity()
+android.support.v4.app.FragmentManagerState
+android.support.v4.app.FragmentManagerState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentState
+android.support.v4.app.FragmentState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentTabHost: void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener)
+android.support.v4.app.FragmentTabHost$SavedState
+android.support.v4.app.FragmentTabHost$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status[] values()
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status valueOf(java.lang.String)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColor(int)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColorResource(int)
+android.support.v4.view.PagerTabStrip: int getTabIndicatorColor()
+android.support.v4.view.PagerTabStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.PagerTabStrip: void setBackgroundColor(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundResource(int)
+android.support.v4.view.PagerTabStrip: void setDrawFullUnderline(boolean)
+android.support.v4.view.PagerTabStrip: boolean getDrawFullUnderline()
+android.support.v4.view.PagerTabStrip: int getMinHeight()
+android.support.v4.view.PagerTitleStrip: void setSingleLineAllCaps(android.widget.TextView)
+android.support.v4.view.PagerTitleStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTitleStrip: int getTextSpacing()
+android.support.v4.view.PagerTitleStrip: void setNonPrimaryAlpha(float)
+android.support.v4.view.PagerTitleStrip: void setTextColor(int)
+android.support.v4.view.PagerTitleStrip: void setGravity(int)
+android.support.v4.view.PagerTitleStrip: int getMinHeight()
+android.support.v4.view.ViewPager
+android.support.v4.view.ViewPager: ViewPager(android.content.Context)
+android.support.v4.view.ViewPager: ViewPager(android.content.Context,android.util.AttributeSet)
+android.support.v4.view.ViewPager: void setScrollState(int)
+android.support.v4.view.ViewPager: void setAdapter(android.support.v4.view.PagerAdapter)
+android.support.v4.view.ViewPager: android.support.v4.view.PagerAdapter getAdapter()
+android.support.v4.view.ViewPager: void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener)
+android.support.v4.view.ViewPager: void setCurrentItem(int)
+android.support.v4.view.ViewPager: int getCurrentItem()
+android.support.v4.view.ViewPager: void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener)
+android.support.v4.view.ViewPager: void setChildrenDrawingOrderEnabledCompat(boolean)
+android.support.v4.view.ViewPager: int getOffscreenPageLimit()
+android.support.v4.view.ViewPager: void setOffscreenPageLimit(int)
+android.support.v4.view.ViewPager: void setPageMargin(int)
+android.support.v4.view.ViewPager: int getPageMargin()
+android.support.v4.view.ViewPager: void setPageMarginDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.ViewPager: void setPageMarginDrawable(int)
+android.support.v4.view.ViewPager: void setScrollingCacheEnabled(boolean)
+android.support.v4.view.ViewPager$SavedState
+android.support.v4.view.ViewPager$SavedState: android.os.Parcelable$Creator CREATOR
+com.google.android.gcm.GCMBaseIntentService: GCMBaseIntentService()
+com.google.android.gcm.GCMBaseIntentService: GCMBaseIntentService(java.lang.String[])
+com.google.android.gcm.GCMBaseIntentService: GCMBaseIntentService(java.lang.String,java.lang.String[])
+com.google.android.gcm.GCMBroadcastReceiver
+com.google.android.gcm.GCMBroadcastReceiver: GCMBroadcastReceiver()
+com.google.gson.FieldNamingPolicy: com.google.gson.FieldNamingPolicy[] values()
+com.google.gson.FieldNamingPolicy: com.google.gson.FieldNamingPolicy valueOf(java.lang.String)
+com.google.gson.LongSerializationPolicy: com.google.gson.LongSerializationPolicy[] values()
+com.google.gson.LongSerializationPolicy: com.google.gson.LongSerializationPolicy valueOf(java.lang.String)
+com.google.gson.stream.JsonScope: com.google.gson.stream.JsonScope[] values()
+com.google.gson.stream.JsonScope: com.google.gson.stream.JsonScope valueOf(java.lang.String)
+com.google.gson.stream.JsonToken: com.google.gson.stream.JsonToken[] values()
+com.google.gson.stream.JsonToken: com.google.gson.stream.JsonToken valueOf(java.lang.String)
+com.slidingmenu.lib.CustomViewAbove: void setCurrentItem(int)
+com.slidingmenu.lib.CustomViewAbove: int getCurrentItem()
+com.slidingmenu.lib.CustomViewAbove: void setOnPageChangeListener(com.slidingmenu.lib.CustomViewAbove$OnPageChangeListener)
+com.slidingmenu.lib.CustomViewAbove: void setOnOpenedListener(com.slidingmenu.lib.SlidingMenu$OnOpenedListener)
+com.slidingmenu.lib.CustomViewAbove: void setOnClosedListener(com.slidingmenu.lib.SlidingMenu$OnClosedListener)
+com.slidingmenu.lib.CustomViewAbove: int getLeftBound()
+com.slidingmenu.lib.CustomViewAbove: int getRightBound()
+com.slidingmenu.lib.CustomViewAbove: int getContentLeft()
+com.slidingmenu.lib.CustomViewAbove: int getBehindWidth()
+com.slidingmenu.lib.CustomViewAbove: void setSlidingEnabled(boolean)
+com.slidingmenu.lib.CustomViewAbove: void setContent(android.view.View)
+com.slidingmenu.lib.CustomViewAbove: android.view.View getContent()
+com.slidingmenu.lib.CustomViewAbove: void setCustomViewBehind(com.slidingmenu.lib.CustomViewBehind)
+com.slidingmenu.lib.CustomViewAbove: void setAboveOffset(int)
+com.slidingmenu.lib.CustomViewAbove: void setTouchMode(int)
+com.slidingmenu.lib.CustomViewAbove: int getTouchMode()
+com.slidingmenu.lib.CustomViewAbove: float getPercentOpen()
+com.slidingmenu.lib.CustomViewAbove: void setScrollingCacheEnabled(boolean)
+com.slidingmenu.lib.CustomViewBehind: void setCustomViewAbove(com.slidingmenu.lib.CustomViewAbove)
+com.slidingmenu.lib.CustomViewBehind: void setCanvasTransformer(com.slidingmenu.lib.SlidingMenu$CanvasTransformer)
+com.slidingmenu.lib.CustomViewBehind: void setWidthOffset(int)
+com.slidingmenu.lib.CustomViewBehind: int getBehindWidth()
+com.slidingmenu.lib.CustomViewBehind: void setContent(android.view.View)
+com.slidingmenu.lib.CustomViewBehind: android.view.View getContent()
+com.slidingmenu.lib.CustomViewBehind: void setSecondaryContent(android.view.View)
+com.slidingmenu.lib.CustomViewBehind: android.view.View getSecondaryContent()
+com.slidingmenu.lib.CustomViewBehind: void setChildrenEnabled(boolean)
+com.slidingmenu.lib.CustomViewBehind: void setMode(int)
+com.slidingmenu.lib.CustomViewBehind: int getMode()
+com.slidingmenu.lib.CustomViewBehind: void setScrollScale(float)
+com.slidingmenu.lib.CustomViewBehind: float getScrollScale()
+com.slidingmenu.lib.CustomViewBehind: void setShadowDrawable(android.graphics.drawable.Drawable)
+com.slidingmenu.lib.CustomViewBehind: void setSecondaryShadowDrawable(android.graphics.drawable.Drawable)
+com.slidingmenu.lib.CustomViewBehind: void setShadowWidth(int)
+com.slidingmenu.lib.CustomViewBehind: void setFadeEnabled(boolean)
+com.slidingmenu.lib.CustomViewBehind: void setFadeDegree(float)
+com.slidingmenu.lib.CustomViewBehind: void setTouchMode(int)
+com.slidingmenu.lib.CustomViewBehind: void setSelectorEnabled(boolean)
+com.slidingmenu.lib.CustomViewBehind: void setSelectedView(android.view.View)
+com.slidingmenu.lib.CustomViewBehind: int getSelectorTop()
+com.slidingmenu.lib.CustomViewBehind: void setSelectorBitmap(android.graphics.Bitmap)
+com.slidingmenu.lib.R$attr: int shadowWidth
+com.slidingmenu.lib.R$attr: int shadowDrawable
+com.slidingmenu.lib.R$attr: int viewAbove
+com.slidingmenu.lib.R$attr: int behindScrollScale
+com.slidingmenu.lib.R$attr: int touchModeAbove
+com.slidingmenu.lib.R$attr: int touchModeBehind
+com.slidingmenu.lib.R$attr: int mode
+com.slidingmenu.lib.R$attr: int selectorDrawable
+com.slidingmenu.lib.R$attr: int behindWidth
+com.slidingmenu.lib.R$attr: int fadeDegree
+com.slidingmenu.lib.R$attr: int selectorEnabled
+com.slidingmenu.lib.R$attr: int behindOffset
+com.slidingmenu.lib.R$attr: int fadeEnabled
+com.slidingmenu.lib.R$attr: int viewBehind
+com.slidingmenu.lib.R$id: int fullscreen
+com.slidingmenu.lib.R$id: int slidingmenumain
+com.slidingmenu.lib.R$id: int selected_view
+com.slidingmenu.lib.R$id: int left
+com.slidingmenu.lib.R$id: int margin
+com.slidingmenu.lib.R$id: int right
+com.slidingmenu.lib.R$layout: int slidingmenumain
+com.slidingmenu.lib.R$styleable: int SlidingMenu_mode
+com.slidingmenu.lib.R$styleable: int SlidingMenu_fadeEnabled
+com.slidingmenu.lib.R$styleable: int SlidingMenu_selectorDrawable
+com.slidingmenu.lib.R$styleable: int SlidingMenu_behindOffset
+com.slidingmenu.lib.R$styleable: int SlidingMenu_viewAbove
+com.slidingmenu.lib.R$styleable: int SlidingMenu_selectorEnabled
+com.slidingmenu.lib.R$styleable: int SlidingMenu_behindScrollScale
+com.slidingmenu.lib.R$styleable: int SlidingMenu_shadowWidth
+com.slidingmenu.lib.R$styleable: int SlidingMenu_behindWidth
+com.slidingmenu.lib.R$styleable: int SlidingMenu_touchModeAbove
+com.slidingmenu.lib.R$styleable: int[] SlidingMenu
+com.slidingmenu.lib.R$styleable: int SlidingMenu_viewBehind
+com.slidingmenu.lib.R$styleable: int SlidingMenu_shadowDrawable
+com.slidingmenu.lib.R$styleable: int SlidingMenu_fadeDegree
+com.slidingmenu.lib.R$styleable: int SlidingMenu_touchModeBehind
+com.slidingmenu.lib.SlidingMenu
+com.slidingmenu.lib.SlidingMenu: SlidingMenu(android.content.Context)
+com.slidingmenu.lib.SlidingMenu: SlidingMenu(android.app.Activity,int)
+com.slidingmenu.lib.SlidingMenu: SlidingMenu(android.content.Context,android.util.AttributeSet)
+com.slidingmenu.lib.SlidingMenu: SlidingMenu(android.content.Context,android.util.AttributeSet,int)
+com.slidingmenu.lib.SlidingMenu: void setContent(int)
+com.slidingmenu.lib.SlidingMenu: void setContent(android.view.View)
+com.slidingmenu.lib.SlidingMenu: android.view.View getContent()
+com.slidingmenu.lib.SlidingMenu: void setMenu(int)
+com.slidingmenu.lib.SlidingMenu: void setMenu(android.view.View)
+com.slidingmenu.lib.SlidingMenu: android.view.View getMenu()
+com.slidingmenu.lib.SlidingMenu: void setSecondaryMenu(int)
+com.slidingmenu.lib.SlidingMenu: void setSecondaryMenu(android.view.View)
+com.slidingmenu.lib.SlidingMenu: android.view.View getSecondaryMenu()
+com.slidingmenu.lib.SlidingMenu: void setSlidingEnabled(boolean)
+com.slidingmenu.lib.SlidingMenu: void setMode(int)
+com.slidingmenu.lib.SlidingMenu: int getMode()
+com.slidingmenu.lib.SlidingMenu: void setStatic(boolean)
+com.slidingmenu.lib.SlidingMenu: int getBehindOffset()
+com.slidingmenu.lib.SlidingMenu: void setBehindOffset(int)
+com.slidingmenu.lib.SlidingMenu: void setBehindOffsetRes(int)
+com.slidingmenu.lib.SlidingMenu: void setAboveOffset(int)
+com.slidingmenu.lib.SlidingMenu: void setAboveOffsetRes(int)
+com.slidingmenu.lib.SlidingMenu: void setBehindWidth(int)
+com.slidingmenu.lib.SlidingMenu: void setBehindWidthRes(int)
+com.slidingmenu.lib.SlidingMenu: float getBehindScrollScale()
+com.slidingmenu.lib.SlidingMenu: void setBehindScrollScale(float)
+com.slidingmenu.lib.SlidingMenu: void setBehindCanvasTransformer(com.slidingmenu.lib.SlidingMenu$CanvasTransformer)
+com.slidingmenu.lib.SlidingMenu: int getTouchModeAbove()
+com.slidingmenu.lib.SlidingMenu: void setTouchModeAbove(int)
+com.slidingmenu.lib.SlidingMenu: void setTouchModeBehind(int)
+com.slidingmenu.lib.SlidingMenu: void setShadowDrawable(int)
+com.slidingmenu.lib.SlidingMenu: void setShadowDrawable(android.graphics.drawable.Drawable)
+com.slidingmenu.lib.SlidingMenu: void setSecondaryShadowDrawable(int)
+com.slidingmenu.lib.SlidingMenu: void setSecondaryShadowDrawable(android.graphics.drawable.Drawable)
+com.slidingmenu.lib.SlidingMenu: void setShadowWidthRes(int)
+com.slidingmenu.lib.SlidingMenu: void setShadowWidth(int)
+com.slidingmenu.lib.SlidingMenu: void setFadeEnabled(boolean)
+com.slidingmenu.lib.SlidingMenu: void setFadeDegree(float)
+com.slidingmenu.lib.SlidingMenu: void setSelectorEnabled(boolean)
+com.slidingmenu.lib.SlidingMenu: void setSelectedView(android.view.View)
+com.slidingmenu.lib.SlidingMenu: void setSelectorDrawable(int)
+com.slidingmenu.lib.SlidingMenu: void setSelectorBitmap(android.graphics.Bitmap)
+com.slidingmenu.lib.SlidingMenu: void setOnOpenListener(com.slidingmenu.lib.SlidingMenu$OnOpenListener)
+com.slidingmenu.lib.SlidingMenu: void setOnCloseListener(com.slidingmenu.lib.SlidingMenu$OnCloseListener)
+com.slidingmenu.lib.SlidingMenu: void setOnOpenedListener(com.slidingmenu.lib.SlidingMenu$OnOpenedListener)
+com.slidingmenu.lib.SlidingMenu: void setOnClosedListener(com.slidingmenu.lib.SlidingMenu$OnClosedListener)
+com.slidingmenu.lib.SlidingMenu$SavedState
+com.slidingmenu.lib.SlidingMenu$SavedState: android.os.Parcelable$Creator CREATOR
+com.slidingmenu.lib.app.SlidingActivity: void setContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingActivity: void setBehindContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingFragmentActivity: SlidingFragmentActivity()
+com.slidingmenu.lib.app.SlidingFragmentActivity: void setContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingFragmentActivity: void setBehindContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingListActivity: void setContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingListActivity: void setBehindContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingPreferenceActivity: void setContentView(android.view.View)
+com.slidingmenu.lib.app.SlidingPreferenceActivity: void setBehindContentView(android.view.View)
+kr.go.KNPA.Romeo.Base.Message
+kr.go.KNPA.Romeo.BaseActivity: BaseActivity(int)
+kr.go.KNPA.Romeo.Chat.Chat
+kr.go.KNPA.Romeo.Chat.ChatListView
+kr.go.KNPA.Romeo.Chat.ChatListView: ChatListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Chat.ChatListView: ChatListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.Chat.ChatListView: kr.go.KNPA.Romeo.Chat.Room getRoom()
+kr.go.KNPA.Romeo.Chat.ChatListView: int getNumberOfItems()
+kr.go.KNPA.Romeo.Chat.RoomListView
+kr.go.KNPA.Romeo.Chat.RoomListView: RoomListView(android.content.Context)
+kr.go.KNPA.Romeo.Chat.RoomListView: RoomListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Chat.RoomListView: RoomListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.Chat.RoomSettingActivity
+kr.go.KNPA.Romeo.Chat.RoomSettingActivity: RoomSettingActivity()
+kr.go.KNPA.Romeo.Document.Document
+kr.go.KNPA.Romeo.Document.DocumentListView
+kr.go.KNPA.Romeo.Document.DocumentListView: DocumentListView(android.content.Context)
+kr.go.KNPA.Romeo.Document.DocumentListView: DocumentListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Document.DocumentListView: DocumentListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.GCMIntentService
+kr.go.KNPA.Romeo.GCMIntentService: GCMIntentService()
+kr.go.KNPA.Romeo.GCMIntentService: GCMIntentService(java.lang.String[])
+kr.go.KNPA.Romeo.IntroActivity
+kr.go.KNPA.Romeo.IntroActivity: IntroActivity()
+kr.go.KNPA.Romeo.MainActivity
+kr.go.KNPA.Romeo.MainActivity: MainActivity()
+kr.go.KNPA.Romeo.Member.Department
+kr.go.KNPA.Romeo.Member.Department: android.os.Parcelable$Creator CREATOR
+kr.go.KNPA.Romeo.Member.MemberDetailActivity
+kr.go.KNPA.Romeo.Member.MemberDetailActivity: MemberDetailActivity()
+kr.go.KNPA.Romeo.Member.MemberFavoriteListView
+kr.go.KNPA.Romeo.Member.MemberFavoriteListView: MemberFavoriteListView(android.content.Context)
+kr.go.KNPA.Romeo.Member.MemberFavoriteListView: MemberFavoriteListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Member.MemberFavoriteListView: MemberFavoriteListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.Member.MemberListView
+kr.go.KNPA.Romeo.Member.MemberListView: MemberListView(android.content.Context)
+kr.go.KNPA.Romeo.Member.MemberListView: MemberListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Member.MemberListView: MemberListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.Member.MemberSearch
+kr.go.KNPA.Romeo.Member.MemberSearch: MemberSearch()
+kr.go.KNPA.Romeo.Member.User
+kr.go.KNPA.Romeo.Member.User: android.os.Parcelable$Creator CREATOR
+kr.go.KNPA.Romeo.Member.UserListActivity
+kr.go.KNPA.Romeo.Member.UserListActivity: UserListActivity()
+kr.go.KNPA.Romeo.PasswordActivity
+kr.go.KNPA.Romeo.PasswordActivity: PasswordActivity()
+kr.go.KNPA.Romeo.R$anim: int slide_in_right
+kr.go.KNPA.Romeo.R$anim: int slide_out_right
+kr.go.KNPA.Romeo.R$anim: int stay
+kr.go.KNPA.Romeo.R$anim: int waiter_anim
+kr.go.KNPA.Romeo.R$array: int color_names
+kr.go.KNPA.Romeo.R$attr: int behindOffset
+kr.go.KNPA.Romeo.R$attr: int behindScrollScale
+kr.go.KNPA.Romeo.R$attr: int behindWidth
+kr.go.KNPA.Romeo.R$attr: int duration
+kr.go.KNPA.Romeo.R$attr: int fadeDegree
+kr.go.KNPA.Romeo.R$attr: int fadeEnabled
+kr.go.KNPA.Romeo.R$attr: int fps
+kr.go.KNPA.Romeo.R$attr: int mode
+kr.go.KNPA.Romeo.R$attr: int selectorDrawable
+kr.go.KNPA.Romeo.R$attr: int selectorEnabled
+kr.go.KNPA.Romeo.R$attr: int shadowDrawable
+kr.go.KNPA.Romeo.R$attr: int shadowWidth
+kr.go.KNPA.Romeo.R$attr: int src
+kr.go.KNPA.Romeo.R$attr: int touchModeAbove
+kr.go.KNPA.Romeo.R$attr: int touchModeBehind
+kr.go.KNPA.Romeo.R$attr: int viewAbove
+kr.go.KNPA.Romeo.R$attr: int viewBehind
+kr.go.KNPA.Romeo.R$color: int background_dark
+kr.go.KNPA.Romeo.R$color: int background_light
+kr.go.KNPA.Romeo.R$color: int black
+kr.go.KNPA.Romeo.R$color: int blue
+kr.go.KNPA.Romeo.R$color: int color0
+kr.go.KNPA.Romeo.R$color: int color1
+kr.go.KNPA.Romeo.R$color: int color2
+kr.go.KNPA.Romeo.R$color: int color3
+kr.go.KNPA.Romeo.R$color: int color4
+kr.go.KNPA.Romeo.R$color: int dark
+kr.go.KNPA.Romeo.R$color: int gray
+kr.go.KNPA.Romeo.R$color: int grayDark
+kr.go.KNPA.Romeo.R$color: int grayLight
+kr.go.KNPA.Romeo.R$color: int green
+kr.go.KNPA.Romeo.R$color: int indogo
+kr.go.KNPA.Romeo.R$color: int light
+kr.go.KNPA.Romeo.R$color: int lighter
+kr.go.KNPA.Romeo.R$color: int main
+kr.go.KNPA.Romeo.R$color: int maroon
+kr.go.KNPA.Romeo.R$color: int midium
+kr.go.KNPA.Romeo.R$color: int navy
+kr.go.KNPA.Romeo.R$color: int orange
+kr.go.KNPA.Romeo.R$color: int red
+kr.go.KNPA.Romeo.R$color: int section_header_title
+kr.go.KNPA.Romeo.R$color: int sub
+kr.go.KNPA.Romeo.R$color: int teal
+kr.go.KNPA.Romeo.R$color: int text
+kr.go.KNPA.Romeo.R$color: int transparent
+kr.go.KNPA.Romeo.R$color: int white
+kr.go.KNPA.Romeo.R$dimen: int activity_horizontal_margin
+kr.go.KNPA.Romeo.R$dimen: int activity_vertical_margin
+kr.go.KNPA.Romeo.R$dimen: int gap
+kr.go.KNPA.Romeo.R$dimen: int gapSmall
+kr.go.KNPA.Romeo.R$dimen: int gapSmaller
+kr.go.KNPA.Romeo.R$dimen: int list_padding
+kr.go.KNPA.Romeo.R$dimen: int menu_list_cell_fontsize
+kr.go.KNPA.Romeo.R$dimen: int menu_list_cell_height
+kr.go.KNPA.Romeo.R$dimen: int menu_list_cell_padding
+kr.go.KNPA.Romeo.R$dimen: int menu_list_cell_width
+kr.go.KNPA.Romeo.R$dimen: int menu_list_icon_height
+kr.go.KNPA.Romeo.R$dimen: int menu_list_icon_padding
+kr.go.KNPA.Romeo.R$dimen: int menu_list_icon_width
+kr.go.KNPA.Romeo.R$dimen: int menu_searchbar_height
+kr.go.KNPA.Romeo.R$dimen: int menu_searchbar_margin
+kr.go.KNPA.Romeo.R$dimen: int menu_searchbar_width
+kr.go.KNPA.Romeo.R$dimen: int section_header_fontsize
+kr.go.KNPA.Romeo.R$dimen: int section_header_height
+kr.go.KNPA.Romeo.R$dimen: int section_header_padding
+kr.go.KNPA.Romeo.R$dimen: int section_header_padding_left
+kr.go.KNPA.Romeo.R$dimen: int settings_cell_height
+kr.go.KNPA.Romeo.R$dimen: int shadow_width
+kr.go.KNPA.Romeo.R$dimen: int slidingmenu_offset
+kr.go.KNPA.Romeo.R$dimen: int survey_result_webview_height_default
+kr.go.KNPA.Romeo.R$drawable: int arrow_down_gray
+kr.go.KNPA.Romeo.R$drawable: int arrow_right_gray
+kr.go.KNPA.Romeo.R$drawable: int box_shadow
+kr.go.KNPA.Romeo.R$drawable: int bubble_active
+kr.go.KNPA.Romeo.R$drawable: int bubble_inactive
+kr.go.KNPA.Romeo.R$drawable: int cell_color
+kr.go.KNPA.Romeo.R$drawable: int chat_bubble_departed
+kr.go.KNPA.Romeo.R$drawable: int chat_bubble_received
+kr.go.KNPA.Romeo.R$drawable: int circle
+kr.go.KNPA.Romeo.R$drawable: int circle_arrow_right_gray
+kr.go.KNPA.Romeo.R$drawable: int circle_check_active
+kr.go.KNPA.Romeo.R$drawable: int circle_check_gray
+kr.go.KNPA.Romeo.R$drawable: int circle_cross_gray
+kr.go.KNPA.Romeo.R$drawable: int circle_minus_gray
+kr.go.KNPA.Romeo.R$drawable: int circle_plus_active
+kr.go.KNPA.Romeo.R$drawable: int circle_star_gray
+kr.go.KNPA.Romeo.R$drawable: int cross_gray
+kr.go.KNPA.Romeo.R$drawable: int download
+kr.go.KNPA.Romeo.R$drawable: int dropdown_background
+kr.go.KNPA.Romeo.R$drawable: int edit_dropdown_layout
+kr.go.KNPA.Romeo.R$drawable: int empty_set_background
+kr.go.KNPA.Romeo.R$drawable: int hr
+kr.go.KNPA.Romeo.R$drawable: int icon
+kr.go.KNPA.Romeo.R$drawable: int icon_arrow_side
+kr.go.KNPA.Romeo.R$drawable: int icon_chat
+kr.go.KNPA.Romeo.R$drawable: int icon_circle
+kr.go.KNPA.Romeo.R$drawable: int icon_dialog
+kr.go.KNPA.Romeo.R$drawable: int icon_document
+kr.go.KNPA.Romeo.R$drawable: int icon_document_check
+kr.go.KNPA.Romeo.R$drawable: int icon_document_departed
+kr.go.KNPA.Romeo.R$drawable: int icon_document_new
+kr.go.KNPA.Romeo.R$drawable: int icon_document_received
+kr.go.KNPA.Romeo.R$drawable: int icon_document_star
+kr.go.KNPA.Romeo.R$drawable: int icon_folder
+kr.go.KNPA.Romeo.R$drawable: int icon_gear
+kr.go.KNPA.Romeo.R$drawable: int icon_people
+kr.go.KNPA.Romeo.R$drawable: int icon_pie_graph
+kr.go.KNPA.Romeo.R$drawable: int icon_pie_graph_departed
+kr.go.KNPA.Romeo.R$drawable: int icon_pie_graph_received
+kr.go.KNPA.Romeo.R$drawable: int icon_star
+kr.go.KNPA.Romeo.R$drawable: int intro
+kr.go.KNPA.Romeo.R$drawable: int magnifier_gray
+kr.go.KNPA.Romeo.R$drawable: int member_detail_background
+kr.go.KNPA.Romeo.R$drawable: int menu_background
+kr.go.KNPA.Romeo.R$drawable: int menu_user_info_box
+kr.go.KNPA.Romeo.R$drawable: int my_rectangle
+kr.go.KNPA.Romeo.R$drawable: int nav_bar_background
+kr.go.KNPA.Romeo.R$drawable: int no_image
+kr.go.KNPA.Romeo.R$drawable: int not_registered
+kr.go.KNPA.Romeo.R$drawable: int room_background
+kr.go.KNPA.Romeo.R$drawable: int round_box
+kr.go.KNPA.Romeo.R$drawable: int round_shadow_gray
+kr.go.KNPA.Romeo.R$drawable: int round_shadow_white
+kr.go.KNPA.Romeo.R$drawable: int shade
+kr.go.KNPA.Romeo.R$drawable: int star_active
+kr.go.KNPA.Romeo.R$drawable: int star_gray
+kr.go.KNPA.Romeo.R$drawable: int sub_indicator
+kr.go.KNPA.Romeo.R$drawable: int user_pic_background
+kr.go.KNPA.Romeo.R$drawable: int user_pic_default
+kr.go.KNPA.Romeo.R$drawable: int user_profile_background
+kr.go.KNPA.Romeo.R$drawable: int waiter_dialog_background
+kr.go.KNPA.Romeo.R$drawable: int waiter_shape
+kr.go.KNPA.Romeo.R$id: int UserListActivityLayout
+kr.go.KNPA.Romeo.R$id: int addAppendix
+kr.go.KNPA.Romeo.R$id: int add_question
+kr.go.KNPA.Romeo.R$id: int arrivalDT
+kr.go.KNPA.Romeo.R$id: int arrow
+kr.go.KNPA.Romeo.R$id: int background
+kr.go.KNPA.Romeo.R$id: int backgroundButton
+kr.go.KNPA.Romeo.R$id: int button
+kr.go.KNPA.Romeo.R$id: int button1
+kr.go.KNPA.Romeo.R$id: int cancel
+kr.go.KNPA.Romeo.R$id: int categoryDepartment
+kr.go.KNPA.Romeo.R$id: int categoryLocation
+kr.go.KNPA.Romeo.R$id: int categoryRank
+kr.go.KNPA.Romeo.R$id: int categoryRole
+kr.go.KNPA.Romeo.R$id: int chatBubbleDeparted
+kr.go.KNPA.Romeo.R$id: int chatBubbleReceived
+kr.go.KNPA.Romeo.R$id: int chatListView
+kr.go.KNPA.Romeo.R$id: int chat_list_cell
+kr.go.KNPA.Romeo.R$id: int checkBox
+kr.go.KNPA.Romeo.R$id: int clearEdit
+kr.go.KNPA.Romeo.R$id: int close
+kr.go.KNPA.Romeo.R$id: int closeDT
+kr.go.KNPA.Romeo.R$id: int close_day
+kr.go.KNPA.Romeo.R$id: int close_month
+kr.go.KNPA.Romeo.R$id: int close_year
+kr.go.KNPA.Romeo.R$id: int code
+kr.go.KNPA.Romeo.R$id: int conditionDepartment
+kr.go.KNPA.Romeo.R$id: int conditionLocation
+kr.go.KNPA.Romeo.R$id: int conditionRank
+kr.go.KNPA.Romeo.R$id: int conditionRole
+kr.go.KNPA.Romeo.R$id: int conditions
+kr.go.KNPA.Romeo.R$id: int content
+kr.go.KNPA.Romeo.R$id: int contentImage
+kr.go.KNPA.Romeo.R$id: int content_frame
+kr.go.KNPA.Romeo.R$id: int control
+kr.go.KNPA.Romeo.R$id: int department
+kr.go.KNPA.Romeo.R$id: int digit0
+kr.go.KNPA.Romeo.R$id: int digit1
+kr.go.KNPA.Romeo.R$id: int digit2
+kr.go.KNPA.Romeo.R$id: int digit3
+kr.go.KNPA.Romeo.R$id: int documentListView
+kr.go.KNPA.Romeo.R$id: int document_list_cell_departed
+kr.go.KNPA.Romeo.R$id: int document_list_cell_favorite
+kr.go.KNPA.Romeo.R$id: int document_list_cell_received
+kr.go.KNPA.Romeo.R$id: int dropdown
+kr.go.KNPA.Romeo.R$id: int dropdown0
+kr.go.KNPA.Romeo.R$id: int dropdown1
+kr.go.KNPA.Romeo.R$id: int dropdown2
+kr.go.KNPA.Romeo.R$id: int dropdown3
+kr.go.KNPA.Romeo.R$id: int dropdown4
+kr.go.KNPA.Romeo.R$id: int dropdown5
+kr.go.KNPA.Romeo.R$id: int dynamic_container
+kr.go.KNPA.Romeo.R$id: int edit
+kr.go.KNPA.Romeo.R$id: int editPic
+kr.go.KNPA.Romeo.R$id: int favorite
+kr.go.KNPA.Romeo.R$id: int favoriteListView
+kr.go.KNPA.Romeo.R$id: int favorite_group_cell
+kr.go.KNPA.Romeo.R$id: int favorite_user_cell
+kr.go.KNPA.Romeo.R$id: int fileList
+kr.go.KNPA.Romeo.R$id: int footer
+kr.go.KNPA.Romeo.R$id: int footer1
+kr.go.KNPA.Romeo.R$id: int footer2
+kr.go.KNPA.Romeo.R$id: int footer3
+kr.go.KNPA.Romeo.R$id: int forwarder
+kr.go.KNPA.Romeo.R$id: int forwards
+kr.go.KNPA.Romeo.R$id: int fullscreen
+kr.go.KNPA.Romeo.R$id: int goCommand
+kr.go.KNPA.Romeo.R$id: int goDetail
+kr.go.KNPA.Romeo.R$id: int goMeeting
+kr.go.KNPA.Romeo.R$id: int goResult
+kr.go.KNPA.Romeo.R$id: int goUnchecked
+kr.go.KNPA.Romeo.R$id: int graphView
+kr.go.KNPA.Romeo.R$id: int header
+kr.go.KNPA.Romeo.R$id: int hr
+kr.go.KNPA.Romeo.R$id: int icon
+kr.go.KNPA.Romeo.R$id: int image
+kr.go.KNPA.Romeo.R$id: int imageView
+kr.go.KNPA.Romeo.R$id: int include1
+kr.go.KNPA.Romeo.R$id: int index
+kr.go.KNPA.Romeo.R$id: int isMultiple
+kr.go.KNPA.Romeo.R$id: int labelDepartment
+kr.go.KNPA.Romeo.R$id: int labelLocation
+kr.go.KNPA.Romeo.R$id: int labelRank
+kr.go.KNPA.Romeo.R$id: int labelRole
+kr.go.KNPA.Romeo.R$id: int left
+kr.go.KNPA.Romeo.R$id: int left_bar_button
+kr.go.KNPA.Romeo.R$id: int listView
+kr.go.KNPA.Romeo.R$id: int listViewContainer
+kr.go.KNPA.Romeo.R$id: int lists
+kr.go.KNPA.Romeo.R$id: int margin
+kr.go.KNPA.Romeo.R$id: int memberDetailActivityLayout
+kr.go.KNPA.Romeo.R$id: int memberListView
+kr.go.KNPA.Romeo.R$id: int member_department_cell
+kr.go.KNPA.Romeo.R$id: int member_user_cell
+kr.go.KNPA.Romeo.R$id: int menu
+kr.go.KNPA.Romeo.R$id: int menu_frame
+kr.go.KNPA.Romeo.R$id: int metadata
+kr.go.KNPA.Romeo.R$id: int name
+kr.go.KNPA.Romeo.R$id: int navigationBar
+kr.go.KNPA.Romeo.R$id: int numNewChat
+kr.go.KNPA.Romeo.R$id: int openDT
+kr.go.KNPA.Romeo.R$id: int open_day
+kr.go.KNPA.Romeo.R$id: int open_month
+kr.go.KNPA.Romeo.R$id: int open_year
+kr.go.KNPA.Romeo.R$id: int options
+kr.go.KNPA.Romeo.R$id: int pager
+kr.go.KNPA.Romeo.R$id: int password
+kr.go.KNPA.Romeo.R$id: int progress
+kr.go.KNPA.Romeo.R$id: int questions
+kr.go.KNPA.Romeo.R$id: int rank
+kr.go.KNPA.Romeo.R$id: int rankName
+kr.go.KNPA.Romeo.R$id: int receivedDT
+kr.go.KNPA.Romeo.R$id: int receivers
+kr.go.KNPA.Romeo.R$id: int receivers_search
+kr.go.KNPA.Romeo.R$id: int right
+kr.go.KNPA.Romeo.R$id: int right_bar_button
+kr.go.KNPA.Romeo.R$id: int role
+kr.go.KNPA.Romeo.R$id: int roomListView
+kr.go.KNPA.Romeo.R$id: int roomSettingScrollView
+kr.go.KNPA.Romeo.R$id: int roomSettingScrollViewLinearLayout
+kr.go.KNPA.Romeo.R$id: int rootLayout
+kr.go.KNPA.Romeo.R$id: int scrollView
+kr.go.KNPA.Romeo.R$id: int searchList
+kr.go.KNPA.Romeo.R$id: int search_bar
+kr.go.KNPA.Romeo.R$id: int section_header
+kr.go.KNPA.Romeo.R$id: int selected_view
+kr.go.KNPA.Romeo.R$id: int sender
+kr.go.KNPA.Romeo.R$id: int slidingmenumain
+kr.go.KNPA.Romeo.R$id: int sub_indicator
+kr.go.KNPA.Romeo.R$id: int submit
+kr.go.KNPA.Romeo.R$id: int surveyListView
+kr.go.KNPA.Romeo.R$id: int survey_list_cell_departed
+kr.go.KNPA.Romeo.R$id: int survey_list_cell_received
+kr.go.KNPA.Romeo.R$id: int tabBar
+kr.go.KNPA.Romeo.R$id: int tabContent
+kr.go.KNPA.Romeo.R$id: int tabFavorite
+kr.go.KNPA.Romeo.R$id: int tabMemberList
+kr.go.KNPA.Romeo.R$id: int textView1
+kr.go.KNPA.Romeo.R$id: int timestamp
+kr.go.KNPA.Romeo.R$id: int title
+kr.go.KNPA.Romeo.R$id: int uesr_pic
+kr.go.KNPA.Romeo.R$id: int userPic
+kr.go.KNPA.Romeo.R$id: int user_group
+kr.go.KNPA.Romeo.R$id: int user_pic
+kr.go.KNPA.Romeo.R$id: int user_profile
+kr.go.KNPA.Romeo.R$id: int waiter
+kr.go.KNPA.Romeo.R$layout: int _cell
+kr.go.KNPA.Romeo.R$layout: int activity_room_setting
+kr.go.KNPA.Romeo.R$layout: int chat_bubble_departed
+kr.go.KNPA.Romeo.R$layout: int chat_bubble_received
+kr.go.KNPA.Romeo.R$layout: int chat_fragment
+kr.go.KNPA.Romeo.R$layout: int chat_info
+kr.go.KNPA.Romeo.R$layout: int chat_input_bar
+kr.go.KNPA.Romeo.R$layout: int chat_room_fragment
+kr.go.KNPA.Romeo.R$layout: int chat_room_list_cell
+kr.go.KNPA.Romeo.R$layout: int content_fragment
+kr.go.KNPA.Romeo.R$layout: int content_frame
+kr.go.KNPA.Romeo.R$layout: int dialog_menu_cell
+kr.go.KNPA.Romeo.R$layout: int document_detail
+kr.go.KNPA.Romeo.R$layout: int document_forward
+kr.go.KNPA.Romeo.R$layout: int document_forward_compose
+kr.go.KNPA.Romeo.R$layout: int document_fragment
+kr.go.KNPA.Romeo.R$layout: int document_list_cell_departed
+kr.go.KNPA.Romeo.R$layout: int document_list_cell_favorite
+kr.go.KNPA.Romeo.R$layout: int document_list_cell_received
+kr.go.KNPA.Romeo.R$layout: int edit_confirm
+kr.go.KNPA.Romeo.R$layout: int edit_dropdown
+kr.go.KNPA.Romeo.R$layout: int edit_dropdown6
+kr.go.KNPA.Romeo.R$layout: int edit_dropdown_item_layout
+kr.go.KNPA.Romeo.R$layout: int edit_frame
+kr.go.KNPA.Romeo.R$layout: int edit_pic
+kr.go.KNPA.Romeo.R$layout: int edit_text
+kr.go.KNPA.Romeo.R$layout: int handbook_fragment
+kr.go.KNPA.Romeo.R$layout: int intro
+kr.go.KNPA.Romeo.R$layout: int list_grouped
+kr.go.KNPA.Romeo.R$layout: int member_conditional_search
+kr.go.KNPA.Romeo.R$layout: int member_conditional_search_condition
+kr.go.KNPA.Romeo.R$layout: int member_department_cell
+kr.go.KNPA.Romeo.R$layout: int member_department_cell_search
+kr.go.KNPA.Romeo.R$layout: int member_detail
+kr.go.KNPA.Romeo.R$layout: int member_detail_activity
+kr.go.KNPA.Romeo.R$layout: int member_favorite_fragment
+kr.go.KNPA.Romeo.R$layout: int member_favorite_group_cell
+kr.go.KNPA.Romeo.R$layout: int member_favorite_group_cell_search
+kr.go.KNPA.Romeo.R$layout: int member_favorite_user_cell
+kr.go.KNPA.Romeo.R$layout: int member_favorite_user_cell_search
+kr.go.KNPA.Romeo.R$layout: int member_fragment
+kr.go.KNPA.Romeo.R$layout: int member_search
+kr.go.KNPA.Romeo.R$layout: int member_user_cell
+kr.go.KNPA.Romeo.R$layout: int member_user_cell_search
+kr.go.KNPA.Romeo.R$layout: int menu_frame
+kr.go.KNPA.Romeo.R$layout: int menu_list_cell
+kr.go.KNPA.Romeo.R$layout: int menu_list_cell_item
+kr.go.KNPA.Romeo.R$layout: int menu_list_cell_section_folded
+kr.go.KNPA.Romeo.R$layout: int menu_list_cell_section_unfolded
+kr.go.KNPA.Romeo.R$layout: int menu_list_fragment
+kr.go.KNPA.Romeo.R$layout: int navigation_bar
+kr.go.KNPA.Romeo.R$layout: int not_registered_activity
+kr.go.KNPA.Romeo.R$layout: int password_activity
+kr.go.KNPA.Romeo.R$layout: int scrollable_image_view
+kr.go.KNPA.Romeo.R$layout: int search_bar
+kr.go.KNPA.Romeo.R$layout: int section_header
+kr.go.KNPA.Romeo.R$layout: int setting_list_cell_menu
+kr.go.KNPA.Romeo.R$layout: int settings_cell
+kr.go.KNPA.Romeo.R$layout: int settings_cell_control
+kr.go.KNPA.Romeo.R$layout: int settings_cell_twoline
+kr.go.KNPA.Romeo.R$layout: int settings_cell_twoline_control
+kr.go.KNPA.Romeo.R$layout: int settings_fragment
+kr.go.KNPA.Romeo.R$layout: int slidingmenumain
+kr.go.KNPA.Romeo.R$layout: int survey_answer
+kr.go.KNPA.Romeo.R$layout: int survey_compose
+kr.go.KNPA.Romeo.R$layout: int survey_fragment
+kr.go.KNPA.Romeo.R$layout: int survey_list_cell_departed
+kr.go.KNPA.Romeo.R$layout: int survey_list_cell_received
+kr.go.KNPA.Romeo.R$layout: int survey_option_compose
+kr.go.KNPA.Romeo.R$layout: int survey_option_result
+kr.go.KNPA.Romeo.R$layout: int survey_question_answer
+kr.go.KNPA.Romeo.R$layout: int survey_question_compose
+kr.go.KNPA.Romeo.R$layout: int survey_question_result
+kr.go.KNPA.Romeo.R$layout: int survey_result
+kr.go.KNPA.Romeo.R$layout: int test_layout
+kr.go.KNPA.Romeo.R$layout: int user_group
+kr.go.KNPA.Romeo.R$layout: int user_list_activity
+kr.go.KNPA.Romeo.R$layout: int user_list_cell
+kr.go.KNPA.Romeo.R$layout: int user_profile_fragment
+kr.go.KNPA.Romeo.R$layout: int waiter_dialog
+kr.go.KNPA.Romeo.R$string: int action_settings
+kr.go.KNPA.Romeo.R$string: int add
+kr.go.KNPA.Romeo.R$string: int add_condition
+kr.go.KNPA.Romeo.R$string: int add_question
+kr.go.KNPA.Romeo.R$string: int app_name
+kr.go.KNPA.Romeo.R$string: int back
+kr.go.KNPA.Romeo.R$string: int button
+kr.go.KNPA.Romeo.R$string: int cancel
+kr.go.KNPA.Romeo.R$string: int checkedChat
+kr.go.KNPA.Romeo.R$string: int checkedDocument
+kr.go.KNPA.Romeo.R$string: int closedSurvey
+kr.go.KNPA.Romeo.R$string: int command
+kr.go.KNPA.Romeo.R$string: int commandTitle
+kr.go.KNPA.Romeo.R$string: int compose
+kr.go.KNPA.Romeo.R$string: int condition_department
+kr.go.KNPA.Romeo.R$string: int condition_location
+kr.go.KNPA.Romeo.R$string: int condition_rank
+kr.go.KNPA.Romeo.R$string: int condition_role
+kr.go.KNPA.Romeo.R$string: int conditionalSearchTitle
+kr.go.KNPA.Romeo.R$string: int department
+kr.go.KNPA.Romeo.R$string: int did
+kr.go.KNPA.Romeo.R$string: int didnot
+kr.go.KNPA.Romeo.R$string: int document
+kr.go.KNPA.Romeo.R$string: int documentDepartedTitle
+kr.go.KNPA.Romeo.R$string: int documentFavoriteTitle
+kr.go.KNPA.Romeo.R$string: int documentForwardTitle
+kr.go.KNPA.Romeo.R$string: int documentReceivedTitle
+kr.go.KNPA.Romeo.R$string: int documentTitle
+kr.go.KNPA.Romeo.R$string: int document_receivers_placehold
+kr.go.KNPA.Romeo.R$string: int done
+kr.go.KNPA.Romeo.R$string: int dummy
+kr.go.KNPA.Romeo.R$string: int duration
+kr.go.KNPA.Romeo.R$string: int edit
+kr.go.KNPA.Romeo.R$string: int error_connection
+kr.go.KNPA.Romeo.R$string: int formatString_FullDate
+kr.go.KNPA.Romeo.R$string: int formatString_closeDT
+kr.go.KNPA.Romeo.R$string: int formatString_openDT
+kr.go.KNPA.Romeo.R$string: int formatString_regular
+kr.go.KNPA.Romeo.R$string: int forward
+kr.go.KNPA.Romeo.R$string: int fromTo
+kr.go.KNPA.Romeo.R$string: int fwd
+kr.go.KNPA.Romeo.R$string: int hello_world
+kr.go.KNPA.Romeo.R$string: int labelForwarder
+kr.go.KNPA.Romeo.R$string: int labelReceiver
+kr.go.KNPA.Romeo.R$string: int labelSender
+kr.go.KNPA.Romeo.R$string: int labelSurveyDuration
+kr.go.KNPA.Romeo.R$string: int letSelect
+kr.go.KNPA.Romeo.R$string: int libraryTitle
+kr.go.KNPA.Romeo.R$string: int list
+kr.go.KNPA.Romeo.R$string: int loremIpsum
+kr.go.KNPA.Romeo.R$string: int loremIpsumLong
+kr.go.KNPA.Romeo.R$string: int loremIpsumShort
+kr.go.KNPA.Romeo.R$string: int meeting
+kr.go.KNPA.Romeo.R$string: int meetingTitle
+kr.go.KNPA.Romeo.R$string: int memberFavoriteTitle
+kr.go.KNPA.Romeo.R$string: int memberListTitle
+kr.go.KNPA.Romeo.R$string: int menu
+kr.go.KNPA.Romeo.R$string: int modify
+kr.go.KNPA.Romeo.R$string: int name
+kr.go.KNPA.Romeo.R$string: int next
+kr.go.KNPA.Romeo.R$string: int none
+kr.go.KNPA.Romeo.R$string: int notification_command_content
+kr.go.KNPA.Romeo.R$string: int notification_command_ticker
+kr.go.KNPA.Romeo.R$string: int notification_command_title
+kr.go.KNPA.Romeo.R$string: int notification_document_content
+kr.go.KNPA.Romeo.R$string: int notification_document_ticker
+kr.go.KNPA.Romeo.R$string: int notification_document_title
+kr.go.KNPA.Romeo.R$string: int notification_meeting_content
+kr.go.KNPA.Romeo.R$string: int notification_meeting_ticker
+kr.go.KNPA.Romeo.R$string: int notification_meeting_title
+kr.go.KNPA.Romeo.R$string: int notification_survey_content
+kr.go.KNPA.Romeo.R$string: int notification_survey_ticker
+kr.go.KNPA.Romeo.R$string: int notification_survey_title
+kr.go.KNPA.Romeo.R$string: int ok
+kr.go.KNPA.Romeo.R$string: int openedSurvey
+kr.go.KNPA.Romeo.R$string: int option_title_placehold
+kr.go.KNPA.Romeo.R$string: int password_input
+kr.go.KNPA.Romeo.R$string: int previous
+kr.go.KNPA.Romeo.R$string: int question_index
+kr.go.KNPA.Romeo.R$string: int question_is_multiple
+kr.go.KNPA.Romeo.R$string: int question_title_placehold
+kr.go.KNPA.Romeo.R$string: int rank
+kr.go.KNPA.Romeo.R$string: int receiver
+kr.go.KNPA.Romeo.R$string: int receivers_placehold
+kr.go.KNPA.Romeo.R$string: int registration
+kr.go.KNPA.Romeo.R$string: int result
+kr.go.KNPA.Romeo.R$string: int role
+kr.go.KNPA.Romeo.R$string: int sampleDT
+kr.go.KNPA.Romeo.R$string: int sampleForwarder
+kr.go.KNPA.Romeo.R$string: int sampleListIndex
+kr.go.KNPA.Romeo.R$string: int sampleSender
+kr.go.KNPA.Romeo.R$string: int sampleSurveyCloseDT
+kr.go.KNPA.Romeo.R$string: int sampleSurveyOpenDT
+kr.go.KNPA.Romeo.R$string: int sampleTime
+kr.go.KNPA.Romeo.R$string: int search
+kr.go.KNPA.Romeo.R$string: int send
+kr.go.KNPA.Romeo.R$string: int sender
+kr.go.KNPA.Romeo.R$string: int settingsTitle
+kr.go.KNPA.Romeo.R$string: int statusAnswered
+kr.go.KNPA.Romeo.R$string: int statusChecked
+kr.go.KNPA.Romeo.R$string: int statusNotAnswered
+kr.go.KNPA.Romeo.R$string: int statusUnchecked
+kr.go.KNPA.Romeo.R$string: int subTitle
+kr.go.KNPA.Romeo.R$string: int submit
+kr.go.KNPA.Romeo.R$string: int survey
+kr.go.KNPA.Romeo.R$string: int surveyComposeTitle
+kr.go.KNPA.Romeo.R$string: int surveyDepartedTitle
+kr.go.KNPA.Romeo.R$string: int surveyReceivedTitle
+kr.go.KNPA.Romeo.R$string: int surveyTitle
+kr.go.KNPA.Romeo.R$string: int survey_close_day_placehold
+kr.go.KNPA.Romeo.R$string: int survey_close_month_placehold
+kr.go.KNPA.Romeo.R$string: int survey_close_year_placehold
+kr.go.KNPA.Romeo.R$string: int survey_content_placehold
+kr.go.KNPA.Romeo.R$string: int survey_open_day_placehold
+kr.go.KNPA.Romeo.R$string: int survey_open_month_placehold
+kr.go.KNPA.Romeo.R$string: int survey_open_year_placehold
+kr.go.KNPA.Romeo.R$string: int survey_receivers_placehold
+kr.go.KNPA.Romeo.R$string: int survey_title_placehold
+kr.go.KNPA.Romeo.R$string: int title
+kr.go.KNPA.Romeo.R$string: int title_activity_main
+kr.go.KNPA.Romeo.R$string: int title_activity_user_list
+kr.go.KNPA.Romeo.R$string: int unCheckedChat
+kr.go.KNPA.Romeo.R$string: int unCheckedDocument
+kr.go.KNPA.Romeo.R$style: int AppBaseTheme
+kr.go.KNPA.Romeo.R$style: int AppTheme
+kr.go.KNPA.Romeo.R$style: int SpinnerDropDownItem
+kr.go.KNPA.Romeo.R$style: int SpinnerItem
+kr.go.KNPA.Romeo.R$style: int Theme_Dialog
+kr.go.KNPA.Romeo.R$style: int customtheme
+kr.go.KNPA.Romeo.R$styleable: int[] SlidingMenu
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_behindOffset
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_behindScrollScale
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_behindWidth
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_fadeDegree
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_fadeEnabled
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_mode
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_selectorDrawable
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_selectorEnabled
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_shadowDrawable
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_shadowWidth
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_touchModeAbove
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_touchModeBehind
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_viewAbove
+kr.go.KNPA.Romeo.R$styleable: int SlidingMenu_viewBehind
+kr.go.KNPA.Romeo.R$styleable: int[] WaiterView
+kr.go.KNPA.Romeo.R$styleable: int WaiterView_duration
+kr.go.KNPA.Romeo.R$styleable: int WaiterView_fps
+kr.go.KNPA.Romeo.R$styleable: int WaiterView_src
+kr.go.KNPA.Romeo.R$xml: int room
+kr.go.KNPA.Romeo.R$xml: int settings
+kr.go.KNPA.Romeo.R$xml: int settings_preferences
+kr.go.KNPA.Romeo.Register.NotRegisteredActivity
+kr.go.KNPA.Romeo.Register.NotRegisteredActivity: NotRegisteredActivity()
+kr.go.KNPA.Romeo.Register.UserRegisterActivity
+kr.go.KNPA.Romeo.Register.UserRegisterActivity: UserRegisterActivity()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.EditText getEditView()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: java.lang.String getEditTitle()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setEditTitle(java.lang.String)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.Button getClearEditButton()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setHeaderTitle(java.lang.String)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setFooterTitle(java.lang.String)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.TextView getHeaderView()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.TextView getFooterView()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.Button getSubmitButton()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setSubmitButtonVisible(java.lang.Boolean)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.Spinner getDropdown()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.Button getImageButton()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.widget.ImageView getImageView()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setImage(int)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setImage(android.graphics.drawable.Drawable)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setImage(android.graphics.Bitmap)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setImage(android.graphics.Matrix)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: void setImage(android.net.Uri)
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.graphics.drawable.Drawable getDrawable()
+kr.go.KNPA.Romeo.Register.UserRegisterEditView: android.graphics.Bitmap getBitmap()
+kr.go.KNPA.Romeo.RomeoListView: RomeoListView(android.content.Context)
+kr.go.KNPA.Romeo.RomeoListView: RomeoListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.RomeoListView: RomeoListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.RomeoListView: void setListBackground(android.database.Cursor)
+kr.go.KNPA.Romeo.Survey.Survey
+kr.go.KNPA.Romeo.Survey.SurveyComposeFragment
+kr.go.KNPA.Romeo.Survey.SurveyComposeFragment: SurveyComposeFragment()
+kr.go.KNPA.Romeo.Survey.SurveyListView
+kr.go.KNPA.Romeo.Survey.SurveyListView: SurveyListView(android.content.Context)
+kr.go.KNPA.Romeo.Survey.SurveyListView: SurveyListView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Survey.SurveyListView: SurveyListView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.Util.WaiterView
+kr.go.KNPA.Romeo.Util.WaiterView: WaiterView(android.content.Context,android.util.AttributeSet,int)
+kr.go.KNPA.Romeo.Util.WaiterView: WaiterView(android.content.Context,android.util.AttributeSet)
+kr.go.KNPA.Romeo.Util.WaiterView: WaiterView(android.content.Context)
+kr.go.KNPA.Romeo.Util.WaiterView: void setProgress(int)
+kr.go.KNPA.Romeo.Util.WaiterView: void setVisibility(int)
+org.kisa.HAS160
+org.kisa.HAS160: int has160Update(int[],int[],byte[],byte[],int)
+org.kisa.HAS160: int has160Final(int[],int[],byte[],byte[])
+org.kisa.HIGHT
+org.kisa.HIGHT: void hightCBCInit(byte[],byte[],byte[])
+org.kisa.HIGHT: int hightCBCProcess(int,int[],byte[],byte[],byte[],byte[],byte[],byte[],int,byte[],int)
+org.kisa.HIGHT: void hightCBCClose(int,byte[],byte[],byte[],byte[],byte[],int)
+org.kisa.SEED
+org.kisa.SEED: int seedCBCInit(byte[],int[])
+org.kisa.SEED: int internalSeedCBCProcessEnc(int,int[],byte[],byte[],int[],byte[],int,byte[],int)
+org.kisa.SEED: int internalSeedCBCProcessDec(int,int[],byte[],byte[],int[],byte[],int[],byte[],int,byte[],int)
+org.kisa.SEED: int internalSeedProcessBlocks(int[],byte[],byte[],byte[],int)

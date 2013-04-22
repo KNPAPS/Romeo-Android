@@ -18,6 +18,8 @@ import kr.go.KNPA.Romeo.Util.ImageViewActivity;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -107,7 +109,7 @@ public class ChatListAdapter extends CursorAdapter {
 				User u = MemberManager.sharedManager().getUser(userIdxs[i]);
 				text += Constants.POLICE_RANK[u.rank]+" "+u.name+"님,";
 			}
-			text = text.substring(0,text.length()-2);
+			text = text.substring(0,text.length()-1);
 			text += "을 초대하였습니다";
 			((TextView)listItem).setText(text);
 			
@@ -325,7 +327,10 @@ public class ChatListAdapter extends CursorAdapter {
 		    	@Override
 		    	public void onClick(DialogInterface dialog, int which) {
 		    		switch(which){
-		    		case 0://채팅방 이름 설정
+		    		case 0://복사
+		    			ClipboardManager clipboardManager =  (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+		    			ClipData clip = ClipData.newPlainText("txt",((TextView)view).getText() );
+		    			clipboardManager.setPrimaryClip(clip);
 		    			
 		    			break;
 		    		case 1://삭제

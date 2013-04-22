@@ -145,7 +145,8 @@ public class RoomSettingActivity extends Activity {
 				
 				Bundle b = new Bundle();
 				b.putInt(KEY_ACTION, RoomFragment.ACTION_JOIN_ROOM);
-				b.putStringArray(KEY_IDXS, (String[]) receiversIdxs.toArray());
+				
+				b.putStringArrayList(KEY_IDXS, receiversIdxs);
 				Intent intent = new Intent();
 				intent.putExtras(b);
 				setResult(RESULT_OK, intent);
