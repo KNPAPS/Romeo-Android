@@ -21,7 +21,14 @@ public class SurveyResultFragment extends Fragment {
 	
 	
 	public SurveyResultFragment() {}
-	public SurveyResultFragment(Survey survey, int subType) {	this.survey = survey;	this.subType = subType;	}
+	public SurveyResultFragment(Survey survey, int subType) {	
+		this.survey = survey;	
+		this.subType = subType;	
+	}
+	public SurveyResultFragment(String surveyIdx) {	
+		this.survey = new Survey(getActivity(), surveyIdx); 
+		this.subType = survey.subType();
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
