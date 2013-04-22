@@ -156,6 +156,7 @@ public class DataParser {
 		data.add(0,KEY.SURVEY.NUM_CHECKERS,jo.getInt(KEY.SURVEY.NUM_CHECKERS));
 		data.add(0,KEY.SURVEY.NUM_RESPONDERS,jo.getInt(KEY.SURVEY.NUM_RESPONDERS));
 		data.add(0,KEY.SURVEY.NUM_RESPONDERS,jo.getInt(KEY.SURVEY.NUM_RESPONDERS));
+		data.add(0,KEY.SURVEY.NUM_GIVE_UP,jo.getInt(KEY.SURVEY.NUM_GIVE_UP));
 		ArrayList<ArrayList<Integer>> ar = new ArrayList<ArrayList<Integer>>();
 		JSONArray ja = jo.getJSONArray(KEY.SURVEY.RESULT);
 		for ( int i=0; i<ja.length(); i++ ) {
