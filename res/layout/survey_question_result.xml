@@ -40,8 +40,9 @@
 
     <WebView
         android:id="@+id/graphView"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/survey_result_webview_height_default" />
+        android:layout_gravity="center_horizontal"
+        android:layout_width="240dp"
+        android:layout_height="240dp" />
 
     <LinearLayout
         android:id="@+id/options"

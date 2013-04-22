@@ -2,8 +2,6 @@ package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
 
-import com.google.gson.Gson;
-
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Event;
@@ -18,18 +16,25 @@ import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 public class SurveyResultFragment extends Fragment {
 
@@ -37,6 +42,8 @@ public class SurveyResultFragment extends Fragment {
 	public int subType;
 	
 	private View view;
+	
+	private final String[] COLORS = {"#AF0452", "#FF8500", "#008196", "#002787", "#4903C7"};
 	
 	public SurveyResultFragment() {}
 	public SurveyResultFragment(Survey survey, int subType) {	
@@ -141,8 +148,15 @@ public class SurveyResultFragment extends Fragment {
 			// TODO Error Handling
 		};
 		public void onPostExecute(Payload result) {
-			Data resData = result.getData();
-			makeResult(resData);
+			final Data resData = result.getData();
+			getActivity().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					makeResult(resData);
+				}
+			});
+			
 		};
 	};
 	
@@ -150,11 +164,11 @@ public class SurveyResultFragment extends Fragment {
 		if(this.view == null || survey == null || survey.form == null) return;
 		Survey.Form form = survey.form;
 		
-		int nReceivers 	= (Integer)resData.get(0, KEY.SURVEY.NUM_RECEIVERS);	// 총 수신자 수(확인X+확인O)
-		int nUncheckers	= (Integer)resData.get(0, KEY.SURVEY.NUM_UNCHECKERS);	// 확인 안한사람 수
-		int nCheckers 	= (Integer)resData.get(0, KEY.SURVEY.NUM_CHECKERS);		// 확인한 사람 수 (응답자+기권자)
+//		int nReceivers 	= (Integer)resData.get(0, KEY.SURVEY.NUM_RECEIVERS);	// 총 수신자 수(확인X+확인O)
+//		int nUncheckers	= (Integer)resData.get(0, KEY.SURVEY.NUM_UNCHECKERS);	// 확인 안한사람 수
+//		int nCheckers 	= (Integer)resData.get(0, KEY.SURVEY.NUM_CHECKERS);		// 확인한 사람 수 (응답자+기권자)
 		int nResponders	= (Integer)resData.get(0, KEY.SURVEY.NUM_RESPONDERS);	// 응답자수
-		int nBlank 		= (Integer)resData.get(0, KEY.SURVEY.NUM_GIVE_UP);		// 기권자 수 (확인후 응답X)
+//		int nBlank 		= (Integer)resData.get(0, KEY.SURVEY.NUM_GIVE_UP);		// 기권자 수 (확인후 응답X)
 		ArrayList<ArrayList<Integer>> _votes = (ArrayList<ArrayList<Integer>>)resData.get(0, KEY.SURVEY.RESULT);			// 문항/선택지별 투표 수를 담고 있는 배열
 		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -163,7 +177,7 @@ public class SurveyResultFragment extends Fragment {
 		ArrayList<Question> _questions = form.questions(); 
 		for( int qi=0; qi < _questions.size(); qi++) {
 			Question question = _questions.get(qi);
-			LinearLayout questionLL = (LinearLayout)inflater.inflate(R.layout.survey_question_result, _questionsLL, true);
+			LinearLayout questionLL = (LinearLayout)inflater.inflate(R.layout.survey_question_result, _questionsLL, false);
 			
 			TextView qIndexTV = (TextView)questionLL.findViewById(R.id.index);
 			qIndexTV.setText((qi+1)+".");
@@ -179,7 +193,26 @@ public class SurveyResultFragment extends Fragment {
 			ArrayList<Integer> qVote = _votes.get(qi);
 			WebView qGraphWV = (WebView)questionLL.findViewById(R.id.graphView);
 			GraphPlugin graphPlugin = new GraphPlugin(qGraphWV, qVote);
-			
+			ViewGroup.LayoutParams lpWV = qGraphWV.getLayoutParams();
+			if(lpWV == null) {
+//				Display display = getActivity().getWindowManager().getDefaultDisplay();
+//				
+//				int width = 0;
+//				// TODO : SDK 버전별 코드
+//				if(Build.VERSION.SDK_INT < 13) {
+//					width = display.getWidth();
+//				} else {
+//					Point size = new Point();
+//					display.getSize(size);	// Disable Check
+//					width = size.x;
+//				}
+//				// 240 - gap - gapSmall - gap dp
+				int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 210, getActivity().getResources().getDisplayMetrics());
+				lpWV = new ViewGroup.LayoutParams(px, px);
+			} else {
+				lpWV.height = lpWV.width;
+			}
+			qGraphWV.setLayoutParams(lpWV);
 			
 			LinearLayout _optionsLL = (LinearLayout)questionLL.findViewById(R.id.options);
 			ArrayList<String> options = question.options();
@@ -189,15 +222,27 @@ public class SurveyResultFragment extends Fragment {
 				TextView optionTitleTV = (TextView)optionLL.findViewById(R.id.title);
 				optionTitleTV.setText(option);
 				
-				TextView optionContentTV = (TextView)_optionsLL.findViewById(R.id.content);
+				TextView optionContentTV = (TextView)optionLL.findViewById(R.id.content);
 				int nThisOption = qVote.get(oi);
-				float percent = ((float)nThisOption / nResponders);
+				float percent = ( (float)nThisOption / (float)nResponders * (float)100.0 );
 				optionContentTV.setText( ((int)Math.round(percent)) + " %");
+				optionContentTV.setTextColor(Color.parseColor(COLORS[oi%(COLORS.length)]));
 				
 				_optionsLL.addView(optionLL);
 			}
 			
 			_questionsLL.addView(questionLL);
+			
+			// TODO : 수평선 이미지 뷰
+			View ruler = new View(getActivity()); 
+			ruler.setBackgroundColor(0xAADDDDDD);
+			LinearLayout.LayoutParams rulerLP = new LinearLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 2);
+			rulerLP.leftMargin = rulerLP.rightMargin = 
+					(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 11, getActivity().getResources().getDisplayMetrics());
+			_questionsLL.addView(ruler, rulerLP);
+//			ImageView hrIV = (ImageView)inflater.inflate(R.layout.hr_view, _questionsLL, false);
+//			_questionsLL.addView(hrIV);
+			
 		}
 		
 	}
@@ -238,6 +283,8 @@ public class SurveyResultFragment extends Fragment {
     	private WebView qGraphWV = null;
     	private String jsCommand = "";
     	private ArrayList<Integer> arg = null;
+    	
+    	
     	public void callAndroid(final String json) { // must be final
     		getActivity().runOnUiThread(new Runnable() {
 				@Override
@@ -249,13 +296,13 @@ public class SurveyResultFragment extends Fragment {
        
     	public GraphPlugin(WebView wv, ArrayList<Integer> arg, int width, int height) {
     		init(wv);
-			willExecute("javascript::makeGraph('"+new Gson().toJson(arg)+","+width+","+height+"');");
+			willExecute("javascript:makeGraph('"+new Gson().toJson(arg)+","+width+","+height+"');");
 			
 		}
     	
     	public GraphPlugin(WebView wv, ArrayList<Integer> arg) {
     		init(wv);
-			willExecute("javascript::makeGraph('"+new Gson().toJson(arg)+"');");
+			willExecute("javascript:makeGraph('"+new Gson().toJson(arg)+"');");
 			
 		}
     	
@@ -266,11 +313,21 @@ public class SurveyResultFragment extends Fragment {
 			qGraphWV.addJavascriptInterface(this, "GraphPlugin");
 			qGraphWV.setWebViewClient(this);
 			qGraphWV.loadUrl("file:///android_asset/www/result.html");
+			//qGraphWV.getSettings().setLoadWithOverviewMode(true);
+			qGraphWV.getSettings().setUseWideViewPort(true);
+			qGraphWV.setInitialScale(1);
+			
+			qGraphWV.setClickable(false);
+			qGraphWV.setLongClickable(false);
+			qGraphWV.setOnClickListener(new OnClickListener() { @Override public void onClick(View v) { return; } });
+			qGraphWV.setOnTouchListener(new OnTouchListener() { @Override public boolean onTouch(View v, MotionEvent event) { return true; } });
+			qGraphWV.setOverScrollMode(View.OVER_SCROLL_NEVER);
     	}
 
     	@Override
     	public void onPageFinished(WebView view, String url) {
     		super.onPageFinished(view, url);
+    		execute();
     	}
 
     	public void willExecute(String jsCommand) {
