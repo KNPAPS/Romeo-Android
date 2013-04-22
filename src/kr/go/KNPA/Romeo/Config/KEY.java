@@ -46,15 +46,15 @@ public class KEY {
 		
 	}
 	
-	public static class CHAT {
-		public static final String IDX = Chat.class.getSimpleName()+"_idx";
-		public static final String TYPE = Chat.class.getSimpleName()+"_type";
-		public static final String CONTENT = Chat.class.getSimpleName()+"_content";
-		public static final String SENDER_IDX = Chat.class.getSimpleName()+"_senderIdx";
-		public static final String RECEIVERS_IDX = Chat.class.getSimpleName()+"_receiversIdx";
-		public static final String CREATED_TS = Chat.class.getSimpleName()+"_TS";
-		public static final String IS_CHECKED = Chat.class.getSimpleName()+"_checked";
-		public static final String CHECK_TS = Chat.class.getSimpleName()+"_checkTS";
+	public static class CHAT extends MESSAGE {
+//		public static final String IDX = Chat.class.getSimpleName()+"_idx";
+//		public static final String TYPE = Chat.class.getSimpleName()+"_type";
+//		public static final String CONTENT = Chat.class.getSimpleName()+"_content";
+//		public static final String SENDER_IDX = Chat.class.getSimpleName()+"_senderIdx";
+//		public static final String RECEIVERS_IDX = Chat.class.getSimpleName()+"_receiversIdx";
+//		public static final String CREATED_TS = Chat.class.getSimpleName()+"_TS";
+//		public static final String IS_CHECKED = Chat.class.getSimpleName()+"_checked";
+//		public static final String CHECK_TS = Chat.class.getSimpleName()+"_checkTS";
 		public static final String ROOM_CODE = Chat.class.getSimpleName()+"_roomCode";
 		public static final String CONTENT_TYPE = Chat.class.getSimpleName()+"_contentType";
 		public static final String IMAGE_SIZE = "imageSize";
@@ -63,16 +63,16 @@ public class KEY {
 		public static final String LAST_READ_TS = "lastReadTS";
 	}
 
-	public static class DOCUMENT {
-		public static final String IDX = Document.class.getSimpleName()+"_idx";
-		public static final String TYPE = Document.class.getSimpleName()+"_type";
-		public static final String TITLE = Document.class.getSimpleName()+"_title";
-		public static final String CONTENT = Document.class.getSimpleName()+"_content";
-		public static final String SENDER_IDX = Document.class.getSimpleName()+"_senderIdx";
-		public static final String RECEIVERS_IDX = Document.class.getSimpleName()+"_receiversIdx";
-		public static final String CREATED_TS = Document.class.getSimpleName()+"_TS";
-		public static final String IS_CHECKED = Document.class.getSimpleName()+"_checked";
-		public static final String CHECK_TS = Document.class.getSimpleName()+"_checkTS";
+	public static class DOCUMENT extends MESSAGE {
+//		public static final String IDX = Document.class.getSimpleName()+"_idx";
+//		public static final String TYPE = Document.class.getSimpleName()+"_type";
+//		public static final String TITLE = Document.class.getSimpleName()+"_title";
+//		public static final String CONTENT = Document.class.getSimpleName()+"_content";
+//		public static final String SENDER_IDX = Document.class.getSimpleName()+"_senderIdx";
+//		public static final String RECEIVERS_IDX = Document.class.getSimpleName()+"_receiversIdx";
+//		public static final String CREATED_TS = Document.class.getSimpleName()+"_TS";
+//		public static final String IS_CHECKED = Document.class.getSimpleName()+"_checked";
+//		public static final String CHECK_TS = Document.class.getSimpleName()+"_checkTS";
 		
 		public static final String FORWARDS = Document.class.getSimpleName()+"_forwards";
 		public static final String FORWARDER_IDX = "forwarderIdx";
@@ -88,17 +88,17 @@ public class KEY {
 		public static final String IS_FAVORITE = Document.class.getSimpleName()+"_isFavorite";
 	}
 	
-	public static class SURVEY {
-		public static final String IDX = Survey.class.getSimpleName()+"_idx";
-		public static final String TYPE = Survey.class.getSimpleName()+"_type";
-		public static final String CONTENT = Survey.class.getSimpleName()+"_content";
-		public static final String TITLE = Survey.class.getSimpleName()+"_title";
-		public static final String SENDER_IDX = Survey.class.getSimpleName()+"_senderIdx";
-		public static final String RECEIVERS_IDX = Survey.class.getSimpleName()+"_receiversIdx";
-		public static final String CREATED_TS = Survey.class.getSimpleName()+"_TS";
-		public static final String IS_CHECKED = Survey.class.getSimpleName()+"_checked";
-		public static final String CHECK_TS = Survey.class.getSimpleName()+"_checkTS";
-		
+	public static class SURVEY extends MESSAGE {
+//		public static final String IDX = Survey.class.getSimpleName()+"_idx";
+//		public static final String TYPE = Survey.class.getSimpleName()+"_type";
+//		public static final String CONTENT = Survey.class.getSimpleName()+"_content";
+//		public static final String TITLE = Survey.class.getSimpleName()+"_title";
+//		public static final String SENDER_IDX = Survey.class.getSimpleName()+"_senderIdx";
+//		public static final String RECEIVERS_IDX = Survey.class.getSimpleName()+"_receiversIdx";
+//		public static final String CREATED_TS = Survey.class.getSimpleName()+"_TS";
+//		public static final String IS_CHECKED = Survey.class.getSimpleName()+"_checked";
+//		public static final String CHECK_TS = Survey.class.getSimpleName()+"_checkTS";
+//		
 		public static final String OPEN_TS = Survey.class.getSimpleName()+"_openTS";
 		public static final String CLOSE_TS = Survey.class.getSimpleName()+"_closeTS";
 		

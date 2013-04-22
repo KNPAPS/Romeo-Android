@@ -319,7 +319,7 @@ public class SurveyComposeFragment extends Fragment {
 		String content = contentET.getText().toString();
 		
 		if( title != null && title.trim().length() > 0) {
-			form.put(KEY.SURVEY.TITLE, 	title);
+			form.put(KEY.MESSAGE.TITLE, 	title);
 		} else {
 			Toast.makeText(getActivity(), "설문 제목이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			WaiterView.dismissDialog(getActivity());
@@ -327,7 +327,7 @@ public class SurveyComposeFragment extends Fragment {
 		}
 		
 		if(content != null && title.trim().length() > 0) {
-			form.put(KEY.SURVEY.CONTENT, 	content);
+			form.put(KEY.MESSAGE.CONTENT, 	content);
 		} else {
 			Toast.makeText(getActivity(), "설문 요지가 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			WaiterView.dismissDialog(getActivity());

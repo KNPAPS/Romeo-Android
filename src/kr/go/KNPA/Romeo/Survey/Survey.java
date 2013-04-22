@@ -55,6 +55,7 @@ public class Survey extends Message {// implements Parcelable{
 		};
 		
 		t.start();
+		
 		try {
 			t.join();
 		} catch (InterruptedException e) {
