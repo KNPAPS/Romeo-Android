@@ -14,6 +14,7 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
+import kr.go.KNPA.Romeo.Util.ImageViewActivity;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.AlertDialog;
@@ -326,11 +327,11 @@ public class ChatListAdapter extends CursorAdapter {
 		    	@Override
 		    	public void onClick(DialogInterface dialog, int which) {
 		    		switch(which){
-		    		case 0://복사
-		    			ClipboardManager clipboardManager =  (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-		    			ClipData clip = ClipData.newPlainText("txt",((TextView)view).getText() );
-		    			clipboardManager.setPrimaryClip(clip);
-		    			
+		    		case 0://복사 TODO
+//		    			ClipboardManager clipboardManager =  (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+//		    			ClipData clip = ClipData.newPlainText("txt",((TextView)view).getText() );
+//		    			clipboardManager.setPrimaryClip(clip);
+//		    			
 		    			break;
 		    		case 1://삭제
 		    			new Thread(){
