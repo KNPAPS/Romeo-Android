@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Survey;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
@@ -200,6 +201,7 @@ public class Survey extends Message {// implements Parcelable{
 	
 	public void afterSendAnswerSheet(Context context, AnswerSheet answerSheet, boolean status) {
 		DBProcManager.sharedManager(context).survey().updateAnsweredTS(this.idx, System.currentTimeMillis()/1000);
+		MainActivity.sharedActivity().popContent();
 		// TODO : animation
 	}
 	

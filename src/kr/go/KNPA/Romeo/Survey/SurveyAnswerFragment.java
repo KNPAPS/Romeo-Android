@@ -136,7 +136,7 @@ public class SurveyAnswerFragment extends Fragment  {
 			final LinearLayout optionsLL = (LinearLayout)questionView.findViewById(R.id.options);
 			for(int oi=0; oi<question.options().size(); oi++) {
 				String option = question.options().get(oi);
-				View optionView = inflater.inflate(R.layout.survey_option_result, questionsLL, false);
+				View optionView = inflater.inflate(R.layout.survey_option_answer, questionsLL, false);
 				Button oControlBT = (Button)optionView.findViewById(R.id.control);
 				
 				

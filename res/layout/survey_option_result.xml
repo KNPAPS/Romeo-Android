@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:layout_marginTop="@dimen/gap"
+    android:layout_marginBottom="@dimen/gap"
     android:orientation="horizontal" >
-
-    <Button
-        android:id="@+id/control"
-        android:layout_marginLeft="10dp"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:gravity="center_vertical"
-        android:focusable="false"
-        android:background="@drawable/circle_check_gray" />
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_marginLeft="@dimen/gap"
-        android:layout_weight="1"
-        android:ems="10"
         android:gravity="center_vertical"
-        android:text="@string/option_title_placehold"
-        android:textColor="@color/text" >
+        android:textSize="16dp"
+        android:text="선택지 내용"
+        android:textColor="@color/text" />
 
-    </TextView>
+    <TextView 
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/gap"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:text=" • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •"
+        android:textColor="@color/text"
+        />
+    
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginRight="@dimen/gap"
+        android:gravity="center_vertical"
+        android:textSize="24dp"        
+        android:text="비율"
+        android:textColor="@color/text" />
+        
 </LinearLayout>
