@@ -208,9 +208,9 @@ public class SurveyResultFragment extends Fragment {
 //				}
 //				// 240 - gap - gapSmall - gap dp
 				int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 210, getActivity().getResources().getDisplayMetrics());
-				lpWV = new ViewGroup.LayoutParams(px, px);
+				lpWV = new ViewGroup.LayoutParams(px, (int)(px * 0.85));
 			} else {
-				lpWV.height = lpWV.width;
+				lpWV.height = (int)(lpWV.width * 0.85);
 			}
 			qGraphWV.setLayoutParams(lpWV);
 			
@@ -235,10 +235,10 @@ public class SurveyResultFragment extends Fragment {
 			
 			// TODO : 수평선 이미지 뷰
 			View ruler = new View(getActivity()); 
-			ruler.setBackgroundColor(0xAADDDDDD);
+			ruler.setBackgroundColor(0x55EEEEEE);
 			LinearLayout.LayoutParams rulerLP = new LinearLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, 2);
 			rulerLP.leftMargin = rulerLP.rightMargin = 
-					(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 11, getActivity().getResources().getDisplayMetrics());
+					(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 54, getActivity().getResources().getDisplayMetrics());
 			_questionsLL.addView(ruler, rulerLP);
 //			ImageView hrIV = (ImageView)inflater.inflate(R.layout.hr_view, _questionsLL, false);
 //			_questionsLL.addView(hrIV);
