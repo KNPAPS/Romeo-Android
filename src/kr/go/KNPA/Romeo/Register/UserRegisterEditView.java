@@ -156,8 +156,22 @@ public class UserRegisterEditView extends LinearLayout {
 				}
 			}
 			
-			ArrayAdapter<String> adapter = new ArrayAdapter<String> (context,  android.R.layout.simple_spinner_item, ranks ); //TODO : template
-			// TODO adapter.setDropDownViewResource(DROPDOWN_VIEW_LAYOUT);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String> (context,  android.R.layout.simple_spinner_item, ranks ) {
+				@Override
+				public View getDropDownView(int position, View convertView, ViewGroup parent) {
+					if(convertView == null) {
+						LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+						convertView = inflater.inflate(R.layout.edit_dropdown_item_layout, parent, false);
+					}
+					
+		 			String rankString = getItem(position);
+					TextView rankTV = (TextView)convertView.findViewById(R.id.title);
+					rankTV.setText(rankString);
+					
+					return convertView;
+				}
+			}; //TODO : template
+			//adapter.setDropDownViewResource(R.layout.edit_dropdown_item_layout);
 			dd.setAdapter(adapter);
 			dd.setPrompt(context.getString(R.string.rank)+" 선택");
 		}	
