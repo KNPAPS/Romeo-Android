@@ -44,7 +44,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -70,9 +69,12 @@ public class MenuListFragment extends ListFragment {
 	private LinearLayout userLL;
 	private View searchBar;
 	private EditText searchET;
+	private Button searchBT;
 	private Button cancelSearchBT;
 	private ExpandableListView menuList;
 	private ListView searchList;
+	
+	private static MenuListFragment sharedFragment;
 	
 	private SimpleSectionAdapter<MenuListItem> sectionAdapter; 
 	private BaseAdapter emptyAdapter = new BaseAdapter() {	
@@ -81,8 +83,11 @@ public class MenuListFragment extends ListFragment {
 		@Override	public long getItemId(int arg0) {	return 0;	}
 		@Override	public View getView(int arg0, View arg1, ViewGroup arg2) {	return null; }	
 	};
-
+	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		
+		sharedFragment = this;
+		
 		View v = inflater.inflate(R.layout.menu_list_fragment, null);
 		
 		////////////////////////
@@ -209,17 +214,19 @@ public class MenuListFragment extends ListFragment {
 		
 		searchBar = v.findViewById(R.id.search_bar);
 		searchET = (EditText)searchBar.findViewById(R.id.edit);
+		searchBT = (Button)searchBar.findViewById(R.id.editButton);
 		cancelSearchBT = (Button)searchBar.findViewById(R.id.cancel);
+//		
+//		searchET.setOnFocusChangeListener(new OnFocusChangeListener() {
+//			
+//			@Override
+//			public void onFocusChange(View v, boolean hasFocus) {
+//				setSearchMode(hasFocus);
+//			};
+//		});
+//		
 		
-		searchET.setOnFocusChangeListener(new OnFocusChangeListener() {
-			
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				setSearchMode(hasFocus);
-			};
-		});
-		
-		searchET.setOnClickListener(new OnClickListener() {
+		searchBT.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -227,7 +234,7 @@ public class MenuListFragment extends ListFragment {
 			}
 		});
 		
-		searchET.setOnKeyListener(new OnKeyListener() {
+		searchBT.setOnKeyListener(new OnKeyListener() {
 			
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -255,8 +262,9 @@ public class MenuListFragment extends ListFragment {
 				searchET.setText("");
 				searchET.clearFocus();
 				searchList.setAdapter(emptyAdapter);
-				InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-				im.hideSoftInputFromWindow(searchET.getWindowToken(), 0);
+//				InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//				im.hideSoftInputFromWindow(searchET.getWindowToken(), 0);
+				setSearchMode(false);
 			}
 		});
 		
@@ -264,15 +272,28 @@ public class MenuListFragment extends ListFragment {
 		return v;
 	}
 
+	public static void setMode(boolean willSearchMode) {
+		if ( sharedFragment != null)
+			sharedFragment.setSearchMode(willSearchMode);
+	}
+	
 	private void setSearchMode(boolean willSearchMode) {
 		if(willSearchMode == true) {
 			cancelSearchBT.setVisibility(View.VISIBLE);
 			searchList.setVisibility(View.VISIBLE);
 			menuList.setVisibility(View.INVISIBLE);
+			
+			if(searchET != null)
+				searchET.requestFocus();
 		} else {
 			cancelSearchBT.setVisibility(View.GONE);
 			searchList.setVisibility(View.INVISIBLE);
 			menuList.setVisibility(View.VISIBLE);
+			
+			if(searchET != null)
+				searchET.clearFocus();
+			InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			im.hideSoftInputFromWindow(searchET.getWindowToken(), 0);
 		}
 	}
 	

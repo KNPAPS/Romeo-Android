@@ -11,14 +11,13 @@ import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.slidingmenu.lib.SlidingMenu;
@@ -179,17 +178,22 @@ public class MainActivity extends BaseActivity {
 		getSupportFragmentManager().popBackStack();
 	}
 		
-//	@Override
-//	public void toggle() {
-//		super.toggle();
-//		
+	@Override
+	public void toggle() {
+		super.toggle();
+		
 //		View focusedView = getCurrentFocus();
 //		if(focusedView != null) {
 //			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 //			imm.hideSoftInputFromWindow(focusedView.getApplicationWindowToken(), 0);
 //		}
-//	  
-//	}
+		if(getSlidingMenu().isShown()) {
+			Log.d("menu","will close!");
+			MenuListFragment.setMode(false);
+		} else {
+			Log.d("menu","will open!");
+		}
+	}
 	 
 	@Override 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
