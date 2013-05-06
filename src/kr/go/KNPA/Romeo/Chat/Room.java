@@ -303,8 +303,12 @@ public class Room {
 		} else {
 			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
 				DBProcManager.sharedManager(mContext).chat().createRoom(this.getChatters(), this.getType(), this.getRoomCode());
-				pullLastReadTS();
+				
 				created(true);
+
+				for ( int i=0; i<this.getChatters().size(); i++ ) {
+					setLastReadTS(this.getChatters().get(i), System.currentTimeMillis()/1000-500);
+				}
 				
 				//방 기본 타이틀 설정
 				setBaseTitle();

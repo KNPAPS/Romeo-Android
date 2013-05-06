@@ -3,6 +3,8 @@ package kr.go.KNPA.Romeo.Chat;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
@@ -98,7 +100,7 @@ public class RoomListView extends RomeoListView implements OnItemClickListener, 
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, final int position, long l_position) {
-
+		
 		new Thread() {
 			@SuppressWarnings("rawtypes")
 			public void run() {

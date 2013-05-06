@@ -197,7 +197,7 @@ public class ChatListAdapter extends CursorAdapter {
 			case Chat.STATE_SUCCESS:
 				
 				if ( waiterViews.get(messageIdx) != null ) {
-					waiterViews.get(messageIdx).restoreView();
+					waiterViews.remove(messageIdx).restoreView();
 				}
 				
 				setUncheckerInfo(goUncheckedBT,arrivalTS);

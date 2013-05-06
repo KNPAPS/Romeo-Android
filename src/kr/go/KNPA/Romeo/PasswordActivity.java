@@ -41,6 +41,7 @@ public class PasswordActivity extends Activity {
 
 			startActivity(newIntent);
 			finish();
+			return;
 		}
 		
 		parent = (ViewGroup)((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.password_activity, null, false);
@@ -211,7 +212,7 @@ public class PasswordActivity extends Activity {
 	}
 	
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
-		
+
 		Button lbb = (Button)parentView.findViewById(R.id.left_bar_button);
 		Button rbb = (Button)parentView.findViewById(R.id.right_bar_button);
 		

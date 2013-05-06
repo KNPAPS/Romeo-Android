@@ -140,7 +140,7 @@ public class ImageManager {
 		
 		//캐시에서 먼저 검사
 	    String imageKey = getImageCacheKey(imageHash,imageType);
-		final Bitmap bitmap = ImageCache.getBitmapFromMemCache(imageKey);
+		final Bitmap bitmap = CacheManager.getBitmapFromMemCache(imageKey);
 		
 		if ( bitmap == null ) {
 			//없으면 서버에서 가져오고 캐싱
@@ -191,7 +191,7 @@ public class ImageManager {
 			Bitmap bitmap = downloadImage(path);
 			
 			if ( bitmap != null ) {
-				ImageCache.addBitmapToMemoryCache(imageKey, bitmap);
+				CacheManager.addBitmapToMemoryCache(imageKey, bitmap);
 			}
 			
 	        return bitmap;

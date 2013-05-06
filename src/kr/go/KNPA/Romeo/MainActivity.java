@@ -1,4 +1,6 @@
 package kr.go.KNPA.Romeo;
+import java.io.File;
+
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.ChatFragment;
 import kr.go.KNPA.Romeo.Chat.Room;
@@ -11,16 +13,26 @@ import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap.CompressFormat;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.decode.BaseImageDecoder;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.slidingmenu.lib.SlidingMenu;
 
 public class MainActivity extends BaseActivity {
@@ -80,7 +92,8 @@ public class MainActivity extends BaseActivity {
 		if (fragment == null)
 			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST);	// 첫화면										// 생성 		전혀 중요한 클래스가 아니다.
 		
-
+		// ImageLoader 클래스 초기 설정
+		initImageLoader();
 		
 		getSupportFragmentManager()
 		.beginTransaction()
@@ -121,6 +134,21 @@ public class MainActivity extends BaseActivity {
 			.commit();												// 컨텐트 프레임과 현재(혹은 생성된) 프레그먼트를 바꾼다.
 		}
 				
+	}
+	
+	/**
+	 * ImageLoader class initialize
+	 */
+	public void initImageLoader() {
+		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+												.cacheInMemory()
+										        .cacheOnDisc()
+										        .build();
+												
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+										        .defaultDisplayImageOptions(defaultOptions)
+										        .build();
+		ImageLoader.getInstance().init(config); // Do it on Application start		
 	}
 	
 	public void goRoomFragment(int subType, Room room) {

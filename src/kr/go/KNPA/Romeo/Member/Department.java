@@ -3,7 +3,7 @@ package kr.go.KNPA.Romeo.Member;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Department implements Parcelable{
+public class Department implements Parcelable {
 	public static final int NOT_SPECIFIED = -777;
 	public static final int TYPE_MEMBERLIST = 0;
 	public static final int TYPE_FAVORITE = 1;
