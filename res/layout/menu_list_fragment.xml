@@ -10,16 +10,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search_bar" >
-	<EditText
-	    android:id="@+id/edit"
-	    android:layout_gravity="top"
-	    android:layout_weight="1"
-	    android:layout_width="0dp"
-	    android:layout_height="@dimen/menu_searchbar_height"
-	    android:hint="@string/search"
-	    android:background="@drawable/round_shadow_white"
-	    android:textSize="@dimen/menu_list_cell_fontsize" >
-	</EditText>
+
+        
+    <RelativeLayout
+        android:layout_gravity="top"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" >
+       	<EditText
+		    android:id="@+id/edit"
+		    android:layout_width="match_parent"
+		    android:layout_height="@dimen/menu_searchbar_height"
+		    android:hint="@string/search"
+		    android:background="@drawable/round_shadow_white"
+		    android:textSize="@dimen/menu_list_cell_fontsize" >
+		</EditText>
+
+       	<Button
+       	    android:id="@+id/editButton"
+       	    android:layout_width="match_parent"
+		    android:layout_height="@dimen/menu_searchbar_height" 
+		    android:background="@color/transparent"/>
+        	
+    </RelativeLayout>
+        
 
 	<Button
 	    android:id="@+id/cancel"

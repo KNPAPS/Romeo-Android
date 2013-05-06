@@ -13,6 +13,7 @@
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"
         android:layout_marginBottom="11dp"
+        android:textColor="@color/text"
         android:paddingLeft="5dp"
         android:gravity="center_horizontal" />
 <!-- 
@@ -46,8 +47,9 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:paddingLeft="@dimen/gap"
-		        android:paddingRight="@dimen/gap"
+		        android:layout_marginTop="@dimen/gapSmaller"
+		        android:layout_marginBottom="@dimen/gapSmaller"
+		        android:background="@drawable/edit_dropdown_layout"
 		        android:prompt="@string/title" />
     
     <Spinner
@@ -56,8 +58,9 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:paddingLeft="@dimen/gap"
-		        android:paddingRight="@dimen/gap"
+		        android:layout_marginTop="@dimen/gapSmaller"
+		        android:layout_marginBottom="@dimen/gapSmaller"
+		        android:background="@drawable/edit_dropdown_layout"
 		        android:prompt="@string/title" />
     
     <Spinner
@@ -66,8 +69,9 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:paddingLeft="@dimen/gap"
-		        android:paddingRight="@dimen/gap"
+		        android:layout_marginTop="@dimen/gapSmaller"
+		        android:layout_marginBottom="@dimen/gapSmaller"
+		        android:background="@drawable/edit_dropdown_layout"
 		        android:prompt="@string/title" />
     
     <Spinner
@@ -76,8 +80,9 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:paddingLeft="@dimen/gap"
-		        android:paddingRight="@dimen/gap"
+		        android:layout_marginTop="@dimen/gapSmaller"
+		        android:layout_marginBottom="@dimen/gapSmaller"
+		        android:background="@drawable/edit_dropdown_layout"
 		        android:prompt="@string/title" />
     
     <Spinner
@@ -86,8 +91,9 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:paddingLeft="@dimen/gap"
-		        android:paddingRight="@dimen/gap"
+		        android:layout_marginTop="@dimen/gapSmaller"
+		        android:layout_marginBottom="@dimen/gapSmaller"
+		        android:background="@drawable/edit_dropdown_layout"
 		        android:prompt="@string/title" />
     <Spinner
 		        android:id="@+id/dropdown5"
@@ -95,8 +101,9 @@
 		        android:layout_height="50dp"
 		        android:layout_marginLeft="11dp"
 		        android:layout_marginRight="11dp"
-		        android:paddingLeft="@dimen/gap"
-		        android:paddingRight="@dimen/gap"
+		        android:layout_marginTop="@dimen/gapSmaller"
+		        android:layout_marginBottom="@dimen/gapSmaller"
+		        android:background="@drawable/edit_dropdown_layout"
 		        android:prompt="@string/title" />
     <!--  		        android:background="@drawable/edit_dropdown_layout"
      -->
