@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBManager.DBSchema;
 import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Encrypter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
@@ -36,6 +37,8 @@ public class DBProcManager {
 	private DBManager dbm = null;
 	private SQLiteDatabase db;
 	private Context context;
+	
+	private DBProcManager() {}
 	
 	private DBProcManager(Context context) {
 		if ( this.dbm == null ) {
@@ -99,7 +102,7 @@ public class DBProcManager {
 	
 	private long hashToId(String tableName, String hashColName, String hash) {
 		
-		if ( hash == null ) {
+		if ( hash == null || tableName == null || hashColName == null ) {
 			return Constants.NOT_SPECIFIED;
 		}
 		
@@ -122,25 +125,18 @@ public class DBProcManager {
 		return Constants.NOT_SPECIFIED;
 	}
 	
-
-	
-	public class ChatProcManager {
+	public class ChatProcManager extends DBProcManager {
 		
 		/**
 		 * 새 채팅방 생성
-		 * @param userHashes 자기 자신을 포함한 방에 참여하고 있는 사람들의 유저해쉬
+		 * @param chatters 방에 참여하고 있는 사람들의 유저해쉬
 		 * @param chatType 채팅방 타입. @see {Chat.TYPE_MEETING}, @see {Chat.TYPE_COMMAND}
 		 * @param roomHash 룸해쉬
 		 * @return 채팅방 해쉬
 		 */
-		public void createRoom(ArrayList<String> userHashes, int chatType, String roomHash ) {
-
-			if ( userHashes.size() == 0 ) {
-				Log.w(TAG,"유저해쉬 어레이가 비어있음 at createRoom(ArrayList<String> userHashes, int chatType )");
-				return;
-			}
+		public void createRoom(int chatType, String roomHash ) {
         	
-			// 새 방 레코드 생성
+			// 새 방에 대한 레코드 생성
 			String sql =
 					"insert into "+DBSchema.ROOM.TABLE_NAME+
 					"("+DBSchema.ROOM.COLUMN_TYPE+","+
@@ -149,25 +145,224 @@ public class DBProcManager {
 					") values ("+String.valueOf(chatType)+",0,?)";
 			String[] value = {roomHash};
 			db.execSQL(sql,value);
-			long roomId = lastInsertId();
+			
+		}
 
-			//채팅방에 참여하고 있는 유저들의 해쉬를 room_chatter 테이블에 추가			
-			db.beginTransaction();
-			try {
-				int i, n=userHashes.size();
-				for( i=0; i<n; i++ ) {
-					sql = 
-						"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+
-						"("+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+")" +
-						"values ( "+String.valueOf( roomId )+", ? )";
-					String[] val = { userHashes.get(i) };
-					db.execSQL(sql, val);
+		/**
+		 * 채팅방 정보를 담고 있는 커서를 반환
+		 * @b 커서구조\n
+		 * @b COLUMN_ROOM_TYPE 채팅방 타입\n
+		 * @b COLUMN_ROOM_ALIAS 채팅방 별칭\n
+		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
+		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
+		 * @param roomCode 룸 코드
+		 * @return cursor
+		 */
+		public Cursor getRoomInfo(String roomCode) {
+			String sql = 
+					"select r._id ," +
+					" r."+DBSchema.ROOM.COLUMN_TYPE+
+						COLUMN_ROOM_TYPE+"," +
+
+					" r."+DBSchema.ROOM.COLUMN_ALIAS+
+						COLUMN_ROOM_ALIAS+"," +
+					
+					" r."+DBSchema.ROOM.COLUMN_TITLE+
+						COLUMN_ROOM_TITLE+"," +
+					
+					" (select count(rc._id) " +
+						"from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" rc " +
+						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id ) "+
+						COLUMN_ROOM_NUM_CHATTER+
+						
+					" from "+DBSchema.ROOM.TABLE_NAME+" r " +
+					" where "+DBSchema.ROOM.COLUMN_IDX+" = ?";
+			
+			String[] val = { roomCode };
+			
+			return db.rawQuery(sql, val);
+		}
+
+		/**
+		 * 채팅방에 있는 사람들의 목록을 리턴
+		 * @b 커서구조
+		 * @b COLUMN_USER_IDX user idx
+		 * @param roomCode 채팅방 idx
+		 * @return
+		 */
+		public Cursor getRoomChatters(String roomCode) {
+			
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
+			
+			String sql = 
+					"select _id, "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+COLUMN_USER_IDX+
+					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
+					" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"="+String.valueOf(roomId);
+			
+			sql += " and "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != ?";
+			String[] val = {UserInfo.getUserIdx(context)};
+			return db.rawQuery(sql,val);
+		}
+		
+		/**
+		 * receiverIdx와 1대 1로 채팅하고 있는 방의 룸코드를 리턴. 없으면 null 
+		 * @param chatterIdx 상대방 idx
+		 * @return 룸코드 or null
+		 */
+		public String getPairRoomCode( int roomType, String chatterIdx ) {
+			
+			//채팅방에 자기자신과 receiverHash에 해당하는 유저만 있는 경우를 선택해서 roomId를 가져온다.
+			String sql =
+				"select "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" roomId, "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" receiver " +
+				" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
+				" group by "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+
+				" having count( _id ) = 1 and " +
+				" receiver = ? ";
+			String[] val = {chatterIdx};
+			Cursor c = db.rawQuery(sql, val);
+			
+			//만약 있으면 그 roomId로 ROOM 테이블에 쿼리를 날려서 인자로 받은 roomType의 방이 있는지 검사한다.
+			if ( c.moveToNext() ) 
+			{
+				
+				long roomId = c.getInt(0);
+				c.close();
+				sql = "select "+DBSchema.ROOM.COLUMN_IDX+" roomCode from "+DBSchema.ROOM.TABLE_NAME+
+						" where _id = "+String.valueOf(roomId)+" and "+DBSchema.ROOM.COLUMN_TYPE+" = "+String.valueOf(roomType);
+				Cursor cursor = db.rawQuery(sql, null);
+
+				// 만약 있다면 roomCode를 리턴하고 없으면 return null
+				if ( cursor.moveToNext() ) 
+				{
+					String roomCode = cursor.getString(0);
+					cursor.close();
+					return roomCode;
+				} 
+				else 
+				{
+					return null;
 				}
 				
-	            db.setTransactionSuccessful();
-			} finally {
-				db.endTransaction();
+			//그런 방이 없으면 걍 리턴 null
+			} 
+			else
+			{
+				c.close();
+				return null;
 			}
+		}
+		
+		public String setRoomBaseTitle(String roomCode, ArrayList<User> receivers)
+		{
+			String title = "";
+			if ( receivers.size() < 1 ) 
+			{
+				//상대방이없으면 빈방
+				setRoomTitle(roomCode, "빈 방");
+			} 
+			else if ( receivers.size() == 1 ) 
+			{
+				//1:1채팅이면 상대방 계급+이름
+				title = Constants.POLICE_RANK[receivers.get(0).rank]+" "+receivers.get(0).name;
+				setRoomTitle(roomCode, title);
+			} 
+			else 
+			{
+				//여러명 채팅이면 리시버들 이름
+				for( int i=0; i<receivers.size(); i++) 
+				{
+					title += Constants.POLICE_RANK[receivers.get(i).rank]+" "+receivers.get(i).name+", ";
+				}
+				
+				title = title.substring(0,title.length()-2);
+				
+				//길이가 너무 길면 짜름
+				final int MAX_TITLE_LENGTH = 17;
+				if ( title.length() >= MAX_TITLE_LENGTH ) 
+				{
+					title = title.substring(0,MAX_TITLE_LENGTH)+"...";
+				}
+				setRoomTitle(roomCode, title);
+			}
+			return title;
+		}
+		
+		/**
+		 * 채팅방의 Title을 바꾼다.\n
+		 * Alias의 우선순위가 더 높음. Alias == null or Alias == "" 이면 Title을 출력하고 아니면 Alias 출력\n
+		 * 채팅방의 타이틀은 [계급] [사람이름] 형식이며 여러 명일 경우 ,로 분리한다.
+		 * @param roomHash 룸코드
+		 * @param title 타이틀
+		 */
+		public void setRoomTitle(String roomCode, String title) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
+			
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			String sql = 
+					"update "+DBSchema.ROOM.TABLE_NAME+" set "+DBSchema.ROOM.COLUMN_TITLE+" = ? where _id = "+String.valueOf(roomId);
+			String[] val = {title};
+			db.execSQL(sql,val);
+		}
+		
+		/**
+		 * 채팅방의 Alias를 바꾼다.\n
+		 * Alias는 사용자가 직접 지정한 채팅방의 이름이며 이 값이 설정되어 있을 경우 사용자에게 출력하는 채팅방의 이름은\n
+		 * Title이 아니라 Alias가 된다
+		 * @param roomCode 룸코드
+		 * @param alias 별칭
+		 */
+		public void setRoomAlias(String roomCode, String alias) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
+			
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			String sql = 
+					"update "+DBSchema.ROOM.TABLE_NAME+" set "+DBSchema.ROOM.COLUMN_ALIAS+" = ? where _id = "+String.valueOf(roomId);
+			String[] val = {alias};
+			db.execSQL(sql,val);
+		}
+		
+		public void setRoomAlarm(String roomCode, boolean isAlarmOn) {
+			
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
+			
+			if ( roomId == Constants.NOT_SPECIFIED ) {
+				return;
+			}
+			
+			int is = isAlarmOn == true ? 1 : 0;
+			
+			String sql = 
+					"update "+DBSchema.ROOM.TABLE_NAME+
+					" set "+DBSchema.ROOM.COLUMN_IS_ALARM_ON+" = "+String.valueOf(is)+
+					" where _id = "+String.valueOf(roomId);
+			
+			db.execSQL(sql);
+			
+		}
+		
+		/**
+		 * 채팅방 나가기
+		 * @param chatHash
+		 */
+		public void deleteRoom(String roomHash) {
+			
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+			
+			String sql = "delete from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
+			db.execSQL(sql);
+			
+			sql = "delete from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
+			db.execSQL(sql);
+			
+			sql = "delete from "+DBSchema.ROOM.TABLE_NAME+" where _id = "+String.valueOf(roomId);
+			db.execSQL(sql);
+			
 		}
 		
 		/**
@@ -175,22 +370,27 @@ public class DBProcManager {
 		 * @param roomHash
 		 * @return
 		 */
-		public boolean roomExists(String roomHash) {
-			String sql = "select count(_id)>0 is_exists from "+DBSchema.ROOM.TABLE_NAME+
+		public boolean isRoomExists(String roomHash) {
+			
+			String sql = 
+					"select count(_id)>0 is_exists from "+DBSchema.ROOM.TABLE_NAME+
 					" where "+DBSchema.ROOM.COLUMN_IDX+" = ?";
 			String[] val = {roomHash};
 			Cursor cursor = db.rawQuery(sql, val);
 			cursor.moveToNext();
-			return cursor.getInt(0)==1?true:false;
+			
+			return cursor.getInt(0)==1;
 		}
 		
 		/**
-		 * 유저 여러명이 대화에 참가
-		 * @param users
-		 * @param roomHash
+		 * users에 담겨 있는 유저들의 idx를 roomCode에 해당하는 방에 추가
+		 * @param usersIdx 추가할 유저들의 idx
+		 * @param roomCode 방코드
 		 */
-		public void addUsersToRoom(ArrayList<String> users, String roomHash ) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+		public void addUsersToRoom(ArrayList<String> usersIdx, String roomCode ) {
+			
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
+			
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -199,47 +399,31 @@ public class DBProcManager {
 					"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+" ("+
 							DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+
 							DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+
-					") values( "+String.valueOf(roomId)+" , ? )";
+					") values( "+String.valueOf(roomId)+", ? )";
+			
 			db.beginTransaction();
+			
 			try {
 				
-				for ( int i=0; i<users.size(); i++ ) {
-					String[] val = {users.get(i)};
+				for ( int i=0; i<usersIdx.size(); i++ ) {
+					String[] val = {usersIdx.get(i)};
 					db.execSQL(sql,val);
 				}
 				
 				db.setTransactionSuccessful();
-			}finally{
+				
+			} finally{
 				db.endTransaction();
 			}
 		}
 		
 		/**
-		 * 유저 한명이 대화에 참가
+		 * userIdx를 roomCode의 참여자 목록에서 삭제
+		 * @param userIdx 삭제할 user idx
+		 * @param roomCode 방코드
 		 */
-		public void addUserToRoom(String user, String roomHash ) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
-			if ( roomId == Constants.NOT_SPECIFIED ) {
-				return;
-			}
-			
-			String sql = 
-					"insert into "+DBSchema.ROOM_CHATTER.TABLE_NAME+" ("+
-							DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+", "+
-							DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+
-					") values( "+String.valueOf(roomId)+" , ? )";
-
-			String[] val = {user};
-			db.execSQL(sql,val);
-		}
-		
-		/**
-		 * 유저 하나가 대화에서 나감
-		 * @param user
-		 * @param roomHash
-		 */
-		public void removeUserFromRoom(String user, String roomHash) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+		public void removeUserFromRoom(String userIdx, String roomCode) {
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -250,51 +434,53 @@ public class DBProcManager {
 						DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId)+
 						" and "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" = ?";
 
-			String[] val = {user};
+			String[] val = {userIdx};
 			db.execSQL(sql,val);
 		}
+		
 		/**
-		 * 채팅 보낼때 메세지 내용 저장 
-		 * @param roomHash 채팅방 해쉬
-		 * @param senderHash 보내는 사람 
-		 * @param content 채팅 내용
-		 * @param contentType 채팅메세지의 콘텐츠타입 (채팅이면 1 사진이면 2) @see {DBProcManager.CHAT_CONTENT_TYPE_TEXT}, @see{DBProcManager.CHAT_CONTENT_TYPE_PICTURE}
+		 * 채팅 보낼때 채팅 내용 저장 후 chatIdx 생성해서 리턴
+		 * @param chatIdx 채팅 메세지의 idx
+		 * @param roomCode 룸코드
+		 * @param senderIdx 보내는 사람 idx 
+		 * @param content 본문
+		 * @param contentType 콘텐츠타입
 		 * @param createdTS 채팅을 보낸 타임스탬프
-		 * @param chatState 채팅메세지의 전송상태. @see{Chat.STATE_SUCCESS}, @see{Chat.STATE_FAIL}, @see{Chat.STATE_SENDING}
+		 * @param chatState 채팅메세지의 전송상태
 		 */
-		public String saveChatOnSend(String roomHash, String senderHash, String content, int contentType, long createdTS, int chatState) {
-			
-			//자신이 보내는 메세지는 채팅 해시를 새로 생성한다
-			String chatHash = Encrypter.sharedEncrypter().md5(senderHash+String.valueOf(createdTS));
+		public void saveChatOnSend(String chatIdx, String roomCode, String senderIdx, String content, int contentType, long createdTS, int chatState) {
 
 			//저장
-			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS, chatState);
+			saveChat(roomCode, chatIdx, senderIdx, content, contentType, createdTS, chatState);
 			
-			//자신이 보내는 메세지는 확인 시간을 createdTS로 설정한다
-			ArrayList<String> ar = new ArrayList<String>();
-			ar.add(chatHash);
-			updateCheckedTS(ar, createdTS);
-
-			//채팅 해쉬를 리턴하여 활용할 수 있게 한다.
-			return chatHash;
 		}
 		
 		/**
 		 * 채팅 받을때 메세지 내용 저장 
-		 * @param roomHash 채팅방 해쉬
+		 * @param roomCode 채팅방 해쉬
 		 * @param chatHash 서버에서 부여한 채팅의 hash
-		 * @param senderHash 보내는 사람 
+		 * @param senderIdx 보내는 사람 
 		 * @param content 채팅 내용
 		 * @param contentType 채팅메세지의 콘텐츠타입 (채팅이면 1 사진이면 2) @see {DBProcManager.CHAT_CONTENT_TYPE_TEXT}, @see{DBProcManager.CHAT_CONTENT_TYPE_PICTURE}
 		 * @param createdTS 채팅을 보낸 타임스탬프
 		 */
-		public void saveChatOnReceived(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS) {
-			saveChat(roomHash, chatHash, senderHash, content, contentType, createdTS, Chat.STATE_SUCCESS);
+		public void saveChatOnReceived(String roomCode, String chatHash, String senderIdx, String content, int contentType, long createdTS) {
+			saveChat(roomCode, chatHash, senderIdx, content, contentType, createdTS, Chat.STATE_SUCCESS);
 		}
 		
-		private void saveChat(String roomHash, String chatHash, String senderHash, String content, int contentType, long createdTS, int chatState) {
+		/**
+		 * insert chat into rs_chat
+		 * @param roomCode 
+		 * @param chatIdx
+		 * @param senderIdx
+		 * @param content
+		 * @param contentType
+		 * @param createdTS
+		 * @param chatState
+		 */
+		private void saveChat(String roomCode, String chatIdx, String senderIdx, String content, int contentType, long createdTS, int chatState) {
 			//room hash가 유효한 방인지 검사
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
 			if ( roomId == Constants.NOT_SPECIFIED ) {
 				return;
 			}
@@ -316,7 +502,7 @@ public class DBProcManager {
 						String.valueOf(contentType)+","+
 						String.valueOf(chatState)+","+
 						String.valueOf(createdTS)+")";
-			String[] val = { chatHash, senderHash, content };
+			String[] val = { chatIdx, senderIdx, content };
 			db.execSQL(sql, val);
 			
 			long chatId = lastInsertId();
@@ -325,30 +511,6 @@ public class DBProcManager {
 					+" set last_chat_id = "+String.valueOf(chatId)+
 					" where _id = "+String.valueOf(roomId);
 			db.execSQL(sql);
-		}
-		
-		/**
-		 * 채팅 메세지를 확인했을 때
-		 * @param chatHash 채팅 해쉬 어레이
-		 * @param checkedTS 체크한 시간
-		 */
-		public void updateCheckedTS( ArrayList<String> chatHash, long checkedTS ) {
-			
-			if ( chatHash.size() == 0 ) {
-				return;
-			}
-			
-			String sql = "update "+DBSchema.CHAT.TABLE_NAME+" "+
-					"set "+
-					DBSchema.CHAT.COLUMN_IS_CHECKED + " = 1,"+
-					DBSchema.CHAT.COLUMN_CHECKED_TS + " = " + String.valueOf(checkedTS)+
-					" where " + DBSchema.CHAT.COLUMN_IDX + " IN (";
-			for( int i=0; i<chatHash.size(); i++) {
-				sql += "?,";
-			}
-			sql = sql.substring(0,sql.length()-1);
-			sql += ")";
-			db.execSQL(sql, chatHash.toArray());
 		}
 		
 		/**
@@ -365,45 +527,31 @@ public class DBProcManager {
 			String[] val = {chatHash};
 			db.execSQL(sql, val);
 		}
-
-		/**
-		 * 유저가 채팅방에 들어가 메세지들을 확인했을 때의 시간을 기록함 
-		 * @param roomHash 채팅방 해쉬
-		 * @param lastReadTS lastReadTS
-		 */
-		public void updateLastReadTS( String roomHash, long lastReadTS ) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
-			
-			if ( roomId == Constants.NOT_SPECIFIED ) {
-				return;
-			}
-			
-			String sql = "update "+DBSchema.ROOM.TABLE_NAME+
-					"set "+
-					DBSchema.ROOM.COLUMN_LAST_READ_TS+" = "+String.valueOf(lastReadTS)+
-					" where _id = "+String.valueOf(roomId);
-			db.execSQL(sql);	
-		}
 		
 		/**
-		 * 채팅방을 즐겨찾기에 추가
-		 * @param hash
+		 * 채팅방 즐겨찾기 설정/해제
+		 * @param roomCode 룸코드
+		 * @param isFavorite 즐겨찾기 여부
 		 */
-		public void addFavorite( String hash ) {
-			
+		public void setRoomFavorite( String roomCode, boolean isFavorite ) {
+			String sql = "UPDATE "+DBSchema.ROOM.TABLE_NAME+" SET "+DBSchema.ROOM.COLUMN_IS_FAVORITE+ " = "+String.valueOf(isFavorite?1:0)+
+					" WHERE "+DBSchema.ROOM.COLUMN_IDX+" = ?" ;
+			String[] val = {roomCode};
+			db.execSQL(sql,val);
 		}
 		
 		/**
 		 * 채팅방 목록에 대한 정보를 담고 있는 커서를 반환
-		 * @b 커서구조
+		 * @b 커서구조\n
 		 * @b COLUMN_ROOM_IDX 채팅방 해시\n
 		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
+		 * @b COLUMN_ROOM_ALIAS 채팅방 별칭\n
 		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
 		 * @b COLUMN_ROOM_NUM_NEW_CHAT 읽지 않은 채팅 수\n
 		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
 		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
-		 * @param roomType 
-		 * @return cursor
+		 * @param roomType 채팅방의 종류(chat의 subtype)
+		 * @return cursor 
 		 */
 		public Cursor getRoomList(int roomType) {
 			String sql = 
@@ -412,7 +560,10 @@ public class DBProcManager {
 						COLUMN_ROOM_IDX+"," +
 					
 					" r."+DBSchema.ROOM.COLUMN_TITLE+
-						COLUMN_ROOM_TITLE+"," +
+					COLUMN_ROOM_TITLE+"," +
+					
+					" r."+DBSchema.ROOM.COLUMN_ALIAS+
+					COLUMN_ROOM_ALIAS+"," +
 					
 					" (select count(rc._id) " +
 						"from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" rc " +
@@ -429,7 +580,7 @@ public class DBProcManager {
 				
 					" ( select chatter."+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+
 					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" chatter where chatter."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = r._id and "
-					+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != ? limit 1) "+COLUMN_ROOM_CHATTER_IDX+", "+
+					+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != ? limit 1) "+COLUMN_USER_IDX+", "+
 						
 					" (CASE lc."+DBSchema.CHAT.COLUMN_CONTENT_TYPE+" " +
 					"WHEN "+CHAT_CONTENT_TYPE_TEXT+" " +
@@ -455,88 +606,22 @@ public class DBProcManager {
 		}
 		
 		/**
-		 * 채팅을 전송할 때 채팅방에 있는 사람들의 목록을 리턴
-		 * @b 커서구조
-		 * @b COLUMN_USER_IDX 리시버 해쉬
-		 * @param hash 채팅방 해쉬
-		 * @param includeMe 자기자신을 포함하는지 여부
-		 * @return
-		 */
-		public Cursor getRoomChatters( String hash , boolean includeMe ) {
-			
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, hash);
-			
-			String sql = 
-					"select _id, "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+COLUMN_USER_IDX+
-					" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
-					" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"="+String.valueOf(roomId);
-			
-			if ( includeMe == false ) {
-				sql += " and "+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+" != "+UserInfo.getUserIdx(context);
-			}
-			
-			return db.rawQuery(sql,null);
-		}
-		
-		/**
-		 * 1:1채팅인 경우(리시버가 1명) 새로 방을 생성하기 전에 기존에 그 사람과 채팅하고 있는 방이 있는 지 검사한다.\n 
-		 * @param receiverHash
-		 * @return
-		 */
-		public String getRoomCode( int roomType, String receiverHash ) {
-			String userIdx = UserInfo.getUserIdx(context);
-			
-			//채팅방에 자기자신과 receiverHash에 해당하는 유저만 있는 경우를 선택해서 roomId를 가져온다.
-			String sql =
-				"select "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" roomId, group_concat("+DBSchema.ROOM_CHATTER.COLUMN_USER_IDX+") users " +
-				" from "+DBSchema.ROOM_CHATTER.TABLE_NAME+
-				" group by "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+
-				" having count( _id ) =2 and " +
-				" ( users like \"%"+receiverHash+","+userIdx+"%\" or users like \"%"+userIdx+","+receiverHash+"%\" )";
-			Cursor c = db.rawQuery(sql, null);
-			
-			//만약 있으면 그 roomId로 ROOM 테이블에 쿼리를 날려서 인자로 받은 roomType의 방이 있는지 검사한다.
-			if ( c.moveToNext() ) {
-				
-				long roomId = c.getInt(0);
-				c.close();
-				sql = "select "+DBSchema.ROOM.COLUMN_IDX+" roomCode from "+DBSchema.ROOM.TABLE_NAME+
-						" where _id = "+String.valueOf(roomId)+" and "+DBSchema.ROOM.COLUMN_TYPE+" = "+String.valueOf(roomType);
-				Cursor cursor = db.rawQuery(sql, null);
-
-				// 만약 있다면 roomCode를 리턴하고 없으면 return null
-				if ( cursor.moveToNext() ) {
-					String roomCode = cursor.getString(0);
-					cursor.close();
-					return roomCode;
-				} else {
-					return null;
-				}
-				
-			//그런 방이 없으면 걍 리턴 null
-			} else {
-				c.close();
-				return null;
-			}
-		}
-		
-		/**
 		 * 채팅방 내의 채팅 목록 불러오기
 		 * @b 커서구조
 		 * @b COLUMN_CHAT_IDX 채팅해쉬\n
 		 * @b COLUMN_CHAT_SENDER_IDX 센더해쉬\n
 		 * @b COLUMN_CHAT_TS 채팅TS\n
 		 * @b COLUMN_CHAT_CONTENT 내용 \n
-		 * @b COLUMN_CHAT_CONTENT_TYPE 내용의 종류 @see{CHAT_CONTENT_TYPE_TEXT} @see{CHAT_CONTENT_TYPE_PICTURE}\n
-		 * @b COLUMN_CHAT_STATE 채팅 상태 @see{Chat.STATE_SENDING} @see{Chat.STATE_SUCCESS} @see{Chat.STATE_FAIL}\n
-		 * @param roomHash
+		 * @b COLUMN_CHAT_CONTENT_TYPE 내용의 종류\n
+		 * @b COLUMN_CHAT_STATE 채팅 상태
+		 * @param roomCode
 		 * @param TS 역순으로 정렬시 불러올 목록 시작 index
 		 * @param 불러올 채팅의 개수
 		 * @return
 		 */
-		public Cursor getChatList(String roomHash, int start, int count) {
+		public Cursor getChatList(String roomCode, int start, int count) {
 		
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
+			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomCode);
 			String sql=
 					"select * from (select _id, "+
 					DBSchema.CHAT.COLUMN_IDX+COLUMN_CHAT_IDX+", "+
@@ -553,49 +638,9 @@ public class DBProcManager {
 			return db.rawQuery(sql, null);
 		}
 		
-		/**
-		 * 채팅방 정보를 담고 있는 커서를 반환
-		 * @b 커서구조
-		 * @b COLUMN_ROOM_TYPE 채팅방 타입\n
-		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
-		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
-		 * @b COLUMN_ROOM_NUM_NEW_CHAT 읽지 않은 채팅 수\n
-		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
-		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
-		 * @param roomType 
-		 * @return cursor
-		 */
-		public Cursor getRoomInfo(String roomHash) {
-			String sql = 
-					"select r._id ," +
-					" r."+DBSchema.ROOM.COLUMN_TYPE+
-						COLUMN_ROOM_TYPE+"," +
-					
-					" r."+DBSchema.ROOM.COLUMN_TITLE+
-						COLUMN_ROOM_TITLE+"," +
-					
-					" (select count(rc._id) " +
-						"from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" rc " +
-						"where rc."+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+"= r._id ) "+
-						COLUMN_ROOM_NUM_CHATTER+
-					" from "+DBSchema.ROOM.TABLE_NAME+" r " +
-					" where "+DBSchema.ROOM.COLUMN_IDX+" = ?";
-			String[] val = { roomHash };
-			Cursor c = db.rawQuery(sql, val);
-			return c;
-		}
-		public void updateRoomTitle(String roomHash, String title) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
-			
-			if ( roomId == Constants.NOT_SPECIFIED ) {
-				return;
-			}
-			
-			String sql = 
-					"update "+DBSchema.ROOM.TABLE_NAME+" set "+DBSchema.ROOM.COLUMN_TITLE+" = ? where _id = "+String.valueOf(roomId);
-			String[] val = {title};
-			db.execSQL(sql,val);
-		}
+
+		
+
 		
 		/**
 		 * 개별채팅삭제
@@ -607,31 +652,16 @@ public class DBProcManager {
 			db.execSQL(sql,val);
 		}
 		
-		/**
-		 * 채팅방 나가기
-		 * @param chatHash
-		 */
-		public void leaveRoom(String roomHash) {
-			long roomId = hashToId(DBSchema.ROOM.TABLE_NAME, DBSchema.ROOM.COLUMN_IDX, roomHash);
-			
-			String sql = "delete from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
-			db.execSQL(sql);
-			sql = "delete from "+DBSchema.ROOM_CHATTER.TABLE_NAME+" where "+DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID+" = "+String.valueOf(roomId);
-			db.execSQL(sql);
-			sql = "delete from "+DBSchema.ROOM.TABLE_NAME+" where _id = "+String.valueOf(roomId);
-			db.execSQL(sql);
-			
-		}
 		
 		public static final String COLUMN_ROOM_IDX = "room_idx";
 		public static final String COLUMN_ROOM_TYPE = "room_type";
 		public static final String COLUMN_ROOM_TITLE = "room_title";
+		public static final String COLUMN_ROOM_ALIAS = "room_alias";
 		public static final String COLUMN_ROOM_NUM_CHATTER = "num_chatter";
 		public static final String COLUMN_ROOM_NUM_NEW_CHAT = "num_new_chat";
 		public static final String COLUMN_ROOM_LAST_CHAT_TS = "last_chat_ts";
 		public static final String COLUMN_ROOM_LAST_CHAT_CONTENT = "last_chat_content";
-		public static final String COLUMN_ROOM_CHATTER_IDX = "chatter_idx";
-		
+
 		public static final String COLUMN_USER_IDX = "user_idx";
 		public static final String COLUMN_CHAT_SENDER_IDX = "sender_idx";
 		public static final String COLUMN_CHAT_IDX = "chat_idx";
@@ -644,7 +674,7 @@ public class DBProcManager {
 		public static final int CHAT_CONTENT_TYPE_PICTURE = 2;
 	}
 
-	public class DocumentProcManager {
+	public class DocumentProcManager extends DBProcManager {
 		private void saveAttachmentInfo(long docId, ArrayList<HashMap<String, Object>> files) {
 						
 			db.beginTransaction();
@@ -1020,7 +1050,7 @@ public class DBProcManager {
 		
 	}
 
-	public class SurveyProcManager {
+	public class SurveyProcManager extends DBProcManager {
 		/**
 		 * 설문조사보낼때 해쉬 저장
 		 * @param surveyHash 서버가 부여한 설문조사 해쉬
@@ -1174,7 +1204,7 @@ public class DBProcManager {
 		public static final String COLUMN_SURVEY_TYPE = "survey_type";
 	}
 	
-	public class MemberProcManager {
+	public class MemberProcManager extends DBProcManager {
 		
 		/**
 		 * 멤버를 즐겨찾기에 추가/삭제

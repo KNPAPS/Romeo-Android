@@ -1,8 +1,10 @@
 package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.Chat.Chatter;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
@@ -162,7 +164,7 @@ public class MemberManager {
 				
 			return users;
 		} else {
-			return null;
+			return new ArrayList<User>();
 		}
 	}
 	

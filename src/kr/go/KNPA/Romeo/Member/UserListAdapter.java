@@ -6,8 +6,11 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -49,7 +52,7 @@ public class UserListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		
 		if ( position>=mArray.size() || position <0 ) {
 			throw new IllegalStateException("couldn't access to index " + position);
@@ -70,7 +73,7 @@ public class UserListAdapter extends BaseAdapter {
 			v = convertView;			
 		}
 		
-		userPIC = (ImageView)v.findViewById(R.id.uesr_pic);
+		userPIC = (ImageView)v.findViewById(R.id.user_pic);
 		departmentTV = (TextView)v.findViewById(R.id.department);
 		nameTV = (TextView)v.findViewById(R.id.name);
 		rankTV = (TextView)v.findViewById(R.id.rank);
@@ -82,7 +85,17 @@ public class UserListAdapter extends BaseAdapter {
 		nameTV.setText(mArray.get(position).name);
 		rankTV.setText(Constants.POLICE_RANK[mArray.get(position).rank]);
 		roleTV.setText(mArray.get(position).role);
-		
+		userPIC.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				Bundle b = new Bundle();
+				b.putString(MemberDetailActivity.KEY_IDX, mArray.get(position).idx);
+				b.putInt(MemberDetailActivity.KEY_IDX_TYPE, MemberDetailActivity.IDX_TYPE_USER );
+				Intent intent = new Intent(mContext, MemberDetailActivity.class);
+				intent.putExtras(b);
+				mContext.startActivity(intent);
+			}
+		});
 		return v;
 	}
 

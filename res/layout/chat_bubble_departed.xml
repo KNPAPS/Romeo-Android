@@ -9,8 +9,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:gravity="right"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:gravity="right" >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -28,7 +29,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/rankName"
+                android:id="@+id/room_list_cell_room_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/name"
@@ -36,12 +37,6 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/userPic"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/user_pic_default" />
 
     </LinearLayout>
 
@@ -66,20 +61,8 @@
             android:layout_gravity="bottom"
             android:padding="@dimen/gapSmaller"
             android:text="@string/sampleTime"
-            android:textColor="@color/text" />
-
-        <TextView
-            android:id="@+id/content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/chat_bubble_departed"
-            android:maxWidth="150dp"
-            android:paddingBottom="@dimen/gapSmall"
-            android:paddingLeft="@dimen/gapSmall"
-            android:paddingRight="@dimen/gap"
-            android:paddingTop="@dimen/gapSmall"
-            android:text="@string/loremIpsumShort"
-            android:textColor="@color/text" />
+            android:textColor="@color/text"
+            android:textSize="12dp" />
 
         <ImageView
             android:id="@+id/contentImage"
@@ -93,6 +76,20 @@
             android:paddingRight="16dp"
             android:paddingTop="@dimen/gapSmall"
             android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chat_bubble_departed"
+            android:maxWidth="150dp"
+            android:paddingBottom="@dimen/gapSmall"
+            android:paddingLeft="@dimen/gapSmall"
+            android:paddingRight="@dimen/gap"
+            android:paddingTop="@dimen/gapSmall"
+            android:text="@string/loremIpsumShort"
+            android:textColor="@color/text"
+            android:textSize="16dp" />
 
     </LinearLayout>
 

@@ -256,6 +256,4 @@ public class ImageManager {
 		
     	return bitmap;
     }
-
-	
 }

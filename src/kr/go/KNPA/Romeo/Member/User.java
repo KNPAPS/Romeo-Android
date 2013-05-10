@@ -20,8 +20,6 @@ public class User implements Parcelable{
 	
 	public final static String[] RANK = {"치안총감", "치안정감", "치안감", "경무관", "총경", "경정", "경감", "경위", "경사", "경장", "순경", "의경"};
 	
-	private static ArrayList<User> _users = null;
-	
 	public String idx;
 	public String name;
 	public int rank;

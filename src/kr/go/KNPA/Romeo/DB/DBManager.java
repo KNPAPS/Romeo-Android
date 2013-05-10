@@ -12,10 +12,8 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final String TAG = DBManager.class.getName();
 	private static final String TEXT = " TEXT ";
 	private static final String INT = " INTEGER ";
-	private static final String REAL = " REAL ";
-	private static final String BLOB = " BLOB ";
 	private static final String UNIQUE = " UNIQUE ";
-	private static final String NOT_NULL = " "; // do not use not null
+	private static final String NOT_NULL = "  "; // TODO to fix. should set default value for each column or assign valid value when inserting
 	private static final String AUTO_INCREMENT = " AUTOINCREMENT ";
 	private static final String PRIMARY_KEY = " PRIMARY KEY ";
 	private static final String COMMA = " , ";
@@ -106,12 +104,13 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final String SQL_CREATE_TABLE_ROOM = 
 			"CREATE TABLE "+DBSchema.ROOM.TABLE_NAME+
 			" ("+
-			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
+			DBSchema.ROOM._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_IDX  +	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
+			DBSchema.ROOM.COLUMN_ALIAS	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_TYPE	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_IS_FAVORITE	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM.COLUMN_LAST_READ_TS	+	INT+COMMA+
+			DBSchema.ROOM.COLUMN_IS_ALARM_ON	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM.COLUMN_LAST_CHAT_ID	+	INT+
 			")";
 	private static final String SQL_CREATE_INDEX_ROOM = 
@@ -124,8 +123,7 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID	+	INT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM_CHATTER.COLUMN_USER_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
-			DBSchema.ROOM_CHATTER.COLUMN_LAST_READ_TS	+	INT+
+			DBSchema.ROOM_CHATTER.COLUMN_USER_IDX	+	TEXT	+	NOT_NULL	+
 			")";
 	private static final String SQL_CREATE_INDEX_ROOM_CHATTER = 
 			"CREATE INDEX ROOM_CHATTER_IDX ON "+
@@ -137,12 +135,6 @@ public class DBManager extends SQLiteOpenHelper {
 			" ("+
 			BaseColumns._ID	+	INT	+	PRIMARY_KEY	+	AUTO_INCREMENT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IDX	+	TEXT	+	NOT_NULL	+	UNIQUE	+	COMMA+
-//			DBSchema.SURVEY.COLUMN_TITLE	+	TEXT	+	NOT_NULL	+	COMMA+
-//			DBSchema.SURVEY.COLUMN_CONTENT	+	TEXT	+	NOT_NULL	+	COMMA+
-//			DBSchema.SURVEY.COLUMN_OPEN_TS	+	INT	+	NOT_NULL	+	COMMA+
-//			DBSchema.SURVEY.COLUMN_CLOSE_TS	+	INT	+	NOT_NULL	+	COMMA+
-//			DBSchema.SURVEY.COLUMN_CREATED_TS	+	INT	+	NOT_NULL	+	COMMA+
-//			DBSchema.SURVEY.COLUMN_CREATOR_IDX	+	TEXT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_CHECKED	+	INT	+	NOT_NULL	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CHECKED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_IS_ANSWERED	+	INT	+	NOT_NULL	+	COMMA+
@@ -150,11 +142,7 @@ public class DBManager extends SQLiteOpenHelper {
 			DBSchema.SURVEY.COLUMN_ANSWERED_TS	+	INT	+	COMMA+
 			DBSchema.SURVEY.COLUMN_CATEGORY	+	INT	+	NOT_NULL	+
 			")";
-//	private static final String SQL_CREATE_INDEX_SURVEY = 
-//			"CREATE INDEX SURVEY_IDX ON "+
-//					DBSchema.SURVEY.TABLE_NAME+" ("+
-//					DBSchema.SURVEY.COLUMN_CATEGORY+" ASC,"+DBSchema.SURVEY.COLUMN_CREATED_TS+" DESC)";
-
+	
 	private static final String SQL_CREATE_TABLE_SURVEY_RECEIVER = 
 			"CREATE TABLE "+DBSchema.SURVEY_RECEIVER.TABLE_NAME+
 			" ("+
@@ -193,9 +181,10 @@ public class DBManager extends SQLiteOpenHelper {
 					DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID+" ASC)";
 	
 	
-	
+	private Context mContext;
 	public DBManager(Context context) {
 		super(context, DBSchema.DATABASE_NAME, null, DATABASE_VERSION);
+		mContext = context;
 	}
 
 	@Override
@@ -220,7 +209,6 @@ public class DBManager extends SQLiteOpenHelper {
 			db.execSQL(SQL_CREATE_INDEX_DOC_FORWARD);
 			db.execSQL(SQL_CREATE_INDEX_ROOM);
 			db.execSQL(SQL_CREATE_INDEX_ROOM_CHATTER);
-//			db.execSQL(SQL_CREATE_INDEX_SURVEY);
 			db.execSQL(SQL_CREATE_INDEX_USER_FAV);
 			db.execSQL(SQL_CREATE_INDEX_SURVEY_RECV);
 			db.execSQL(SQL_CREATE_INDEX_DOC_RECV);
@@ -232,7 +220,6 @@ public class DBManager extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
-		
 	}
 
 	static class DBSchema {
@@ -290,32 +277,28 @@ public class DBManager extends SQLiteOpenHelper {
 		}
 		
 		public static abstract class ROOM implements BaseColumns {
+			
 			public static final String TABLE_NAME = " rs_room ";
 			public static final String COLUMN_IDX = " room_idx ";
 			public static final String COLUMN_TITLE = " room_title ";
+			public static final String COLUMN_ALIAS = " room_alias ";
 			public static final String COLUMN_TYPE = " room_type ";
 			public static final String COLUMN_IS_FAVORITE = " is_favorite ";
+			public static final String COLUMN_IS_ALARM_ON = " is_alarm_on ";
 			public static final String COLUMN_LAST_CHAT_ID = " last_chat_id ";
-			public static final String COLUMN_LAST_READ_TS = " last_read_ts ";
+			
 		}
-		
+
 		public static abstract class ROOM_CHATTER implements BaseColumns {
 			public static final String TABLE_NAME = " rs_room_chatter ";
 			public static final String COLUMN_ROOM_ID = " room_id ";
 			public static final String COLUMN_USER_IDX = " user_idx ";
-			public static final String COLUMN_LAST_READ_TS = " last_read_ts ";
 		}
 		
 		public static abstract class SURVEY implements BaseColumns {
 			public static final String TABLE_NAME = " rs_survey ";
 			public static final String COLUMN_IDX = " survey_idx ";
 			public static final String COLUMN_CATEGORY = " survey_category ";
-//			public static final String COLUMN_TITLE = " survey_title ";
-//			public static final String COLUMN_CONTENT = " survey_content ";
-//			public static final String COLUMN_OPEN_TS = " open_ts ";
-//			public static final String COLUMN_CLOSE_TS = " close_ts ";
-//			public static final String COLUMN_CREATED_TS = " created_ts ";
-//			public static final String COLUMN_CREATOR_IDX = " creator_idx ";
 			public static final String COLUMN_IS_CHECKED = " is_checked ";
 			public static final String COLUMN_CHECKED_TS = " checked_ts ";
 			public static final String COLUMN_IS_ANSWERED = " is_answered ";

@@ -89,7 +89,7 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden" >
         </activity>
-                <activity
+        <activity
             android:name="kr.go.KNPA.Romeo.Util.ImageViewActivity"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden" >
@@ -104,6 +104,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="kr.go.KNPA.Romeo.Chat.RoomAliasSettingActivity"
+            android:label="@string/title_activity_room_title_setting"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
+        
         <!-- GCM 리시버 -->
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
@@ -112,12 +119,14 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="kr.go.KNPA.Romeo" /> <!-- 젤리빈 부터는 category 빼도 된다 -->
+                <category android:name="kr.go.KNPA.Romeo" />
+ <!-- 젤리빈 부터는 category 빼도 된다 -->
             </intent-filter>
         </receiver>
 
         <!-- GCM 리시버에서 돌리는 서비스 -->
-        <service android:name="kr.go.KNPA.Romeo.GCMIntentService" /> <!-- 서비스명 변경하면 안됨 -->
+        <service android:name="kr.go.KNPA.Romeo.GCMIntentService" />
+ <!-- 서비스명 변경하면 안됨 -->
     </application>
 
 </manifest>

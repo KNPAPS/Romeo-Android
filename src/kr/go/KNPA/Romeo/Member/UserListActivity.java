@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserListActivity extends Activity {
-
+	public static final String KEY_USERS = "users";
 	public static final String KEY_USERS_IDX = "idxs";
 	public static final String KEY_TITLE = "title";
 	

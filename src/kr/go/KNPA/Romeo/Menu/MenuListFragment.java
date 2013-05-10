@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Menu;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,7 @@ import kr.go.KNPA.Romeo.ContentFragment;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.ChatFragment;
+import kr.go.KNPA.Romeo.Chat.RoomListController;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
@@ -362,11 +363,6 @@ public class MenuListFragment extends ListFragment {
 			cDoc.moveToNext();
 		}
 		
-		//// 채팅  X
-		//// 설문 TODO
-		//// 자료실
-		
-		
 		// SimpleSectionList
 		
 		BaseAdapter listAdapter = new IntergratedSearchListAdatper(keyword, resUsers, resDocs, null);
@@ -567,19 +563,19 @@ public class MenuListFragment extends ListFragment {
 			HashMap<String, String> g = (HashMap<String, String>) gData.get(groupPosition);
 			String[] codes = g.get("code").split(":");
 			
-			if(codes[0].toUpperCase().equals("CHAT")) {
-				if(codes[1].toUpperCase().equals("COMMAND")) {
-					fragment = ChatFragment.chatFragment(Chat.TYPE_COMMAND);
-				} else if(codes[1].toUpperCase().equals("MEETING")) {
-					fragment = ChatFragment.chatFragment(Chat.TYPE_MEETING);
+			if(codes[0].equalsIgnoreCase("CHAT")) {
+				if(codes[1].equalsIgnoreCase("COMMAND")) {
+					fragment = RoomListController.getInstance(Chat.TYPE_COMMAND);
+				} else if(codes[1].equalsIgnoreCase("MEETING")) {
+					fragment = RoomListController.getInstance(Chat.TYPE_MEETING);
 				}
-			} else if (codes[0].toUpperCase().equals("DOCUMENT")) {
+			} else if (codes[0].equalsIgnoreCase("DOCUMENT")) {
 				// do nothing, expand
-			} else if (codes[0].toUpperCase().equals("SURVEY")) {
+			} else if (codes[0].equalsIgnoreCase("SURVEY")) {
 				// do nothing, expand
-			} else if (codes[0].toUpperCase().equals("MEMBER") ) {
+			} else if (codes[0].equalsIgnoreCase("MEMBER") ) {
 				// do nothing, expand
-			} else if (codes[0].toUpperCase().equals("SETTINGS")) {
+			} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 				fragment = new SettingsFragment();
 			}
 			
@@ -602,37 +598,37 @@ public class MenuListFragment extends ListFragment {
 			HashMap<String, String> c = (HashMap<String, String>) cData.get(groupPosition).get(childPosition);
 			String[] codes = c.get("code").split(":");
 			
-			if(codes[0].toUpperCase().equals("CHAT")) {
-				if(codes[1].toUpperCase().equals("COMMAND")) {
-					fragment = ChatFragment.chatFragment(Chat.TYPE_COMMAND);
-				} else if(codes[1].toUpperCase().equals("MEETING")) {
-					fragment = ChatFragment.chatFragment(Chat.TYPE_MEETING);
-				}
-			} else if (codes[0].toUpperCase().equals("DOCUMENT")) {
-				if(codes[1].toUpperCase().equals("FAVORITE")) {
+			if(codes[0].equalsIgnoreCase("CHAT")) {
+				if(codes[1].equalsIgnoreCase("COMMAND")) {
+					fragment = RoomListController.getInstance(Chat.TYPE_COMMAND);
+				} else if(codes[1].equalsIgnoreCase("MEETING")) {
+					fragment = RoomListController.getInstance(Chat.TYPE_MEETING);
+				} 
+			} else if (codes[0].equalsIgnoreCase("DOCUMENT")) {
+				if(codes[1].equalsIgnoreCase("FAVORITE")) {
 					fragment = DocumentFragment.documentFragment(Document.TYPE_FAVORITE);
-				}else if(codes[1].toUpperCase().equals("RECEIVED")) {
+				}else if(codes[1].equalsIgnoreCase("RECEIVED")) {
 					fragment = DocumentFragment.documentFragment(Document.TYPE_RECEIVED);
-				} else if(codes[1].toUpperCase().equals("DEPARTED")) {
+				} else if(codes[1].equalsIgnoreCase("DEPARTED")) {
 					fragment = DocumentFragment.documentFragment(Document.TYPE_DEPARTED);
 				}
-			} else if (codes[0].toUpperCase().equals("SURVEY")) {
-				if(codes[1].toUpperCase().equals("DEPARTED")) {
+			} else if (codes[0].equalsIgnoreCase("SURVEY")) {
+				if(codes[1].equalsIgnoreCase("DEPARTED")) {
 					fragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
-				} else if(codes[1].toUpperCase().equals("RECEIVED")) {
+				} else if(codes[1].equalsIgnoreCase("RECEIVED")) {
 					fragment = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED);
 				}
-			} else if (codes[0].toUpperCase().equals("MEMBER") ) {
-				if(codes[1].toUpperCase().equals("MEMBERLIST")) {
+			} else if (codes[0].equalsIgnoreCase("MEMBER") ) {
+				if(codes[1].equalsIgnoreCase("MEMBERLIST")) {
 					fragment = MemberFragment.memberFragment(User.TYPE_MEMBERLIST);
-				} else if(codes[1].toUpperCase().equals("FAVORITE")) {
+				} else if(codes[1].equalsIgnoreCase("FAVORITE")) {
 					fragment = MemberFragment.memberFragment(User.TYPE_FAVORITE);
 				}
-			} else if (codes[0].toUpperCase().equals("LIBRARY")) {
-				if(codes[1].toUpperCase().equals("HANDBOOK")) {
+			} else if (codes[0].equalsIgnoreCase("LIBRARY")) {
+				if(codes[1].equalsIgnoreCase("HANDBOOK")) {
 					fragment = new HandBookFragment();
 				}
-			} else if (codes[0].toUpperCase().equals("SETTINGS")) {
+			} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 				// NOTHING
 			}
 			

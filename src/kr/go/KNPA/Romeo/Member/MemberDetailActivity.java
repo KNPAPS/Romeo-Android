@@ -9,11 +9,11 @@ import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
 import kr.go.KNPA.Romeo.Util.ImageManager;
-import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,16 +29,14 @@ import android.widget.TextView;
 public class MemberDetailActivity extends Activity {
 
 	static final int NOT_SPECIFIED = -777;
-	static final String KEY_IDX = "idx";
-	static final String KEY_IDX_TYPE = "idx_type";
-	static final int IDX_TYPE_USER = 0; 
-	static final int IDX_TYPE_GROUP = 1;
+	public static final String KEY_IDX = "idx";
+	public static final String KEY_IDX_TYPE = "idx_type";
+	public static final int IDX_TYPE_USER = 0; 
+	public static final int IDX_TYPE_GROUP = 1;
 	private Handler mHandler; 
 	private Button background;
 	private Button  close;
 	private Button favorite;
-	private Button goDocument;
-	private Button goSurvey;
 	private Button goCommand;
 	private Button goMeeting;
 	
@@ -80,8 +78,10 @@ public class MemberDetailActivity extends Activity {
 		int statusBarHeight = (int) Math.ceil(25 * this.getResources().getDisplayMetrics().density);
 		ViewGroup vg = (ViewGroup) findViewById(R.id.memberDetailActivityLayout);
 		ViewGroup.LayoutParams lp = vg.getLayoutParams();
-		lp.width = getWindowManager().getDefaultDisplay().getWidth();
-		lp.height = getWindowManager().getDefaultDisplay().getHeight() - statusBarHeight;
+		Point size = new Point();
+		getWindowManager().getDefaultDisplay().getSize(size);
+		lp.width = size.x;
+		lp.height = size.y - statusBarHeight;
 		vg.setLayoutParams(lp);
 
 		// 주어진 idx가 즐겨찾기 되어있는지 판단한다.
@@ -114,7 +114,7 @@ public class MemberDetailActivity extends Activity {
 			nameTV.setText(user.name);
 			
 			ImageView userPicIV = (ImageView)findViewById(R.id.user_pic);
-			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, idx, userPicIV);
+			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_MEDIUM, idx, userPicIV);
 		} else if(idxType == IDX_TYPE_GROUP) {
 			
 			if( title == null || title.trim().length() == 0) {
@@ -144,10 +144,7 @@ public class MemberDetailActivity extends Activity {
 		
 		goMeeting = (Button)findViewById(R.id.goMeeting);
 		goCommand = (Button)findViewById(R.id.goCommand);
-		//goDocument = (Button)findViewById(R.id.goDocument);
-		//goSurvey = (Button)findViewById(R.id.goSurvey);
 		
-		// TODO
 		background.setOnClickListener(finish);
 		close.setOnClickListener(finish);
 		
@@ -158,13 +155,19 @@ public class MemberDetailActivity extends Activity {
 				MemberProcManager mpm = DBProcManager.sharedManager(MemberDetailActivity.this).member();
 				boolean isFavorite = mpm.isUserFavorite(idx);
 				mpm.setFavorite(idx, !isFavorite);
+				
+
+				if(!isFavorite) {
+					favorite.setBackgroundResource(R.drawable.star_active);
+				} else {
+					favorite.setBackgroundResource(R.drawable.star_gray);
+				}
+				favorite.requestLayout();
 			}
 		});
 		
 		goMeeting.setOnClickListener(goMessage);
 		goCommand.setOnClickListener(goMessage);
-		//goDocument.setOnClickListener(goMessage);
-		//goSurvey.setOnClickListener(goMessage);
 	}
 
  	private final OnClickListener finish = new OnClickListener() {
@@ -182,15 +185,20 @@ public class MemberDetailActivity extends Activity {
 					super.run();
 					final int roomType = btn==goCommand ? Chat.TYPE_COMMAND : Chat.TYPE_MEETING;
 					
-					String roomCode = Room.find(getApplicationContext(), roomType, idx);
+					String roomCode = DBProcManager.sharedManager(MemberDetailActivity.this).chat().getPairRoomCode(roomType, idx);
+					
 					Room room = null;
-					if ( roomCode != null ) {
-						room = new Room(getApplicationContext(), roomCode);
-					} else {
-						ArrayList<String> chatters = new ArrayList<String>();
-						chatters.add( idx );
-						chatters.add( UserInfo.getUserIdx(getApplicationContext()) );
-						room = new Room(getApplicationContext(),roomType,chatters);
+					if ( roomCode != null ) 
+					{
+						room = new Room(roomCode);
+					} 
+					else 
+					{
+						room = new Room();
+						room.setType(roomType);
+						ArrayList<String> idxs = new ArrayList<String>();
+						idxs.add(idx);
+						room.addChatters(idxs);
 					}
 
 					final Room fRoom = room;
@@ -199,13 +207,11 @@ public class MemberDetailActivity extends Activity {
 						public void run() {
 							finish();
 							MainActivity.sharedActivity().goRoomFragment(roomType, fRoom);
-							
 						};
 					});
 					
 				};
 			}.start();
-			
 			
 		}
 	};

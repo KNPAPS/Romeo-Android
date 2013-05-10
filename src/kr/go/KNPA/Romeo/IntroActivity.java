@@ -34,11 +34,6 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
-		Bundle _b = intent.getExtras();
-		long mil = 0;
-		if(_b!= null && _b.containsKey("TEST"))
-			mil = _b.getLong("TEST");
-
 		targetModuleInfo = new Bundle();
 		Bundle b = intent.getExtras();
 		if(b != null) targetModuleInfo.putAll(b);
@@ -249,7 +244,7 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 				// TODO : 분실 신고, 분실 중 메시지 도착, 단말기 복구 ?? =>> 쌓여있던 메시지들은??,,,,
 			}
 		} else {
-			AlertDialog alert = new AlertDialog.Builder(IntroActivity.this)
+			new AlertDialog.Builder(IntroActivity.this)
 				.setTitle("유저 등록에 실패했습니다.")//context.getString(kr.go.KNPA.Romeo.R.string.)
 				.setMessage("다시 시도해주시기 바랍니다. 문제가 반복되어 발생하는 경우 재설치해주시기 바랍니다.")
 				.setPositiveButton(IntroActivity.this.getString(kr.go.KNPA.Romeo.R.string.ok), new DialogInterface.OnClickListener() {

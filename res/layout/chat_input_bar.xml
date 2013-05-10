@@ -6,7 +6,7 @@
     android:orientation="horizontal" >
 
     <Button
-        android:id="@+id/addAppendix"
+        android:id="@+id/appendixBtn"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_gravity="top"
@@ -16,7 +16,7 @@
      		android:background="@drawable/circle_plus_active" />
 
     <EditText
-        android:id="@+id/edit"
+        android:id="@+id/inputET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gapSmall"
@@ -29,7 +29,7 @@
     </EditText>
 
     <Button
-        android:id="@+id/submit"
+        android:id="@+id/submitBtn"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:textColor="@color/gray"

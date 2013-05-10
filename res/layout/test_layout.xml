@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/room_alias_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Send"

@@ -37,20 +37,31 @@ public class DataParser {
 	 * @return data
 	 * @throws JSONException
 	 */
-	public static Data parse( String event, int status, JSONArray dataJSONArray ) throws JSONException {
+	public Data parse( String event, int status, JSONArray dataJSONArray ) throws JSONException {
 		Data dataNative = null;
 		
-		if ( event.equals( Event.Message.send() )) {
-			dataNative = parse_on_msg_send(dataJSONArray);					
-		} else if ( event.equals( Event.Message.received() ) ) {
-
+		if ( event.equalsIgnoreCase( Event.Message.send() )) 
+		{
+			dataNative = parse_on_msg_send(dataJSONArray);				
+		} 
+		else if ( event.equalsIgnoreCase( Event.Message.received() ) )
+		{
 			dataNative = parse_on_msg_receive(dataJSONArray);	
-			
-		} else if ( event.equals( Event.Message.Survey.getContent() ) ) {
+		}
+		else if ( event.equalsIgnoreCase(Event.PUSH_USER_JOIN_ROOM) )
+		{
+			dataNative = parse_on_user_join_room(dataJSONArray);
+		}
+		else if ( event.equalsIgnoreCase( Event.Message.Survey.getContent() ) ) 
+		{
 			dataNative = parse_on_msg_receive(dataJSONArray);	
-		} else if ( event.equals(Event.Message.Survey.getResult()) ) {
+		} 
+		else if ( event.equalsIgnoreCase(Event.Message.Survey.getResult()) ) 
+		{
 			dataNative = parse_on_msg_survey_result(dataJSONArray);
-		} else {
+		} 
+		else 
+		{
 			dataNative = basicParse(dataJSONArray);
 		}
 		
@@ -64,14 +75,14 @@ public class DataParser {
 	 * @return parsed data
 	 * @throws JSONException
 	 */
-	private static Data basicParse( JSONArray dataJSONArray ) throws JSONException {
+	private Data basicParse( JSONArray dataJSONArray ) throws JSONException {
 		
 		Data dataNative = new Data();
 		
 		int i,n;
 		n = dataJSONArray.length();
 		for ( i=0; i<n; i++ ) {
-	        dataNative.add( DataParser.<Object>JSONObjectToHashMap( dataJSONArray.getJSONObject(i) ) );
+	        dataNative.add( this.<Object>JSONObjectToHashMap( dataJSONArray.getJSONObject(i) ) );
 		}
 		
 		return dataNative;
@@ -83,7 +94,7 @@ public class DataParser {
 	 * @return
 	 * @throws JSONException 
 	 */
-	private static Data parse_on_msg_send(JSONArray dataJSONArray) throws JSONException {
+	private Data parse_on_msg_send(JSONArray dataJSONArray) throws JSONException {
 		Data dataNative = new Data();
 		
 		HashMap<String,Object> hm = new HashMap<String, Object>();
@@ -104,7 +115,7 @@ public class DataParser {
 		JSONArray jar = gjo.getJSONArray(KEY.GCM.RESULTS);
 		for ( int i=0; i<jar.length(); i++ ) {
 			JSONObject j = jar.getJSONObject(i);
-			eachResultAr.add( DataParser.<String>JSONObjectToHashMap(j) );
+			eachResultAr.add( this.<String>JSONObjectToHashMap(j) );
 		}
 		result.eachResult = eachResultAr;
 		
@@ -120,7 +131,7 @@ public class DataParser {
 	 * @return
 	 * @throws JSONException 
 	 */
-	private static Data parse_on_msg_receive(JSONArray dataJSONArray) throws JSONException {
+	private Data parse_on_msg_receive(JSONArray dataJSONArray) throws JSONException {
 		Data dataNative = new Data();
 		
 		JSONObject jo = dataJSONArray.getJSONObject(0);
@@ -148,7 +159,7 @@ public class DataParser {
 		return dataNative;
 	}
 	
-	private static Data parse_on_msg_survey_result(JSONArray dataJSONArray) throws JSONException {
+	private Data parse_on_msg_survey_result(JSONArray dataJSONArray) throws JSONException {
 		JSONObject jo = dataJSONArray.getJSONObject(0);
 		Data data = new Data();
 		data.add(0,KEY.SURVEY.NUM_RECEIVERS,jo.getInt(KEY.SURVEY.NUM_RECEIVERS));
@@ -170,20 +181,34 @@ public class DataParser {
 		return data;
 	}
 	
-	private static <T> ArrayList<T> JSONArrayToArrayList(JSONArray jsonArray) throws JSONException {
+	private Data parse_on_user_join_room(JSONArray jsonArray) throws JSONException
+	{
+		JSONObject jo = jsonArray.getJSONObject(0);
+		Data data = new Data();
+		data.add(0,KEY.CHAT.ROOM_CODE,jo.getString(KEY.CHAT.ROOM_CODE));
+		data.add(0,KEY.USER.IDX,jo.getString(KEY.USER.IDX));
+		data.add(0,KEY.CHAT.ROOM_MEMBER, this.<String>JSONArrayToArrayList(jo.getJSONArray(KEY.CHAT.ROOM_MEMBER)));
+		return data;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> ArrayList<T> JSONArrayToArrayList(JSONArray jsonArray) throws JSONException 
+	{
 		int i,n;
 		ArrayList<T> arrayList;
 		
 		n = jsonArray.length();
 		arrayList = new ArrayList<T>(n);
-		for ( i=0; i<n; i++ ) {
+		for ( i=0; i<n; i++ ) 
+		{
 			arrayList.add( (T)jsonArray.get(i) );
 		}
 		
 		return arrayList;
 	}
 	
-	private static <T> HashMap<String,T> JSONObjectToHashMap(JSONObject jsonObject) throws JSONException {
+	@SuppressWarnings("unchecked")
+	private <T> HashMap<String,T> JSONObjectToHashMap(JSONObject jsonObject) throws JSONException {
 		
 		HashMap<String,T> hm = new HashMap<String,T>();
 		

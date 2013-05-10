@@ -7,24 +7,14 @@
 
     <include
         layout="@layout/navigation_bar" />
-<!-- 
-    <TextView
-        android:id="@+id/subTitle"
-        android:layout_width="match_parent"
-        android:layout_height="22dp"
-        android:background="@color/light"
-        android:paddingLeft="6dp"
-        android:textSize="11sp"
-        android:gravity="center_vertical"
-        android:layout_weight="0"
-        android:text="@string/subTitle" />
- -->
 
     <kr.go.KNPA.Romeo.Chat.RoomListView
         android:id="@+id/roomListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/lighter" android:longClickable="true"/>
+        android:background="@color/lighter"
+        android:clickable="true"
+        android:longClickable="true" />
 
 </LinearLayout>

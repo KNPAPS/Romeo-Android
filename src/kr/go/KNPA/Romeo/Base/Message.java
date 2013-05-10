@@ -263,29 +263,12 @@ public class Message implements Parcelable{
 			}
 		}
 	}
-	/*
-	public static void setChecked(Context context, String messageIdx, int mainType, int subType) {
-		Message message = new Message();
-		message.idx = messageIdx;
-		message.type = Message.makeType(mainType, subType);
-		// TODO
-		message.checked = false;
-		
-		ArrayList<Message> messages = new ArrayList<Message>();
-		messages.add(message);
-		
-		Message.setChecked(context, messages);
-	}
-*/
+	
 	public void setChecked(Context context) {
 		if(this.mainType() == MESSAGE_TYPE_DOCUMENT)  {
 			Message.setCheckedOnServer(context, this);
 		} else if(this.mainType() == MESSAGE_TYPE_SURVEY) {
 			Message.setCheckedOnServer(context, this);
-		} else if(this.mainType() == MESSAGE_TYPE_CHAT){
-			ArrayList<Message> messages = new ArrayList<Message>(1);
-			messages.add(this);
-			Message.setChecked(context, messages);
 		}
 	}
 	
@@ -296,11 +279,6 @@ public class Message implements Parcelable{
 		} else if(message.mainType() == MESSAGE_TYPE_SURVEY) {
 			DBProcManager.sharedManager(context).survey().updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
 			message.checked = true;
-		} else if(message.mainType() == MESSAGE_TYPE_CHAT){
-			ArrayList<String> chatIdxs = new ArrayList<String>(1);
-			chatIdxs.add(message.idx);
-			message.checked = true;
-			DBProcManager.sharedManager(context).chat().updateCheckedTS(chatIdxs, System.currentTimeMillis()/1000);
 		}
 	}
 	

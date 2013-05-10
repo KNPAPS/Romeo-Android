@@ -2,31 +2,23 @@ package kr.go.KNPA.Romeo.Chat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
-import kr.go.KNPA.Romeo.Util.ImageViewActivity;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,25 +33,51 @@ import android.widget.TextView;
 
 public class ChatListAdapter extends CursorAdapter {
 
-	public HashMap<String,WaiterView> waiterViews;
-	private Room room;
-	int chatType = Chat.NOT_SPECIFIED;
+	public interface Listener 
+	{
+		void onChatDelete(String chatIdx);
+		void onChatTextCopy(String text);
+		void onProfileImageClick(String userIdx);
+		void onChatImageClick(String imageIdx);
+		void onGoToUncheckersList(ArrayList<String> uncheckers);
+		void onFailedChatReSend(String chatIdx);
+	}
+	
+	private Listener mListener;
+	private static final String TAG = ChatListAdapter.class.getSimpleName();
+	public HashMap<String,WaiterView> mWaiterViews;
+	int mChatType = Chat.NOT_SPECIFIED;
+	public static final int NUM_INITIAL_CHAT = 20;
+	private Room mRoom;
 	
 	/**
 	 * @param context context
-	 * @param c 커서
+	 * @param c 초기에 리스트뷰에 출력할 커서
 	 * @param chatType 채팅 리스트의 타입. @value{Chat.TYPE_MEETING}, @value{Chat.TYPE_COMMAND}
 	 */
-	public ChatListAdapter(Context context, Cursor c, int chatType) {
+	public ChatListAdapter(Context context, Cursor c, Room room) 
+	{
 		super(context, c, 0);
-		this.chatType = chatType;
-		this.waiterViews = new HashMap<String, WaiterView>();
+		if (room == null)
+		{
+			Log.e(TAG,"input room is null");
+			throw new RuntimeException();
+		}
+
+		this.mRoom = room;
+		this.mWaiterViews = new HashMap<String, WaiterView>();
 	}
-	public ChatListAdapter setRoom(Room room) { 
-		this.room = room; 
-		return this; 
+	
+	public void setListener(Listener l)
+	{
+		this.mListener = l;
 	}
-	public Room getRoom(){ return this.room; } 
+	
+	public Cursor query(int nItems) 
+	{
+		return DBProcManager.sharedManager(mContext).chat().getChatList(mRoom.getCode(), 0, nItems);
+	}
+	
 	/**
 	 * 리스트뷰의 각 행을 만든다.
 	 * @param listItem 리스트뷰의 각 행을 이루는 ViewGroup
@@ -79,7 +97,7 @@ public class ChatListAdapter extends CursorAdapter {
 		listItem.setTag(messageIdx);
 		
 		// 센더해쉬
-		String senderIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
+		final String senderIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
 		// 채팅TS
 		long arrivalTS = c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_TS));
 		// 내용
@@ -94,80 +112,74 @@ public class ChatListAdapter extends CursorAdapter {
 		//유저 idx를 유저 객체로 변환
 		User sender = MemberManager.sharedManager().getUser(senderIdx);
 		
-		if ( contentType == Chat.CONTENT_TYPE_USER_LEAVE ) {
+		switch(contentType)
+		{
+		case Chat.CONTENT_TYPE_TEXT:case Chat.CONTENT_TYPE_PICTURE:
 			
-			String text = Constants.POLICE_RANK[sender.rank]+" "+sender.name+"님이 나가셨습니다.";
-			
-			((TextView)listItem).setText(text);
-			
-		} else if ( contentType == Chat.CONTENT_TYPE_USER_JOIN ) {
-			String text = Constants.POLICE_RANK[sender.rank]+" "+sender.name+"님이 ";
-			
-			String[] userIdxs = content.split(":");
-			
-			for(int i=0; i<userIdxs.length; i++) {
-				User u = MemberManager.sharedManager().getUser(userIdxs[i]);
-				text += Constants.POLICE_RANK[u.rank]+" "+u.name+"님,";
-			}
-			text = text.substring(0,text.length()-1);
-			text += "을 초대하였습니다";
-			((TextView)listItem).setText(text);
-			
-		} else {
-		
 			/**
 			 * listItem 내 하위 View들 참조
 			 * {{{
 			 */
 			ImageView 	userPicIV		= (ImageView) 	listItem.findViewById(R.id.userPic);
 			TextView 	departmentTV	= (TextView) 	listItem.findViewById(R.id.department);
-			TextView 	rankNameTV		= (TextView) 	listItem.findViewById(R.id.rankName);
+			TextView 	rankNameTV		= (TextView) 	listItem.findViewById(R.id.room_list_cell_room_name);
 			TextView 	arrivalDTTV		= (TextView) 	listItem.findViewById(R.id.arrivalDT);
-			
 			TextView 	contentTV		= (TextView) 	listItem.findViewById(R.id.content);
 			ImageView	contentIV		= (ImageView)	listItem.findViewById(R.id.contentImage);
-			
 			final Button goUncheckedBT 	= (Button) 		listItem.findViewById(R.id.goUnchecked);
 			/** }}} */
 			
 			/**
-			 * 각 view에 적절한 정보를 삽입함.
+			 * 공통된 정보(부서,계급, 채팅 도착 시간 text)를 설정함
 			 * {{{
 			 */
 			
-			//프로필 사진 load
-			ImageManager im = new ImageManager();
-			im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
-			
-			//부서,계급, 채팅 도착 시간 text 삽입
-			departmentTV.setText( sender.department.nameFull );
-			rankNameTV.setText( User.RANK[sender.rank] +" "+ sender.name );
+			departmentTV.setText(sender.department.nameFull);
+			rankNameTV.setText(User.RANK[sender.rank] +" "+ sender.name);
 			String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 			arrivalDTTV.setText(arrivalDT);
 			
-			//채팅의 content type에 따라 content 설정
-			int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
+			/** }}} */
 			
-			switch( contentType ) {
+			//received인 경우 상대방 프로필 사진 설정
+			if ( !senderIdx.equals(UserInfo.getUserIdx(mContext)) ) {
+				ImageManager im = new ImageManager();
+				//프로필 사진 load
+				im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
+				
+				userPicIV.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) 
+					{
+						if (mListener != null) 
+						{
+							mListener.onProfileImageClick(senderIdx);
+						}
+					}
+				});
+				
+			}
+						
+			switch(contentType) 
+			{
 			case Chat.CONTENT_TYPE_TEXT:
 				contentTV.setText(content);
 				contentTV.setOnLongClickListener(new ChatMenu());
 				contentIV.setVisibility(View.GONE);
 				break;
 			case Chat.CONTENT_TYPE_PICTURE:
+				ImageManager im = new ImageManager();
 				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
 				contentIV.setOnLongClickListener(new ChatMenu());
-				final String imageHash = messageIdx;
+				final String imageIdx = messageIdx;
 				contentIV.setOnClickListener(new OnClickListener(){
 					@Override
-					public void onClick(View v) {
-						Bundle b = new Bundle();
-						b.putInt("imageType", ImageManager.CHAT_SIZE_ORIGINAL);
-						b.putString("imageHash", imageHash);
-						Intent intent = new Intent(mContext, ImageViewActivity.class);
-						intent.putExtras(b);
-						mContext.startActivity(intent);
-						
+					public void onClick(View v) 
+					{
+						if (mListener != null)
+						{
+							mListener.onChatImageClick(imageIdx);
+						}
 					}
 				});
 				contentTV.setVisibility(View.GONE);
@@ -180,10 +192,15 @@ public class ChatListAdapter extends CursorAdapter {
 			/**
 			 * 채팅의 상태에 따라 WatierView, UnChecker 버튼, 재전송 버튼을 설정한다
 			 */
-			switch(chatStatus){
+			//채팅의 content type에 따라 content 설정
+			int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
+			
+			switch(chatStatus)
+			{
 			case Chat.STATE_SENDING:
 				
-				if ( goUncheckedBT.getVisibility() != View.GONE ) {
+				if (goUncheckedBT.getVisibility() != View.GONE) 
+				{
 					WaiterView wv = new WaiterView(context);
 					wv.substituteView(goUncheckedBT);
 					DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -191,33 +208,72 @@ public class ChatListAdapter extends CursorAdapter {
 					params.gravity = Gravity.BOTTOM;
 					params.bottomMargin = (int)((18 * displayMetrics.density) + 0.5);
 					wv.setLayoutParams(params);
-					waiterViews.put(listItem.getTag().toString(),wv);
+					mWaiterViews.put(listItem.getTag().toString(),wv);
 				}
+				
 				break;
 			case Chat.STATE_SUCCESS:
 				
-				if ( waiterViews.get(messageIdx) != null ) {
-					waiterViews.remove(messageIdx).restoreView();
+				if (mWaiterViews.get(messageIdx) != null) 
+				{
+					mWaiterViews.remove(messageIdx).restoreView();
 				}
 				
 				setUncheckerInfo(goUncheckedBT,arrivalTS);
 				
 				break;
 			case Chat.STATE_FAIL:
+				
+				goUncheckedBT.setBackgroundResource(R.drawable.chat_fail);
+				goUncheckedBT.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) 
+					{
+						if (mListener != null)
+						{
+							mListener.onFailedChatReSend(messageIdx);
+						}
+					}
+				});
+				
 				break;
 			default:
 				break;
 			}
-
+			
+			break;//end of chat.text || chat.image
+			
+		case Chat.CONTENT_TYPE_USER_JOIN:
+			String text = Constants.POLICE_RANK[sender.rank]+" "+sender.name+"님이 ";
+			
+			String[] userIdxs = content.split(":");
+			
+			for(int i=0; i<userIdxs.length; i++) {
+				User u = MemberManager.sharedManager().getUser(userIdxs[i]);
+				text += Constants.POLICE_RANK[u.rank]+" "+u.name+"님,";
+			}
+			text = text.substring(0,text.length()-1);
+			text += "을 초대하였습니다";
+			((TextView)listItem).setText(text);
+			break;
+		case Chat.CONTENT_TYPE_USER_LEAVE:
+			String txt = Constants.POLICE_RANK[sender.rank]+" "+sender.name+"님이 나가셨습니다.";
+			((TextView)listItem).setText(txt);
+			break;
 		}
+		
 	}
 	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-	    if (!mDataValid) {
+	public View getView(int position, View convertView, ViewGroup parent) 
+	{
+	    if (!mDataValid) 
+	    {
 	        throw new IllegalStateException("this should only be called when the cursor is valid");
 	    }
-	    if (!mCursor.moveToPosition(position)) {
+	    
+	    if (!mCursor.moveToPosition(position)) 
+	    {
 	        throw new IllegalStateException("couldn't move cursor to position " + position);
 	    }
 	    
@@ -226,14 +282,13 @@ public class ChatListAdapter extends CursorAdapter {
 		
 		View v = null;
 		
-		if ( convertView != null && convertView.getTag() != null && chatIdx.equals(convertView.getTag())) {
-		
-			v = convertView;
-			
-		} else {
-			
-			v = newView(mContext,mCursor,parent);
-			
+		if ( convertView != null && convertView.getTag() != null && chatIdx.equals(convertView.getTag())) 
+		{
+			v = convertView;	
+		} 
+		else 
+		{	
+			v = newView(mContext,mCursor,parent);	
 		}
 
 		bindView(v, mContext, mCursor);
@@ -247,23 +302,28 @@ public class ChatListAdapter extends CursorAdapter {
 		int rId = R.layout.chat_bubble_received;
 		
 		int contentType = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
-			
-		if ( contentType == Chat.CONTENT_TYPE_USER_LEAVE || contentType == Chat.CONTENT_TYPE_USER_JOIN) {
-			
-			rId = R.layout.chat_info;
-			
-		} else {
 
-			// 유저 해시를 비교하여 자기가 전송한건지 받은건지 구별
+		switch(contentType)
+		{
+		case Chat.CONTENT_TYPE_USER_LEAVE: case Chat.CONTENT_TYPE_USER_JOIN:
+			rId = R.layout.chat_info;
+			break;
+		case Chat.CONTENT_TYPE_TEXT: case Chat.CONTENT_TYPE_PICTURE:
 			String userIdx = UserInfo.getUserIdx(context);
-			if ( userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))) ) {
+			if ( userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))) ) 
+			{
 				rId = R.layout.chat_bubble_departed;
-			} else {
+			} 
+			else 
+			{
 				rId = R.layout.chat_bubble_received;
 			}
-			
+			break;
+		default:
+			Log.e(TAG,"content type is not valid");
+			throw new RuntimeException();
 		}
-
+		
 		View v = inflater.inflate(rId, parent, false);
 		return v;
 	}
@@ -284,29 +344,30 @@ public class ChatListAdapter extends CursorAdapter {
 	}
 	
 	public void setUncheckerInfo(final Button goUncheckedBT,final long arrivalTS) {
-		HashMap<String,Long> lastReadTS = room.getLastReadTS();
+		
 		int numUncheckers= 0;
 		ArrayList<String> uncheckers = new ArrayList<String>();
 		
-		Iterator<String> itr = lastReadTS.keySet().iterator();
-		while (itr.hasNext()) {
-		    String key = (String)itr.next();
-		    if ( lastReadTS.get(key) < arrivalTS && !key.equals(UserInfo.getUserIdx(mContext))){
+		for (int i=0; i<mRoom.chatters.size(); i++)
+		{
+			Chatter c = mRoom.chatters.get(i);
+		    if ( c.lastReadTS < arrivalTS )
+		    {
 		    	numUncheckers++;
-		    	uncheckers.add(key);
+		    	uncheckers.add(c.idx);
 		    }
 		}
 		
 		final ArrayList<String> unchks = uncheckers;
 		goUncheckedBT.setText(String.valueOf(numUncheckers));
 		goUncheckedBT.setOnClickListener(new OnClickListener() {
-			
 			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.sharedActivity(),UserListActivity.class);
-				intent.putExtra(UserListActivity.KEY_USERS_IDX, unchks);
-				intent.putExtra(UserListActivity.KEY_TITLE, "미확인자 명단");
-				mContext.startActivity(intent);
+			public void onClick(View v) 
+			{
+				if (mListener!=null)
+				{
+					mListener.onGoToUncheckersList(unchks);
+				}
 			}
 		});
 	}
@@ -324,31 +385,26 @@ public class ChatListAdapter extends CursorAdapter {
 		    ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell, array);
 		    
 		    chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener(){
-		    	@Override
+				@Override
 		    	public void onClick(DialogInterface dialog, int which) {
-		    		switch(which){
-		    		case 0://복사 TODO
-//		    			ClipboardManager clipboardManager =  (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-//		    			ClipData clip = ClipData.newPlainText("txt",((TextView)view).getText() );
-//		    			clipboardManager.setPrimaryClip(clip);
-//		    			
-		    			break;
-		    		case 1://삭제
-		    			new Thread(){
-		    				public void run() {
-		    					String chatHash = (String) ((View)view.getParent().getParent()).getTag();
-		    					DBProcManager.sharedManager(mContext).chat().deleteChat(chatHash);
-		    					final Cursor c = ChatFragment.getCurrentRoom().getListView().query();
-		    					ChatFragment.getCurrentRoom().mHandler.post(new Runnable(){
-		    						@Override
-		    						public void run() {
-		    							ChatFragment.getCurrentRoom().getListView().refresh(c);
-		    						}
-		    					});
-		    				};
-		    			}.start();
-		    			
-		    			break;
+		    		if (mListener != null)
+		    		{
+			    		switch(which){
+			    		case 0://복사
+			    			String text = ((TextView)view).getText().toString();
+			    			if (mListener != null)
+			    			{
+				    			mListener.onChatTextCopy(text);			    				
+			    			}
+			    			break;
+			    		case 1://삭제
+			    			String chatHash = (String) ((View)view.getParent().getParent()).getTag();
+			    			if (mListener != null)
+			    			{
+				    			mListener.onChatDelete(chatHash);			    				
+			    			}
+			    			break;
+			    		}
 		    		}
 		    	}
 		    });

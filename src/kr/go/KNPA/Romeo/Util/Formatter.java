@@ -3,7 +3,9 @@ package kr.go.KNPA.Romeo.Util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 
 import kr.go.KNPA.Romeo.R;
@@ -88,12 +90,12 @@ public class Formatter {
 	}
 	
 	public static String encodeURIComponent(String s)
-	  {
-	    String result = null;
+	{
+		String result = null;
 	 
-	    try
-	    {
-	      result = URLEncoder.encode(s, "UTF-8")
+		try
+		{
+			result = URLEncoder.encode(s, "UTF-8")
 	                         .replaceAll("\\+", "%20")
 	                         .replaceAll("\\%21", "!")
 	                         .replaceAll("\\%27", "'")
@@ -101,15 +103,39 @@ public class Formatter {
 	                         .replaceAll("\\%29", ")")
 	                         .replaceAll("\\%7E", "~");
 	    }
-	 
 	    // This exception should never occur.
 	    catch (UnsupportedEncodingException e)
 	    {
 	      result = s;
 	    }
 	 
-	    return result;
-	  }
+		return result;
+	}
+	
+	public static String join(Collection<?> s, String delimiter) {
+	     StringBuilder builder = new StringBuilder();
+	     Iterator<?> iter = s.iterator();
+	     while (iter.hasNext()) {
+	         builder.append(iter.next());
+	         if (!iter.hasNext()) {
+	           break;                  
+	         }
+	         builder.append(delimiter);
+	     }
+	     return builder.toString();
+	 }
+	
+	public static String makeEllipsis(String str, int maxLen)
+	{
+		if (str.length() > maxLen-3)
+		{
+			return str.substring(0,maxLen)+"...";
+		}
+		else
+		{
+			return str;
+		}
+	}
 }
 /*
 

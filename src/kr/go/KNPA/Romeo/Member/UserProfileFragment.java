@@ -96,7 +96,11 @@ public class UserProfileFragment extends Fragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == Constants.REQUEST_PIC_PICKER) {
-				
+			
+			if ( data.getData() == null ){
+				return;
+			}
+			
 			picUri = data.getData();
 			
 			if(picUri != null ){

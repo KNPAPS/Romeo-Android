@@ -66,7 +66,9 @@ public class Payload {
 			}
 			setEvent(responseEvent);
 			setStatusCode(responseStatus);
-			setData( DataParser.parse(getEvent(), getStatusCode(), jo.getJSONArray(KEY_DATA) ) );
+			DataParser parser = new DataParser();
+			Data data = parser.parse(getEvent(), getStatusCode(), jo.getJSONArray(KEY_DATA) );
+			setData( data );
 		} catch( JSONException e) {
 			Log.d(TAG, e.getMessage()+":"+json);
 		}

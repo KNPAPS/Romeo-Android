@@ -4,9 +4,13 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Util.Encrypter;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.content.Context;
 
 public class Chat extends Message {
 	
@@ -68,5 +72,11 @@ public class Chat extends Message {
 		chat.roomCode = this.roomCode;
 		chat.contentType = this.contentType;	
 		return chat;
+	}
+	
+	public static String makeChatIdx(Context context)
+	{
+		String userIdx = UserInfo.getUserIdx(context);
+		return Encrypter.sharedEncrypter().md5(userIdx+String.valueOf(System.currentTimeMillis()));
 	}
 }

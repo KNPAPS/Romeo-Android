@@ -1,368 +1,154 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Config.Constants;
-import kr.go.KNPA.Romeo.Config.Event;
-import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Config.StatusCode;
-import kr.go.KNPA.Romeo.Connection.Connection;
-import kr.go.KNPA.Romeo.Connection.Data;
-import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
-import kr.go.KNPA.Romeo.Util.Encrypter;
-import kr.go.KNPA.Romeo.Util.UserInfo;
-import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
 
+/**
+ * 채팅방에 대한 Entity Class
+ */
 public class Room {
-	private static final String TAG = Room.class.getName();
-	private String roomCode;
-	private String title;
-	private int type;
-	private ArrayList<String> chatters;
-	private HashMap<String,Long> lastReadTS; 
-	private boolean created = false;
-	private Context mContext;
 	
-	/**
-	 * 기존에 설정된 roomCode를 가지고 해당 방에 대한 정보를 DB와 서버에서 가져옴
-	 * @param context
-	 * @param roomCode
-	 */
-	public Room(Context context, String roomCode){
-		this.mContext = context;
-		if ( DBProcManager.sharedManager(mContext).chat().roomExists(roomCode) == false ) {
-			throw new RuntimeException("해당 룸해쉬에 대한 방이 존재하지 않음 : "+roomCode);
-		}
-		//룸 해쉬 설정
-		setRoomCode(roomCode);
-		
-		//방 기본 정보 가져오기 : 타이틀, 타입
-		Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomInfo(roomCode);
-		c.moveToNext();
-		this.title = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE));
-		this.type = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TYPE));
-		c.close();
-		
-		//채팅방 참가자들 정보 가져오기
-		Cursor cursor = DBProcManager.sharedManager(mContext).chat().getRoomChatters(getRoomCode(),true);
-		ArrayList<String> chatters = new ArrayList<String>(cursor.getCount());
-		
-		while(cursor.moveToNext()) {
-			chatters.add( cursor.getString(cursor.getColumnIndex(ChatProcManager.COLUMN_USER_IDX)) );
-		}
-		cursor.close();
-		this.chatters = chatters;
-		
-		//참가자들이 마지막으로 방에 입장한 시간을 서버에서 가져온다
-		pullLastReadTS();
-		
-		//생성완료 플래그
-		created(true);
+	private String mCode;
+	private String mTitle;
+	private String mAlias;
+	private int mType;
+	private int mStatus;
+	public ArrayList<Chatter> chatters; 
+	
+	public static final int STATUS_VIRTUAL = 1;
+	public static final int STATUS_CREATED = 2;
+
+	public static final int TYPE_MEETING = Chat.TYPE_MEETING;
+	public static final int TYPE_COMMAND = Chat.TYPE_COMMAND;
+	
+	public Room(String roomCode)
+	{
+		mTitle = "";
+		mAlias = "";
+		mCode = roomCode;
+		mType = Constants.NOT_SPECIFIED;
+		mStatus = STATUS_CREATED;
+		chatters = new ArrayList<Chatter>();
 	}
 	
-	/**
-	 * 새 채팅방을 만들었을 때 메세지를 보내기 전 임시로 생성된 채팅방 객체.\n
-	 * 첫 메세지를 보낼 때 create() 메소드를 호출하여 실제 방으로 만든다.
-	 * @param context
-	 * @param type
-	 * @param initChatters
-	 */
-	public Room(Context context, int type, ArrayList<String> initChatters ) {
-		this.mContext = context;
-		setType(type);
-		chatters = new ArrayList<String>(initChatters.size());
-		chatters.addAll(initChatters);
-		created(false);
+	public Room()
+	{
+		mTitle = "";
+		mAlias = "";
+		mCode = "";
+		mType = Constants.NOT_SPECIFIED;
+		mStatus = STATUS_VIRTUAL;
+		
+		chatters = new ArrayList<Chatter>();
+	}
+	
+	public ArrayList<String> getChattersIdx()
+	{
+		ArrayList<String> chattersIdx = new ArrayList<String>(chatters.size());
+		
+		for (int i=0; i<chatters.size(); i++)
+		{
+			chattersIdx.add(chatters.get(i).idx);
+		}
+		
+		return chattersIdx;
 	}
 
-	/**
-	 * Chatter들 중 자기 자신을 제외한 사람들의 목록
-	 * @return
-	 */
-	public ArrayList<String> getReceivers() {
-		String userIdx = UserInfo.getUserIdx(mContext);
-		ArrayList<String> receiversIdx = new ArrayList<String>(this.chatters.size()-1);
-		for(int i=0; i<this.chatters.size(); i++) {
-			if ( !this.chatters.get(i).equals(userIdx) ) {
-				receiversIdx.add(this.chatters.get(i));
+	public Chatter getChatter(String chatterIdx)
+	{
+		for (int i=0; i<chatters.size(); i++)
+		{
+			Chatter c = chatters.get(i);
+			if (c.idx.equalsIgnoreCase(chatterIdx))
+			{
+				return c; 
 			}
 		}
-		return receiversIdx;
+		return null;
 	}
 	
-	public ArrayList<String> getChatters(){
-		return chatters;
-	}
-	
-	public void addChatter(String userIdx) {
-		chatters.add(userIdx);
-	}
-	
-	public void addChatters(ArrayList<String> userIdxs) {
-		
-		
-		String senderIdx = UserInfo.getUserIdx(mContext);
-		ArrayList<String> receivers = getReceivers();
-		
-		String newbies = "";
-		for (int i=0; i<userIdxs.size(); i++ ) {
-			newbies += userIdxs.get(i)+":"; 
-			setLastReadTS(userIdxs.get(i),System.currentTimeMillis()/1000);
-		}
-		newbies = newbies.substring(0,newbies.length()-1);
-		Chat chat = new Chat(
-							null,
-							getType(), 
-							newbies, 
-							senderIdx, 
-							receivers, 
-							false,
-							System.currentTimeMillis()/1000,
-							true,
-							System.currentTimeMillis()/1000,
-							getRoomCode(), 
-							Chat.CONTENT_TYPE_USER_JOIN);
-		
-		//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
-		String chatHash = DBProcManager.sharedManager(mContext)
-							.chat()
-							.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
-
-		//채팅해쉬를 채팅 객체에 설정함
-		chat.idx = chatHash;
-		Data reqData = new Data();
-		reqData.add(0,KEY._MESSAGE, chat);
-		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
-		new Connection().async(false).requestPayload(request).request();
-		
-		DBProcManager.sharedManager(mContext).chat().addUsersToRoom(userIdxs, getRoomCode());
-		chatters.addAll(userIdxs);
-		
-	}
-	
-	public void removeChatter(String userIdx) {
-		chatters.remove(userIdx);
-		lastReadTS.remove(userIdx);
-	}
-	
-	/**
-	 * @name static method
-	 * @{
-	 */
-	public static String makeRoomCode(Context context) {
-		String str = UserInfo.getUserIdx(context)+":"+System.currentTimeMillis();
-		return Encrypter.sharedEncrypter().md5(str);
-	}
-	/**@}*/
-
-	public String getRoomCode() {
-		return roomCode;
-	}
-
-	public void setRoomCode(String roomCode) {
-		this.roomCode = roomCode;
-	}
-	
-	public int getType() { return this.type; }
-	public void setType(int type) { this.type = type; }
-	
-	/**
-	 * 방제목 가져오기
-	 * @return
-	 */
-	public String getTitle() {
-		return this.title;
-	}
-	
-	/**
-	 * 방제목설정
-	 * @param title
-	 */
-	public void setTitle(String title){
-		this.title = title;
-		DBProcManager.sharedManager(mContext).chat().updateRoomTitle(getRoomCode(), title);
-	}
-	
-	/**
-	 * 채팅방이 생성될 때 기본 채팅방 제목 설정
-	 */
-	public void setBaseTitle() {
-		ArrayList<String> receiversIdx = this.getReceivers();
-		
-		ArrayList<User> receivers= MemberManager.sharedManager().getUsers(receiversIdx);
-		
-		String title = "";
-		if ( receivers.size() < 1 ) {
-			//상대방이없으면 빈방
-			setTitle("빈 방");
-		} else if ( receivers.size() == 1 ) {
-			//1:1채팅이면 상대방 계급+이름
-			title = Constants.POLICE_RANK[receivers.get(0).rank]+" "+receivers.get(0).name;
-			setTitle(title);
-		} else {
-			//여러명 채팅이면 리시버들 이름
-			for( int i=0; i<receivers.size(); i++) {
-				title += Constants.POLICE_RANK[receivers.get(i).rank]+" "+receivers.get(i).name+", ";
-			}
-			title = title.substring(0,title.length()-2);
-			
-			//길이가 너무 길면 짜름
-			final int MAX_TITLE_LENGTH = 17;
-			if ( title.length() >= MAX_TITLE_LENGTH ) {
-				title = title.substring(0,MAX_TITLE_LENGTH)+"...";
-			}
-			setTitle(title);
-		}
-		
-	}
-	
-	/**
-	 * 서버에서 lastReadTS 정보 가져와서 this.lastReadTS에 할당
-	 */
-	public void pullLastReadTS(){
-		Data reqData = new Data();
-		reqData.add(0,KEY.CHAT.ROOM_CODE,this.getRoomCode());
-		
-		Payload request = new Payload().setEvent(Event.Message.Chat.pullLastReadTS()).setData(reqData);
-		Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
-		if ( response != null && response.getData() != null ) {
-			Data respData = response.getData();
-			lastReadTS = new HashMap<String,Long>();
-			for( int i=0; i<respData.size(); i++ ) {
-				lastReadTS.put( (String)respData.get(i).get(KEY.USER.IDX), Long.parseLong(respData.get(i).get(KEY.CHAT.LAST_READ_TS).toString()) );
+	public void setLastReadTS(String chatterIdx, Long TS)
+	{
+		for (int i=0; i<chatters.size(); i++)
+		{
+			Chatter c = chatters.get(i);
+			if (c.idx.equalsIgnoreCase(chatterIdx))
+			{
+				c.lastReadTS = TS;
+				chatters.set(i, c); 
 			}
 		}
 	}
 	
-	/**
-	 * 서버에 내가 TS 시간에 마지막으로 읽었다고 업데이트를 함\n
-	 */
-	public void updateLastReadTS(long TS){
-		String userIdx = UserInfo.getUserIdx(mContext);
-		
-		setLastReadTS(userIdx, TS);
-		Data reqData = new Data();
-		reqData.add(0,KEY.USER.IDX,userIdx);
-		reqData.add(0,KEY.CHAT.ROOM_CODE,getRoomCode());
-		reqData.add(0,KEY.CHAT.LAST_READ_TS,(Long)TS);
-		
-		Payload request = new Payload().setEvent(Event.Message.Chat.updateLastReadTS()).setData(reqData);
-		new Connection().async(false).requestPayload(request).request();
-	}
-	
-	/**
-	 * 다른 사람에게서 GCM으로 새 lastReadTS에 대한 정보가 왔을 때 업데이트
-	 * @param userHash
-	 * @param TS
-	 */
-	public void setLastReadTS(String userHash, long TS ) {
-		lastReadTS.put(userHash, TS);
-	}
-	
-	/**
-	 * lastReadTS getter. 만약 싱크가 안맞으면 서버에서 가져온 후 리턴
-	 * @return
-	 */
-	public HashMap<String,Long> getLastReadTS(){
-		return lastReadTS;
-	}
-	
-	public boolean isCreated() {
-		return created;
+	public String getCode()
+	{
+		return mCode;
 	}
 
-	public void created(boolean created) {
-		this.created = created;
+	public void setCode(String code)
+	{
+		this.mCode = code;
+		this.mStatus = STATUS_CREATED;
 	}
-	
-	/**
-	 * 임시로 만들어져 있는 상태 : isCreated()==false의 방을 DB와 서버에 등록하고 생성함
-	 * @return
-	 */
-	public boolean create() {
-		this.setRoomCode( Room.makeRoomCode(mContext) );
-		
-		Data reqData = new Data();
-		reqData.add(0,KEY.CHAT.ROOM_CODE,this.getRoomCode());
-		reqData.add(0,KEY.MESSAGE.TYPE,this.getType());
-		reqData.add(0,KEY.CHAT.ROOM_MEMBER, this.getChatters());
-		reqData.add(0,KEY.USER.IDX, UserInfo.getUserIdx(mContext) );
-		
-		Payload request = new Payload().setEvent(Event.Message.Chat.createRoom()).setData(reqData);
-		Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
 
-		if ( response == null ) {
-			return false;
-		} else {
-			if ( response.getStatusCode() == StatusCode.SUCCESS ) {
-				DBProcManager.sharedManager(mContext).chat().createRoom(this.getChatters(), this.getType(), this.getRoomCode());
-				
-				created(true);
+	public String getTitle()
+	{
+		return mTitle;
+	}
 
-				for ( int i=0; i<this.getChatters().size(); i++ ) {
-					setLastReadTS(this.getChatters().get(i), System.currentTimeMillis()/1000-500);
-				}
-				
-				//방 기본 타이틀 설정
-				setBaseTitle();
-				return true;
-			}
-			Log.e(TAG,"response status code : "+response.getStatusCode());
-			return false;
+	public void setTitle(String title)
+	{
+		this.mTitle = title;
+	}
+
+	public String getAlias()
+	{
+		return mAlias;
+	}
+
+	public void setAlias(String alias)
+	{
+		this.mAlias = alias;
+	}
+
+	public int getType()
+	{
+		return mType;
+	}
+
+	public void setType(int type)
+	{
+		this.mType = type;
+	}
+
+	public int getStatus()
+	{
+		return mStatus;
+	}
+
+	public void setStatus(int status)
+	{
+		this.mStatus = status;
+	}
+
+	public void addChatters(ArrayList<String> chattersIdx)
+	{
+		ArrayList<User> newbies = MemberManager.sharedManager().getUsers(chattersIdx);
+		for (int i=0; i<newbies.size(); i++)
+		{
+			User u = newbies.get(i);
+			Chatter c = new Chatter();
+			c.idx = u.idx;
+			c.department = u.department;
+			c.name = u.name;
+			c.pic = u.pic;
+			c.rank = u.rank;
+			c.role = u.role;
+			c.lastReadTS = 0L;
+			chatters.add(c);
 		}
-	}
-	
-	/**
-	 * 해당 유저와 1:1채팅을 하고 있는 게 있는 지 검색해서 있으면 룸코드, 없으면 null 반환
-	 * @param roomType 룸타입
-	 * @param userIdx 1:1채팅하고 있는 상대방 useridx
-	 * @return 룸코드 or null
-	 */
-	public static String find(Context context, int roomType, String userIdx) {
-		return DBProcManager.sharedManager(context).chat().getRoomCode(roomType, userIdx);
-	}
-	
-	/**
-	 * 방에서 나가기\n
-	 * 로컬디비에서 해당 방의 정보를 삭제하고 서버에도 알림을 보낸다
-	 * @param context
-	 * @param roomHash
-	 */
-	public void leaveRoom() {
-		
-		String senderIdx = UserInfo.getUserIdx(mContext);
-		ArrayList<String> receivers = getReceivers();
-		
-		Chat chat = new Chat(
-							null,
-							getType(), 
-							"", 
-							senderIdx, 
-							receivers, 
-							false,
-							System.currentTimeMillis()/1000,
-							true,
-							System.currentTimeMillis()/1000,
-							getRoomCode(), 
-							Chat.CONTENT_TYPE_USER_LEAVE);
-		//로컬 DB에 저장하고 채팅해쉬를 발급받아옴
-		String chatHash = DBProcManager.sharedManager(mContext)
-							.chat()
-							.saveChatOnSend(chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
-		//채팅해쉬를 채팅 객체에 설정함
-		chat.idx = chatHash;
-		Data reqData = new Data();
-		reqData.add(0,KEY._MESSAGE, chat);
-		Payload request = new Payload().setEvent(Event.Message.send()).setData(reqData);
-		new Connection().async(false).requestPayload(request).request();
-		
-		DBProcManager.sharedManager(mContext).chat().leaveRoom(getRoomCode());
 	}
 }

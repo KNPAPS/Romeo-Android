@@ -3,15 +3,11 @@ package kr.go.KNPA.Romeo.Chat;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Chat.ChatFragment.ChatFragmentHandler;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.Settings.SettingsCellMaker;
-import kr.go.KNPA.Romeo.Util.UserInfo;
-import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -78,7 +74,7 @@ public class RoomSettingActivity extends Activity {
 				new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						
+						//TODO
 					}
 				});
 		
@@ -89,7 +85,7 @@ public class RoomSettingActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Bundle b = new Bundle();
-				b.putInt(KEY_ACTION, RoomFragment.ACTION_LEAVE_ROOM);
+				b.putInt(KEY_ACTION, RoomController.ACTION_LEAVE_ROOM);
 				
 				Intent intent = new Intent();
 				intent.putExtras(b);
@@ -144,7 +140,7 @@ public class RoomSettingActivity extends Activity {
 				}
 				
 				Bundle b = new Bundle();
-				b.putInt(KEY_ACTION, RoomFragment.ACTION_JOIN_ROOM);
+				b.putInt(KEY_ACTION, RoomController.ACTION_INVITE_USERS);
 				
 				b.putStringArrayList(KEY_IDXS, receiversIdxs);
 				Intent intent = new Intent();

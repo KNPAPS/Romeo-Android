@@ -24,10 +24,13 @@ public class Event {
 	public static final String MESSAGE_SURVEY_GET_CONTENT="MESSAGE:SURVEY:GET_CONTENT";/*!<설문조사 상세 내용 가져오기*/
 	
 	public static final String MESSAGE_CHAT_PULL_LAST_READ_TS ="MESSAGE:CHAT:PULL_LAST_READ_TS";
-	public static final String MESSAGE_CHAT_UPDATE_LAST_READ_TS ="MESSAGE:CHAT:UPDATE_LAST_READ_TS";
+	public static final String MESSAGE_CHAT_NOTIFY_LAST_READ_TS ="MESSAGE:CHAT:NOTIFY_LAST_READ_TS";
 	public static final String MESSAGE_CHAT_LEAVE_ROOM ="MESSAGE:CHAT:LEAVE_ROOM";
 	public static final String MESSAGE_CHAT_JOIN_ROOM ="MESSAGE:CHAT:JOIN_ROOM";
 	
+	public static final String PUSH_USER_LEAVE_ROOM ="PUSH:USER_LEAVE_ROOM";
+	public static final String PUSH_USER_JOIN_ROOM ="PUSH:USER_JOIN_ROOM";
+	public static final String PUSH_UPDATE_LAST_READ_TS ="PUSH:UPDATE_LAST_READ_TS";
 	
 	public static final String DEVICE_REGISTER="DEVICE:REGISTER";/*!<기기 정보 등록*/
 	public static final String DEVICE_IS_REGISTERED="DEVICE:IS_REGISTERED";/*!<기기가 등록되어 있는지, 활성화 되어 있는지 확인*/
@@ -72,7 +75,7 @@ public class Event {
 		public static class Chat {
 			public static String createRoom()		{	return MESSAGE_CHAT_CREATE_ROOM;		}
 			public static String pullLastReadTS()	{	return MESSAGE_CHAT_PULL_LAST_READ_TS;	}
-			public static String updateLastReadTS()	{	return MESSAGE_CHAT_UPDATE_LAST_READ_TS;	}
+			public static String notifyLastReadTS()	{	return MESSAGE_CHAT_NOTIFY_LAST_READ_TS;	}
 			public static String leaveRoom()		{	return MESSAGE_CHAT_LEAVE_ROOM;	}
 			public static String joinRoom()			{	return MESSAGE_CHAT_JOIN_ROOM;	}
 			

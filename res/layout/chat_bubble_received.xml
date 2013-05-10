@@ -33,7 +33,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/rankName"
+                android:id="@+id/room_list_cell_room_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/name"
@@ -62,7 +62,8 @@
             android:paddingRight="@dimen/gapSmall"
             android:paddingTop="@dimen/gapSmall"
             android:text="@string/loremIpsumShort"
-            android:textColor="@color/text" />
+            android:textColor="@color/text"
+            android:textSize="16dp" />
 
         <ImageView
             android:id="@+id/contentImage"
@@ -84,7 +85,8 @@
             android:layout_gravity="bottom"
             android:padding="@dimen/gapSmaller"
             android:text="@string/sampleTime"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="12dp" />
 
         <Button
             android:id="@+id/goUnchecked"

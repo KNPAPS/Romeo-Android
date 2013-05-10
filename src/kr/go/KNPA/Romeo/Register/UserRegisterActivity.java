@@ -256,6 +256,7 @@ public class UserRegisterActivity extends Activity {
 	 * 이 액티비티에 설정된 멤버 변수들을 토대로 서버에 유저 등록 후 user hash를 받아와 반환
 	 * @return
 	 */
+	private static Connection conn = null;
 	public boolean registerUser() {
 		Data reqData = new Data().add(0, KEY.USER.NAME, name)
 								 .add(0, KEY.USER.ROLE, role)
@@ -263,8 +264,20 @@ public class UserRegisterActivity extends Activity {
 								 .add(0, KEY.DEPT.IDX, department.idx);
 		// TODO : 사진 업로드
 		
-		Payload request = new Payload().setEvent(Event.User.register()).setData(reqData);
-		Connection conn = new Connection().requestPayload(request).async(false).request();
+		final Payload request = new Payload().setEvent(Event.User.register()).setData(reqData);
+		Thread t = new Thread(){
+			public void run(){
+				conn = new Connection().requestPayload(request).async(false).request();
+			}
+		};
+		t.start();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Payload response = conn.getResponsePayload();
 		
 		if(response.getStatusCode() == StatusCode.SUCCESS) {

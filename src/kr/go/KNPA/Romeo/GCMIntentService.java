@@ -10,7 +10,6 @@ import com.google.android.gcm.GCMBaseIntentService;
 
 public class GCMIntentService extends GCMBaseIntentService {
 	//서비스는 GCMBaseIntentService를 상속받아 구현해야 한다.
-	private static final String tag = "GCMIntentService";
     private static final String PROJECT_ID = "44570658441";
     //구글 api 페이지 주소 [https://code.google.com/apis/console/#project:긴 번호]
     //#project: 이후의 숫자가 위의 PROJECT_ID 값에 해당한다

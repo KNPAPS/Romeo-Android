@@ -19,4 +19,6 @@ public class Constants {
 	public static boolean DEBUG = true;
 	
 	public static final int REQUEST_PIC_PICKER = 300;
+	
+	public static final int CHAT_ROOM_TITLE_MAX_LEN = 10;
 }
