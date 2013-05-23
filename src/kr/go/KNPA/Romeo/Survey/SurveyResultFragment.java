@@ -184,7 +184,12 @@ public class SurveyResultFragment extends Fragment {
 			
 			
 			// ChartView
-			ArrayList<Integer> qVote = _votes.get(qi);
+			//ArrayList<Integer> qVote = _votes.get(qi);
+			ArrayList<Integer> qVote = new ArrayList<Integer>();
+			qVote.add(10);
+			qVote.add(20);
+			qVote.add(30);
+			qVote.add(40);
 			
 			DefaultRenderer renderer = new DefaultRenderer();
 			String dummyLabel = "";
