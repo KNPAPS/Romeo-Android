@@ -10,20 +10,20 @@ import kr.go.KNPA.Romeo.Member.User;
  * 채팅방에 대한 Entity Class
  */
 public class Room {
-	
-	private String mCode;
-	private String mTitle;
-	private String mAlias;
-	private int mType;
-	private int mStatus;
-	public ArrayList<Chatter> chatters; 
-	
-	public static final int STATUS_VIRTUAL = 1;
-	public static final int STATUS_CREATED = 2;
 
-	public static final int TYPE_MEETING = Chat.TYPE_MEETING;
-	public static final int TYPE_COMMAND = Chat.TYPE_COMMAND;
-	
+	private String				mCode;
+	private String				mTitle;
+	private String				mAlias;
+	private int					mType;
+	private int					mStatus;
+	public ArrayList<Chatter>	chatters;
+
+	public static final int		STATUS_VIRTUAL	= 1;
+	public static final int		STATUS_CREATED	= 2;
+
+	public static final int		TYPE_MEETING	= Chat.TYPE_MEETING;
+	public static final int		TYPE_COMMAND	= Chat.TYPE_COMMAND;
+
 	public Room(String roomCode)
 	{
 		mTitle = "";
@@ -33,7 +33,7 @@ public class Room {
 		mStatus = STATUS_CREATED;
 		chatters = new ArrayList<Chatter>();
 	}
-	
+
 	public Room()
 	{
 		mTitle = "";
@@ -41,48 +41,48 @@ public class Room {
 		mCode = "";
 		mType = Constants.NOT_SPECIFIED;
 		mStatus = STATUS_VIRTUAL;
-		
+
 		chatters = new ArrayList<Chatter>();
 	}
-	
+
 	public ArrayList<String> getChattersIdx()
 	{
 		ArrayList<String> chattersIdx = new ArrayList<String>(chatters.size());
-		
-		for (int i=0; i<chatters.size(); i++)
+
+		for (int i = 0; i < chatters.size(); i++)
 		{
 			chattersIdx.add(chatters.get(i).idx);
 		}
-		
+
 		return chattersIdx;
 	}
 
 	public Chatter getChatter(String chatterIdx)
 	{
-		for (int i=0; i<chatters.size(); i++)
+		for (int i = 0; i < chatters.size(); i++)
 		{
 			Chatter c = chatters.get(i);
 			if (c.idx.equalsIgnoreCase(chatterIdx))
 			{
-				return c; 
+				return c;
 			}
 		}
 		return null;
 	}
-	
+
 	public void setLastReadTS(String chatterIdx, Long TS)
 	{
-		for (int i=0; i<chatters.size(); i++)
+		for (int i = 0; i < chatters.size(); i++)
 		{
 			Chatter c = chatters.get(i);
 			if (c.idx.equalsIgnoreCase(chatterIdx))
 			{
 				c.lastReadTS = TS;
-				chatters.set(i, c); 
+				chatters.set(i, c);
 			}
 		}
 	}
-	
+
 	public String getCode()
 	{
 		return mCode;
@@ -137,17 +137,10 @@ public class Room {
 	public void addChatters(ArrayList<String> chattersIdx)
 	{
 		ArrayList<User> newbies = MemberManager.sharedManager().getUsers(chattersIdx);
-		for (int i=0; i<newbies.size(); i++)
+		for (int i = 0; i < newbies.size(); i++)
 		{
 			User u = newbies.get(i);
-			Chatter c = new Chatter();
-			c.idx = u.idx;
-			c.department = u.department;
-			c.name = u.name;
-			c.pic = u.pic;
-			c.rank = u.rank;
-			c.role = u.role;
-			c.lastReadTS = 0L;
+			Chatter c = new Chatter(u);
 			chatters.add(c);
 		}
 	}

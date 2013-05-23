@@ -19,6 +19,7 @@
 	    android:drawSelectorOnTop="false"
 	    android:footerDividersEnabled="false"
 	    android:headerDividersEnabled="false"
+	    android:listSelector="@android:color/transparent"
 	    android:scrollingCache="true"
 	    android:stackFromBottom="false" />
 

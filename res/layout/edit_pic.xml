@@ -40,7 +40,7 @@
         android:layout_height="104dp" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/chatterListTV"
         android:layout_width="104dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"

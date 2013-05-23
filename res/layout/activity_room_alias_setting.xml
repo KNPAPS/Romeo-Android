@@ -44,6 +44,18 @@
             android:layout_marginRight="10dp"
             android:text="@string/ok" />
 
+        <TextView
+            android:id="@+id/chatterListTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:text="경위 조현주, 경사 지종환, 의경 채호식, 의경 최영우님이 참여 중입니다."
+            android:textColor="@color/sub"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </LinearLayout>
