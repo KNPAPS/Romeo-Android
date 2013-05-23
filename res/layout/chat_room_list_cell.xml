@@ -48,7 +48,14 @@
 					    android:layout_width="13dp"
 					    android:layout_height="13dp"
 					    android:layout_marginRight="3dp"
-					    android:src="@drawable/bubble_active" />
+					    android:layout_marginTop="2dp"
+					    android:background="@drawable/bubble_active"
+					    android:paddingBottom="2dp"
+					    android:paddingLeft="3dp"
+					    android:src="@drawable/bubble_active"
+					    android:text="5"
+					    android:textColor="@color/black"
+					    android:textSize="12sp" />
 
 					<TextView
 					    android:id="@+id/content"

@@ -180,6 +180,7 @@ public class DBProcManager {
 		 * @b COLUMN_ROOM_ALIAS 채팅방 별칭\n
 		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
 		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
+		 * @b COLUMN_LAST_ENTERED_TS 자신이 마지막으로 들어간 시간
 		 * @param roomCode
 		 *            룸 코드
 		 * @return cursor
@@ -190,11 +191,10 @@ public class DBProcManager {
 
 			" r." + DBSchema.ROOM.COLUMN_ALIAS + COLUMN_ROOM_ALIAS + "," +
 
-			" r." + DBSchema.ROOM.COLUMN_TITLE + COLUMN_ROOM_TITLE + "," +
+			" r." + DBSchema.ROOM.COLUMN_TITLE + COLUMN_ROOM_TITLE + "," + " r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + COLUMN_LAST_ENTERED_TS + "," + " (select count(rc._id) " + "from "
+					+ DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID + "= r._id ) " + COLUMN_ROOM_NUM_CHATTER +
 
-			" (select count(rc._id) " + "from " + DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID + "= r._id ) " + COLUMN_ROOM_NUM_CHATTER +
-
-			" from " + DBSchema.ROOM.TABLE_NAME + " r " + " where " + DBSchema.ROOM.COLUMN_IDX + " = ?";
+					" from " + DBSchema.ROOM.TABLE_NAME + " r " + " where " + DBSchema.ROOM.COLUMN_IDX + " = ?";
 
 			String[] val = { roomCode };
 
@@ -542,6 +542,13 @@ public class DBProcManager {
 			db.execSQL(sql);
 		}
 
+		public void updateLastEnteredTS(String roomCode, Long TS)
+		{
+			String sql = "UPDATE " + DBSchema.ROOM.TABLE_NAME + " SET " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " = " + String.valueOf(TS) + " WHERE " + DBSchema.ROOM.COLUMN_IDX + " = ?";
+			String[] val = { roomCode };
+			db.execSQL(sql, val);
+		}
+
 		/**
 		 * 채팅의 상태를 변경
 		 * 
@@ -600,8 +607,9 @@ public class DBProcManager {
 
 			" (select count(rc._id) " + "from " + DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID + "= r._id ) " + COLUMN_ROOM_NUM_CHATTER + ", " +
 
-			" (select count(c._id) " + "from " + DBSchema.CHAT.TABLE_NAME + " c " + "where c." + DBSchema.CHAT.COLUMN_ROOM_ID + " = r._id and c." + DBSchema.CHAT.COLUMN_IS_CHECKED + "= 0 and c."
-					+ DBSchema.CHAT.COLUMN_CONTENT_TYPE + " NOT IN (" + Chat.CONTENT_TYPE_USER_JOIN + "," + Chat.CONTENT_TYPE_USER_LEAVE + ") ) " + COLUMN_ROOM_NUM_NEW_CHAT + ", " +
+			" (select count(c._id) " + "from " + DBSchema.CHAT.TABLE_NAME + " c " + "where c." + DBSchema.CHAT.COLUMN_ROOM_ID + " = r._id and r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " < c."
+					+ DBSchema.CHAT.COLUMN_CREATED_TS + " and  c." + DBSchema.CHAT.COLUMN_SENDER_IDX + " != ? and c." + DBSchema.CHAT.COLUMN_CONTENT_TYPE + " NOT IN (" + Chat.CONTENT_TYPE_USER_JOIN
+					+ "," + Chat.CONTENT_TYPE_USER_LEAVE + ") ) " + COLUMN_ROOM_NUM_NEW_CHAT + ", " +
 
 					" lc." + DBSchema.CHAT.COLUMN_CREATED_TS + COLUMN_ROOM_LAST_CHAT_TS + ", " +
 
@@ -616,7 +624,8 @@ public class DBProcManager {
 					" where " + DBSchema.ROOM.COLUMN_TYPE + " = " + String.valueOf(roomType) +
 
 					" order by lc." + DBSchema.CHAT.COLUMN_CREATED_TS + " desc ";
-			Cursor c = db.rawQuery(sql, null);
+			String[] val = { UserInfo.getUserIdx(context) };
+			Cursor c = db.rawQuery(sql, val);
 			return c;
 		}
 
@@ -677,6 +686,7 @@ public class DBProcManager {
 		public static final String	COLUMN_CHAT_CONTENT				= "chat_content";
 		public static final String	COLUMN_CHAT_CONTENT_TYPE		= "chat_content_type";
 		public static final String	COLUMN_CHAT_STATE				= "chat_state";
+		public static final String	COLUMN_LAST_ENTERED_TS			= "last_entered_ts";
 
 	}
 

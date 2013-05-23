@@ -8,13 +8,13 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 public class DBManager extends SQLiteOpenHelper {
-	private static final int	DATABASE_VERSION						= 3;
+	private static final int	DATABASE_VERSION						= 4;
 	private static final String	TAG										= DBManager.class.getName();
 	private static final String	TEXT									= " TEXT ";
 	private static final String	INT										= " INTEGER ";
 	private static final String	UNIQUE									= " UNIQUE ";
-	private static final String	NOT_NULL								= "  ";																														// TODO
-																																																		// when
+	private static final String	NOT_NULL								= "  ";
+
 	// inserting
 	private static final String	AUTO_INCREMENT							= " AUTOINCREMENT ";
 	private static final String	PRIMARY_KEY								= " PRIMARY KEY ";
@@ -67,8 +67,8 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final String	SQL_CREATE_TABLE_ROOM					= "CREATE TABLE " + DBSchema.ROOM.TABLE_NAME + " (" + DBSchema.ROOM._ID + INT + PRIMARY_KEY + AUTO_INCREMENT + NOT_NULL + COMMA
 																				+ DBSchema.ROOM.COLUMN_IDX + TEXT + NOT_NULL + UNIQUE + COMMA + DBSchema.ROOM.COLUMN_ALIAS + TEXT + NOT_NULL + COMMA
 																				+ DBSchema.ROOM.COLUMN_TITLE + TEXT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_TYPE + INT + NOT_NULL + COMMA
-																				+ DBSchema.ROOM.COLUMN_IS_FAVORITE + INT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_IS_ALARM_ON + INT + NOT_NULL + COMMA
-																				+ DBSchema.ROOM.COLUMN_LAST_CHAT_ID + INT + ")";
+																				+ DBSchema.ROOM.COLUMN_IS_FAVORITE + INT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + INT + NOT_NULL
+																				+ COMMA + DBSchema.ROOM.COLUMN_IS_ALARM_ON + INT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_LAST_CHAT_ID + INT + ")";
 	private static final String	SQL_CREATE_INDEX_ROOM					= "CREATE INDEX ROOM_IDX ON " + DBSchema.ROOM.TABLE_NAME + " (" + DBSchema.ROOM.COLUMN_TYPE + " ASC, "
 																				+ DBSchema.ROOM.COLUMN_LAST_CHAT_ID + " ASC)";
 
@@ -145,10 +145,17 @@ public class DBManager extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer)
 	{
-		if (oldVer == 2 && newVer == 3)
+		if (oldVer == 2 && newVer == 4)
 		{
 			db.execSQL("alter table " + DBSchema.ROOM_CHATTER.TABLE_NAME + " add column " + DBSchema.ROOM_CHATTER.COLUMN_ENTERED_TS + " INT");
 			db.execSQL("update " + DBSchema.ROOM_CHATTER.TABLE_NAME + " set " + DBSchema.ROOM_CHATTER.COLUMN_ENTERED_TS + "=0");
+			db.execSQL("alter table " + DBSchema.ROOM.TABLE_NAME + " add column " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " INT");
+			db.execSQL("update " + DBSchema.ROOM.TABLE_NAME + " set " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + "=0");
+		}
+		else if (oldVer == 3 && newVer == 4)
+		{
+			db.execSQL("alter table " + DBSchema.ROOM.TABLE_NAME + " add column " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " INT");
+			db.execSQL("update " + DBSchema.ROOM.TABLE_NAME + " set " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + "=0");
 		}
 	}
 
@@ -212,14 +219,15 @@ public class DBManager extends SQLiteOpenHelper {
 
 		public static abstract class ROOM implements BaseColumns {
 
-			public static final String	TABLE_NAME			= " rs_room ";
-			public static final String	COLUMN_IDX			= " room_idx ";
-			public static final String	COLUMN_TITLE		= " room_title ";
-			public static final String	COLUMN_ALIAS		= " room_alias ";
-			public static final String	COLUMN_TYPE			= " room_type ";
-			public static final String	COLUMN_IS_FAVORITE	= " is_favorite ";
-			public static final String	COLUMN_IS_ALARM_ON	= " is_alarm_on ";
-			public static final String	COLUMN_LAST_CHAT_ID	= " last_chat_id ";
+			public static final String	TABLE_NAME				= " rs_room ";
+			public static final String	COLUMN_IDX				= " room_idx ";
+			public static final String	COLUMN_TITLE			= " room_title ";
+			public static final String	COLUMN_ALIAS			= " room_alias ";
+			public static final String	COLUMN_TYPE				= " room_type ";
+			public static final String	COLUMN_IS_FAVORITE		= " is_favorite ";
+			public static final String	COLUMN_IS_ALARM_ON		= " is_alarm_on ";
+			public static final String	COLUMN_LAST_CHAT_ID		= " last_chat_id ";
+			public static final String	COLUMN_LAST_ENTERED_TS	= " last_entered_ts ";
 
 		}
 

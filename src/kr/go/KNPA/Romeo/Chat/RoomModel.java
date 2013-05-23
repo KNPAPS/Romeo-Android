@@ -228,6 +228,8 @@ public class RoomModel extends BaseModel {
 			return;
 		}
 
+		DBProcManager.sharedManager(mContext).chat().updateLastEnteredTS(mRoom.getCode(), System.currentTimeMillis() / 1000);
+
 		Data reqData = new Data();
 		reqData.add(0, KEY.CHAT.ROOM_CODE, mRoom.getCode());
 		reqData.add(0, KEY.USER.IDX, UserInfo.getUserIdx(mContext));

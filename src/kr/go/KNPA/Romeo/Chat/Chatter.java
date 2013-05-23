@@ -3,8 +3,7 @@ package kr.go.KNPA.Romeo.Chat;
 import kr.go.KNPA.Romeo.Member.User;
 
 public class Chatter extends User {
-	public Long	lastReadTS	= 0L;
-	public Long	enteredTS	= 0L;
+	public Long	lastReadTS	= System.currentTimeMillis() / 1000;
 
 	public Chatter()
 	{
