@@ -14,27 +14,27 @@ import kr.go.KNPA.Romeo.Survey.Survey.Form.Question;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.UserInfo;
+
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.chart.PieChart;
+import org.achartengine.model.CategorySeries;
+import org.achartengine.renderer.DefaultRenderer;
+import org.achartengine.renderer.SimpleSeriesRenderer;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
 
 public class SurveyResultFragment extends Fragment {
 
@@ -43,7 +43,7 @@ public class SurveyResultFragment extends Fragment {
 	
 	private View view;
 	
-	private final String[] COLORS = {"#AF0452", "#FF8500", "#008196", "#002787", "#4903C7"};
+	protected final int[] COLORS = { Color.parseColor("#AF0452"), Color.parseColor("#FF8500"), Color.parseColor("#008196"), Color.parseColor("#002787"), Color.parseColor("#4903C7") };
 	
 	public SurveyResultFragment() {}
 	public SurveyResultFragment(Survey survey, int subType) {	
@@ -70,12 +70,6 @@ public class SurveyResultFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
-		//super.onCreateView(inflater, container, savedInstanceState);
-		//Intent intent = getIntent();
-		//Bundle b = intent.getExtras();
-		//this.survey = b.getParcelable("survey");
-		//this.context = SurveyDetailFragment.this;
 
 		this.view = inflater.inflate(R.layout.survey_result, null, false);
 		
@@ -189,31 +183,23 @@ public class SurveyResultFragment extends Fragment {
 			qIsMultipleTV.setVisibility((question.isMultiple() ? View.VISIBLE : View.INVISIBLE));
 			
 			
-			// Graph with WebView
+			// ChartView
 			ArrayList<Integer> qVote = _votes.get(qi);
-			WebView qGraphWV = (WebView)questionLL.findViewById(R.id.graphView);
-			GraphPlugin graphPlugin = new GraphPlugin(qGraphWV, qVote);
-			ViewGroup.LayoutParams lpWV = qGraphWV.getLayoutParams();
-			if(lpWV == null) {
-//				Display display = getActivity().getWindowManager().getDefaultDisplay();
-//				
-//				int width = 0;
-//				// TODO : SDK 버전별 코드
-//				if(Build.VERSION.SDK_INT < 13) {
-//					width = display.getWidth();
-//				} else {
-//					Point size = new Point();
-//					display.getSize(size);	// Disable Check
-//					width = size.x;
-//				}
-//				// 240 - gap - gapSmall - gap dp
-				int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 210, getActivity().getResources().getDisplayMetrics());
-				lpWV = new ViewGroup.LayoutParams(px, (int)(px * 0.85));
-			} else {
-				lpWV.height = (int)(lpWV.width * 0.85);
-			}
-			qGraphWV.setLayoutParams(lpWV);
 			
+			DefaultRenderer renderer = new DefaultRenderer();
+			String dummyLabel = "";
+			CategorySeries series = new CategorySeries(dummyLabel);
+			for (int i=0; i< qVote.size(); i++) {
+				SimpleSeriesRenderer ssr = new SimpleSeriesRenderer();
+				ssr.setColor(COLORS[ i % (COLORS.length) ] );
+				renderer.addSeriesRenderer(ssr);
+				series.add(dummyLabel, qVote.get(i));
+			}
+			
+			PieChart qChart = new PieChart(series, renderer);
+			GraphicalView qChartView = ChartFactory.getPieChartView(getActivity(), series, renderer);
+			View qChartContainer = (View)questionLL.findViewById(R.id.graphView);
+					
 			LinearLayout _optionsLL = (LinearLayout)questionLL.findViewById(R.id.options);
 			ArrayList<String> options = question.options();
 			for(int oi = 0; oi<options.size(); oi++) {
@@ -226,7 +212,7 @@ public class SurveyResultFragment extends Fragment {
 				int nThisOption = qVote.get(oi);
 				float percent = ( (float)nThisOption / (float)nResponders * (float)100.0 );
 				optionContentTV.setText( ((int)Math.round(percent)) + " %");
-				optionContentTV.setTextColor(Color.parseColor(COLORS[oi%(COLORS.length)]));
+				optionContentTV.setTextColor( COLORS[oi%(COLORS.length)] );
 				
 				_optionsLL.addView(optionLL);
 			}
@@ -278,66 +264,6 @@ public class SurveyResultFragment extends Fragment {
 	}
 	
 
-	/** Object exposed to JavaScript */
-    private class GraphPlugin extends WebViewClient {
-    	private WebView qGraphWV = null;
-    	private String jsCommand = "";
-    	private ArrayList<Integer> arg = null;
-    	
-    	
-    	public void callAndroid(final String json) { // must be final
-    		getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					Log.i("Javascript", json);
-				}
-			});
-		}
-       
-    	public GraphPlugin(WebView wv, ArrayList<Integer> arg, int width, int height) {
-    		init(wv);
-			willExecute("javascript:makeGraph('"+new Gson().toJson(arg)+","+width+","+height+"');");
-			
-		}
-    	
-    	public GraphPlugin(WebView wv, ArrayList<Integer> arg) {
-    		init(wv);
-			willExecute("javascript:makeGraph('"+new Gson().toJson(arg)+"');");
-			
-		}
-    	
-    	private void init(WebView wv) {
-    		this.qGraphWV = wv;
-    		
-    		qGraphWV.getSettings().setJavaScriptEnabled(true);
-			qGraphWV.addJavascriptInterface(this, "GraphPlugin");
-			qGraphWV.setWebViewClient(this);
-			qGraphWV.loadUrl("file:///android_asset/www/result.html");
-			//qGraphWV.getSettings().setLoadWithOverviewMode(true);
-			qGraphWV.getSettings().setUseWideViewPort(true);
-			qGraphWV.setInitialScale(1);
-			
-			qGraphWV.setClickable(false);
-			qGraphWV.setLongClickable(false);
-			qGraphWV.setOnClickListener(new OnClickListener() { @Override public void onClick(View v) { return; } });
-			qGraphWV.setOnTouchListener(new OnTouchListener() { @Override public boolean onTouch(View v, MotionEvent event) { return true; } });
-			qGraphWV.setOverScrollMode(View.OVER_SCROLL_NEVER);
-    	}
 
-    	@Override
-    	public void onPageFinished(WebView view, String url) {
-    		super.onPageFinished(view, url);
-    		execute();
-    	}
-
-    	public void willExecute(String jsCommand) {
-    		this.jsCommand = jsCommand;
-    	}
-    	
-    	public void execute() {
-    		// JAVASCRIPT 호출 :
-    		qGraphWV.loadUrl(jsCommand);
-    	}
-    }
     
 }
