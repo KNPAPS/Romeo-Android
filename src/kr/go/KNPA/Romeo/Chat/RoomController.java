@@ -677,7 +677,6 @@ public class RoomController extends BaseController implements RoomLayout.Listene
 					public void run()
 					{
 						super.run();
-
 						mLayout.getListView().isLoading = true;
 
 						final Cursor c = mListAdapter.query(nItems + ChatListAdapter.NUM_CHAT_PER_PAGE);

@@ -87,7 +87,7 @@ public class RoomModel extends BaseModel {
 		Data reqData = new Data();
 		reqData.add(0, KEY.CHAT.ROOM_MEMBER, mRoom.getChattersIdx());
 		reqData.add(0, KEY.CHAT.ROOM_CODE, roomCode);
-		reqData.add(0, KEY.CHAT.TYPE, mRoom.getType());
+		reqData.add(0, KEY.MESSAGE.TYPE, mRoom.getType());
 		reqData.add(0, KEY.USER.IDX, UserInfo.getUserIdx(mContext));
 
 		Payload request = new Payload().setEvent(Event.MESSAGE_CHAT_CREATE_ROOM).setData(reqData);

@@ -1,4 +1,4 @@
- package kr.go.KNPA.Romeo;
+package kr.go.KNPA.Romeo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +17,17 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class BaseActivity extends SlidingFragmentActivity {
 
-	private int mTitleRes;
-	protected ListFragment mFrag;
+	private int				mTitleRes;
+	protected ListFragment	mFrag;
 
-	public BaseActivity(int titleRes) {
+	public BaseActivity(int titleRes)
+	{
 		mTitleRes = titleRes;
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 
 		setTitle(mTitleRes);
@@ -36,40 +38,43 @@ public class BaseActivity extends SlidingFragmentActivity {
 		ft.commit();
 		SlidingMenu sm = getSlidingMenu();
 		sm.setShadowWidthRes(R.dimen.shadow_width);
-		sm.setShadowDrawable(R.drawable.shade);	
+		sm.setShadowDrawable(R.drawable.shade);
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		sm.setFadeDegree(0.35f);
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		sm.setSlidingEnabled(true);
 
-		
-		
 	}
-	
-	public class BasePagerAdapter extends FragmentPagerAdapter {
-		private List<Fragment> mFragments = new ArrayList<Fragment>();
-		private ViewPager mPager;
 
-		public BasePagerAdapter(FragmentManager fm, ViewPager vp) {
+	public class BasePagerAdapter extends FragmentPagerAdapter {
+		private List<Fragment>	mFragments	= new ArrayList<Fragment>();
+		private ViewPager		mPager;
+
+		public BasePagerAdapter(FragmentManager fm, ViewPager vp)
+		{
 			super(fm);
 			mPager = vp;
 			mPager.setAdapter(this);
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++)
+			{
 				addTab(new MenuListFragment());
 			}
 		}
 
-		public void addTab(Fragment frag) {
+		public void addTab(Fragment frag)
+		{
 			mFragments.add(frag);
 		}
 
 		@Override
-		public Fragment getItem(int position) {
+		public Fragment getItem(int position)
+		{
 			return mFragments.get(position);
 		}
 
 		@Override
-		public int getCount() {
+		public int getCount()
+		{
 			return mFragments.size();
 		}
 	}

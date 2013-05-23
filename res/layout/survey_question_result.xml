@@ -38,7 +38,7 @@
         android:text="@string/question_is_multiple"
         android:textColor="@color/text" />
 
-    <View
+    <ImageView
         android:id="@+id/graphView"
         android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
