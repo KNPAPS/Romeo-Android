@@ -97,7 +97,7 @@ public class UserProfileFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == Constants.REQUEST_PIC_PICKER) {
 			
-			if ( data.getData() == null ){
+			if ( data.getData() == null || resultCode == Activity.RESULT_CANCELED){
 				return;
 			}
 			
