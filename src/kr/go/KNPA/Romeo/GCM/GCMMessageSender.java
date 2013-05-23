@@ -90,8 +90,6 @@ public class GCMMessageSender {
 				
 				if(response.getStatusCode() == StatusCode.SUCCESS) {
 				
-					// TODO : 서버 오류로 인해 response.statuscode 값은 정상이나
-					// Data가 존재하지 않는 경우, get(index)하면 Null Point Exception
 					String messageIdx = (String)response.getData().get(0, KEY.MESSAGE.IDX);
 					_message.idx = messageIdx;
 					// TODO :  실패한 발신자
