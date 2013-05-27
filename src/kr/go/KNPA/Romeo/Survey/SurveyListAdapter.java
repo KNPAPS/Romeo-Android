@@ -149,7 +149,7 @@ class SurveyListAdapter extends CursorAdapter {
 						
 						@Override
 						public void run() {
-							ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(IGNORE_ITEM_VIEW_TYPE, survey.idx);
+							ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(survey.type(), survey.idx);
 							
 							android.os.Message message = obtainMessage();
 							message.what = WHAT_UNCHECKERS;

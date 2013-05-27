@@ -12,9 +12,8 @@ import android.view.ViewGroup;
 public class SurveyFragment extends RomeoFragment {
 
 	// Managed Fragments
-	public static SurveyFragment _departedFragment = null;
-	public static SurveyFragment _receivedFragment = null;
-	private boolean isForeGround=false;
+	private static SurveyFragment _departedFragment = null;
+	private static SurveyFragment _receivedFragment = null;
 	
 	// Constructor
 	public SurveyFragment() {
@@ -46,7 +45,6 @@ public class SurveyFragment extends RomeoFragment {
 		// if call super.onResume(), 
 		// cannot edit EditTexts in ComposeFrag
 		super.onResume();
-		isForeGround = true;
 	}
 	
 	@Override

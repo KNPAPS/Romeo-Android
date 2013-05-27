@@ -57,7 +57,7 @@ public class GCMMessageSender {
 	}
 
 	public static ArrayList<String> getUncheckers(int type, String idx) {
-		Payload request = new Payload().setData(new Data().add(0, KEY.MESSAGE.TYPE, type).add(0, KEY.MESSAGE.IDX, idx));
+		Payload request = new Payload().setEvent(Event.MESSAGE_GET_UNCHECKERS).setData(new Data().add(0, KEY.MESSAGE.TYPE, type).add(0, KEY.MESSAGE.IDX, idx));
 		Connection conn = new Connection().async(false).requestPayload(request).request();
 		Payload response = conn.getResponsePayload();
 		

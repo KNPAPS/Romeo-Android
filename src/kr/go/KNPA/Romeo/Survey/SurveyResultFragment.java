@@ -214,58 +214,9 @@ public class SurveyResultFragment extends Fragment {
 			// qVote.add(10);
 			// qVote.add(20);
 
-			DefaultRenderer renderer = new DefaultRenderer();
-			String dummyLabel = "";
-			CategorySeries series = new CategorySeries(dummyLabel);
-			for (int i = 0; i < qVote.size(); i++)
-			{
-				SimpleSeriesRenderer ssr = new SimpleSeriesRenderer();
-				ssr.setColor(COLORS[i % (COLORS.length)]);
-				renderer.addSeriesRenderer(ssr);
-				series.add(dummyLabel, qVote.get(i));
-			}
-
-			renderer.setDisplayValues(false);
-			// renderer.setInScroll(true);
-			renderer.setShowLabels(false);
-			renderer.setShowLegend(false);
-			renderer.setShowAxes(false);
-			renderer.setShowCustomTextGrid(false);
-			renderer.setShowGrid(false);
-			renderer.setZoomEnabled(false);
-			renderer.setExternalZoomEnabled(false);
-			renderer.setClickEnabled(false);
-			renderer.setPanEnabled(false);
-			renderer.setMargins(new int[] { 0, 0, 0, 0 });
-			renderer.setScale(1.25f);
-
-			PieChart qChart = new PieChart(series, renderer);
-			// GraphicalView qChartView =
-			// ChartFactory.getPieChartView(getActivity(), series, renderer);
-			// ViewGroup qChartContainer = (ViewGroup)
-			// questionLL.findViewById(R.id.graphView);
-			// qChartContainer.addView(qChartView);
-
-			int diameter = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
-			int radius = diameter / 2;
-			int viewWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
-			int viewHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
-			int marginW = (viewWidth - diameter) / 2;
-			int marginH = (viewHeight - diameter) / 2;
-			int widthPX = getResources().getDisplayMetrics().widthPixels;
-
-			Bitmap bm = Bitmap.createBitmap(viewWidth, viewHeight, Config.ARGB_8888);
-			Canvas c = new Canvas(bm);
-			Paint p = new Paint();
-			// p.setStrokeWidth(10);
-			// p.setColor(Color.parseColor("#33FF0000"));
-			// c.drawLine(10, 10, diameter - 10, diameter - 10, p);
-			qChart.draw(c, marginW, marginH, diameter, diameter, p);
-
-			ImageView qChartContainer = (ImageView) questionLL.findViewById(R.id.graphView);
-			qChartContainer.setImageBitmap(bm);
-			// qChartContainer.setBackgroundResource(R.color.blue);
-
+			// 그래프를 그린다.
+			drawChart(questionLL, qVote);
+			
 			LinearLayout _optionsLL = (LinearLayout) questionLL.findViewById(R.id.options);
 			ArrayList<String> options = question.options();
 			// nResponders = options.size();
@@ -310,6 +261,93 @@ public class SurveyResultFragment extends Fragment {
 													}
 												};
 
+	protected void drawChart(ViewGroup questionLL, ArrayList<Integer> qVote) {
+		// 그래프를 담당하는 부분
+		DefaultRenderer renderer = new DefaultRenderer();
+		String dummyLabel = "";
+		
+		
+		// 그래프 각 portion에 대한 설정
+		CategorySeries series = new CategorySeries(dummyLabel);
+		for (int i = 0; i < qVote.size(); i++)
+		{
+			SimpleSeriesRenderer ssr = new SimpleSeriesRenderer();
+			ssr.setColor(COLORS[i % (COLORS.length)]);
+			renderer.addSeriesRenderer(ssr);
+			
+			series.add(dummyLabel, qVote.get(i));
+		}
+
+		
+		// 차트 전체에 대한 설정
+		renderer.setDisplayValues(false);
+		renderer.setShowLabels(false);
+		renderer.setShowLegend(false);
+		renderer.setShowAxes(false);
+		renderer.setShowCustomTextGrid(false);
+		renderer.setShowGrid(false);
+		renderer.setZoomEnabled(false);
+		renderer.setExternalZoomEnabled(false);
+		renderer.setClickEnabled(false);
+		renderer.setPanEnabled(false);
+		renderer.setMargins(new int[] { 0, 0, 0, 0 });
+		renderer.setScale(1.25f);
+
+		PieChart qChart = new PieChart(series, renderer);
+
+
+		int diameter = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
+		int viewWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
+		int viewHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
+		int marginW = (viewWidth - diameter) / 2;
+		int marginH = (viewHeight - diameter) / 2;
+
+		Bitmap bm = Bitmap.createBitmap(viewWidth, viewHeight, Config.ARGB_8888);
+		Canvas c = new Canvas(bm);
+		Paint p = new Paint();
+		qChart.draw(c, marginW, marginH, diameter + marginW, diameter + marginH, p);
+		
+		makeDonutEffect(c, viewWidth, viewHeight, diameter, 0.5f);
+		ImageView qChartContainer = (ImageView) questionLL.findViewById(R.id.graphView);
+		qChartContainer.setImageBitmap(bm);
+		// qChartContainer.setBackgroundResource(R.color.blue);
+
+	}
+
+	protected void makeDonutEffect(Canvas c, int viewW, int viewH, int original_diameter, float thickness) {
+		// 도넛 효과를 위한 가운데 흰 원그래프에 대한 설정
+		
+		// 차트 전체에 대한 설정
+		DefaultRenderer dummyRenderer =   new DefaultRenderer();
+		dummyRenderer.setDisplayValues(false);
+		dummyRenderer.setShowLabels(false);
+		dummyRenderer.setShowLegend(false);
+		dummyRenderer.setShowAxes(false);
+		dummyRenderer.setShowCustomTextGrid(false);
+		dummyRenderer.setShowGrid(false);
+		dummyRenderer.setZoomEnabled(false);
+		dummyRenderer.setExternalZoomEnabled(false);
+		dummyRenderer.setClickEnabled(false);
+		dummyRenderer.setPanEnabled(false);
+		dummyRenderer.setMargins(new int[] { 0, 0, 0, 0 });
+		dummyRenderer.setScale(1.25f);
+
+		SimpleSeriesRenderer ssr = new SimpleSeriesRenderer();
+		ssr.setColor(Color.parseColor("#FFFFFF"));
+		dummyRenderer.addSeriesRenderer(ssr);
+		
+		CategorySeries dummySeries = new CategorySeries("DUMMY");
+		dummySeries.add("DUMMY", 1);
+		
+		PieChart dummyChart = new PieChart(dummySeries, dummyRenderer);
+		
+		int diameter = (int)(original_diameter * thickness);
+		int marginW = ( viewW - diameter )/2;
+		int marginH = ( viewH - diameter )/2;
+		
+		dummyChart.draw(c, marginW, marginH, diameter , diameter, new Paint());
+	}
+	
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener,
 			OnClickListener rbbOnClickListener)
 	{

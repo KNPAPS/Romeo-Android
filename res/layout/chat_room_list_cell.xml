@@ -3,7 +3,7 @@
     android:id="@+id/chat_list_cell"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/white"
+    android:background="@drawable/list_cell"
     android:orientation="horizontal" >
 
     <ImageView

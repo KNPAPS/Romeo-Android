@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -415,6 +416,12 @@ public class SurveyComposeFragment extends Fragment {
 		
 		// WaiterView.dismissDialog(getActivity()); : Survey.AfterSend();
 		
+		// FragmentManager fm = getActivity().getSupportFragmentManager();
+		// fm.getBackStackEntryAt(fm.getBackStackEntryCount()-2).;
+		SurveyFragment departedFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+		if( departedFragment != null && departedFragment.listView != null) {
+			departedFragment.listView.refresh();
+		}
 		MainActivity.sharedActivity().popContent();
 	}
 	
