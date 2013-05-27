@@ -39,7 +39,7 @@ import android.widget.Toast;
 public class MemberListView extends RomeoListView {
 
 	// Adapter Override
-	public MemberListAdapter listAdapter;
+	public CellNodeTreeAdapter listAdapter;
 	public View searchBar;
 	
 	private Context context;
@@ -112,9 +112,14 @@ public class MemberListView extends RomeoListView {
 		
 		switch(this.subType) {
 			case User.TYPE_MEMBERLIST_SEARCH :
+				listAdapter = new MemberListSearchAdapter(context);
+				this.setOnItemClickListener((MemberListSearchAdapter) listAdapter);
+				this.setAdapter(listAdapter);
+				break;
+				
 			case User.TYPE_MEMBERLIST :
-				listAdapter = new MemberListAdapter(context, subType);
-				this.setOnItemClickListener(listAdapter);
+				listAdapter = new MemberListAdapter(context);
+				this.setOnItemClickListener((MemberListAdapter) listAdapter);
 				this.setAdapter(listAdapter);
 				break;		
 		}

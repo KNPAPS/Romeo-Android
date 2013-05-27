@@ -13,7 +13,8 @@
         android:layout_height="11dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="0dp"
-        android:src="@drawable/sub_indicator" />
+        android:src="@drawable/indentation"
+         />
 
     <TextView
         android:id="@+id/title"

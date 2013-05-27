@@ -14,7 +14,7 @@
         android:layout_marginRight="2dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/dummy"
-        android:src="@drawable/sub_indicator" />
+        android:src="@drawable/indentation" />
     
     <ImageView
         android:id="@+id/user_pic"

@@ -10,7 +10,7 @@
         android:layout_height="11dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/gap"
-        android:src="@drawable/sub_indicator" />
+        android:src="@drawable/indentation" />
     
     <ImageView
         android:id="@+id/icon"

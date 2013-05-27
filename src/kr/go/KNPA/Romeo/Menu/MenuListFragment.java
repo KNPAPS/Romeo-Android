@@ -173,7 +173,7 @@ public class MenuListFragment extends ListFragment {
 		childData.add(l);
 		
 		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"설정", 			"iconImage", ""+R.drawable.sub_indicator, 	"code", "settings"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"설정", 			"iconImage", ""+R.drawable.indentation, 	"code", "settings"));
 		childData.add(l);	l= null;
         
 		
