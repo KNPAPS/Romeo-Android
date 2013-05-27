@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/gapSmall"
-    android:padding="@dimen/gapSmall"
-    android:orientation="vertical" >
+    android:baselineAligned="true"
+    android:orientation="vertical"
+    android:padding="@dimen/gapSmall" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/department"
                 android:textColor="@color/text"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/room_list_cell_room_name"
@@ -62,10 +63,10 @@
             android:paddingBottom="@dimen/gapSmall"
             android:paddingLeft="16dp"
             android:paddingRight="@dimen/gapSmall"
-            android:paddingTop="@dimen/gap"
+            android:paddingTop="@dimen/gapSmall"
             android:text="@string/loremIpsumShort"
             android:textColor="@color/text"
-            android:textSize="16dp" />
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/contentImage"
@@ -88,16 +89,18 @@
             android:padding="@dimen/gapSmaller"
             android:text="@string/sampleTime"
             android:textColor="@color/black"
-            android:textSize="10dp" />
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/goUnchecked"
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="bottom"
-            android:layout_marginTop="@dimen/gapSmall"
-            android:layout_marginBottom="-16dp"
-            android:background="@drawable/bubble_active" />
+            android:background="@drawable/bubble_active"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="1"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </LinearLayout>

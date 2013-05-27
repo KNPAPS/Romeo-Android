@@ -77,7 +77,28 @@ public class RoomController extends BaseController implements RoomLayout.Listene
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		mModel = new RoomModel(getActivity(), mRoom);
+
+		Thread t = new Thread() {
+			@Override
+			public void run()
+			{
+				super.run();
+
+				mModel = new RoomModel(getActivity(), mRoom);
+			}
+		};
+
+		t.start();
+		try
+		{
+			t.join();
+		}
+		catch (InterruptedException e)
+		{
+			Log.e(TAG, "모델 생성 쓰레드 interrupted");
+			e.printStackTrace();
+			return null;
+		}
 
 		// 레이아웃 설정
 		mLayout = new RoomLayout(getActivity(), inflater, container, savedInstanceState);

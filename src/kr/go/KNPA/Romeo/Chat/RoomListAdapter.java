@@ -78,13 +78,13 @@ class RoomListAdapter extends CursorAdapter {
 
 		roomTitleTV.setText(roomTitle);
 
-		if (nUsers > 1)
+		if (nUsers > 2)
 		{
 			// 그룹 채팅일 경우
 			departmentTV.setText("그룹 회의");
 			numChatters.setText("(" + String.valueOf(nUsers) + " 명)");
 		}
-		else if (nUsers == 1)
+		else if (nUsers == 2)
 		{
 			// 1:1채팅일 경우
 			numChatters.setVisibility(View.INVISIBLE);
@@ -114,6 +114,7 @@ class RoomListAdapter extends CursorAdapter {
 
 		if (nUnchecked > 0)
 		{
+			numNewChat.setVisibility(View.VISIBLE);
 			numNewChat.setText(String.valueOf(nUnchecked));
 		}
 		else

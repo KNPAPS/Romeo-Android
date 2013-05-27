@@ -122,9 +122,12 @@ public class MainActivity extends BaseActivity {
 
 	public void goRoomFragment(int subType, Room room)
 	{
-		RoomListController roomListController = RoomListController.getInstance(subType);
+		if (getSupportFragmentManager().findFragmentByTag(RoomListController.class.getSimpleName()) == null)
+		{
+			RoomListController roomListController = RoomListController.getInstance(subType);
+			switchContent(roomListController);
+		}
 		RoomController roomController = new RoomController(room);
-		switchContent(roomListController);
 		pushContent(roomController);
 	}
 

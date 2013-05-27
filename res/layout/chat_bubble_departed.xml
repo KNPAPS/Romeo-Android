@@ -27,7 +27,7 @@
                 android:text="@string/department"
                 android:textColor="@color/text"
                 android:textColorLink="@color/black"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/room_list_cell_room_name"
@@ -52,8 +52,10 @@
             android:layout_width="18dp"
             android:layout_height="18dp"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="-16dp"
-            android:background="@drawable/bubble_active" />
+            android:background="@drawable/bubble_active"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="14"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/arrivalDT"
@@ -63,7 +65,7 @@
             android:padding="@dimen/gapSmaller"
             android:text="@string/sampleTime"
             android:textColor="@color/text"
-            android:textSize="10dp" />
+            android:textSize="10sp" />
 
         <ImageView
             android:id="@+id/contentImage"
@@ -87,10 +89,10 @@
             android:paddingBottom="@dimen/gapSmall"
             android:paddingLeft="@dimen/gapSmall"
             android:paddingRight="@dimen/gap"
-            android:paddingTop="@dimen/gap"
-            android:text="@string/loremIpsumShort"
+            android:paddingTop="@dimen/gapSmall"
+            android:text="@string/loremIpsum"
             android:textColor="@color/text"
-            android:textSize="16dp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 

@@ -45,6 +45,7 @@ public class RoomModel extends BaseModel {
 		{
 			fetchBaseInfo();
 			fetchChatters();
+			pullLastReadTS();
 		}
 	}
 
