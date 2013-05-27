@@ -418,22 +418,192 @@ public class CellNode {
 	
 
 	public void check() {
-		if( status() == CellNode.FCHECK) {
-			detParentStatusChecked();
-			for(int i=0; i< this.children().size(); i++) {
-				CellNode child = this.children().get(i);
-				child.status(NCHECK);
-			}
-		} else {
-			detParentStatusUnchecked();
-			// if(this.children().size >0)
-			for(int i=0; i< this.children().size(); i++) {
-				CellNode child = this.children().get(i);
-				child.status(FCHECK);
-			}
+		switch( status() ) {
+		case CellNode.FCHECK :
+			this.status(NCHECK);
+			detParentOfF2N();
+			checkChildren(NCHECK);
+			break;
+		
+		case CellNode.HCHECK :
+			this.status(FCHECK);
+			detParentOfH2F();
+			checkChildren(FCHECK);
+			break;
+			
+		case CellNode.NCHECK :
+			this.status(FCHECK);
+			detParentOfN2F();
+			checkChildren(FCHECK);
+			break;
+			
 		}
 	}
 	
+	private void checkChildren(int willStatus) {
+		
+		for(int i=0; i< this.children().size(); i++) {
+			
+			CellNode child = this.children().get(i);
+			child.status(willStatus);
+			child.checkChildren(willStatus);
+			
+		}
+		
+	}
+	
+	private void detParentOfF2N() {
+		CellNode parent = this.parent();
+		if(parent.isRoot()) return;
+		
+		boolean allNCHECK = detAllSiblingsAre(NCHECK);
+		
+		switch(parent.status()) {
+		
+		case FCHECK : 	
+			if(!allNCHECK) {
+				parent.status(HCHECK);
+				parent.detParentOfF2H();
+			} else {
+				parent.status(NCHECK);
+				parent.detParentOfF2N();
+			}
+			
+			break;
+			
+		case HCHECK :
+			if(!allNCHECK) {
+				parent.status(HCHECK);
+			} else {
+				parent.status(NCHECK);
+				parent.detParentOfH2N();
+			}
+			break;
+			
+		default :
+		case NCHECK :
+			break;
+		}
+	}
+	
+	private void detParentOfF2H() {
+		CellNode parent = this.parent();
+		if(parent.isRoot()) return;
+		
+		//boolean
+		
+		switch(parent.status()) {
+		case FCHECK :
+			parent.status(HCHECK);
+			parent.detParentOfF2H();
+			break;
+			
+		case HCHECK :
+			parent.status(HCHECK);
+			break;
+			
+		default :
+		case NCHECK :
+			break;
+		}
+	}
+	
+	private void detParentOfH2F() {
+		CellNode parent = this.parent();
+		if(parent.isRoot()) return;
+		
+		boolean allFCHECK = detAllSiblingsAre(FCHECK);
+		
+		switch(parent.status()) {
+		case HCHECK :
+			if(allFCHECK) {
+				parent.status(FCHECK);
+				parent.detParentOfH2F();
+			} else {
+				parent.status(HCHECK);
+			}
+			break;
+		
+		default :
+		case FCHECK :
+		case NCHECK :
+			break;
+		}
+		
+	}
+	
+	private void detParentOfH2N() {
+		this.detParentOfF2N();
+	}
+	
+	private void detParentOfN2F() {
+		CellNode parent = this.parent();
+		if(parent.isRoot()) return;
+		
+		boolean allFCHECK = detAllSiblingsAre(FCHECK);
+		
+		switch(parent.status()) {
+		case HCHECK :
+			if(allFCHECK) {
+				parent.status(FCHECK);
+				parent.detParentOfH2F();
+			} else {
+				parent.status(HCHECK);
+			}
+			break;
+			
+		case NCHECK :
+			if(allFCHECK) {
+				parent.status(FCHECK);
+				parent.detParentOfN2F();
+			} else {
+				parent.status(HCHECK);
+				parent.detParentOfN2H();
+			}
+			break;
+			
+		default :
+		case FCHECK :
+			break;
+		}
+	}
+	
+	private void detParentOfN2H() {
+		CellNode parent = this.parent();
+		if(parent.isRoot()) return;
+		
+		//boolean
+		
+		switch(parent.status()) {
+		case NCHECK :
+			parent.status(HCHECK);
+			parent.detParentOfN2H();
+			break;
+			
+		default :
+		case FCHECK :
+		case HCHECK :
+			break;
+		}
+	}
+	
+	private boolean detAllSiblingsAre(int status) {
+		ArrayList<CellNode> sibs = this.parent().children();
+		
+		boolean result = true;
+		for(int i=0; i<sibs.size(); i++) {
+			CellNode sib = sibs.get(i);
+			if(sib.indexPath().equals(this.indexPath())) continue;
+			if(sib.status() != status) {
+				result = false;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
+	/*
 	private void detParentStatusChecked() {
 		boolean flag = false;
 		ArrayList<CellNode> sibs = this.parent().children();
@@ -483,7 +653,7 @@ public class CellNode {
 			this.status(FCHECK);
 		}
 	}
-	
+	*/
 	public static ArrayList<String> collect(CellNode rootNode) { 
 		HashSet<String> _result = new HashSet<String>();
 		

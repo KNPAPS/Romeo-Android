@@ -27,8 +27,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
 public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnItemClickListener {
-
-	private BaseAdapter listAdapter;
 	
 	// Constructor
 	public MemberListSearchAdapter(final Context context) {
@@ -53,11 +51,11 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 		WaiterView.dismissDialog(context);		
 	}
 	
-	@Override	public int getCount() {	return listAdapter.getCount();	}
-	@Override	public Object getItem(int pos) {	return listAdapter.getItem(pos-1);	}
-	@Override	public long getItemId(int pos) {	return listAdapter.getItemId(pos-1);	}
-	@Override	public int 		getViewTypeCount	() 		{	return	3;																}
-	@Override	public boolean areAllItemsEnabled() {	return listAdapter.areAllItemsEnabled();	}
+	@Override	public int 		getCount	() 					{	return	this.rootNode().count();										}
+	@Override	public Object 	getItem		(int position) 		{	return	objectForRowAtIndexPath( getIndexPathFromPosition(position) );	}
+	@Override	public long 	getItemId	(int position) 		{	return	getIndexPathFromPosition(position).indexPathToLong();			}
+	@Override	public int 		getViewTypeCount	() 			{	return	3;																}
+	@Override	public boolean 	areAllItemsEnabled	() 			{	return	true;															}	
 	
 
 	@Override
@@ -72,7 +70,7 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 		
 		CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
 		
-		if(convertView == null && getItemViewType(position) != node.type()) {			// re-usable test
+		if(convertView == null || getItemViewType(position) != node.type()) {			// re-usable test
 			switch(node.type()) {
 			case CellNode.CN_DEPARTMENT :
 				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_department_cell_search, parent, false);	break;
@@ -163,15 +161,7 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 		final CellNode nodeClicked = CellNode.nodeAtIndexPath(this.rootNode(), path);
 		
 		if(nodeClicked.type() == CellNode.CN_USER) {	
-		// node의 type이 USER이면 상세안내창 띄우기
-			Intent intent = new Intent(this.context, MemberDetailActivity.class);
-
-			Bundle b = new Bundle();
-			b.putString(MemberDetailActivity.KEY_IDX, ((User)getItem(position)).idx );
-			b.putInt(MemberDetailActivity.KEY_IDX_TYPE, MemberDetailActivity.IDX_TYPE_USER);
-			intent.putExtras(b);	
 			
-			this.context.startActivity(intent);
 			
 		} else if(nodeClicked.type() == CellNode.CN_DEPARTMENT) {
 		// node의 type이 DEPARTMENT이면
@@ -181,8 +171,7 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 				// 숨겨진 children이 있으면.
 					nodeClicked.isUnfolded(true);
 				} else {
-					
-					
+					getSubNodes(nodeClicked);
 				}
 				
 			} else {
@@ -220,6 +209,7 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 				
 				switch(nodeClicked.status()) {
 					case CellNode.HCHECK : status = CellNode.NCHECK; break;	// NEVER REACH
+					
 					case CellNode.FCHECK : status = CellNode.FCHECK; break;
 					default :
 					case CellNode.NCHECK : status = CellNode.NCHECK; break;
