@@ -159,7 +159,7 @@ public class RoomController extends BaseController implements RoomLayout.Listene
 	public void onReceiveChat(Chat chat)
 	{
 		mModel.notifyLastReadTS(System.currentTimeMillis() / 1000);
-
+		mModel.updateLastReadTS(chat.senderIdx, chat.TS);
 		final Cursor c = mListAdapter.query(mListAdapter.getCount() + 1);
 
 		mHandler.post(new Runnable() {

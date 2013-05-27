@@ -190,6 +190,8 @@ public class RoomModel extends BaseModel {
 		proc.saveChatOnReceived(mRoom.getCode(), chatIdx, chatterIdx, "", Chat.CONTENT_TYPE_USER_LEAVE, System.currentTimeMillis() / 1000);
 		proc.removeUserFromRoom(chatterIdx, mRoom.getCode());
 
+		mRoom.chatters.remove(chatterIdx);
+
 		adjustTitle();
 
 	}
