@@ -33,6 +33,12 @@ public class MainActivity extends BaseActivity {
 	public MainActivity()
 	{ // 생성자
 		super(R.string.app_name);
+
+		if (_sharedActivity != null)
+		{
+			_sharedActivity.finish();
+		}
+
 		_sharedActivity = this;
 	}
 
@@ -62,15 +68,6 @@ public class MainActivity extends BaseActivity {
 			fragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
 		if (fragment == null)
 			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST); // 첫화면
-																						// //
-																						// 생성
-																						// 전혀
-																						// 중요한
-																						// 클래스가
-																						// 아니다.
-
-		// ImageLoader 클래스 초기 설정
-		initImageLoader();
 
 		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame, new MenuListFragment()).commit();
 
@@ -102,12 +99,7 @@ public class MainActivity extends BaseActivity {
 			}
 			catch (Exception e)
 			{
-				getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit(); // 컨텐트
-																												// 프레임과
-																												// 현재(혹은
-																												// 생성된)
-																												// 프레그먼트를
-																												// 바꾼다.
+				getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 			}
 		}
 		else
@@ -124,7 +116,7 @@ public class MainActivity extends BaseActivity {
 	{
 		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().cacheInMemory().cacheOnDisc().build();
 
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).defaultDisplayImageOptions(defaultOptions).build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(MainActivity.this).defaultDisplayImageOptions(defaultOptions).build();
 		ImageLoader.getInstance().init(config); // Do it on Application start
 	}
 

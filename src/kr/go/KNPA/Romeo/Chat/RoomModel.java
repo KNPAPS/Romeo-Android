@@ -190,6 +190,14 @@ public class RoomModel extends BaseModel {
 		proc.saveChatOnReceived(mRoom.getCode(), chatIdx, chatterIdx, "", Chat.CONTENT_TYPE_USER_LEAVE, System.currentTimeMillis() / 1000);
 		proc.removeUserFromRoom(chatterIdx, mRoom.getCode());
 
+		for (int i = 0; i < mRoom.chatters.size(); i++)
+		{
+			if (mRoom.chatters.get(i).idx.equals(chatterIdx))
+			{
+				mRoom.chatters.remove(i);
+				break;
+			}
+		}
 		mRoom.chatters.remove(chatterIdx);
 
 		adjustTitle();
@@ -312,15 +320,25 @@ public class RoomModel extends BaseModel {
 		}
 
 		int n = mRoom.chatters.size();
-		ArrayList<String> titles = new ArrayList<String>(n);
-
-		for (int i = 0; i < n; i++)
+		String title = null;
+		if (n > 0)
 		{
-			Chatter chatter = mRoom.chatters.get(i);
-			titles.add(Constants.POLICE_RANK[chatter.rank] + " " + chatter.name);
+			ArrayList<String> titles = new ArrayList<String>(n);
+
+			for (int i = 0; i < n; i++)
+			{
+				Chatter chatter = mRoom.chatters.get(i);
+				titles.add(Constants.POLICE_RANK[chatter.rank] + " " + chatter.name);
+			}
+
+			title = Formatter.join(titles, ",");
+
+		}
+		else
+		{
+			title = "빈 방";
 		}
 
-		String title = Formatter.join(titles, ",");
 		DBProcManager.sharedManager(mContext).chat().setRoomTitle(mRoom.getCode(), title);
 		mRoom.setTitle(title);
 	}

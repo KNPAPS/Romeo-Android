@@ -186,7 +186,7 @@ public class GCMMessageManager {
 		proc.saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
 
 		// 앱이 실행 중이면 callback 호출
-		if (isRunningProcess(mContext))
+		if (isRunningProcess(mContext) && MainActivity.sharedActivity() != null)
 		{
 			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
 			RoomListController roomListController = (RoomListController) fm.findFragmentByTag(RoomListController.class.getSimpleName());

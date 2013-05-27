@@ -452,6 +452,11 @@ public class RoomController extends BaseController implements RoomLayout.Listene
 		{
 			startCreateRoomThread();
 		}
+		else if (mModel.getRoom().getStatus() == Room.STATUS_CREATED && mModel.getRoom().chatters.size() == 0)
+		{
+			Toast.makeText(getActivity(), "빈 방입니다. 사용자를 초대하거나 새 방을 만들어주세요.", Toast.LENGTH_SHORT).show();
+			return;
+		}
 
 		String senderIdx = UserInfo.getUserIdx(getActivity());
 		ArrayList<String> receivers = mModel.getRoom().getChattersIdx();
