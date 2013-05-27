@@ -161,6 +161,7 @@ public class CellNode {
 		private	boolean				_isRoot 			= 	false;
 		private IndexPath			_indexPath			=	null;
 		private	boolean 			_isUnfolded 		= 	false;
+		private boolean				_hasChildren			=	false;
 		
 		private boolean _hasType 		= 	false;
 		private boolean	_hasIdx			=	false;
@@ -168,6 +169,7 @@ public class CellNode {
 		private boolean _hasIsRoot 		= 	false;
 		private boolean _hasIndexPath 	= 	false;
 		private	boolean	_hasIsUnfolded	= 	false;
+		private boolean _hasHasChildren	=	false;
 		
 		public Condition() {}
 		public Condition indexPath(IndexPath path) {
@@ -206,6 +208,12 @@ public class CellNode {
 			return this;
 		}
 		
+		public Condition hasChildren(boolean hasChildren) {
+			this._hasChildren = hasChildren;
+			_hasHasChildren = true;
+			return this;
+		}
+		
 		public IndexPath indexPath() {
 			return _indexPath;
 		}
@@ -228,6 +236,10 @@ public class CellNode {
 		
 		public boolean isUnfolded() {
 			return _isUnfolded;
+		}
+		
+		public boolean hasChildren() {
+			return _hasChildren;
 		}
 		
 		public boolean hasStatus() {
@@ -253,6 +265,10 @@ public class CellNode {
 			return _hasIsUnfolded;
 		}
 		
+		public boolean hasHasChildren() {
+			return _hasHasChildren;
+		}
+		
 		public void removeType() {
 			_hasType = false;
 			_type = CN_NULL;
@@ -276,6 +292,11 @@ public class CellNode {
 		public void removeIndexPath() {
 			_hasIndexPath = false;
 			_indexPath = null;
+		}
+		
+		public void removeHasChildren() {
+			_hasHasChildren = false;
+			_hasChildren = false;
 		}
 	}
 
@@ -357,6 +378,8 @@ public class CellNode {
 		return array;
 	}
 	
+	
+	// 조건 추가시, 이 메서드만 건들면 된다.
 	public boolean inCondition(Condition c) {
 		boolean inCondition = true;
 		
@@ -373,6 +396,9 @@ public class CellNode {
 			inCondition = false;
 		
 		if(c.hasType() && this.type() != c.type())
+				inCondition = false;
+		
+		if(c.hasHasChildren() && (        ( (this.children()!=null)&&(this.children().size()>0) ) != c.hasChildren()           ) )
 				inCondition = false;
 		
 		return inCondition;
@@ -655,6 +681,9 @@ public class CellNode {
 	}
 	*/
 	public static ArrayList<String> collect(CellNode rootNode) { 
+		
+		/*
+		
 		HashSet<String> _result = new HashSet<String>();
 		
 		Condition uc = new Condition().status(FCHECK).type(CN_USER);
@@ -686,7 +715,75 @@ public class CellNode {
 		while(itr.hasNext()) {
 			result.add(itr.next());
 		}
+		
+		*/
+		
+		
+		/*
+		ArrayList<String> result = new ArrayList<String>();
+		
+		Condition c = new Condition().hasChildren(false).status(FCHECK);
+		ArrayList<CellNode> selectedNodes = rootNode.find(c);
+		
+		for(int i=0; i<selectedNodes.size(); i++) {
+			CellNode node = selectedNodes.get(i);
+			if(node.type() == CellNode.CN_DEPARTMENT) {
+				ArrayList<User> users = MemberManager.sharedManager().getDeptMembers(node.idx(), true);
+				for(int ui=0; ui<users.size(); i++) {
+					boolean isExists = false;
+					User user = users.get(ui);
+					
+					for(int j=0; j< result.size(); j++) {
+						if( result.get(j).equalsIgnoreCase(user.idx) ) {
+							isExists = true;
+							break; // ui index를 가진 다음 for 문으로 간다.
+						}
+					}
+					
+					if(isExists != true)
+						result.add(user.idx);
+				}
+			} else {
+				boolean isExists = false;
+				
+				for(int j=0; j< result.size(); j++) {
+					if( result.get(j).equalsIgnoreCase(node.idx()) ) {
+						isExists = true;
+						break; // ui index를 가진 다음 for 문으로 간다.
+					}
+				}
+				
+				if(isExists != true)
+					result.add(node.idx());
+				
+			}
+		}
+		*/
+
+		HashSet<String> _result = new HashSet<String>();
+
+		Condition c = new Condition().hasChildren(false).status(FCHECK);
+		ArrayList<CellNode> selectedNodes = rootNode.find(c);
+		
+		for(int ni=0; ni<selectedNodes.size(); ni++) {
+			CellNode node = selectedNodes.get(ni);
+			if(node.type() == CellNode.CN_DEPARTMENT) {
+				ArrayList<User> users = MemberManager.sharedManager().getDeptMembers(node.idx(), true);
+				for(int ui=0; ui<users.size(); ui++) {
+					_result.add( users.get(ui).idx );
+				}
+			} else {
+				_result.add(node.idx());
+			}
+		}
 			
+		
+		ArrayList<String> result = new ArrayList<String>();
+		Iterator<String> itr = _result.iterator();
+		while(itr.hasNext()) {
+			result.add(itr.next());
+		}
+		
 		return result;
 	}
 	
