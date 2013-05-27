@@ -185,13 +185,11 @@ public class GCMMessageManager {
 					// 입장해 있다면 notification 대신 callback 실행
 					RoomListController.getCurrentRoom().onReceiveChat(chat);
 				}
+				return;
 			}
 		}
-		else
-		// 앱이 꺼져 있으면 그냥 바로 notification 만들기
-		{
-			notifyMessage(chat);
-		}
+
+		notifyMessage(chat);
 	}
 
 	private void onDocument(Document document)
@@ -319,7 +317,8 @@ public class GCMMessageManager {
 
 		intent.putExtras(b);
 
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext).setTicker(ticker).setSmallIcon(R.drawable.icon).setContentTitle(title).setContentText(content);
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext).setTicker(ticker).setSmallIcon(R.drawable.icon).setContentTitle(title).setContentText(content)
+				.setAutoCancel(true);
 
 		PendingIntent contentIntent = PendingIntent.getActivity(mContext, message.type(), intent, 0);
 

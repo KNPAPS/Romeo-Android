@@ -272,6 +272,11 @@ public class RoomModel extends BaseModel {
 			mRoom.setTitle(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE)));
 			mRoom.setAlias(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS)));
 			mRoom.setType(c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TYPE)));
+
+			if (mRoom.getTitle() == null)
+			{
+				adjustTitle();
+			}
 		}
 
 		c.close();
