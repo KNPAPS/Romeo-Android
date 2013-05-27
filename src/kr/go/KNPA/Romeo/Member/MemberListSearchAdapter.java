@@ -16,33 +16,31 @@ import android.os.Message;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 
-//Inner Class Member List Adapter //
-public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClickListener {
-	
-	
-	// related with SEARCH
-	public static int[] search;
+public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnItemClickListener {
+
+	private BaseAdapter listAdapter;
 	
 	// Constructor
-	public MemberListAdapter(final Context context) {
+	public MemberListSearchAdapter(final Context context) {
 		this.context = context;
 
 		init();
 	}
+
 	
 	@Override
 	protected void init() {
-		
+
 		this._rootNode = new CellNode().isRoot(true).isUnfolded(true).parent((CellNode)null);
 
 		WaiterView.showDialog(context);
@@ -52,22 +50,20 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			CellNode node = new CellNode().index(i).isRoot(false).isUnfolded(false).parent(rootNode()).type(CellNode.CN_DEPARTMENT).idx(deps.get(i).idx);
 			rootNode().append(node);
 		}
-		WaiterView.dismissDialog(context);
+		WaiterView.dismissDialog(context);		
 	}
 	
+	@Override	public int getCount() {	return listAdapter.getCount();	}
+	@Override	public Object getItem(int pos) {	return listAdapter.getItem(pos-1);	}
+	@Override	public long getItemId(int pos) {	return listAdapter.getItemId(pos-1);	}
+	@Override	public int 		getViewTypeCount	() 		{	return	3;																}
+	@Override	public boolean areAllItemsEnabled() {	return listAdapter.areAllItemsEnabled();	}
 	
-	// Adapter
 
-	@Override	public int 		getCount	() 					{	return	this.rootNode().count();										}
-	@Override	public Object 	getItem		(int position) 		{	return	objectForRowAtIndexPath( getIndexPathFromPosition(position) );	}
-	@Override	public long 	getItemId	(int position) 		{	return	getIndexPathFromPosition(position).indexPathToLong();			}
-	@Override	public int 		getViewTypeCount	() 			{	return	3;																}
-	@Override	public boolean 	areAllItemsEnabled	() 			{	return	true;															}
-	
-	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
+
 		IndexPath path = getIndexPathFromPosition(position);
 		Object model = objectForRowAtIndexPath(path);
 		
@@ -76,19 +72,28 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 		
 		CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
 		
-		if(convertView == null || getItemViewType(position) != node.type()) {			// re-usable test
+		if(convertView == null && getItemViewType(position) != node.type()) {			// re-usable test
 			switch(node.type()) {
-			
-			case CellNode.CN_DEPARTMENT :			
-				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_department_cell, parent, false);	break;
+			case CellNode.CN_DEPARTMENT :
+				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_department_cell_search, parent, false);	break;
 				
 			case CellNode.CN_USER :
-				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_user_cell, parent, false);			break;
+				convertView = LayoutInflater.from(this.context).inflate(R.layout.member_user_cell_search, parent, false);		break;
 				
 			}
 		}
 		
 		if(node.type() == CellNode.CN_DEPARTMENT) {
+			Button control = (Button)convertView.findViewById(R.id.control);
+			control.setTag(path);
+			control.setOnClickListener(searchCheck);
+			
+			switch(node.status()) {
+				case CellNode.NCHECK : control.setBackgroundResource(R.drawable.circle); break;
+				case CellNode.HCHECK : control.setBackgroundResource(R.drawable.circle_check_gray); break;
+				case CellNode.FCHECK : control.setBackgroundResource(R.drawable.circle_check_active); break;
+			}
+
 			department = (Department)model;
 			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
 			titleTV.setText(department.name);
@@ -100,6 +105,16 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			String uName = user.name; 
 			String uRole = user.role; uRole = ( uRole != null ) ? uRole : "";  
 			int uRank = user.rank;
+
+			Button control = (Button)convertView.findViewById(R.id.control);
+			control.setTag(path);
+			control.setOnClickListener(searchCheck);
+			
+			switch(node.status()) {
+				case CellNode.NCHECK : control.setBackgroundResource(R.drawable.circle); break;
+				case CellNode.HCHECK : control.setBackgroundResource(R.drawable.circle_check_gray); break;
+				case CellNode.FCHECK : control.setBackgroundResource(R.drawable.circle_check_active); break;
+			}
 			
 			ImageView userPicIV = (ImageView)convertView.findViewById(R.id.user_pic);
 			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, uIdx, userPicIV);
@@ -138,29 +153,11 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 	}
 
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	// ClickListener
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,	long l_position) {
-		// parent : AdapterView의 속성을 모두 사용할 수 있다.
-		// view : 클릭한 row의 view
-		// position : 클릭한 row의 position
-		// l_position : 클릭한 row의 long Type의 position을 반환
-		
-		// 클릭된 셀의 position을 이용하여 indexpath를 알아낸다.
-		
-		//final WaiterView waiter = (WaiterView)view.findViewById(R.id.waiter);
-	
-		position--;
+
 		IndexPath path = getIndexPathFromPosition(position);
 		
 		final CellNode nodeClicked = CellNode.nodeAtIndexPath(this.rootNode(), path);
@@ -178,19 +175,20 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			
 		} else if(nodeClicked.type() == CellNode.CN_DEPARTMENT) {
 		// node의 type이 DEPARTMENT이면
-			
-			if(nodeClicked.isUnfolded() == true) {
-				nodeClicked.isUnfolded(false);	// unfolded == true이면,
+			if(nodeClicked.isUnfolded() == false) {
+			// unfolded == false 이면
+				if(nodeClicked.children() != null && nodeClicked.children().size() >0) {
+				// 숨겨진 children이 있으면.
+					nodeClicked.isUnfolded(true);
+				} else {
+					
+					
+				}
 				
 			} else {
-				// unfolded == false 이면
-				if(nodeClicked.children() != null && nodeClicked.children().size() >0)
-					nodeClicked.isUnfolded(true);	// 숨겨진 children이 있으면.
-				else
-					getSubNodes(nodeClicked);	// 숨겨진 children이 없으면.						
-				
+			// unfolded == true이면,
+				nodeClicked.isUnfolded(false);
 			}
-			
 		}
 		
 		
@@ -201,6 +199,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 	
 	@Override
 	protected void getSubNodes(final CellNode nodeClicked) {
+	// 숨겨진 children이 없으면.
 		WaiterView.showDialog(context);
 		
 		final Handler handler = new Handler() {
@@ -217,12 +216,21 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			
 			@Override
 			public void run() {
+				int status;
+				
+				switch(nodeClicked.status()) {
+					case CellNode.HCHECK : status = CellNode.NCHECK; break;	// NEVER REACH
+					case CellNode.FCHECK : status = CellNode.FCHECK; break;
+					default :
+					case CellNode.NCHECK : status = CellNode.NCHECK; break;
+				}
 				
 				String deptIdx = nodeClicked.idx();
 				ArrayList<Department> deps = MemberManager.sharedManager().getChildDepts(deptIdx);
 				
 				for(int i=0; i<deps.size(); i++) {
 					CellNode node = new CellNode()
+											.status(status)
 											.type(CellNode.CN_DEPARTMENT)
 											.idx( deps.get(i).idx )
 											.isRoot(false)
@@ -240,8 +248,9 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 						continue;
 					
 					CellNode node = new CellNode()
+											.status(status)
 											.type(CellNode.CN_USER)
-											.idx( users.get(i).idx )
+											.idx( users.get(i).idx )											
 											.isRoot(false)
 											.isUnfolded(false)
 											.index( nodeClicked.children().size() )
@@ -251,11 +260,10 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 									
 				nodeClicked.isUnfolded(true);
 				
-				
 				handler.sendMessage(handler.obtainMessage());
 			}
 		}).start();
-				
+		
 	}
 	
 	@Override	
@@ -268,5 +276,16 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			return Constants.NOT_SPECIFIED;
 		}
 	}
-
+	
+	private final OnClickListener searchCheck = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			IndexPath path = (IndexPath)v.getTag();
+			CellNode node = CellNode.nodeAtIndexPath(rootNode(), path);
+			node.check();
+			notifyDataSetChanged();
+		}
+	};
+	
 }
