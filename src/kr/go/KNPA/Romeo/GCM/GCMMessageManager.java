@@ -21,6 +21,7 @@ import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.NotificationManager;
@@ -157,8 +158,28 @@ public class GCMMessageManager {
 		// 방이 존재하지 않으면 DB상에 새로 만든다.
 		if (proc.isRoomExists(chat.roomCode) == false)
 		{
-			proc.createRoom(chat.type(), chat.roomCode);
-			proc.addUsersToRoom(chat.receiversIdx, chat.roomCode);
+			Room room = new Room(chat.roomCode);
+			room.setStatus(Room.STATUS_INVITED);
+			room.setType(chat.subType());
+
+			ArrayList<String> chattersIdx = new ArrayList<String>(chat.receiversIdx.size());
+
+			chattersIdx.add(chat.senderIdx);
+			String userIdx = UserInfo.getUserIdx(mContext);
+
+			for (int i = 0; i < chat.receiversIdx.size(); i++)
+			{
+				String chatterIdx = chat.receiversIdx.get(i);
+				if (!chatterIdx.equalsIgnoreCase(userIdx))
+				{
+					chattersIdx.add(chatterIdx);
+				}
+			}
+
+			room.addChatters(chattersIdx);
+
+			RoomModel model = new RoomModel(mContext, room);
+			model.createRoom();
 		}
 
 		// Chat 저장

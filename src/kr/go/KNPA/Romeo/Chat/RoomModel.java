@@ -78,33 +78,42 @@ public class RoomModel extends BaseModel {
 			return false;
 		}
 
-		String roomCode = makeRoomCode();
+		String roomCode = null;
+		if (mRoom.getStatus() == Room.STATUS_VIRTUAL)
+		{
+			roomCode = makeRoomCode();
+
+			Data reqData = new Data();
+			reqData.add(0, KEY.CHAT.ROOM_MEMBER, mRoom.getChattersIdx());
+			reqData.add(0, KEY.CHAT.ROOM_CODE, roomCode);
+			reqData.add(0, KEY.MESSAGE.TYPE, mRoom.getType());
+			reqData.add(0, KEY.USER.IDX, UserInfo.getUserIdx(mContext));
+
+			Payload request = new Payload().setEvent(Event.MESSAGE_CHAT_CREATE_ROOM).setData(reqData);
+			Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
+
+			if (response.getStatusCode() == StatusCode.SUCCESS)
+			{
+				mRoom.setCode(roomCode);
+			}
+			else
+			{
+				Log.e(TAG, "방 생성 실패. response payload" + response.toJSON());
+				return false;
+			}
+		}
+		else
+		{
+			roomCode = mRoom.getCode();
+		}
 
 		ChatProcManager proc = DBProcManager.sharedManager(mContext).chat();
 		proc.createRoom(mRoom.getType(), roomCode);
 		proc.addUsersToRoom(mRoom.getChattersIdx(), roomCode);
 
-		Data reqData = new Data();
-		reqData.add(0, KEY.CHAT.ROOM_MEMBER, mRoom.getChattersIdx());
-		reqData.add(0, KEY.CHAT.ROOM_CODE, roomCode);
-		reqData.add(0, KEY.MESSAGE.TYPE, mRoom.getType());
-		reqData.add(0, KEY.USER.IDX, UserInfo.getUserIdx(mContext));
-
-		Payload request = new Payload().setEvent(Event.MESSAGE_CHAT_CREATE_ROOM).setData(reqData);
-		Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
-
-		if (response.getStatusCode() == StatusCode.SUCCESS)
-		{
-			mRoom.setCode(roomCode);
-			mRoom.setStatus(Room.STATUS_CREATED);
-			adjustTitle();
-			return true;
-		}
-		else
-		{
-			Log.e(TAG, "방 생성 실패. response payload" + response.toJSON());
-			return false;
-		}
+		mRoom.setStatus(Room.STATUS_CREATED);
+		adjustTitle();
+		return true;
 	}
 
 	public Room getRoom()
@@ -272,11 +281,6 @@ public class RoomModel extends BaseModel {
 			mRoom.setTitle(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE)));
 			mRoom.setAlias(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS)));
 			mRoom.setType(c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TYPE)));
-
-			if (mRoom.getTitle() == null)
-			{
-				adjustTitle();
-			}
 		}
 
 		c.close();

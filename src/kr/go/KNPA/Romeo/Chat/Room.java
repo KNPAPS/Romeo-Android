@@ -20,6 +20,7 @@ public class Room {
 
 	public static final int		STATUS_VIRTUAL	= 1;
 	public static final int		STATUS_CREATED	= 2;
+	public static final int		STATUS_INVITED	= 3;
 
 	public static final int		TYPE_MEETING	= Chat.TYPE_MEETING;
 	public static final int		TYPE_COMMAND	= Chat.TYPE_COMMAND;
