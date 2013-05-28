@@ -16,6 +16,8 @@ public class Room {
 	private String				mAlias;
 	private int					mType;
 	private int					mStatus;
+	private boolean				isAlarmOn;
+
 	public ArrayList<Chatter>	chatters;
 
 	public static final int		STATUS_VIRTUAL	= 1;
@@ -92,7 +94,6 @@ public class Room {
 	public void setCode(String code)
 	{
 		this.mCode = code;
-		this.mStatus = STATUS_CREATED;
 	}
 
 	public String getTitle()
@@ -144,5 +145,15 @@ public class Room {
 			Chatter c = new Chatter(u);
 			chatters.add(c);
 		}
+	}
+
+	public boolean isAlarmOn()
+	{
+		return isAlarmOn;
+	}
+
+	public void setAlarm(boolean isAlarmOn)
+	{
+		this.isAlarmOn = isAlarmOn;
 	}
 }

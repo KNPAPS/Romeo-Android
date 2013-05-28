@@ -65,7 +65,7 @@
                 android:maxWidth="150dp"
                 android:paddingBottom="@dimen/gapSmall"
                 android:paddingLeft="16dp"
-                android:paddingRight="@dimen/gapSmall"
+                android:paddingRight="@dimen/gap"
                 android:paddingTop="@dimen/gapSmall"
                 android:text="@string/loremIpsumShort"
                 android:textColor="@color/text"

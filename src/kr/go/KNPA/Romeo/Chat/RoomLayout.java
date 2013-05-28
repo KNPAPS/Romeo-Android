@@ -3,7 +3,7 @@ package kr.go.KNPA.Romeo.Chat;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.Base.BaseLayout;
+import kr.go.KNPA.Romeo.Base.FragmentLayout;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +23,7 @@ import android.widget.EditText;
 /**
  * 채팅방 화면
  */
-public class RoomLayout extends BaseLayout {
+public class RoomLayout extends FragmentLayout {
 
 	public static final String	CHAT_LIST_VIEW_HEADER	= "chatListViewHeader";
 

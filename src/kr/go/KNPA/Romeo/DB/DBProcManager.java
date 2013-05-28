@@ -165,8 +165,8 @@ public class DBProcManager {
 		{
 
 			// 새 방에 대한 레코드 생성
-			String sql = "insert into " + DBSchema.ROOM.TABLE_NAME + "(" + DBSchema.ROOM.COLUMN_TYPE + "," + DBSchema.ROOM.COLUMN_IS_FAVORITE + "," + DBSchema.ROOM.COLUMN_IDX + ") values ("
-					+ String.valueOf(chatType) + ",0,?)";
+			String sql = "insert into " + DBSchema.ROOM.TABLE_NAME + "(" + DBSchema.ROOM.COLUMN_TYPE + "," + DBSchema.ROOM.COLUMN_IS_FAVORITE + "," + DBSchema.ROOM.COLUMN_IDX + ","
+					+ DBSchema.ROOM.COLUMN_IS_ALARM_ON + ") values (" + String.valueOf(chatType) + ",0,?,1)";
 			String[] value = { roomHash };
 			db.execSQL(sql, value);
 
@@ -181,6 +181,7 @@ public class DBProcManager {
 		 * @b COLUMN_ROOM_TITLE 채팅방 제목\n
 		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
 		 * @b COLUMN_LAST_ENTERED_TS 자신이 마지막으로 들어간 시간
+		 * @b COLUMN_IS_ALARM_ON 알람 여부
 		 * @param roomCode
 		 *            룸 코드
 		 * @return cursor
@@ -191,8 +192,9 @@ public class DBProcManager {
 
 			" r." + DBSchema.ROOM.COLUMN_ALIAS + COLUMN_ROOM_ALIAS + "," +
 
-			" r." + DBSchema.ROOM.COLUMN_TITLE + COLUMN_ROOM_TITLE + "," + " r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + COLUMN_LAST_ENTERED_TS + "," + " (select count(rc._id) " + "from "
-					+ DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID + "= r._id ) " + COLUMN_ROOM_NUM_CHATTER +
+			" r." + DBSchema.ROOM.COLUMN_TITLE + COLUMN_ROOM_TITLE + "," + " r." + DBSchema.ROOM.COLUMN_IS_ALARM_ON + COLUMN_ROOM_IS_ALARM_ON + "," + " r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS
+					+ COLUMN_LAST_ENTERED_TS + "," + " (select count(rc._id) " + "from " + DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID
+					+ "= r._id ) " + COLUMN_ROOM_NUM_CHATTER +
 
 					" from " + DBSchema.ROOM.TABLE_NAME + " r " + " where " + DBSchema.ROOM.COLUMN_IDX + " = ?";
 
@@ -677,6 +679,7 @@ public class DBProcManager {
 		public static final String	COLUMN_ROOM_NUM_NEW_CHAT		= "num_new_chat";
 		public static final String	COLUMN_ROOM_LAST_CHAT_TS		= "last_chat_ts";
 		public static final String	COLUMN_ROOM_LAST_CHAT_CONTENT	= "last_chat_content";
+		public static final String	COLUMN_ROOM_IS_ALARM_ON			= "is_alarm_on";
 
 		public static final String	COLUMN_ENTERED_TS				= "entered_ts";
 		public static final String	COLUMN_USER_IDX					= "user_idx";

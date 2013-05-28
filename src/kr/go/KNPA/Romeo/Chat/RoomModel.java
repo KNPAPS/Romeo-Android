@@ -287,7 +287,7 @@ public class RoomModel extends BaseModel {
 		DBProcManager.sharedManager(mContext).chat().setRoomAlias(mRoom.getCode(), alias);
 	}
 
-	private void fetchBaseInfo()
+	public void fetchBaseInfo()
 	{
 		Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomInfo(mRoom.getCode());
 
@@ -296,12 +296,22 @@ public class RoomModel extends BaseModel {
 			mRoom.setTitle(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE)));
 			mRoom.setAlias(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS)));
 			mRoom.setType(c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TYPE)));
+			boolean isAlarmOn = true;
+			if (c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IS_ALARM_ON)) == 1)
+			{
+				isAlarmOn = true;
+			}
+			else
+			{
+				isAlarmOn = false;
+			}
+			mRoom.setAlarm(isAlarmOn);
 		}
 
 		c.close();
 	}
 
-	private void fetchChatters()
+	public void fetchChatters()
 	{
 		Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomChatters(mRoom.getCode());
 

@@ -9,8 +9,8 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.Room;
-import kr.go.KNPA.Romeo.Chat.RoomController;
-import kr.go.KNPA.Romeo.Chat.RoomListController;
+import kr.go.KNPA.Romeo.Chat.RoomFragment;
+import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.Chat.RoomModel;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
@@ -140,7 +140,7 @@ public class GCMMessageManager {
 	{
 		if (isRunningProcess(mContext))
 		{
-			RoomController currentRoomFragment = RoomListController.getCurrentRoom();
+			RoomFragment currentRoomFragment = RoomListFragment.getCurrentRoom();
 
 			if (currentRoomFragment != null && currentRoomFragment.getRoom() != null && currentRoomFragment.getRoom().getCode() != null
 					&& currentRoomFragment.getRoom().getCode().equalsIgnoreCase(roomCode))
@@ -189,7 +189,7 @@ public class GCMMessageManager {
 		if (isRunningProcess(mContext) && MainActivity.sharedActivity() != null)
 		{
 			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
-			RoomListController roomListController = (RoomListController) fm.findFragmentByTag(RoomListController.class.getSimpleName());
+			RoomListFragment roomListController = (RoomListFragment) fm.findFragmentByTag(RoomListFragment.class.getSimpleName());
 			// 현재 채팅 fragment에 있다면
 			if (roomListController != null)
 			{
@@ -197,14 +197,14 @@ public class GCMMessageManager {
 				roomListController.onReceiveChat(chat);
 
 				// 만약 room에 입장해있지 않으면 notification 만들기
-				if (RoomListController.getCurrentRoom() == null)
+				if (RoomListFragment.getCurrentRoom() == null)
 				{
 					notifyMessage(chat);
 				}
 				else
 				{
 					// 입장해 있다면 notification 대신 callback 실행
-					RoomListController.getCurrentRoom().onReceiveChat(chat);
+					RoomListFragment.getCurrentRoom().onReceiveChat(chat);
 				}
 				return;
 			}
@@ -238,7 +238,7 @@ public class GCMMessageManager {
 		if (isRunningProcess(mContext))
 		{
 			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
-			RoomController roomController = (RoomController) fm.findFragmentByTag(RoomController.class.getSimpleName());
+			RoomFragment roomController = (RoomFragment) fm.findFragmentByTag(RoomFragment.class.getSimpleName());
 
 			if (roomController != null && roomController.getRoom().getCode().equalsIgnoreCase(roomCode))
 			{
@@ -266,7 +266,7 @@ public class GCMMessageManager {
 		if (isRunningProcess(mContext))
 		{
 			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
-			RoomController roomController = (RoomController) fm.findFragmentByTag(RoomController.class.getSimpleName());
+			RoomFragment roomController = (RoomFragment) fm.findFragmentByTag(RoomFragment.class.getSimpleName());
 
 			if (roomController != null && roomController.getRoom().getCode().equalsIgnoreCase(roomCode))
 			{

@@ -2,8 +2,8 @@ package kr.go.KNPA.Romeo;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Room;
-import kr.go.KNPA.Romeo.Chat.RoomController;
-import kr.go.KNPA.Romeo.Chat.RoomListController;
+import kr.go.KNPA.Romeo.Chat.RoomFragment;
+import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
@@ -122,9 +122,9 @@ public class MainActivity extends BaseActivity {
 
 	public void goRoomFragment(int subType, Room room)
 	{
-		RoomListController roomListController = new RoomListController(subType);
+		RoomListFragment roomListController = new RoomListFragment(subType);
 		switchContent(roomListController);
-		RoomController roomController = new RoomController(room);
+		RoomFragment roomController = new RoomFragment(room);
 		pushContent(roomController);
 	}
 

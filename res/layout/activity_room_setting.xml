@@ -1,13 +1,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/roomSettingScrollView"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/room_background" >
 
     <LinearLayout
         android:id="@+id/roomSettingScrollViewLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="vertical" >
 
     </LinearLayout>

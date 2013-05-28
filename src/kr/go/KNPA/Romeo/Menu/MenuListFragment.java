@@ -10,7 +10,7 @@ import kr.go.KNPA.Romeo.ContentFragment;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Chat.Chat;
-import kr.go.KNPA.Romeo.Chat.RoomListController;
+import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
@@ -565,9 +565,9 @@ public class MenuListFragment extends ListFragment {
 			
 			if(codes[0].equalsIgnoreCase("CHAT")) {
 				if(codes[1].equalsIgnoreCase("COMMAND")) {
-					fragment = RoomListController.getInstance(Chat.TYPE_COMMAND);
+					fragment = RoomListFragment.getInstance(Chat.TYPE_COMMAND);
 				} else if(codes[1].equalsIgnoreCase("MEETING")) {
-					fragment = RoomListController.getInstance(Chat.TYPE_MEETING);
+					fragment = RoomListFragment.getInstance(Chat.TYPE_MEETING);
 				}
 			} else if (codes[0].equalsIgnoreCase("DOCUMENT")) {
 				// do nothing, expand
@@ -600,9 +600,9 @@ public class MenuListFragment extends ListFragment {
 			
 			if(codes[0].equalsIgnoreCase("CHAT")) {
 				if(codes[1].equalsIgnoreCase("COMMAND")) {
-					fragment = RoomListController.getInstance(Chat.TYPE_COMMAND);
+					fragment = RoomListFragment.getInstance(Chat.TYPE_COMMAND);
 				} else if(codes[1].equalsIgnoreCase("MEETING")) {
-					fragment = RoomListController.getInstance(Chat.TYPE_MEETING);
+					fragment = RoomListFragment.getInstance(Chat.TYPE_MEETING);
 				} 
 			} else if (codes[0].equalsIgnoreCase("DOCUMENT")) {
 				if(codes[1].equalsIgnoreCase("FAVORITE")) {
