@@ -15,8 +15,10 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MemberDetailActivity extends Activity {
@@ -76,13 +79,24 @@ public class MemberDetailActivity extends Activity {
 		layoutParams.dimAmount = 0.7f;
 
 		getWindow().setAttributes(layoutParams);
-		setContentView(R.layout.member_detail_activity);
+		View view = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.member_detail_activity, null);
+		setContentView(view);
 
 		int statusBarHeight = (int) Math.ceil(25 * this.getResources().getDisplayMetrics().density);
 		ViewGroup vg = (ViewGroup) findViewById(R.id.memberDetailActivityLayout);
 		ViewGroup.LayoutParams lp = vg.getLayoutParams();
 		Point size = new Point();
-		getWindowManager().getDefaultDisplay().getSize(size);
+		
+		// Display.getHeight() & Display.getWidth() are deprecated in API Level13,
+		// instead, Display.getSize(Point) is added.
+		if(Build.VERSION.SDK_INT >= 13) {
+			getWindowManager().getDefaultDisplay().getSize(size);
+		} else {
+			size.y = getWindowManager().getDefaultDisplay().getHeight();
+			size.x = getWindowManager().getDefaultDisplay().getWidth();
+		}
+		
+		
 		lp.width = size.x;
 		lp.height = size.y - statusBarHeight;
 		vg.setLayoutParams(lp);

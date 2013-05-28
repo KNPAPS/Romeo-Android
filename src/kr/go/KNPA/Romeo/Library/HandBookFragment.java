@@ -102,7 +102,7 @@ public class HandBookFragment extends Fragment {
 				showContentsListDialog();
 			}
 		};
-		initNavigationBar(view, "현장매뉴얼", true, true, "메뉴", "목자", lbbOnClickListener, rbbOnClickListener);
+		initNavigationBar(view, "현장매뉴얼", true, true, "메뉴", "목차", lbbOnClickListener, rbbOnClickListener);
 		
 		pager = (ViewPager)view.findViewById(R.id.pager);
 		pager.setAdapter(new HandBookAdapter());

@@ -93,6 +93,13 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
 			titleTV.setText(department.name);
 			
+			if(node.isUnfolded() == true) {
+				convertView.setBackgroundResource(R.color.lighter);
+			} else {
+				convertView.setBackgroundResource(R.color.white);
+			}
+			
+			
 		} else if (node.type() == CellNode.CN_USER) {
 			user = (User)model;
 			Department uDepartment = user.department;
@@ -102,6 +109,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			int uRank = user.rank;
 			
 			ImageView userPicIV = (ImageView)convertView.findViewById(R.id.user_pic);
+			userPicIV.setImageResource(R.drawable.user_pic_default);
 			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, uIdx, userPicIV);
 			
 			TextView rankTV = (TextView)convertView.findViewById(R.id.rank);
@@ -115,6 +123,8 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
 			departmentTV.setText(uDepartment.nameFull);
+			
+			convertView.setBackgroundResource(R.color.white);
 		}
 		
 		if(node.type() == CellNode.CN_DEPARTMENT || node.type() == CellNode.CN_USER) {

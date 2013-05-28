@@ -9,7 +9,7 @@
         android:layout_width="11dp"
         android:layout_height="11dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/gap"
+        android:layout_marginLeft="33dp"
         android:src="@drawable/indentation" />
     
     <ImageView

@@ -96,6 +96,12 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 			TextView titleTV = (TextView)convertView.findViewById(R.id.title);
 			titleTV.setText(department.name);
 			
+			if(node.isUnfolded() == true) {
+				convertView.setBackgroundResource(R.color.lighter);
+			} else {
+				convertView.setBackgroundResource(R.color.white);
+			}
+			
 		} else if (node.type() == CellNode.CN_USER) {
 			user = (User)model;
 			Department uDepartment = user.department;
@@ -128,6 +134,8 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 			
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
 			departmentTV.setText(uDepartment.nameFull);
+			
+			convertView.setBackgroundResource(R.color.white);
 		}
 		
 		if(node.type() == CellNode.CN_DEPARTMENT || node.type() == CellNode.CN_USER) {

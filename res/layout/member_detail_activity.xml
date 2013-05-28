@@ -13,8 +13,8 @@
         android:layout_weight="1"
         android:background="@color/transparent" />
 		
-		<include 
-		    layout="@layout/member_detail"
-		    android:layout_width="match_parent"
-		    android:layout_weight="0" />
+	<include 
+	    layout="@layout/member_detail"
+	    android:layout_width="match_parent"
+	    android:layout_weight="0" />
 </LinearLayout>
