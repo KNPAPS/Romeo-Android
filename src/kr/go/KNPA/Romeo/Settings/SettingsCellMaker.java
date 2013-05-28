@@ -121,8 +121,10 @@ public class SettingsCellMaker {
 	
 	public static ImageView makeListCellDivider(Context context, ViewGroup parent) {
 		ImageView im = new ImageView(context);
-		int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
-		ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(parent.getLayoutParams().width, px);
+		int pxH = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
+		int pxW = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, context.getResources().getDisplayMetrics());
+		im.setBackgroundResource(R.color.grayLight);
+		ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(parent.getLayoutParams().width, pxH);//(parent.getLayoutParams().width, px);
 		im.setLayoutParams(lp);
 		return im;
 	}
