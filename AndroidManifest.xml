@@ -127,6 +127,9 @@
         <!-- GCM 리시버에서 돌리는 서비스 -->
         <service android:name="kr.go.KNPA.Romeo.GCMIntentService" />
  <!-- 서비스명 변경하면 안됨 -->
+        <activity android:name="kr.go.KNPA.Romeo.Chat.InviteActivity" 
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>
