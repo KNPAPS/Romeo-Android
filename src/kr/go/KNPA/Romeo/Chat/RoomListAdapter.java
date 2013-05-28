@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberManager;
@@ -68,10 +69,12 @@ class RoomListAdapter extends CursorAdapter {
 			roomTitle = alias;
 		}
 
+		roomTitle = Formatter.makeEllipsis(roomTitle, Constants.CHAT_ROOM_TITLE_MAX_LEN);
+
 		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
 		TextView departmentTV = (TextView) v.findViewById(R.id.department);
 		TextView roomTitleTV = (TextView) v.findViewById(R.id.room_list_cell_room_name);
-		TextView contentTV = (TextView) v.findViewById(R.id.content);
+		TextView contentTV = (TextView) v.findViewById(R.id.chat_content);
 		TextView arrivalDTTV = (TextView) v.findViewById(R.id.arrivalDT);
 		TextView numNewChat = (TextView) v.findViewById(R.id.numNewChat);
 		TextView numChatters = (TextView) v.findViewById(R.id.numChatters);

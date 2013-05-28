@@ -121,7 +121,7 @@ public class SurveyResultFragment extends Fragment {
 		String closeDT = Formatter.timeStampToStringWithFormat((Long) this.survey.form.get(KEY.SURVEY.CLOSE_TS), getString(R.string.formatString_closeDT));
 		closeDTTV.setText(closeDT);
 
-		TextView contentTV = (TextView) view.findViewById(R.id.content);
+		TextView contentTV = (TextView) view.findViewById(R.id.chat_content);
 		String content = this.survey.content;
 		contentTV.setText(content);
 
@@ -227,7 +227,7 @@ public class SurveyResultFragment extends Fragment {
 				TextView optionTitleTV = (TextView) optionLL.findViewById(R.id.title);
 				optionTitleTV.setText(option);
 
-				TextView optionContentTV = (TextView) optionLL.findViewById(R.id.content);
+				TextView optionContentTV = (TextView) optionLL.findViewById(R.id.chat_content);
 				int nThisOption = qVote.get(oi);
 				float percent = ((float) nThisOption / (float) nResponders * (float) 100.0);
 				optionContentTV.setText(((int) Math.round(percent)) + " %");

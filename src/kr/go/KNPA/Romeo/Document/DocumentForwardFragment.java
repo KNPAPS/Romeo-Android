@@ -101,7 +101,7 @@ public class DocumentForwardFragment extends Fragment {
 		receiversSearchBT = (Button)view.findViewById(R.id.receivers_search);
 		receiversSearchBT.setOnClickListener(callSearchActivity);
 		
-		contentET = (EditText)view.findViewById(R.id.content);
+		contentET = (EditText)view.findViewById(R.id.chat_content);
 		
 		return view;
 	}

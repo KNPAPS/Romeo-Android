@@ -78,7 +78,7 @@ public class SettingsCellMaker {
 	}
 	
 	public static RelativeLayout setContent(RelativeLayout cell, String content) {
-		TextView contentTV = (TextView)cell.findViewById(R.id.content);
+		TextView contentTV = (TextView)cell.findViewById(R.id.chat_content);
 		if(contentTV != null)
 			contentTV.setText(content);
 		return cell;
@@ -131,7 +131,7 @@ public class SettingsCellMaker {
 	public static void setEnabled(RelativeLayout cell, boolean willEnabled) {
 		cell.setEnabled(willEnabled);
 		TextView titleTV = (TextView)cell.findViewById(R.id.title);
-		TextView contentTV = (TextView)cell.findViewById(R.id.content);
+		TextView contentTV = (TextView)cell.findViewById(R.id.chat_content);
 		
 		if(titleTV != null)
 			titleTV.setTextColor( (willEnabled)? Color.BLACK : Color.GRAY);

@@ -161,7 +161,7 @@ public class DocumentDetailFragment extends Fragment {
 				
 				// 코멘트
 				String fContent = (String)forward.get(KEY.DOCUMENT.FORWARD_CONTENT);
-				TextView fContentTV = (TextView)forwardView.findViewById(R.id.content);
+				TextView fContentTV = (TextView)forwardView.findViewById(R.id.chat_content);
 				fContentTV.setText(fContent);
 				
 				forwardsLL.addView(forwardView);
@@ -204,7 +204,7 @@ public class DocumentDetailFragment extends Fragment {
 		
 		
 		
-		TextView contentTV = (TextView)parent.findViewById(R.id.content);
+		TextView contentTV = (TextView)parent.findViewById(R.id.chat_content);
 		String content = this.document.content;
 		contentTV.setText(content);
 	}

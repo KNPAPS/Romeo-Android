@@ -139,25 +139,19 @@ public class ChatListAdapter extends CursorAdapter {
 			TextView departmentTV = (TextView) listItem.findViewById(R.id.department);
 			TextView rankNameTV = (TextView) listItem.findViewById(R.id.room_list_cell_room_name);
 			TextView arrivalDTTV = (TextView) listItem.findViewById(R.id.arrivalDT);
-			TextView contentTV = (TextView) listItem.findViewById(R.id.content);
+			TextView contentTV = (TextView) listItem.findViewById(R.id.chat_content);
 			ImageView contentIV = (ImageView) listItem.findViewById(R.id.contentImage);
 			final Button goUncheckedBT = (Button) listItem.findViewById(R.id.goUnchecked);
 			/** }}} */
 
-			/**
-			 * 공통된 정보(부서,계급, 채팅 도착 시간 text)를 설정함 {{{
-			 */
-
-			departmentTV.setText(sender.department.nameFull);
-			rankNameTV.setText(User.RANK[sender.rank] + " " + sender.name);
 			String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 			arrivalDTTV.setText(arrivalDT);
 
-			/** }}} */
-
-			// received인 경우 상대방 프로필 사진 설정
+			// received인 경우 상대방 정보 설정
 			if (!senderIdx.equals(UserInfo.getUserIdx(mContext)))
 			{
+				departmentTV.setText(sender.department.nameFull);
+				rankNameTV.setText(User.RANK[sender.rank] + " " + sender.name);
 				ImageManager im = new ImageManager();
 				// 프로필 사진 load
 				im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);

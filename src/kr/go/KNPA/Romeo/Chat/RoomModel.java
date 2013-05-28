@@ -223,7 +223,7 @@ public class RoomModel extends BaseModel {
 		Payload request = new Payload().setEvent(Event.Message.Chat.pullLastReadTS()).setData(reqData);
 		Payload response = new Connection().async(false).requestPayload(request).request().getResponsePayload();
 
-		if (response != null && response.getData() != null)
+		if (response != null && response.getStatusCode() == StatusCode.SUCCESS && response.getData() != null)
 		{
 			Data respData = response.getData();
 
@@ -234,6 +234,10 @@ public class RoomModel extends BaseModel {
 
 				updateLastReadTS(receiverIdx, TS);
 			}
+		}
+		else
+		{
+			Log.e(TAG, "pullLastReadTS 실패");
 		}
 	}
 

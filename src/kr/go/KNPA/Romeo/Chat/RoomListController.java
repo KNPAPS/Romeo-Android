@@ -25,7 +25,7 @@ public class RoomListController extends BaseController implements RoomListLayout
 	private RoomListLayout				mLayout;
 	private RoomListAdapter				mListAdapter;
 
-	private RoomListController(int subType)
+	public RoomListController(int subType)
 	{
 		this.subType = subType;
 	}

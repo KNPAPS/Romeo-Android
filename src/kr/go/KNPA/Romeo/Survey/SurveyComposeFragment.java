@@ -126,7 +126,7 @@ public class SurveyComposeFragment extends Fragment {
 		closeETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_year);
 		closeETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_month);
 		closeETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_day);
-		contentET = (EditText)rootLayout.findViewById(R.id.content);
+		contentET = (EditText)rootLayout.findViewById(R.id.chat_content);
 		ImageView hrIV = (ImageView)rootLayout.findViewById(R.id.hr);
 		hrIV.setVisibility(View.INVISIBLE);
 		// TODO  갯수차면 자동으로 넘어가도록.

@@ -54,7 +54,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/content"
+        android:id="@+id/chat_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/gap"

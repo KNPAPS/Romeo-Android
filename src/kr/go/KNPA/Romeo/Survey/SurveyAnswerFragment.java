@@ -101,7 +101,7 @@ public class SurveyAnswerFragment extends Fragment  {
 		}
 		closeDTTV.setText(closeDT);
 
-		TextView contentTV = (TextView)view.findViewById(R.id.content);
+		TextView contentTV = (TextView)view.findViewById(R.id.chat_content);
 		String content = "";
 		try {
 			content = this.survey.content; 

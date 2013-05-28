@@ -193,7 +193,7 @@
 				            android:gravity="center"
 				            android:hint="@string/survey_close_day_placehold"
 				            android:inputType="number"
-				            android:nextFocusDown="@+id/content"
+				            android:nextFocusDown="@+id/chat_content"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
 				            android:maxLength="2"
@@ -202,7 +202,7 @@
 				    </LinearLayout>
 				
 				    <EditText
-				        android:id="@+id/content"
+				        android:id="@+id/chat_content"
 				        android:layout_width="match_parent"
 				        android:layout_height="wrap_content"
 				        android:layout_marginBottom="5dp"
