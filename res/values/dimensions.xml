@@ -46,4 +46,6 @@
 	<dimen name="survey_result_webview_height_default">200dp</dimen>
 	
 	<dimen name="settings_cell_height">60dp</dimen>
+	
+	<dimen name="navigationBarHeight">50dp</dimen>
 </resources>

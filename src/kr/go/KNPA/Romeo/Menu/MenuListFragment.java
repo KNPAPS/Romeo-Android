@@ -21,6 +21,7 @@ import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Library.HandBookFragment;
+import kr.go.KNPA.Romeo.Library.SocialEvilManualBook;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
@@ -170,7 +171,9 @@ public class MenuListFragment extends ListFragment {
 		
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"집회시위 현장매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:HandBook"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"4대 사회악 근절 전담부대 매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:SocialEvil"));
 		childData.add(l);
+		
 		
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"설정", 			"iconImage", ""+R.drawable.indentation, 	"code", "settings"));
@@ -627,6 +630,8 @@ public class MenuListFragment extends ListFragment {
 			} else if (codes[0].equalsIgnoreCase("LIBRARY")) {
 				if(codes[1].equalsIgnoreCase("HANDBOOK")) {
 					fragment = new HandBookFragment();
+				} else if(codes[1].equalsIgnoreCase("SOCIALEVIL")) {
+					fragment = new SocialEvilManualBook();
 				}
 			} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 				// NOTHING

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.R;
+
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -136,6 +138,7 @@ public class ImageBookAdapter extends PagerAdapter {
 		//iv.setScrollbarFadingEnabled(true);
 		//iv.setVerticalScrollBarEnabled(true);
 		iv.setScaleType(ScaleType.CENTER_CROP);
+		
 		final Bitmap bm = getImageFromPosition(position);
 		if(bm != null)
 			iv.setImageBitmap( bm );
@@ -143,9 +146,21 @@ public class ImageBookAdapter extends PagerAdapter {
 		//Display display = context.getWindowManager().getDefaultDisplay();
 		DisplayMetrics display = context.getResources().getDisplayMetrics();
 		// set maximum scroll amount (based on center of image)
-		float zoomRatio = display.widthPixels / bm.getWidth();
-	    //int maxX = Math.max((int)((bm.getWidth() / 2) - (display.getWidth() / 2)), 0);
-	    int maxY = Math.max( (int)((bm.getHeight() * zoomRatio / 2) - (display.heightPixels / 2)), 0);
+		Resources r = context.getResources();
+		
+		float navBarHeight = r.getDimension(R.dimen.navigationBarHeight);
+		float navBarHeightInPX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, navBarHeight, r.getDisplayMetrics());
+		
+		float viewWidth = display.widthPixels;
+		float viewHeight = display.heightPixels - navBarHeightInPX;
+		
+		float zoomRatio = viewWidth / bm.getWidth();
+		
+		float imageZoomedWidth = bm.getWidth() * zoomRatio;
+		float imageZoomedHeight = bm.getHeight() * zoomRatio;
+		
+	    //int maxX = Math.max((int)(( imageZoomedHeight / 2) - (display.getWidth() / 2)), 0);
+	    int maxY = Math.max( ((int)(imageZoomedHeight - viewHeight))/2 , 0);
 	    
 	    // set scroll limits
 	    final int maxLeft = 0;//(maxX * -1);
@@ -153,10 +168,10 @@ public class ImageBookAdapter extends PagerAdapter {
 	    final int maxTop = 0;//(maxY * -1);
 	    final int maxBottom = 2*maxY;
 
-	    Resources r = context.getResources();
-	    float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, r.getDisplayMetrics());
 	    
-		iv.scrollTo(0, -maxY-(int)px/2 );
+	    
+	    
+		iv.scrollTo(0, -maxY);
 		
 		iv.setOnTouchListener(new View.OnTouchListener() {
 

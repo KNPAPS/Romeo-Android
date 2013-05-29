@@ -13,6 +13,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -97,7 +98,7 @@ abstract public class ImageBookFragment extends Fragment {
 			}
 		};
 		
-		initNavigationBar(view, this.shortTitle, true, true, "메뉴", "목차", lbbOnClickListener, rbbOnClickListener);
+		initNavigationBar(view, this.fullTitle, true, true, "메뉴", "목차", lbbOnClickListener, rbbOnClickListener);
 		
 		pager = (ViewPager)view.findViewById(R.id.pager);
 		pager.setAdapter(new ImageBookAdapter(getActivity(), getBasePath(), nPages, book));
@@ -127,7 +128,7 @@ abstract public class ImageBookFragment extends Fragment {
 		
 		contents = new RomeoDialog.Builder(getActivity())
 											  //.setCancelable(true)
-											  .setTitle(this.fullTitle)
+											  .setTitle(this.shortTitle)
 											  .setAdapter(contentsAdapter, contentsAdapter, contentsAdapter)
 											  //.setAdapter((ListAdapter) contentsAapter, contentsAapter)
 											  .create();
@@ -158,6 +159,7 @@ abstract public class ImageBookFragment extends Fragment {
 		
 		TextView titleView = (TextView)parentView.findViewById(R.id.title);
 		titleView.setText(titleText);
+		titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 		
 		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
 		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
