@@ -154,7 +154,12 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 		case MemberSearchActivity.REQUEST_CODE:
 			if (resultCode == Activity.RESULT_OK)
 			{
-				// TODO 초대 후 작업 처리
+				Bundle b = data.getExtras();
+				ArrayList<String> idxs = b.getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
+				Intent intent = new Intent();
+				intent.putExtra(KEY_CHATTERS_IDX, idxs);
+				setResult(Activity.RESULT_OK, intent);
+				finish();
 			}
 			break;
 		}

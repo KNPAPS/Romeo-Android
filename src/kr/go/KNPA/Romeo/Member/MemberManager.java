@@ -9,65 +9,31 @@ import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.Util.CacheManager;
 
 public class MemberManager {
-	public static int							USER_IDX			= 0;
-	public static int							USER_NAME			= 1;
-	public static int							USER_DEPARTMENT		= 2;
-	public static int							USER_RANK			= 3;
-	public static int							USER_PIC			= 4;
-	public static int							USER_OBJECT			= 5;
-	public static int							USER_ALL			= 6;
 
-	private static MemberManager				_instance			= null;
+	private static MemberManager	mInstance	= null;
 
-	private static HashMap<String, User>		cachedUsers			= null;
-	private static HashMap<String, Department>	cachedDepartment	= null;
+	private MemberManager()
+	{
 
-	// Apply Singleton Type
+	}
+
 	public static MemberManager sharedManager()
 	{
-		if (_instance == null)
+		if (mInstance == null)
 		{
-			_instance = new MemberManager();
+			mInstance = new MemberManager();
 		}
 
-		if (cachedUsers == null)
-		{
-			cachedUsers = new HashMap<String, User>();
-		}
-
-		if (cachedDepartment == null)
-		{
-			cachedDepartment = new HashMap<String, Department>();
-		}
-
-		return _instance;
-	}
-
-	/**
-	 * 다른 멤버의 정보 저장
-	 * 
-	 * @param member
-	 *            Member 객체
-	 */
-	public void cacheUser(User user)
-	{
-		if (cachedUsers == null)
-			cachedUsers = new HashMap<String, User>();
-		cachedUsers.put(user.idx, user);
-	}
-
-	public void cacheDepartment(Department department)
-	{
-		if (cachedDepartment == null)
-			cachedDepartment = new HashMap<String, Department>();
-		cachedDepartment.put(department.idx, department);
+		return mInstance;
 	}
 
 	public User getUser(final String idx)
 	{
-		User user = cachedUsers.get(idx);
+		User user = CacheManager.getUserFromMemCache(idx);
+
 		if (user != null)
 		{
 			return user;
@@ -90,7 +56,7 @@ public class MemberManager {
 						User userFromServer = new User.Builder().idx((String) hm.get(KEY.USER.IDX)).name((String) hm.get(KEY.USER.NAME)).rank(Integer.parseInt((String) hm.get(KEY.USER.RANK)))
 								.role((String) hm.get(KEY.USER.ROLE)).department(dep).build();
 
-						cacheUser(userFromServer);
+						CacheManager.addUserToMemCache(userFromServer);
 					}
 				}
 			};
@@ -104,10 +70,11 @@ public class MemberManager {
 			{
 				e.printStackTrace();
 			}
-			User u = cachedUsers.get(idx);
+
+			User u = CacheManager.getUserFromMemCache(idx);
 			if (u == null)
 			{
-				return cachedUsers.get("nulluseridx");
+				return CacheManager.getUserFromMemCache("nulluseridx");
 			}
 			return u;
 		}
@@ -120,7 +87,7 @@ public class MemberManager {
 		Data data = new Data();
 		for (int i = 0; i < idxs.size(); i++)
 		{
-			User cachedUser = cachedUsers.get(idxs.get(i));
+			User cachedUser = CacheManager.getUserFromMemCache(idxs.get(i));
 			if (cachedUser != null)
 			{
 				users.add(cachedUser);
@@ -157,7 +124,7 @@ public class MemberManager {
 				User user = new User.Builder().idx((String) hm.get(KEY.USER.IDX)).name((String) hm.get(KEY.USER.NAME)).rank(Integer.parseInt((String) hm.get(KEY.USER.RANK)))
 						.role((String) hm.get(KEY.USER.ROLE)).department(dep).build();
 
-				cacheUser(user);
+				CacheManager.addUserToMemCache(user);
 				users.add(user);
 			}
 
@@ -170,17 +137,6 @@ public class MemberManager {
 	}
 
 	/**
-	 * 해당 hash를 가진 사람에 대한 자료 cache에서 삭제
-	 * 
-	 * @param hash
-	 * @return
-	 */
-	public void removeCachedMember(String hash)
-	{
-		cachedUsers.remove(hash);
-	}
-
-	/**
 	 * 부서 정보 가져와서 Department 객체에 담아 반환\n parentHash까지는 가져온 데이터로부터 할당을 할 수 있지만\n
 	 * Department 객체의 parentDept 멤버는 클라이언트쪽에서 따로 지정해줘야 함\n
 	 * 
@@ -189,7 +145,7 @@ public class MemberManager {
 	 */
 	public Department getDeptartment(final String deptIdx)
 	{
-		Department department = cachedDepartment.get(deptIdx);
+		Department department = CacheManager.getDeptFromMemCache(deptIdx);
 		if (department != null)
 			return department;
 
@@ -214,7 +170,7 @@ public class MemberManager {
 
 					Department dept = new Department((String) reqData.get(0, KEY.DEPT.IDX), (String) reqData.get(0, KEY.DEPT.NAME), (String) reqData.get(0, KEY.DEPT.FULL_NAME), (String) reqData.get(
 							0, KEY.DEPT.PARENT_IDX), (String) respData.get(0, KEY.DEPT.SEQUENCE));
-					cacheDepartment(dept);
+					CacheManager.addDeptToMemCache(dept);
 				}
 				else
 				{
@@ -236,7 +192,7 @@ public class MemberManager {
 			e.printStackTrace();
 		}
 
-		Department d = cachedDepartment.get(deptIdx);
+		Department d = CacheManager.getDeptFromMemCache(deptIdx);
 		return d;
 
 	}
@@ -288,7 +244,7 @@ public class MemberManager {
 						Department dep = new Department((String) respData.get(i, KEY.DEPT.IDX), (String) respData.get(i, KEY.DEPT.NAME), (String) respData.get(i, KEY.DEPT.FULL_NAME),
 								(String) respData.get(i, KEY.DEPT.PARENT_IDX), (String) respData.get(i, KEY.DEPT.SEQUENCE));
 
-						cacheDepartment(dep);
+						CacheManager.addDeptToMemCache(dep);
 
 						children.add(dep);
 					}

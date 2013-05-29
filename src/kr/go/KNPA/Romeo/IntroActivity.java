@@ -1,9 +1,19 @@
 package kr.go.KNPA.Romeo;
 
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.GCM.GCMRegisterManager;
+import kr.go.KNPA.Romeo.Member.Department;
+import kr.go.KNPA.Romeo.Member.MemberManager;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Register.NotRegisteredActivity;
 import kr.go.KNPA.Romeo.Register.StatusChecker;
 import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
+import kr.go.KNPA.Romeo.Util.CacheManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -56,8 +66,37 @@ public class IntroActivity extends Activity {// extends BaseActivity{
 					targetModuleInfo.putAll(b);
 
 				checkRegistered();
+
+				loadBaseDataFromServer_Temporary();
 			}
+
 		}).start();
+	}
+
+	private void loadBaseDataFromServer_Temporary()
+	{
+		// TODO 적당한 캐시 정책을 세우고 구현할 때 까지 임시로 사용. 앱 시작 시에 모든 유저에 대한 정보를 캐싱한다.
+		Data reqData = new Data();
+		reqData.add(0, KEY.DEPT.IDX, "");
+		reqData.add(0, KEY.DEPT.FETCH_RECURSIVE, 1);
+
+		Payload request = new Payload().setData(reqData).setEvent(Event.USER_GET_MEMBERS);
+		Payload response = new Connection().requestPayload(request).async(false).request().getResponsePayload();
+
+		if (response.getStatusCode() == StatusCode.SUCCESS)
+		{
+			Data d = response.getData();
+			for (int i = 0; i < d.size(); i++)
+			{
+
+				String deptIdx = d.get(i).get(KEY.DEPT.IDX).toString();
+				Department dept = MemberManager.sharedManager().getDeptartment(deptIdx);
+				User u = new User(d.get(i).get(KEY.USER.IDX).toString(), d.get(i).get(KEY.USER.NAME).toString(), Integer.parseInt(d.get(i).get(KEY.USER.RANK).toString()), d.get(i).get(KEY.USER.ROLE)
+						.toString(), dept);
+
+				CacheManager.addUserToMemCache(u);
+			}
+		}
 	}
 
 	private void checkRegistered()

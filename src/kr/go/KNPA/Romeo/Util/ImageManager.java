@@ -216,7 +216,7 @@ public class ImageManager {
 
 			if (bitmap != null)
 			{
-				CacheManager.addBitmapToMemoryCache(imageKey, bitmap);
+				CacheManager.addBitmapToMemCache(imageKey, bitmap);
 			}
 
 			return bitmap;
