@@ -168,8 +168,8 @@ public class MemberManager {
 
 					Data respData = response.getData();
 
-					Department dept = new Department((String) reqData.get(0, KEY.DEPT.IDX), (String) reqData.get(0, KEY.DEPT.NAME), (String) reqData.get(0, KEY.DEPT.FULL_NAME), (String) reqData.get(
-							0, KEY.DEPT.PARENT_IDX), (String) respData.get(0, KEY.DEPT.SEQUENCE));
+					Department dept = new Department((String) respData.get(0, KEY.DEPT.IDX), (String) respData.get(0, KEY.DEPT.NAME), (String) respData.get(0, KEY.DEPT.FULL_NAME),
+							(String) respData.get(0, KEY.DEPT.PARENT_IDX), (String) respData.get(0, KEY.DEPT.SEQUENCE));
 					CacheManager.addDeptToMemCache(dept);
 				}
 				else

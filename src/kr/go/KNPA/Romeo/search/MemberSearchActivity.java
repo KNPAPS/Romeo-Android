@@ -78,7 +78,7 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 		}
 
 		Intent intent = new Intent();
-		intent.putExtra(KEY_RESULT_IDXS, getMembersIdx().toArray(new String[getMembersIdx().size()]));
+		intent.putExtra(KEY_RESULT_IDXS, getMembersIdx());
 		setResult(Activity.RESULT_OK, intent);
 		finish();
 	}

@@ -158,6 +158,7 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 				ArrayList<String> idxs = b.getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
 				Intent intent = new Intent();
 				intent.putExtra(KEY_CHATTERS_IDX, idxs);
+				intent.putExtra(KEY_ACTION, RoomFragment.ACTION_INVITE_USERS);
 				setResult(Activity.RESULT_OK, intent);
 				finish();
 			}
