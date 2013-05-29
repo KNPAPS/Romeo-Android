@@ -21,10 +21,7 @@ public class MemberManager {
 
 	private static MemberManager				_instance			= null;
 
-	private static HashMap<String, User>		cachedUsers			= null; // !
-																			// 캐시된
-																			// 사람들
-																			// 목록
+	private static HashMap<String, User>		cachedUsers			= null;
 	private static HashMap<String, Department>	cachedDepartment	= null;
 
 	// Apply Singleton Type

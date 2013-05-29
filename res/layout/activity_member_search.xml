@@ -23,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/round_shadow_white"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:padding="15dp" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -33,9 +34,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/gray"
                 android:textColorHint="@color/black"
-                android:textSize="16sp" />
+                android:textSize="18dp" />
 
-            <MultiAutoCompleteTextView
+            <kr.go.KNPA.Romeo.search.MemberSearchTextView
                 android:id="@+id/atv_invitee_search"
                 style="@color/transparent"
                 android:layout_width="0dp"
@@ -44,11 +45,19 @@
                 android:background="@color/transparent"
                 android:ems="10"
                 android:hint="검색"
-                android:inputType="textAutoComplete"
+                android:inputType="textAutoComplete|textMultiLine"
+                android:popupBackground="@null"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="17sp" />
 
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_typeahead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/ll_btn_group_wrapper"
@@ -76,7 +85,6 @@
                 android:text="즐겨찾기"
                 android:textColor="@color/black"
                 android:textSize="13sp" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -98,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/gapSmall"
                 android:background="@drawable/round_shadow_white"
-                android:text="대화에 추가"
+                android:text="추가"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

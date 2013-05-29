@@ -6,7 +6,7 @@ import java.util.Arrays;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
-import kr.go.KNPA.Romeo.search.InviteActivity;
+import kr.go.KNPA.Romeo.search.MemberSearchActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -117,9 +117,9 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 	@Override
 	public void onGoToInviteActivity()
 	{
-		Intent intent = new Intent(this, InviteActivity.class);
-		intent.putExtra(InviteActivity.KEY_EXCLUDE_IDXS, mRoom.getChattersIdx());
-		startActivityForResult(intent, InviteActivity.REQUEST_CODE);
+		Intent intent = new Intent(this, MemberSearchActivity.class);
+		intent.putExtra(MemberSearchActivity.KEY_EXCLUDE_IDXS, mRoom.getChattersIdx());
+		startActivityForResult(intent, MemberSearchActivity.REQUEST_CODE);
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 				onChangeRoomAlias(newAlias);
 			}
 			break;
-		case InviteActivity.REQUEST_CODE:
+		case MemberSearchActivity.REQUEST_CODE:
 			if (resultCode == Activity.RESULT_OK)
 			{
 				// TODO 초대 후 작업 처리
