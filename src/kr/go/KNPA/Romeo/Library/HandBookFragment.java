@@ -119,18 +119,20 @@ public class HandBookFragment extends Fragment {
 	}
 	
 	private void showContentsListDialog() {
-		// RomeoDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
+		// AlertDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
+		
 		ContentsListAdapter contentsAapter = new ContentsListAdapter();
-		ExpandableListView contentsView = new ExpandableListView(getActivity());
-		contentsView.setAdapter(contentsAapter);
-		contentsView.setOnGroupClickListener(contentsAapter);
-		contentsView.setOnChildClickListener(contentsAapter);
+//		ExpandableListView contentsView = new ExpandableListView(getActivity());
+//		contentsView.setAdapter(contentsAapter);
+//		contentsView.setOnGroupClickListener(contentsAapter);
+//		contentsView.setOnChildClickListener(contentsAapter);
 		contents = new RomeoDialog.Builder(getActivity())
-											  .setCancelable(true)
+											  //.setCancelable(true)
 											  .setTitle("집회시위 현장매뉴얼")
-											  .setView(contentsView)
+											  .setAdapter(contentsAapter, contentsAapter, contentsAapter)
 											  //.setAdapter((ListAdapter) contentsAapter, contentsAapter)
 											  .show();
+		
 		//contents.requestWindowFeature(Window.Fe)
 	}
 	

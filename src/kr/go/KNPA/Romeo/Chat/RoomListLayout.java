@@ -8,6 +8,7 @@ import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,7 +96,11 @@ public class RoomListLayout extends FragmentLayout {
 
 	public void setBackground(Drawable d)
 	{
-		getListView().setBackground(d);
+		if(Build.VERSION.SDK_INT < 16) {
+			getListView().setBackgroundDrawable(d);
+		} else  {
+			getListView().setBackground(d);
+		}
 	}
 
 	public RoomListView getListView()

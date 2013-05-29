@@ -5,11 +5,18 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -18,7 +25,7 @@ import android.widget.TextView;
 public class RomeoDialog extends Dialog {
 
 	protected View view; 
-	
+	protected boolean cancelable = true;
 	protected RomeoDialog(Context context) {
 		this(context, R.style.RomeoDialogTheme);
 	}
@@ -30,6 +37,15 @@ public class RomeoDialog extends Dialog {
 		this.setContentView(this.view);
 	}
 	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// If you handled the event, return true. If you want to allow the event to be handled by the next receiver, return false.
+		if(keyCode != KeyEvent.KEYCODE_BACK)
+			return false;
+		if(cancelable == true)
+			this.dismiss();
+		return !cancelable; // TODO
+	}
 	
 	static public class Builder {
 		private Context context;
@@ -58,6 +74,7 @@ public class RomeoDialog extends Dialog {
 		private	TextView	getTitleView()		{	return ((TextView)dialog.view.findViewById(R.id.title));	}
 		private	TextView	getMessageView()	{	return ((TextView)dialog.view.findViewById(R.id.message));	}
 		private	ListView	getListView()		{	return ((ListView)dialog.view.findViewById(R.id.list));		}
+		private	ExpandableListView	getExpandableListView()		{	return ((ExpandableListView)dialog.view.findViewById(R.id.expandableList));		}
 		
 		public Builder	setTitle(int titleId) 				{	getTitleView().setText(titleId);		return this;	}
 		public Builder	setTitle(CharSequence title)		{	getTitleView().setText(title);			return this;	}
@@ -90,6 +107,24 @@ public class RomeoDialog extends Dialog {
 				}
 			};
 			lv.setOnItemClickListener(itemClickListener);
+			
+			if(getMessageView().getVisibility() != View.VISIBLE)
+				getListView().setVisibility(View.VISIBLE);
+			return this;
+		}
+		public Builder setAdapter(ExpandableListAdapter adapter, final OnGroupClickListener groupListener, final OnChildClickListener childListener) { 
+			return setAdapter(adapter, groupListener, childListener, null, null);
+		}
+		public Builder setAdapter(ExpandableListAdapter adapter, final OnGroupClickListener groupListener, final OnChildClickListener childListener,
+				final OnGroupExpandListener expandListener, final OnGroupCollapseListener collapseListener) {
+			ExpandableListView lv = getExpandableListView();
+			lv.setAdapter(adapter);
+			lv.setOnGroupClickListener(groupListener);
+			lv.setOnChildClickListener(childListener);
+			if( collapseListener != null)
+				lv.setOnGroupCollapseListener(collapseListener);
+			if( expandListener != null)
+				lv.setOnGroupExpandListener(expandListener);
 			
 			if(getMessageView().getVisibility() != View.VISIBLE)
 				getListView().setVisibility(View.VISIBLE);
@@ -135,16 +170,17 @@ public class RomeoDialog extends Dialog {
 		}
 					
 		public Builder setCancelable(boolean cancelable) {
-			Button cancelBT = (Button)dialog.view.findViewById(R.id.cancel);
-			cancelBT.setText("취소");
-			cancelBT.setVisibility(View.VISIBLE);
-			cancelBT.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					dialog.dismiss();
-				}
-			});
-			dialog.view.findViewById(R.id.buttonWrapper).setVisibility(View.VISIBLE);
+//			Button cancelBT = (Button)dialog.view.findViewById(R.id.cancel);
+//			cancelBT.setText("취소");
+//			cancelBT.setVisibility(View.VISIBLE);
+//			cancelBT.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					dialog.dismiss();
+//				}
+//			});
+//			dialog.view.findViewById(R.id.buttonWrapper).setVisibility(View.VISIBLE);
+			dialog.cancelable = cancelable;
 			return this;
 		}
 		

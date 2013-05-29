@@ -65,6 +65,16 @@
 	        android:layout_alignParentTop="true"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" />
+        
+        <ExpandableListView
+	        android:id="@+id/expandableList"
+	        android:padding="11dp"
+	        android:visibility="gone"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	    </ExpandableListView>
     </RelativeLayout>
 
     <LinearLayout
@@ -75,13 +85,6 @@
         android:orientation="horizontal"
         android:visibility="gone" >
 
-        <Button
-            android:id="@+id/cancel"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:visibility="gone"
-            android:layout_height="match_parent" />
-        
         <Button
             android:id="@+id/negative"
             android:layout_weight="1"
@@ -98,5 +101,7 @@
 
 
     </LinearLayout>
+
+
 
 </LinearLayout>

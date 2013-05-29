@@ -16,6 +16,7 @@ import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -115,7 +116,12 @@ public class MainActivity extends BaseActivity {
 	private void setUpDeviceSpec()
 	{
 		Point outSize = new Point();
-		getWindowManager().getDefaultDisplay().getSize(outSize);
+		if(Build.VERSION.SDK_INT < 13) {
+			outSize.y = getWindowManager().getDefaultDisplay().getHeight();
+			outSize.x = getWindowManager().getDefaultDisplay().getWidth();
+		} else {
+			getWindowManager().getDefaultDisplay().getSize(outSize);
+		}
 		Constants.DEVICE_WIDTH = outSize.x;
 		Constants.DEVICE_HEIGHT = outSize.y;
 	}
