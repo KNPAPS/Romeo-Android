@@ -127,7 +127,7 @@ public class RomeoDialog extends Dialog {
 				lv.setOnGroupExpandListener(expandListener);
 			
 			if(getMessageView().getVisibility() != View.VISIBLE)
-				getListView().setVisibility(View.VISIBLE);
+				getExpandableListView().setVisibility(View.VISIBLE);
 			return this;
 		}
 		
