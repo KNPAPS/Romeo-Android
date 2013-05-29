@@ -28,6 +28,12 @@ public class SurveyAnswerFragment extends Fragment  {
 	
 	public SurveyAnswerFragment() {}
 	//public SurveyAnswerFragment(Survey survey, int subType) {	this.survey = survey; this.subType = subType;}
+	
+	public SurveyAnswerFragment(Survey survey) {
+		this.survey = survey;
+		this.subType = survey.subType();
+	}
+	
 	public SurveyAnswerFragment(String surveyIdx) {
 		this.survey = new Survey(getActivity(), surveyIdx); 
 		this.subType = survey.subType();

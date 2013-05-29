@@ -5,6 +5,7 @@
     android:orientation="horizontal" >
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/index"
         android:layout_width="20dp"
         android:layout_height="wrap_content"

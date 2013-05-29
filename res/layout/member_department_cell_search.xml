@@ -3,7 +3,6 @@
     android:id="@+id/member_department_cell"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/lighter"
     android:padding="11dp" >
     <!-- 
     <include layout="@layout/member_department_cell" />
@@ -12,7 +11,6 @@
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="60dp"
-	    android:background="@color/lighter"
 	    android:orientation="horizontal"
 	    android:padding="9dp" >
 	

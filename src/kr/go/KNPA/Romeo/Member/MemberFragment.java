@@ -11,6 +11,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.Member.MemberListView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ public class MemberFragment extends RomeoFragment {
 			_sharedMemberFragments.put(type, new MemberFragment(type));
 		return _sharedMemberFragments.get(type);
 	}
+	
 	// Manage List View
 	public RomeoListView getListView() {
 		View view = ((ViewGroup)getView());
@@ -51,6 +53,13 @@ public class MemberFragment extends RomeoFragment {
 		return lv;
 	}
 	
+	public void setExeptionList(ArrayList<String> exeptionList) {
+		((MemberListView)(this.listView)).listAdapter.setExeptionList(exeptionList);
+	}
+	
+	public void unsetExeptionList() {
+		((MemberListView)(this.listView)).listAdapter.unsetExeptionList();
+	}
 
 	@Override
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

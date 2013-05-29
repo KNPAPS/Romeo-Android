@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
@@ -9,6 +10,7 @@ import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.content.Context;
 import android.content.Intent;
@@ -16,25 +18,30 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.TextView;
-class SurveyListAdapter extends CursorAdapter {
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 	// Variables
 	public int subType = Survey.NOT_SPECIFIED;
 	
 	private static final int WHAT_SURVEY = 0;
 	private static final int WHAT_SENDER = 1;
 	private static final int WHAT_UNCHECKERS = 2;
-	
+	private Context context;
 	// Constructor
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);						}
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int subType) 	{	super(context, c, autoRequery);	this.subType = subType;	}
-	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);							}
+	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);							this.context = context;	}
+	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int subType) 	{	super(context, c, autoRequery);	this.subType = subType;	this.context = context;	}
+	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);								this.context = context;	}
 
 	@Override
 	public void bindView(final View v, final Context context, final Cursor c) {
@@ -164,6 +171,7 @@ class SurveyListAdapter extends CursorAdapter {
 	
 				// Received : go Result	
 				} else if(this.subType == Survey.TYPE_RECEIVED) {
+					
 					boolean isAnswered = survey.isAnswered(context);
 					
 					int answeredColor = context.getResources().getColor(R.color.black);
@@ -178,7 +186,7 @@ class SurveyListAdapter extends CursorAdapter {
 					}
 					
 					Button goResultBT = (Button)v.findViewById(R.id.goResult);
-	
+					/*
 					if(isAnswered) {
 						
 						goResultBT.setOnClickListener( new OnClickListener() {
@@ -192,10 +200,12 @@ class SurveyListAdapter extends CursorAdapter {
 					
 					} else {	
 					}
-					
+					*/
 					goResultBT.setText(answeredStatus);
 					goResultBT.setTextColor(answeredColor);
+					
 	
+					
 				}
 		
 			} else if (msg.what == WHAT_UNCHECKERS ) {
@@ -236,4 +246,76 @@ class SurveyListAdapter extends CursorAdapter {
 	public boolean areAllItemsEnabled() {
 		return true;
 	};
+	
+	
+	
+	
+	// Click Listener
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
+			
+			ListAdapter adapter = this;
+			if(parent.getAdapter() instanceof SimpleSectionAdapter)
+				adapter= ((SimpleSectionAdapter)parent.getAdapter());
+			
+			Cursor c = (Cursor)adapter.getItem(position);
+			String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+			
+			Survey survey = new Survey(context, surveyIdx);
+			
+			if(this.subType == Survey.TYPE_RECEIVED) {
+
+				long openTS = (Long)survey.form.get( KEY.SURVEY.OPEN_TS );
+				long closeTS = (Long)survey.form.get( KEY.SURVEY.CLOSE_TS );
+				long currentTS = new Date().getTime()/1000;
+
+				boolean isAnswered = survey.isAnswered(context);
+				boolean isChecked = survey.checked;
+				
+				if(currentTS < openTS) {
+					Toast.makeText(context, "아직 설문 기간이 아닙니다.", Toast.LENGTH_SHORT).show();
+					
+				} else if(currentTS >= openTS && currentTS < closeTS) {
+					if( isAnswered ) {
+						// 자신이 답변한 것을 보여준다. (TODO)
+					} else {
+						// 응답양식을 보여준다.
+						
+						Fragment f = new SurveyAnswerFragment(survey);
+						if(f != null)
+							MainActivity.sharedActivity().pushContent(f);
+					}
+					
+					
+				} else if ( currentTS >= closeTS ){
+					if ( isAnswered || isChecked) {
+						// 자신의 답변을 강조한(TODO) 결과 양식을 보여준다.
+						SurveyResultFragment f = new SurveyResultFragment(survey, subType);
+						MainActivity.sharedActivity().pushContent(f);
+					} else {
+						Toast.makeText(context, "설문 기간이 지났습니다.", Toast.LENGTH_SHORT).show();
+					}
+					
+				}
+
+			} else if(this.subType == Survey.TYPE_DEPARTED){
+				Fragment f = new SurveyResultFragment(survey);
+				if(f != null)
+					MainActivity.sharedActivity().pushContent(f);
+			}
+						
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			
+		}
 }

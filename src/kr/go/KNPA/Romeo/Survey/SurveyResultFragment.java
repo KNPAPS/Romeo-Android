@@ -20,7 +20,7 @@ import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -48,9 +48,7 @@ public class SurveyResultFragment extends Fragment {
 
 	protected final int[]	COLORS	= { Color.parseColor("#AF0452"), Color.parseColor("#FF8500"), Color.parseColor("#008196"), Color.parseColor("#002787"), Color.parseColor("#4903C7") };
 
-	public SurveyResultFragment()
-	{
-	}
+	public SurveyResultFragment(){}
 
 	public SurveyResultFragment(Survey survey, int subType)
 	{
@@ -58,6 +56,10 @@ public class SurveyResultFragment extends Fragment {
 		this.subType = subType;
 	}
 
+	public SurveyResultFragment(Survey survey) {
+		this.survey = survey;
+		this.subType = survey.subType();
+	}
 	public SurveyResultFragment(String surveyIdx)
 	{
 		this.survey = new Survey(getActivity(), surveyIdx);
@@ -145,7 +147,7 @@ public class SurveyResultFragment extends Fragment {
 	final CallbackEvent<Payload, Integer, Payload>	gotResult	= new CallbackEvent<Payload, Integer, Payload>() {
 																	public void onError(String errorMsg, Exception e)
 																	{
-																		AlertDialog dialog = new AlertDialog.Builder(getActivity()).setIcon(R.drawable.icon_dialog)
+																		RomeoDialog dialog = new RomeoDialog.Builder(getActivity()).setIcon(R.drawable.icon_dialog)
 																				.setMessage("결과를 불러올 수 없습니다. 잠시 후 다시 시도해 주세요.").show();
 																		MainActivity.sharedActivity().popContent();
 																		// TODO

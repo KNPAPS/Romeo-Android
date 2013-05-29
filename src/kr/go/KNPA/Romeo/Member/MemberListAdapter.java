@@ -29,6 +29,7 @@ import android.widget.TextView;
 //Inner Class Member List Adapter //
 public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClickListener {
 	
+	private ArrayList<String> exeptionList;
 	
 	// related with SEARCH
 	public static int[] search;
@@ -53,6 +54,14 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			rootNode().append(node);
 		}
 		WaiterView.dismissDialog(context);
+	}
+	
+	public void setExeptionList(ArrayList<String> exeptionList) {
+		this.exeptionList = exeptionList;
+	}
+	
+	public void unsetExeptionList() {
+		this.exeptionList = null;
 	}
 	
 	
@@ -247,6 +256,9 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 				
 				for(int i=0; i<users.size(); i++) {
 					if(users.get(i).idx.equalsIgnoreCase(UserInfo.getUserIdx(context)) == true)
+						continue;
+					
+					if(exeptionList != null && exeptionList.contains(users.get(i).idx))
 						continue;
 					
 					CellNode node = new CellNode()

@@ -12,10 +12,11 @@ import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -115,7 +116,12 @@ public class MainActivity extends BaseActivity {
 	private void setUpDeviceSpec()
 	{
 		Point outSize = new Point();
-		getWindowManager().getDefaultDisplay().getSize(outSize);
+		if(Build.VERSION.SDK_INT < 13) {
+			outSize.y = getWindowManager().getDefaultDisplay().getHeight();
+			outSize.x = getWindowManager().getDefaultDisplay().getWidth();
+		} else {
+			getWindowManager().getDefaultDisplay().getSize(outSize);
+		}
 		Constants.DEVICE_WIDTH = outSize.x;
 		Constants.DEVICE_HEIGHT = outSize.y;
 	}
@@ -211,7 +217,7 @@ public class MainActivity extends BaseActivity {
 					return true;
 				}
 
-				new AlertDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
+				new RomeoDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
 						.setMessage("종료하시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which)

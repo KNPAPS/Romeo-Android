@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/menu_list_cell_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/menu_list_cell_height"
+    android:background="@drawable/menu_list_cell_highlight"
     android:orientation="horizontal" >
 
     <ImageView
@@ -24,7 +26,8 @@
         android:id="@+id/title"
         android:background="@color/transparent"
         android:layout_width="@dimen/menu_list_cell_width"
-        android:layout_height="@dimen/menu_list_cell_height"
+        android:layout_height="wrap_content"
+		android:minHeight="@dimen/menu_list_cell_height"
         android:gravity="center_vertical"
         android:textSize="@dimen/menu_list_cell_fontsize"
         android:padding="@dimen/menu_list_cell_padding"
@@ -35,6 +38,6 @@
         android:id="@+id/code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
 </LinearLayout>

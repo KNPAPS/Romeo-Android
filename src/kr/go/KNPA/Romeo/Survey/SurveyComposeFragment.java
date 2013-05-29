@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import kr.go.KNPA.Romeo.MainActivity;
@@ -17,7 +18,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -356,14 +356,69 @@ public class SurveyComposeFragment extends Fragment {
 		}
 		
 		if( openTSValid == true && closeTSValid == true) {
-			form.put(KEY.SURVEY.OPEN_TS, getTSFrom(openETs));
-			form.put(KEY.SURVEY.CLOSE_TS, getTSFrom(closeETs));
+			//if( openETs[0] )
+			//	closeETs[0];
+			
+			if( Integer.parseInt( openETs[1].getText().toString() ) < 1 
+					|| Integer.parseInt( openETs[1].getText().toString() ) > 12) {
+				WaiterView.dismissDialog(getActivity());
+				openETs[1].setText("");
+				Toast.makeText(getActivity(), "설문 시작 월이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			if( Integer.parseInt( closeETs[1].getText().toString() ) < 1 
+					|| Integer.parseInt( closeETs[1].getText().toString() ) > 12) {
+				WaiterView.dismissDialog(getActivity());
+				closeETs[1].setText("");
+				Toast.makeText(getActivity(), "설문 종료 월이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			
+			if( Integer.parseInt( openETs[2].getText().toString() ) < 1 
+					|| Integer.parseInt( openETs[2].getText().toString() ) > 31) {
+				WaiterView.dismissDialog(getActivity());
+				openETs[1].setText("");
+				Toast.makeText(getActivity(), "설문 시작 일이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			if( Integer.parseInt( closeETs[2].getText().toString() ) < 1 
+					|| Integer.parseInt( closeETs[2].getText().toString() ) > 31) {
+				WaiterView.dismissDialog(getActivity());
+				closeETs[1].setText("");
+				Toast.makeText(getActivity(), "설문 종료 일이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			long openTS = getTSFrom(openETs);
+			long closeTS = getTSFrom(closeETs);
+			long currentTS = new Date().getTime() / 1000;
+			
+			if( openTS < currentTS) {
+				WaiterView.dismissDialog(getActivity());
+				Toast.makeText(getActivity(), "설문 시작 시간이 현재보다 이전입니다.", Toast.LENGTH_SHORT).show();
+				return;
+			} else if( closeTS < currentTS) {
+				WaiterView.dismissDialog(getActivity());
+				Toast.makeText(getActivity(), "설문 종료 시간이 현재보다 이전입니다.", Toast.LENGTH_SHORT).show();
+				return;
+			} else if( closeTS < openTS ) {
+				WaiterView.dismissDialog(getActivity());
+				Toast.makeText(getActivity(), "설문 종료 시간이 설문 시작시간보다 이전입니다.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			form.put(KEY.SURVEY.OPEN_TS, openTS);
+			form.put(KEY.SURVEY.CLOSE_TS, closeTS);
 		} else {
 			Toast.makeText(getActivity(), "설문 기간이 정확히 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			WaiterView.dismissDialog(getActivity());
 			// TODO : NumberFormatException
 			return;
 		}
+		
 		
 		// TODO : 나머지 Validation
 		// 돌면서 양식을 취합.

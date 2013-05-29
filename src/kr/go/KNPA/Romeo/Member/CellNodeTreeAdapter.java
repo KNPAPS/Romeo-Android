@@ -1,5 +1,7 @@
 package kr.go.KNPA.Romeo.Member;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
@@ -13,7 +15,10 @@ public abstract class CellNodeTreeAdapter extends BaseAdapter {
 	protected CellNode _rootNode;
 	  
 	public int subType = User.NOT_SPECIFIED;
-		
+	
+	public void setExeptionList(ArrayList<String> exeptionList) {}
+	public void unsetExeptionList() {}
+	
 	protected abstract void init();
 	
 	// Deal with Position and IndexPath
