@@ -1,8 +1,11 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.util.Date;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
+import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
@@ -15,8 +18,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
+import android.widget.Toast;
 
-public class SurveyListView extends RomeoListView implements OnItemClickListener{
+public class SurveyListView extends RomeoListView {
 	
 	// Constructor
 	public SurveyListView(Context context)	 									{	this(context, null);				}
@@ -32,7 +36,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 		case Survey.TYPE_DEPARTED :
 			listAdapter = new SurveyListAdapter(getContext(), query(), false, this.subType);
 			this.setAdapter(listAdapter);
-			this.setOnItemClickListener(this);
+			this.setOnItemClickListener((android.widget.AdapterView.OnItemClickListener) listAdapter);
 			break;
 			
 		case Survey.TYPE_RECEIVED :
@@ -52,7 +56,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 			SimpleSectionAdapter<Cursor> sectionAdapter
 				= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.title, sectionizer);
 			this.setAdapter(sectionAdapter);
-			this.setOnItemClickListener(this);
+			this.setOnItemClickListener((android.widget.AdapterView.OnItemClickListener) listAdapter);
 			break;
 		}
 		
@@ -64,26 +68,7 @@ public class SurveyListView extends RomeoListView implements OnItemClickListener
 	@Override
 	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).survey().getSurveyList(this.subType);	}
 
-	// Click Listener
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
-		ListAdapter adapter = listAdapter;
-		if(this.getAdapter() instanceof SimpleSectionAdapter)
-			adapter= ((SimpleSectionAdapter)this.getAdapter());
-		
-		Cursor c = (Cursor)adapter.getItem(position);
-		String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
-		
-		Fragment f = null;
-		if(this.subType == Survey.TYPE_RECEIVED) {
-			f = new SurveyAnswerFragment(surveyIdx);
-		} else if(this.subType == Survey.TYPE_DEPARTED){
-			f = new SurveyResultFragment(surveyIdx);
-		}
-		
-		if(f != null)
-			MainActivity.sharedActivity().pushContent(f);
-	}
+	
 	@Override
 	public void onPreExecute() {
 		//WaiterView.showDialog(getContext());

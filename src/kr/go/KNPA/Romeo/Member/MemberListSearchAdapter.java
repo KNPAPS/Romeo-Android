@@ -28,6 +28,8 @@ import android.widget.BaseAdapter;
 
 public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnItemClickListener {
 	
+	private ArrayList<String> exeptionList;
+	
 	// Constructor
 	public MemberListSearchAdapter(final Context context) {
 		this.context = context;
@@ -49,6 +51,15 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 			rootNode().append(node);
 		}
 		WaiterView.dismissDialog(context);		
+	}
+	
+	
+	public void setExeptionList(ArrayList<String> exeptionList) {
+		this.exeptionList = exeptionList;
+	}
+	
+	public void unsetExeptionList() {
+		this.exeptionList = null;
 	}
 	
 	@Override	public int 		getCount	() 					{	return	this.rootNode().count();										}
@@ -243,6 +254,9 @@ public class MemberListSearchAdapter extends CellNodeTreeAdapter implements OnIt
 				
 				for(int i=0; i<users.size(); i++) {
 					if(users.get(i).idx.equalsIgnoreCase(UserInfo.getUserIdx(context)) == true)
+						continue;
+					
+					if(exeptionList != null && exeptionList.contains(users.get(i).idx))
 						continue;
 					
 					CellNode node = new CellNode()

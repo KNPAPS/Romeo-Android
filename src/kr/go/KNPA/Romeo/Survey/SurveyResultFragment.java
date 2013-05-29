@@ -48,9 +48,7 @@ public class SurveyResultFragment extends Fragment {
 
 	protected final int[]	COLORS	= { Color.parseColor("#AF0452"), Color.parseColor("#FF8500"), Color.parseColor("#008196"), Color.parseColor("#002787"), Color.parseColor("#4903C7") };
 
-	public SurveyResultFragment()
-	{
-	}
+	public SurveyResultFragment(){}
 
 	public SurveyResultFragment(Survey survey, int subType)
 	{
@@ -58,6 +56,10 @@ public class SurveyResultFragment extends Fragment {
 		this.subType = subType;
 	}
 
+	public SurveyResultFragment(Survey survey) {
+		this.survey = survey;
+		this.subType = survey.subType();
+	}
 	public SurveyResultFragment(String surveyIdx)
 	{
 		this.survey = new Survey(getActivity(), surveyIdx);
