@@ -10,7 +10,7 @@ import java.util.Map;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Util.CollectionFactory;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -44,7 +44,7 @@ public class HandBookFragment extends Fragment {
 	private ViewPager pager;
 	private HashMap<Integer, ArrayList<String>> book;
 	private static int nPages = 0; 
-	private AlertDialog contents; 
+	private RomeoDialog contents; 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -119,13 +119,13 @@ public class HandBookFragment extends Fragment {
 	}
 	
 	private void showContentsListDialog() {
-		// AlertDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
+		// RomeoDialog. setAdapter, ArrayAdapter<String> setCancelable(true);
 		ContentsListAdapter contentsAapter = new ContentsListAdapter();
 		ExpandableListView contentsView = new ExpandableListView(getActivity());
 		contentsView.setAdapter(contentsAapter);
 		contentsView.setOnGroupClickListener(contentsAapter);
 		contentsView.setOnChildClickListener(contentsAapter);
-		contents = new AlertDialog.Builder(getActivity())
+		contents = new RomeoDialog.Builder(getActivity())
 											  .setCancelable(true)
 											  .setTitle("집회시위 현장매뉴얼")
 											  .setView(contentsView)

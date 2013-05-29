@@ -13,7 +13,7 @@ import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -405,7 +405,7 @@ public class ChatListAdapter extends CursorAdapter {
 		@Override
 		public boolean onLongClick(final View view)
 		{
-			AlertDialog.Builder chooseDlg = new AlertDialog.Builder(mContext);
+			RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(mContext);
 			chooseDlg.setTitle("작업선택");
 
 			ArrayList<String> array = new ArrayList<String>();

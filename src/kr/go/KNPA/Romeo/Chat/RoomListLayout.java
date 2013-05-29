@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.FragmentLayout;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
@@ -60,7 +60,7 @@ public class RoomListLayout extends FragmentLayout {
 				{
 					final String roomCode = view.getTag().toString();
 
-					AlertDialog.Builder chooseDlg = new AlertDialog.Builder(mContext);
+					RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(mContext);
 					chooseDlg.setTitle("옵션");
 
 					ArrayList<String> array = new ArrayList<String>();

@@ -9,7 +9,7 @@ import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.app.Activity;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,7 +37,7 @@ public class UserProfileFragment extends Fragment {
 			public void onError(String errorMsg, Exception e)
 			{
 				WaiterView.dismissDialog(getActivity());
-				AlertDialog ad = new AlertDialog.Builder(getActivity()).setIcon(R.drawable.icon_dialog).setTitle("사진을 전송할 수 없습니다.").setMessage(errorMsg + " 잠시후에 다시 시도해 주세요.")
+				RomeoDialog ad = new RomeoDialog.Builder(getActivity()).setIcon(R.drawable.icon_dialog).setTitle("사진을 전송할 수 없습니다.").setMessage(errorMsg + " 잠시후에 다시 시도해 주세요.")
 						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which)

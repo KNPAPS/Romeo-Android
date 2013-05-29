@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.FragmentLayout;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -75,7 +75,7 @@ public class RoomLayout extends FragmentLayout {
 			@Override
 			public void onClick(View v)
 			{
-				AlertDialog.Builder chooseDlg = new AlertDialog.Builder(getActivity());
+				RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(getActivity());
 				chooseDlg.setTitle("사진 보내기");
 
 				ArrayList<String> array = new ArrayList<String>();

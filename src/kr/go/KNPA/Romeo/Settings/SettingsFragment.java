@@ -8,7 +8,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.VibrationPattern;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -160,7 +160,7 @@ public class SettingsFragment extends Fragment {
 							}
 						};
 						
-						AlertDialog adRington = new AlertDialog.Builder(getActivity())
+						RomeoDialog adRington = new RomeoDialog.Builder(getActivity())
 															   .setIcon(R.drawable.icon_dialog)
 															   .setTitle("알림 소리 선택")
 															   .setAdapter(rtAdapter, rtClicked)
@@ -211,7 +211,7 @@ public class SettingsFragment extends Fragment {
 							}
 						};
 						
-						AlertDialog adVibration = new AlertDialog.Builder(getActivity())
+						RomeoDialog adVibration = new RomeoDialog.Builder(getActivity())
 															   .setIcon(R.drawable.icon_dialog)
 															   .setTitle("진동 패턴 선택")
 															   .setAdapter(vbAdapter, vbClicked)

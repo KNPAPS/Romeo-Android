@@ -4,7 +4,7 @@ import kr.go.KNPA.Romeo.Register.NotRegisteredActivity;
 import kr.go.KNPA.Romeo.Register.StatusChecker;
 import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
 import android.app.Activity;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -244,7 +244,7 @@ public class IntroActivity extends Activity{//extends BaseActivity{
 				// TODO : 분실 신고, 분실 중 메시지 도착, 단말기 복구 ?? =>> 쌓여있던 메시지들은??,,,,
 			}
 		} else {
-			new AlertDialog.Builder(IntroActivity.this)
+			new RomeoDialog.Builder(IntroActivity.this)
 				.setTitle("유저 등록에 실패했습니다.")//context.getString(kr.go.KNPA.Romeo.R.string.)
 				.setMessage("다시 시도해주시기 바랍니다. 문제가 반복되어 발생하는 경우 재설치해주시기 바랍니다.")
 				.setPositiveButton(IntroActivity.this.getString(kr.go.KNPA.Romeo.R.string.ok), new DialogInterface.OnClickListener() {

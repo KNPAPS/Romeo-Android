@@ -12,7 +12,7 @@ import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
-import android.app.AlertDialog;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -211,7 +211,7 @@ public class MainActivity extends BaseActivity {
 					return true;
 				}
 
-				new AlertDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
+				new RomeoDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
 						.setMessage("종료하시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which)
