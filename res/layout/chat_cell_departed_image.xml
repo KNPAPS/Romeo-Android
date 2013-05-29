@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatBubbleDeparted"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/gapSmall"
+    android:orientation="vertical"
+    android:padding="@dimen/gapSmall" >
+
+    <ImageView
+        android:id="@+id/chat_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/chat_bubble_departed"
+        android:maxWidth="200dp"
+        android:paddingBottom="@dimen/gapSmall"
+        android:paddingLeft="@dimen/gapSmall"
+        android:paddingRight="15dp"
+        android:paddingTop="@dimen/gapSmall"
+        />
+
+    <TextView
+        android:id="@+id/arrivalDT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/chat_content"
+        android:layout_toLeftOf="@+id/chat_content"
+        android:padding="@dimen/gapSmaller"
+        android:text="5월14일\n12:12"
+        android:textColor="@color/text"
+        android:textSize="10sp" />
+
+    <Button
+        android:id="@+id/goUnchecked"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignTop="@+id/arrivalDT"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="7dp"
+        android:layout_toLeftOf="@+id/arrivalDT"
+        android:background="@drawable/bubble_active"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="14"
+        android:textSize="12sp" />
+
+</RelativeLayout>

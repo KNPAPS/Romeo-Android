@@ -9,6 +9,7 @@ import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
 import kr.go.KNPA.Romeo.Util.ImageManager;
+import kr.go.KNPA.Romeo.Util.ImageViewActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -26,7 +27,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MemberDetailActivity extends Activity {
@@ -79,24 +79,27 @@ public class MemberDetailActivity extends Activity {
 		layoutParams.dimAmount = 0.7f;
 
 		getWindow().setAttributes(layoutParams);
-		View view = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.member_detail_activity, null);
+		View view = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.member_detail_activity, null);
 		setContentView(view);
 
 		int statusBarHeight = (int) Math.ceil(25 * this.getResources().getDisplayMetrics().density);
 		ViewGroup vg = (ViewGroup) findViewById(R.id.memberDetailActivityLayout);
 		ViewGroup.LayoutParams lp = vg.getLayoutParams();
 		Point size = new Point();
-		
-		// Display.getHeight() & Display.getWidth() are deprecated in API Level13,
+
+		// Display.getHeight() & Display.getWidth() are deprecated in API
+		// Level13,
 		// instead, Display.getSize(Point) is added.
-		if(Build.VERSION.SDK_INT >= 13) {
+		if (Build.VERSION.SDK_INT >= 13)
+		{
 			getWindowManager().getDefaultDisplay().getSize(size);
-		} else {
+		}
+		else
+		{
 			size.y = getWindowManager().getDefaultDisplay().getHeight();
 			size.x = getWindowManager().getDefaultDisplay().getWidth();
 		}
-		
-		
+
 		lp.width = size.x;
 		lp.height = size.y - statusBarHeight;
 		vg.setLayoutParams(lp);
@@ -129,7 +132,7 @@ public class MemberDetailActivity extends Activity {
 		if (idxType == IDX_TYPE_USER)
 		{
 			// User 정보를 얻어온다.
-			User user = User.getUserWithIdx(idx);
+			final User user = User.getUserWithIdx(idx);
 
 			departmentTV.setText(user.department.nameFull);
 			rankTV.setText(User.RANK[user.rank]);
@@ -137,6 +140,17 @@ public class MemberDetailActivity extends Activity {
 
 			ImageView userPicIV = (ImageView) findViewById(R.id.user_pic);
 			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_MEDIUM, idx, userPicIV);
+			userPicIV.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v)
+				{
+					Intent intent = new Intent(MemberDetailActivity.this, ImageViewActivity.class);
+					intent.putExtra("imageHash", user.idx);
+					intent.putExtra("imageType", ImageManager.PROFILE_SIZE_ORIGINAL);
+					startActivity(intent);
+				}
+			});
 		}
 		else if (idxType == IDX_TYPE_GROUP)
 		{
@@ -216,7 +230,7 @@ public class MemberDetailActivity extends Activity {
 															public void run()
 															{
 																super.run();
-																final int roomType = btn == goCommand ? Chat.TYPE_COMMAND : Chat.TYPE_MEETING;
+																final int roomType = btn.equals(goCommand) ? Chat.TYPE_COMMAND : Chat.TYPE_MEETING;
 
 																String roomCode = DBProcManager.sharedManager(MemberDetailActivity.this).chat().getPairRoomCode(roomType, idx);
 

@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.Base.FragmentLayout;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class RoomListLayout extends FragmentLayout {
 		initListView();
 	}
 
-	public void initListView()
+	private void initListView()
 	{
 		mListView = (RoomListView) mRoot.findViewById(R.id.roomListView);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -90,6 +91,11 @@ public class RoomListLayout extends FragmentLayout {
 				return false;
 			}
 		});
+	}
+
+	public void setBackground(Drawable d)
+	{
+		getListView().setBackground(d);
 	}
 
 	public RoomListView getListView()

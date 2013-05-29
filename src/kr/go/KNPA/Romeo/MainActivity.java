@@ -4,6 +4,7 @@ import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.Chat.RoomListFragment;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
@@ -14,6 +15,7 @@ import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -107,6 +109,15 @@ public class MainActivity extends BaseActivity {
 			getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 		}
 
+		setUpDeviceSpec();
+	}
+
+	private void setUpDeviceSpec()
+	{
+		Point outSize = new Point();
+		getWindowManager().getDefaultDisplay().getSize(outSize);
+		Constants.DEVICE_WIDTH = outSize.x;
+		Constants.DEVICE_HEIGHT = outSize.y;
 	}
 
 	/**

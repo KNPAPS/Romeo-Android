@@ -18,9 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class ChatListAdapter extends CursorAdapter {
@@ -55,6 +52,8 @@ public class ChatListAdapter extends CursorAdapter {
 	public static final int				NUM_CHAT_PER_PAGE	= 20;
 	public int							numTotalChat		= Constants.NOT_SPECIFIED;
 	private Room						mRoom;
+	private String						userIdx;
+	private int							TEXT_VIEW_MAX_WIDTH;
 
 	/**
 	 * @param context
@@ -76,6 +75,8 @@ public class ChatListAdapter extends CursorAdapter {
 
 		this.mRoom = room;
 		this.mWaiterViews = new HashMap<String, WaiterView>();
+		this.userIdx = UserInfo.getUserIdx(context);
+		TEXT_VIEW_MAX_WIDTH = Math.min((int) Math.floor(Constants.DEVICE_WIDTH * 0.6), 500);
 	}
 
 	public void setListener(Listener l)
@@ -124,34 +125,22 @@ public class ChatListAdapter extends CursorAdapter {
 		 * }}}
 		 */
 
-		// 유저 idx를 유저 객체로 변환
-		User sender = MemberManager.sharedManager().getUser(senderIdx);
-
 		switch (contentType)
 		{
 		case Chat.CONTENT_TYPE_TEXT:
 		case Chat.CONTENT_TYPE_PICTURE:
-
-			/**
-			 * listItem 내 하위 View들 참조 {{{
-			 */
-			ImageView userPicIV = (ImageView) listItem.findViewById(R.id.userPic);
-			TextView departmentTV = (TextView) listItem.findViewById(R.id.department);
-			TextView rankNameTV = (TextView) listItem.findViewById(R.id.room_list_cell_room_name);
-			TextView arrivalDTTV = (TextView) listItem.findViewById(R.id.arrivalDT);
-			TextView contentTV = (TextView) listItem.findViewById(R.id.chat_content);
-			ImageView contentIV = (ImageView) listItem.findViewById(R.id.contentImage);
-			final Button goUncheckedBT = (Button) listItem.findViewById(R.id.goUnchecked);
-			/** }}} */
-
-			String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
-			arrivalDTTV.setText(arrivalDT);
-
 			// received인 경우 상대방 정보 설정
-			if (!senderIdx.equals(UserInfo.getUserIdx(mContext)))
+			if (!senderIdx.equals(userIdx))
 			{
+				User sender = MemberManager.sharedManager().getUser(senderIdx);
+
+				ImageView userPicIV = (ImageView) listItem.findViewById(R.id.userPic);
+				TextView departmentTV = (TextView) listItem.findViewById(R.id.department);
+				TextView rankNameTV = (TextView) listItem.findViewById(R.id.room_list_cell_room_name);
+
 				departmentTV.setText(sender.department.nameFull);
 				rankNameTV.setText(User.RANK[sender.rank] + " " + sender.name);
+
 				ImageManager im = new ImageManager();
 				// 프로필 사진 load
 				im.loadToImageView(ImageManager.PROFILE_SIZE_SMALL, senderIdx, userPicIV);
@@ -169,19 +158,26 @@ public class ChatListAdapter extends CursorAdapter {
 
 			}
 
+			TextView arrivalDTTV = (TextView) listItem.findViewById(R.id.arrivalDT);
+			String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
+			arrivalDTTV.setText(arrivalDT);
+
+			View contentView = listItem.findViewById(R.id.chat_content);
+			contentView.setOnLongClickListener(new ChatContentLongClickListener());
+
 			switch (contentType)
 			{
 			case Chat.CONTENT_TYPE_TEXT:
-				contentTV.setText(content);
-				contentTV.setOnLongClickListener(new ChatMenu());
-				contentIV.setVisibility(View.GONE);
+				((TextView) contentView).setMaxWidth(TEXT_VIEW_MAX_WIDTH);
+				((TextView) contentView).setText(content);
 				break;
+
 			case Chat.CONTENT_TYPE_PICTURE:
 				ImageManager im = new ImageManager();
-				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, contentIV);
-				contentIV.setOnLongClickListener(new ChatMenu());
+				im.loadToImageView(ImageManager.CHAT_SIZE_SMALL, messageIdx, (ImageView) contentView);
+
 				final String imageIdx = messageIdx;
-				contentIV.setOnClickListener(new OnClickListener() {
+				contentView.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v)
 					{
@@ -191,8 +187,8 @@ public class ChatListAdapter extends CursorAdapter {
 						}
 					}
 				});
-				contentTV.setVisibility(View.GONE);
 				break;
+
 			default:
 				break;
 			}
@@ -201,8 +197,8 @@ public class ChatListAdapter extends CursorAdapter {
 			/**
 			 * 채팅의 상태에 따라 WatierView, UnChecker 버튼, 재전송 버튼을 설정한다
 			 */
-			// 채팅의 content type에 따라 content 설정
 			int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
+			final Button goUncheckedBT = (Button) listItem.findViewById(R.id.goUnchecked);
 
 			switch (chatStatus)
 			{
@@ -212,11 +208,15 @@ public class ChatListAdapter extends CursorAdapter {
 				{
 					WaiterView wv = new WaiterView(context);
 					wv.substituteView(goUncheckedBT);
-					DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-					LayoutParams params = new LayoutParams((int) ((26 * displayMetrics.density) + 0.5), (int) ((26 * displayMetrics.density) + 0.5));
-					params.gravity = Gravity.BOTTOM;
-					params.bottomMargin = (int) ((18 * displayMetrics.density) + 0.5);
-					wv.setLayoutParams(params);
+					// DisplayMetrics displayMetrics =
+					// context.getResources().getDisplayMetrics();
+					// LayoutParams params = new LayoutParams((int) ((26 *
+					// displayMetrics.density) + 0.5), (int) ((26 *
+					// displayMetrics.density) + 0.5));
+					// params.gravity = Gravity.BOTTOM;
+					// params.bottomMargin = (int) ((18 *
+					// displayMetrics.density) + 0.5);
+					// wv.setLayoutParams(params);
 					mWaiterViews.put(listItem.getTag().toString(), wv);
 				}
 
@@ -253,6 +253,7 @@ public class ChatListAdapter extends CursorAdapter {
 			break;// end of chat.text || chat.image
 
 		case Chat.CONTENT_TYPE_USER_JOIN:
+			User sender = MemberManager.sharedManager().getUser(senderIdx);
 			String text = Constants.POLICE_RANK[sender.rank] + " " + sender.name + "님이 ";
 
 			String[] userIdxs = content.split(":");
@@ -264,11 +265,14 @@ public class ChatListAdapter extends CursorAdapter {
 			}
 			text = text.substring(0, text.length() - 1);
 			text += "을 초대하였습니다";
-			((TextView) listItem).setText(text);
+			((TextView) listItem.findViewById(R.id.tv_chat_info)).setText(text);
 			break;
 		case Chat.CONTENT_TYPE_USER_LEAVE:
-			String txt = Constants.POLICE_RANK[sender.rank] + " " + sender.name + "님이 나가셨습니다.";
-			((TextView) listItem).setText(txt);
+
+			User leftUser = MemberManager.sharedManager().getUser(senderIdx);
+
+			String txt = Constants.POLICE_RANK[leftUser.rank] + " " + leftUser.name + "님이 나가셨습니다.";
+			((TextView) listItem.findViewById(R.id.tv_chat_info)).setText(txt);
 			break;
 		}
 
@@ -310,7 +314,7 @@ public class ChatListAdapter extends CursorAdapter {
 	{
 		LayoutInflater inflater = LayoutInflater.from(context);
 
-		int rId = R.layout.chat_bubble_received;
+		int rId = R.layout.chat_cell_received_text;
 
 		int contentType = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
 
@@ -318,18 +322,26 @@ public class ChatListAdapter extends CursorAdapter {
 		{
 		case Chat.CONTENT_TYPE_USER_LEAVE:
 		case Chat.CONTENT_TYPE_USER_JOIN:
-			rId = R.layout.chat_info;
+			rId = R.layout.chat_info_cell;
 			break;
 		case Chat.CONTENT_TYPE_TEXT:
-		case Chat.CONTENT_TYPE_PICTURE:
-			String userIdx = UserInfo.getUserIdx(context);
 			if (userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))))
 			{
-				rId = R.layout.chat_bubble_departed;
+				rId = R.layout.chat_cell_departed_text;
 			}
 			else
 			{
-				rId = R.layout.chat_bubble_received;
+				rId = R.layout.chat_cell_received_text;
+			}
+			break;
+		case Chat.CONTENT_TYPE_PICTURE:
+			if (userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))))
+			{
+				rId = R.layout.chat_cell_departed_image;
+			}
+			else
+			{
+				rId = R.layout.chat_cell_received_image;
 			}
 			break;
 		default:
@@ -389,7 +401,7 @@ public class ChatListAdapter extends CursorAdapter {
 		});
 	}
 
-	class ChatMenu implements OnLongClickListener {
+	class ChatContentLongClickListener implements OnLongClickListener {
 		@Override
 		public boolean onLongClick(final View view)
 		{

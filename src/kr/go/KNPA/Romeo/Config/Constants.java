@@ -2,9 +2,6 @@ package kr.go.KNPA.Romeo.Config;
 
 /**
  * 일반적으로 사용되는 공통된 상수들의 모음
- * 
- * @author 최영우
- * @since 2013.04.02
  */
 public class Constants {
 	// ! Type이나 기타 int형 변수의 기본 설정값
@@ -21,4 +18,7 @@ public class Constants {
 	public static final int			REQUEST_PIC_PICKER		= 300;
 
 	public static final int			CHAT_ROOM_TITLE_MAX_LEN	= 15;
+	public static int				DEVICE_WIDTH;
+	public static int				DEVICE_HEIGHT;
+
 }

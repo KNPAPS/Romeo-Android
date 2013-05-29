@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_room_info_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/room_background"
+    android:orientation="vertical"
+    tools:context=".Chat.RoomSettingActivity" >
+
+    <include
+        layout="@layout/navigation_bar"
+ />
+
+    <ScrollView
+        android:id="@+id/sv_room_info_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/ll_room_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/ll_room_name_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/gap"
+                android:background="@drawable/rounded_square"
+                android:fadingEdge="horizontal"
+                android:orientation="horizontal"
+                android:padding="@dimen/gap" >
+
+                <TextView
+                    android:id="@+id/tv_room_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="의경 채호식, 의경 이기문, 의경 최영우"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_alarm_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/gap"
+                android:background="@drawable/rounded_square"
+                android:fadingEdge="horizontal"
+                android:orientation="horizontal"
+                android:padding="@dimen/gap" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="알림"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:gravity="right"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/tv_room_alarm_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="켬"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/gray"
+                        android:textColorHint="@color/black"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_chatter_list_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/gap"
+                android:background="@drawable/rounded_square"
+                android:fadingEdge="horizontal"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"
+                android:showDividers="middle" >
+
+			<LinearLayout
+			    android:id="@+id/ll_full_chatter_list_btn_wrapper"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal" >
+
+			    <Button
+			        android:id="@+id/btn_full_chatter_list"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:background="@drawable/round_shadow_white"
+			        android:text="전체 참여자 목록"
+			        android:textColor="@color/black"
+			        android:textSize="16sp" />
+			</LinearLayout>
+
+			<LinearLayout
+			    android:id="@+id/ll_invite_btn_wrapper"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal" >
+
+				<Button
+				    android:id="@+id/btn_invite_chatter"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content"
+				    android:background="@drawable/round_shadow_white"
+				    android:text="대화상대 추가하기"
+				    android:textColor="@color/black"
+				    android:textSize="16sp" />
+
+			</LinearLayout>
+												
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_leave_room_btn_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/gap"
+                android:background="@drawable/rounded_square"
+                android:fadingEdge="horizontal"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btn_leave_room"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_shadow_gray"
+                    android:text="채팅방 나가기"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>

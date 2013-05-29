@@ -1,9 +1,10 @@
-package kr.go.KNPA.Romeo.Member;
+package kr.go.KNPA.Romeo.search;
 
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,21 +14,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UserListAdapter extends BaseAdapter {
+public class MemberSearchTextViewAdapter extends BaseAdapter {
 
 	private ArrayList<User>	mArray;
 	private Context			mContext;
 
-	public UserListAdapter(Context context)
+	public MemberSearchTextViewAdapter(Context context)
 	{
 		this.mContext = context;
 		this.mArray = new ArrayList<User>();
-	}
-
-	public UserListAdapter(Context context, ArrayList<User> users)
-	{
-		this.mContext = context;
-		this.mArray = users;
 	}
 
 	@Override
