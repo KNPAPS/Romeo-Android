@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -133,9 +134,8 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 		switch (requestCode)
 		{
 		case MemberSearchActivity.REQUEST_CODE:
-			if (resultCode == MemberSearch.RESULT_OK)
+			if (resultCode == Activity.RESULT_OK)
 			{
-
 				final ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
 
 				Room room = null;

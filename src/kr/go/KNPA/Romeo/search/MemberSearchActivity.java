@@ -29,10 +29,18 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 
 		Bundle b = getIntent().getExtras();
 
-		mExcludeIdxs = b.getStringArrayList(KEY_EXCLUDE_IDXS);
-		if (mExcludeIdxs == null)
+		if (b == null)
 		{
 			mExcludeIdxs = new ArrayList<String>();
+		}
+		else
+		{
+			mExcludeIdxs = b.getStringArrayList(KEY_EXCLUDE_IDXS);
+			if (mExcludeIdxs == null)
+			{
+
+				mExcludeIdxs = new ArrayList<String>();
+			}
 		}
 
 		ArrayList<User> users = CacheManager.getCachedUsers();
