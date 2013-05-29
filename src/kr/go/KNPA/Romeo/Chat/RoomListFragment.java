@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Member.MemberSearch;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -262,7 +261,7 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 	public void onRightNavBarBtnClick()
 	{
 		Intent intent = new Intent(getActivity(), MemberSearchActivity.class);
-		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
+		startActivityForResult(intent, MemberSearchActivity.REQUEST_CODE);
 	}
 
 	private void onSetRoomAlias(final String roomCode, final String newAlias)
