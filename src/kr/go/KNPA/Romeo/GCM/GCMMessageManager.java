@@ -187,7 +187,7 @@ public class GCMMessageManager {
 			room.addChatters(chattersIdx);
 
 			RoomModel model = new RoomModel(mContext, room);
-			model.createRoom();
+			model.createRoom(false);
 		}
 
 		// Chat 저장

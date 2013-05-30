@@ -13,29 +13,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listener {
-	public static final int		REQUEST_CODE		= 101;
+public class RoomInfoActivity extends Activity implements RoomInfoActivityLayout.Listener {
+	public static final int			REQUEST_CODE		= 101;
 
-	public static final String	KEY_ROOM_CODE		= RoomInfoActivity.class.getName() + "roomCode";
-	public static final String	KEY_ROOM_TITLE		= RoomInfoActivity.class.getName() + "roomTitle";
-	public static final String	KEY_ROOM_ALIAS		= RoomInfoActivity.class.getName() + "roomAlias";
-	public static final String	KEY_ROOM_STATUS		= RoomInfoActivity.class.getName() + "roomStatus";
-	public static final String	KEY_ROOM_TYPE		= RoomInfoActivity.class.getName() + "roomType";
-	public static final String	KEY_IS_ALARM_ON		= RoomInfoActivity.class.getName() + "isAlarmOn";
-	public static final String	KEY_CHATTERS_IDX	= RoomInfoActivity.class.getName() + "chattersIdx";
+	public static final String		KEY_ROOM_CODE		= RoomInfoActivity.class.getName() + "roomCode";
+	public static final String		KEY_ROOM_TITLE		= RoomInfoActivity.class.getName() + "roomTitle";
+	public static final String		KEY_ROOM_ALIAS		= RoomInfoActivity.class.getName() + "roomAlias";
+	public static final String		KEY_ROOM_STATUS		= RoomInfoActivity.class.getName() + "roomStatus";
+	public static final String		KEY_ROOM_TYPE		= RoomInfoActivity.class.getName() + "roomType";
+	public static final String		KEY_IS_ALARM_ON		= RoomInfoActivity.class.getName() + "isAlarmOn";
+	public static final String		KEY_CHATTERS_IDX	= RoomInfoActivity.class.getName() + "chattersIdx";
+	public static final String		KEY_IS_HOST			= RoomInfoActivity.class.getName() + "isHost";
+	public static final String		KEY_ACTION			= "action";
+	public static final int			ACTION_LEAVE_ROOM	= 1;
 
-	public static final String	KEY_ACTION			= "action";
-	public static final int		ACTION_LEAVE_ROOM	= 1;
-
-	private RoomInfoLayout		mLayout;
-	private Room				mRoom;
+	private RoomInfoActivityLayout	mLayout;
+	private Room					mRoom;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
-		mLayout = new RoomInfoLayout(this, R.layout.activity_room_info);
+		mLayout = new RoomInfoActivityLayout(this, R.layout.activity_room_info);
 		mLayout.setNavBarTitleTV("채팅방 정보");
 		mLayout.setLeftNavBarBtnText(R.string.cancel);
 		mLayout.setListener(this);
@@ -52,6 +52,8 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 			mRoom.setAlarm(b.getBoolean(KEY_IS_ALARM_ON));
 			mRoom.setTitle(b.getString(KEY_ROOM_TITLE));
 			mRoom.setAlias(b.getString(KEY_ROOM_ALIAS));
+			mRoom.setAlias(b.getString(KEY_ROOM_ALIAS));
+			mRoom.setHost(b.getBoolean(KEY_IS_HOST));
 			mLayout.setRoomName(mRoom.getTitle(), mRoom.getAlias());
 			mLayout.setAlarmStatusText(mRoom.isAlarmOn());
 		}
@@ -61,6 +63,11 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 		}
 
 		mLayout.setChatterList(mRoom.chatters);
+
+		if (mRoom.getType() == Room.TYPE_COMMAND && mRoom.isHost() == false)
+		{
+			mLayout.disableInvitation();
+		}
 	}
 
 	@Override

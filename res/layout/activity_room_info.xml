@@ -30,8 +30,17 @@
                 android:layout_margin="@dimen/gap"
                 android:background="@drawable/rounded_square"
                 android:fadingEdge="horizontal"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="@dimen/gap" >
+
+                <TextView
+                    android:id="@+id/tv_room_name_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/gapSmall"
+                    android:text="방 이름"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/gray" />
 
                 <TextView
                     android:id="@+id/tv_room_name"
@@ -42,6 +51,7 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:textSize="15sp" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -120,7 +130,7 @@
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
 				    android:background="@drawable/round_shadow_white"
-				    android:text="대화상대 추가하기"
+				    android:text="참여자 추가하기"
 				    android:textColor="@color/black"
 				    android:textSize="16sp" />
 
@@ -142,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_shadow_gray"
-                    android:text="채팅방 나가기"
+                    android:text="방 나가기"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 

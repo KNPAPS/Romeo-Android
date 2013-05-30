@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,14 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class RoomListFragment extends Fragment implements RoomListLayout.Listener {
+public class RoomListFragment extends Fragment implements RoomListFragmentLayout.Listener {
 	private static RoomListFragment	mCommandListController	= null;
 	private static RoomListFragment	mMeetingListController	= null;
 	private static RoomFragment		mCurrentRoom			= null;
 
 	private static Handler			mHandler;
 	private int						subType;
-	private RoomListLayout			mLayout;
+	private RoomListFragmentLayout	mLayout;
 	private RoomListAdapter			mListAdapter;
 
 	public RoomListFragment(int subType)
@@ -85,7 +87,7 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		mLayout = new RoomListLayout(getActivity(), inflater, container, savedInstanceState, R.layout.chat_fragment);
+		mLayout = new RoomListFragmentLayout(getActivity(), inflater, container, savedInstanceState, R.layout.chat_fragment);
 		mLayout.setListener(this);
 
 		mLayout.setLeftNavBarBtnText(R.string.menu);
@@ -106,19 +108,58 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 			{
 				mListAdapter = new RoomListAdapter(getActivity(), null);
 
-				final Cursor c = mListAdapter.query(subType);
-				mHandler.post(new Runnable() {
-					public void run()
-					{
-						mLayout.getListView().setAdapter(mListAdapter);
-						mListAdapter.changeCursor(c);
-						mListAdapter.notifyDataSetChanged();
-						if (mListAdapter.getCount() == 0)
+				if (subType == Room.TYPE_COMMAND)
+				{
+					Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
+						@Override
+						public String getSectionTitleForItem(Cursor c)
 						{
-							mLayout.setBackground(getActivity().getResources().getDrawable(R.drawable.empty_set_background));
+							int isHost = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_IS_HOST));
+							String sectionTitle = null;
+							if (isHost == 1)
+							{
+								sectionTitle = "보낸 공지사항";
+							}
+							else
+							{
+								sectionTitle = "받은 공지사항";
+							}
+							return sectionTitle;
 						}
-					}
-				});
+					};
+
+					final SimpleSectionAdapter<Cursor> sectionAdapter = new SimpleSectionAdapter<Cursor>(getActivity(), mListAdapter, R.layout.section_header, R.id.title, sectionizer);
+
+					final Cursor c = mListAdapter.query(subType);
+					mHandler.post(new Runnable() {
+						public void run()
+						{
+							mLayout.getListView().setAdapter(sectionAdapter);
+							refresh(c);
+
+							if (mListAdapter.getCount() == 0)
+							{
+								mLayout.setBackground(getActivity().getResources().getDrawable(R.drawable.empty_set_background));
+							}
+						}
+					});
+				}
+				else
+				{
+					final Cursor c = mListAdapter.query(subType);
+					mHandler.post(new Runnable() {
+						public void run()
+						{
+							mLayout.getListView().setAdapter(mListAdapter);
+							refresh(c);
+
+							if (mListAdapter.getCount() == 0)
+							{
+								mLayout.setBackground(getActivity().getResources().getDrawable(R.drawable.empty_set_background));
+							}
+						}
+					});
+				}
 
 				super.run();
 			}
@@ -197,8 +238,8 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 				mHandler.post(new Runnable() {
 					public void run()
 					{
-						mListAdapter.changeCursor(c);
-						mListAdapter.notifyDataSetChanged();
+						refresh(c);
+
 					}
 				});
 				super.run();
@@ -234,8 +275,8 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 				mHandler.post(new Runnable() {
 					public void run()
 					{
-						mListAdapter.changeCursor(c);
-						mListAdapter.notifyDataSetChanged();
+						refresh(c);
+
 					}
 				});
 				model = null;
@@ -280,8 +321,8 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 				mHandler.post(new Runnable() {
 					public void run()
 					{
-						mListAdapter.changeCursor(c);
-						mListAdapter.notifyDataSetChanged();
+						refresh(c);
+
 					}
 				});
 				model = null;
@@ -295,5 +336,18 @@ public class RoomListFragment extends Fragment implements RoomListLayout.Listene
 		RoomFragment roomController = new RoomFragment(room);
 		getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
 				.replace(R.id.content_frame, roomController, roomController.getClass().getSimpleName()).addToBackStack(null).commit();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void refresh(Cursor c)
+	{
+		mListAdapter.changeCursor(c);
+
+		mListAdapter.notifyDataSetChanged();
+
+		if (subType == Room.TYPE_COMMAND)
+		{
+			((SimpleSectionAdapter<Cursor>) mLayout.getListView().getAdapter()).notifyDataSetChanged();
+		}
 	}
 }

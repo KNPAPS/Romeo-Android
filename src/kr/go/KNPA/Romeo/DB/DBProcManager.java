@@ -159,14 +159,17 @@ public class DBProcManager {
 		 *            채팅방 타입. @see {Chat.TYPE_MEETING}, @see {Chat.TYPE_COMMAND}
 		 * @param roomHash
 		 *            룸해쉬
+		 * @param isHost
+		 *            내가 방을 만든 사람인지 아닌지(지시와보고때문에필요)
 		 * @return 채팅방 해쉬
 		 */
-		public void createRoom(int chatType, String roomHash)
+		public void createRoom(int chatType, String roomHash, boolean isHost)
 		{
 
+			int amIHost = isHost == true ? 1 : 0;
 			// 새 방에 대한 레코드 생성
 			String sql = "insert into " + DBSchema.ROOM.TABLE_NAME + "(" + DBSchema.ROOM.COLUMN_TYPE + "," + DBSchema.ROOM.COLUMN_IS_FAVORITE + "," + DBSchema.ROOM.COLUMN_IDX + ","
-					+ DBSchema.ROOM.COLUMN_IS_ALARM_ON + ") values (" + String.valueOf(chatType) + ",0,?,1)";
+					+ DBSchema.ROOM.COLUMN_IS_ALARM_ON + "," + DBSchema.ROOM.COLUMN_AM_I_HOST + ") values (" + String.valueOf(chatType) + ",0,?,1," + String.valueOf(amIHost) + ")";
 			String[] value = { roomHash };
 			db.execSQL(sql, value);
 
@@ -182,6 +185,7 @@ public class DBProcManager {
 		 * @b COLUMN_ROOM_NUM_CHATTER 채팅방에 있는 사람 수\n
 		 * @b COLUMN_LAST_ENTERED_TS 자신이 마지막으로 들어간 시간
 		 * @b COLUMN_IS_ALARM_ON 알람 여부
+		 * @b COLUMN_IS_HOST 내가 호스트인지여부
 		 * @param roomCode
 		 *            룸 코드
 		 * @return cursor
@@ -190,7 +194,7 @@ public class DBProcManager {
 		{
 			String sql = "select r._id ," + " r." + DBSchema.ROOM.COLUMN_TYPE + COLUMN_ROOM_TYPE + "," +
 
-			" r." + DBSchema.ROOM.COLUMN_ALIAS + COLUMN_ROOM_ALIAS + "," +
+			" r." + DBSchema.ROOM.COLUMN_ALIAS + COLUMN_ROOM_ALIAS + "," + " r." + DBSchema.ROOM.COLUMN_AM_I_HOST + COLUMN_IS_HOST + "," +
 
 			" r." + DBSchema.ROOM.COLUMN_TITLE + COLUMN_ROOM_TITLE + "," + " r." + DBSchema.ROOM.COLUMN_IS_ALARM_ON + COLUMN_ROOM_IS_ALARM_ON + "," + " r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS
 					+ COLUMN_LAST_ENTERED_TS + "," + " (select count(rc._id) " + "from " + DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID
@@ -595,6 +599,8 @@ public class DBProcManager {
 		 * @b COLUMN_ROOM_LAST_CHAT_TS 마지막 채팅이 도착한 시간 TS\n
 		 * @b COLUMN_ROOM_LAST_CHAT_CONTENT 마지막 채팅의 내용\n
 		 * @b COLUMN_USER_IDX 1:1채팅의 경우 같이 채팅하고 있는 사람의 idx, 그룹 채팅의 경우 무시
+		 * @b COLUMN_IS_ALARM_ON 알람여부
+		 * @b COLUMN_IS_HOST 호스트여부
 		 * @param roomType
 		 *            채팅방의 종류(chat의 subtype)
 		 * @return cursor
@@ -606,6 +612,8 @@ public class DBProcManager {
 			" r." + DBSchema.ROOM.COLUMN_TITLE + COLUMN_ROOM_TITLE + "," +
 
 			" r." + DBSchema.ROOM.COLUMN_ALIAS + COLUMN_ROOM_ALIAS + "," +
+
+			" r." + DBSchema.ROOM.COLUMN_IS_ALARM_ON + COLUMN_ROOM_IS_ALARM_ON + "," + " r." + DBSchema.ROOM.COLUMN_AM_I_HOST + COLUMN_IS_HOST + "," +
 
 			" (select count(rc._id) " + "from " + DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID + "= r._id ) " + COLUMN_ROOM_NUM_CHATTER + ", " +
 
@@ -680,6 +688,7 @@ public class DBProcManager {
 		public static final String	COLUMN_ROOM_LAST_CHAT_TS		= "last_chat_ts";
 		public static final String	COLUMN_ROOM_LAST_CHAT_CONTENT	= "last_chat_content";
 		public static final String	COLUMN_ROOM_IS_ALARM_ON			= "is_alarm_on";
+		public static final String	COLUMN_IS_HOST					= "is_host";
 
 		public static final String	COLUMN_ENTERED_TS				= "entered_ts";
 		public static final String	COLUMN_USER_IDX					= "user_idx";

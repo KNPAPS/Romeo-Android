@@ -17,6 +17,7 @@ public class Room {
 	private int					mType;
 	private int					mStatus;
 	private boolean				isAlarmOn;
+	private boolean				isHost			= false;
 
 	public ArrayList<Chatter>	chatters;
 
@@ -155,5 +156,15 @@ public class Room {
 	public void setAlarm(boolean isAlarmOn)
 	{
 		this.isAlarmOn = isAlarmOn;
+	}
+
+	public boolean isHost()
+	{
+		return isHost;
+	}
+
+	public void setHost(boolean isHost)
+	{
+		this.isHost = isHost;
 	}
 }

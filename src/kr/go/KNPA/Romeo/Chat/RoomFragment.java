@@ -39,11 +39,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-public class RoomFragment extends Fragment implements RoomLayout.Listener, ChatListAdapter.Listener {
+public class RoomFragment extends Fragment implements RoomFragmentLayout.Listener, ChatListAdapter.Listener {
 
 	private static final String	TAG					= RoomFragment.class.getSimpleName();
 
-	private RoomLayout			mLayout;
+	private RoomFragmentLayout	mLayout;
 	private RoomModel			mModel;
 	private ChatListAdapter		mListAdapter;
 
@@ -101,7 +101,7 @@ public class RoomFragment extends Fragment implements RoomLayout.Listener, ChatL
 		}
 
 		// 레이아웃 설정
-		mLayout = new RoomLayout(getActivity(), inflater, container, savedInstanceState);
+		mLayout = new RoomFragmentLayout(getActivity(), inflater, container, savedInstanceState);
 		mLayout.setListener(this);
 		mLayout.setLeftNavBarBtnText(R.string.menu);
 		mLayout.setRightNavBarBtnText(R.string.edit);
@@ -406,7 +406,7 @@ public class RoomFragment extends Fragment implements RoomLayout.Listener, ChatL
 				});
 
 				// 방 생성
-				if (mModel.createRoom() == true)
+				if (mModel.createRoom(true) == true)
 				{
 					mHandler.post(new Runnable() {
 						@Override
@@ -510,6 +510,7 @@ public class RoomFragment extends Fragment implements RoomLayout.Listener, ChatL
 		b.putInt(RoomInfoActivity.KEY_ROOM_STATUS, mModel.getRoom().getStatus());
 		b.putInt(RoomInfoActivity.KEY_ROOM_TYPE, mModel.getRoom().getType());
 		b.putBoolean(RoomInfoActivity.KEY_IS_ALARM_ON, mModel.getRoom().isAlarmOn());
+		b.putBoolean(RoomInfoActivity.KEY_IS_HOST, mModel.getRoom().isHost());
 		b.putStringArray(RoomInfoActivity.KEY_CHATTERS_IDX, mModel.getRoom().getChattersIdx().toArray(new String[mModel.getRoom().getChattersIdx().size()]));
 
 		intent.putExtras(b);

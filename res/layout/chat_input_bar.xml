@@ -22,11 +22,10 @@
         android:layout_height="36sp"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:text="가나다라마바사밝"
-        android:inputType="textMultiLine"
         android:background="@drawable/romeo_edittext_background"
-        android:textSize="16sp"
-        android:textColor="@color/text" >
+        android:inputType="textMultiLine"
+        android:textColor="@color/text"
+        android:textSize="16sp" >
 
     </EditText>
 
@@ -34,13 +33,13 @@
         android:id="@+id/submitBtn"
         android:layout_width="wrap_content"
         android:layout_height="36sp"
-        android:layout_marginRight="@dimen/gapSmall"
-        android:layout_marginLeft="@dimen/gapSmall"
         android:layout_gravity="center_vertical"
-        android:textColor="@color/gray"
+        android:layout_marginLeft="@dimen/gapSmall"
+        android:layout_marginRight="@dimen/gapSmall"
         android:background="@drawable/romeo_button_background_gray"
-        android:minWidth="48dp"
         android:enabled="false"
-        android:text="@string/send" />
+        android:minWidth="48dp"
+        android:text="@string/send"
+        android:textColor="@color/black" />
 
 </LinearLayout>

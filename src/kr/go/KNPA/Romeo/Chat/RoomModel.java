@@ -71,7 +71,7 @@ public class RoomModel extends BaseModel {
 		DBProcManager.sharedManager(mContext).chat().deleteRoom(mRoom.getCode());
 	}
 
-	public boolean createRoom()
+	public boolean createRoom(boolean isHost)
 	{
 		if (mRoom.getStatus() == Room.STATUS_CREATED)
 		{
@@ -109,7 +109,7 @@ public class RoomModel extends BaseModel {
 		}
 
 		ChatProcManager proc = DBProcManager.sharedManager(mContext).chat();
-		proc.createRoom(mRoom.getType(), roomCode);
+		proc.createRoom(mRoom.getType(), roomCode, isHost);
 		proc.addUsersToRoom(mRoom.getChattersIdx(), roomCode);
 
 		mRoom.setStatus(Room.STATUS_CREATED);
@@ -296,6 +296,7 @@ public class RoomModel extends BaseModel {
 			mRoom.setTitle(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE)));
 			mRoom.setAlias(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS)));
 			mRoom.setType(c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TYPE)));
+
 			boolean isAlarmOn = true;
 			if (c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IS_ALARM_ON)) == 1)
 			{
@@ -306,6 +307,17 @@ public class RoomModel extends BaseModel {
 				isAlarmOn = false;
 			}
 			mRoom.setAlarm(isAlarmOn);
+
+			boolean isHost = true;
+			if (c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_IS_HOST)) == 1)
+			{
+				isHost = true;
+			}
+			else
+			{
+				isHost = false;
+			}
+			mRoom.setHost(isHost);
 		}
 
 		c.close();

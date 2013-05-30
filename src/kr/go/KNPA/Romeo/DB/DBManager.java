@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 public class DBManager extends SQLiteOpenHelper {
-	private static final int	DATABASE_VERSION						= 4;
+	private static final int	DATABASE_VERSION						= 5;
 	private static final String	TAG										= DBManager.class.getName();
 	private static final String	TEXT									= " TEXT ";
 	private static final String	INT										= " INTEGER ";
@@ -68,7 +68,8 @@ public class DBManager extends SQLiteOpenHelper {
 																				+ DBSchema.ROOM.COLUMN_IDX + TEXT + NOT_NULL + UNIQUE + COMMA + DBSchema.ROOM.COLUMN_ALIAS + TEXT + NOT_NULL + COMMA
 																				+ DBSchema.ROOM.COLUMN_TITLE + TEXT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_TYPE + INT + NOT_NULL + COMMA
 																				+ DBSchema.ROOM.COLUMN_IS_FAVORITE + INT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + INT + NOT_NULL
-																				+ COMMA + DBSchema.ROOM.COLUMN_IS_ALARM_ON + INT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_LAST_CHAT_ID + INT + ")";
+																				+ COMMA + DBSchema.ROOM.COLUMN_IS_ALARM_ON + INT + NOT_NULL + COMMA + DBSchema.ROOM.COLUMN_AM_I_HOST + INT + NOT_NULL
+																				+ COMMA + DBSchema.ROOM.COLUMN_LAST_CHAT_ID + INT + ")";
 	private static final String	SQL_CREATE_INDEX_ROOM					= "CREATE INDEX ROOM_IDX ON " + DBSchema.ROOM.TABLE_NAME + " (" + DBSchema.ROOM.COLUMN_TYPE + " ASC, "
 																				+ DBSchema.ROOM.COLUMN_LAST_CHAT_ID + " ASC)";
 
@@ -145,17 +146,23 @@ public class DBManager extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer)
 	{
-		if (oldVer == 2 && newVer == 4)
+		if (oldVer == 2 && newVer >= 4)
 		{
 			db.execSQL("alter table " + DBSchema.ROOM_CHATTER.TABLE_NAME + " add column " + DBSchema.ROOM_CHATTER.COLUMN_ENTERED_TS + " INT");
 			db.execSQL("update " + DBSchema.ROOM_CHATTER.TABLE_NAME + " set " + DBSchema.ROOM_CHATTER.COLUMN_ENTERED_TS + "=0");
 			db.execSQL("alter table " + DBSchema.ROOM.TABLE_NAME + " add column " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " INT");
 			db.execSQL("update " + DBSchema.ROOM.TABLE_NAME + " set " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + "=0");
 		}
-		else if (oldVer == 3 && newVer == 4)
+		else if (oldVer == 3 && newVer >= 4)
 		{
 			db.execSQL("alter table " + DBSchema.ROOM.TABLE_NAME + " add column " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " INT");
 			db.execSQL("update " + DBSchema.ROOM.TABLE_NAME + " set " + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + "=0");
+		}
+
+		if (newVer >= 5)
+		{
+			db.execSQL("alter table " + DBSchema.ROOM.TABLE_NAME + " add column " + DBSchema.ROOM.COLUMN_AM_I_HOST + " INT");
+			db.execSQL("update " + DBSchema.ROOM.TABLE_NAME + " set " + DBSchema.ROOM.COLUMN_AM_I_HOST + "=0");
 		}
 	}
 
@@ -228,7 +235,7 @@ public class DBManager extends SQLiteOpenHelper {
 			public static final String	COLUMN_IS_ALARM_ON		= " is_alarm_on ";
 			public static final String	COLUMN_LAST_CHAT_ID		= " last_chat_id ";
 			public static final String	COLUMN_LAST_ENTERED_TS	= " last_entered_ts ";
-
+			public static final String	COLUMN_AM_I_HOST		= " am_i_host ";
 		}
 
 		public static abstract class ROOM_CHATTER implements BaseColumns {
