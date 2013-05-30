@@ -5,15 +5,43 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class VibrationPattern {
-	private final static long[] VP_NONE				= {0,0};
-	private final static long[] VP_DEFAULT 			= {500, 500, 500, 500};
-	private final static long[] VP_ONE_SECOND		= {1000};
-	private final static long[] VP_THREE_SECOND		= {2000};
-	private final static long[] VP_FIVE_SECOND		= {5000};
-	private final static long[] VP_TEN_SECOND		= {10000};
-	private final static long[] VP_PIANISSIMO		= {10,90, 10,90, 10,90, 10,90, 10,90, 10,90, 10,90, 10,90, 10,90, 10,90 }; 
-	private final static long[] VP_CRESCENDO 		= {10,90, 20,80, 30,70, 40,60, 50,50, 60,40, 70,30, 80,20, 90,10, 100,0 };
-	private final static long[] VP_DECRESCENDO		= {100,0, 90,10, 80,20, 70,30, 60,40, 50,50, 40,60, 30,70, 20,80, 10,90 };
+	
+	
+	private static long[] getVibrationPattern(String key) {
+		long[] pattern;
+		
+		if( NONE.equalsIgnoreCase(key)) {
+			return new long[] {0,0};
+		} else if(ONE_SECOND.equalsIgnoreCase(key)) {
+			pattern = new long[] {10,1000};
+		} else if(THREE_SECOND.equalsIgnoreCase(key)) {
+			pattern = new long[] {10,3000};
+		} else if(FIVE_SECOND.equalsIgnoreCase(key)) {
+			pattern = new long[] {10,5000};
+		} else if(TEN_SECOND.equalsIgnoreCase(key)) {
+			pattern = new long[] {10,10000};
+		} else if(PIANISSIMO.equalsIgnoreCase(key)) {
+			pattern = new long[500];
+			for(int i=0; i< pattern.length; i++) {
+				pattern[i] = ( (i%2 == 1) ?7:3);
+			}
+			return pattern;
+		} else if(CRESCENDO.equalsIgnoreCase(key)) {
+			pattern = new long[50];
+			for(int i=0; i< pattern.length; i++) {
+				pattern[i] = ( (i%2 == 1) ?20+i:80-i);
+			}
+		} else if(DECRESCENDO.equalsIgnoreCase(key)) {
+			pattern = new long[50];
+			for(int i=0; i< pattern.length; i++) {
+				pattern[i] = ( (i%2 == 1) ?80-i:20+i);
+			}
+		} else {//if(DEFAULT.equalsIgnoreCase(key)) {
+			pattern = new long[] {500, 500, 500, 500};
+		}
+		
+		return pattern;
+	}
 	
 	private static HashMap<String, long[]> PATTERNS = null;
 	private static HashMap<String, String> PATTERNS_TITLE = null;
@@ -43,15 +71,15 @@ public class VibrationPattern {
 	public final static String DICTIONARY_TITLE = "TITLE";
 	private static void init() {
 		PATTERNS = new HashMap<String, long[]>();
-		PATTERNS.put(NONE, VP_NONE);
-		PATTERNS.put(DEFAULT, VP_DEFAULT);
-		PATTERNS.put(ONE_SECOND, VP_ONE_SECOND);
-		PATTERNS.put(THREE_SECOND, VP_THREE_SECOND);
-		PATTERNS.put(FIVE_SECOND, VP_FIVE_SECOND);
-		PATTERNS.put(TEN_SECOND, VP_TEN_SECOND);
-		PATTERNS.put(PIANISSIMO, VP_PIANISSIMO);
-		PATTERNS.put(CRESCENDO, VP_CRESCENDO);
-		PATTERNS.put(DECRESCENDO, VP_DECRESCENDO);
+		PATTERNS.put(NONE, getVibrationPattern(NONE));
+		PATTERNS.put(DEFAULT, getVibrationPattern(DEFAULT));
+		PATTERNS.put(ONE_SECOND, getVibrationPattern(ONE_SECOND));
+		PATTERNS.put(THREE_SECOND, getVibrationPattern(THREE_SECOND));
+		PATTERNS.put(FIVE_SECOND, getVibrationPattern(FIVE_SECOND));
+		PATTERNS.put(TEN_SECOND, getVibrationPattern(TEN_SECOND));
+		PATTERNS.put(PIANISSIMO, getVibrationPattern(PIANISSIMO));
+		PATTERNS.put(CRESCENDO, getVibrationPattern(CRESCENDO));
+		PATTERNS.put(DECRESCENDO, getVibrationPattern(DECRESCENDO));
 		
 		PATTERNS_TITLE = new HashMap<String, String>();
 		PATTERNS_TITLE.put(NONE, TITLE_NONE);

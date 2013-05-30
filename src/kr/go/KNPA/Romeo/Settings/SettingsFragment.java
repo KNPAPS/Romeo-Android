@@ -184,7 +184,18 @@ public class SettingsFragment extends Fragment {
 										getActivity(), 
 										R.layout.dialog_menu_cell2, 
 										R.id.title, 
-										vibs);
+										vibs) {
+							@Override
+							
+							public View getView(int position, View convertView,	ViewGroup parent) {
+								super.getView(position, convertView, parent);
+								HashMap<String, String> vibObj = getItem(position);
+								convertView = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+													.inflate(R.layout.dialog_menu_cell2, parent, false);
+								TextView tv = (TextView)convertView.findViewById(R.id.title); 
+								(tv).setText(vibObj.get(VibrationPattern.DICTIONARY_TITLE));
+								return convertView; 
+							}}; 
 						
 
 						DialogInterface.OnClickListener vbClicked = new DialogInterface.OnClickListener() {

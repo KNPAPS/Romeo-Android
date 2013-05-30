@@ -436,8 +436,8 @@ public class UserRegisterEditView extends LinearLayout {
 					
 					for(int i=0; i<DROPDOWN_MAX_LENGTH; i++) {
 						Department selectedDep = (Department)getDropdown(i).getSelectedItem();
-						if(  (selectedDep.idx == null && !selectedDep.name.equals(context.getString(R.string.none))) 
-								|| selectedDep.name.equals(context.getString(R.string.letSelect))) {
+						if(  (selectedDep.idx == null && !selectedDep.name.equals(context.getString(R.string.none))) ){ 
+								//|| selectedDep.name.equals(context.getString(R.string.letSelect))) {
 							allRight = false;
 							selectedDeps[i] = null;
 						} else {
