@@ -112,6 +112,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		if (isGroup && subType == User.TYPE_FAVORITE)
 		{
 			Button goDetail = (Button) v.findViewById(R.id.goDetail);
+			goDetail.setTag(idx);
 			goDetail.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -119,6 +120,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 				{
 					Intent intent = new Intent(ctx, UserListActivity.class);
 					Bundle b = new Bundle();
+					String idx = (String)view.getTag();
 					b.putString(UserListActivity.KEY_USERS_IDX, idx);
 					intent.putExtras(b);
 					ctx.startActivity(intent);
