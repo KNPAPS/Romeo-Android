@@ -122,7 +122,7 @@ public class SettingsFragment extends Fragment {
 						}
 						
 						
-						ArrayAdapter<String> rtAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, android.R.id.text1, rtTitleArray);
+						ArrayAdapter<String> rtAdapter = new ArrayAdapter<String>(getActivity(),R.layout.dialog_menu_cell2, R.id.title, rtTitleArray);
 						
 //						CursorAdapter rtAdapter = new CursorAdapter(getActivity(), cRingtone, false) {
 //							
@@ -182,8 +182,8 @@ public class SettingsFragment extends Fragment {
 						final ArrayAdapter<HashMap<String, String>> vbAdapter = 
 								new ArrayAdapter<HashMap<String, String>>(
 										getActivity(), 
-										android.R.layout.simple_list_item_1, 
-										android.R.id.text1, 
+										R.layout.dialog_menu_cell2, 
+										R.id.title, 
 										vibs);
 						
 
