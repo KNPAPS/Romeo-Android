@@ -37,6 +37,7 @@
 				            android:ems="10"
 				            android:hint="@string/survey_title_placehold"
 				            android:inputType="text"
+            android:background="@drawable/romeo_edittext_background"
 				            android:nextFocusDown="@+id/open_year"
 				            android:textColor="@color/text" >
 
@@ -69,6 +70,7 @@
 				                android:layout_width="match_parent"
 				                android:inputType="text"
 				                android:focusable="false"
+            android:background="@drawable/romeo_edittext_background"
 				                android:layout_height="wrap_content" />
 						    
 						    		<Button
@@ -111,6 +113,7 @@
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_open_year_placehold"
+            android:background="@drawable/romeo_edittext_background"
 				            android:inputType="number"
 				            android:nextFocusDown="@+id/open_month"
 				            android:padding="@dimen/gapSmaller"
@@ -126,6 +129,7 @@
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_open_month_placehold"
+            android:background="@drawable/romeo_edittext_background"
 				            android:inputType="number"
 				            android:nextFocusDown="@+id/open_day"
 				            android:padding="@dimen/gapSmaller"
@@ -141,6 +145,7 @@
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_open_day_placehold"
+            android:background="@drawable/romeo_edittext_background"
 				            android:inputType="number"
 				            android:nextFocusDown="@+id/close_year"
 				            android:padding="@dimen/gapSmaller"
@@ -162,6 +167,7 @@
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_close_year_placehold"
+            android:background="@drawable/romeo_edittext_background"
 				            android:inputType="number"
 				            android:nextFocusDown="@+id/close_month"
 				            android:padding="@dimen/gapSmaller"
@@ -177,6 +183,7 @@
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_close_month_placehold"
+            android:background="@drawable/romeo_edittext_background"
 				            android:inputType="number"
 				            android:nextFocusDown="@+id/close_day"
 				            android:padding="@dimen/gapSmaller"
@@ -192,6 +199,7 @@
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_close_day_placehold"
+            android:background="@drawable/romeo_edittext_background"
 				            android:inputType="number"
 				            android:nextFocusDown="@+id/chat_content"
 				            android:padding="@dimen/gapSmaller"
@@ -208,6 +216,7 @@
 				        android:layout_marginBottom="5dp"
 				        android:layout_marginTop="5dp"
 				        android:ems="10"
+            android:background="@drawable/romeo_edittext_background"
 				        android:inputType="none|textMultiLine"
 				        android:nextFocusDown="@+id/questions"
 				        android:textColor="@color/text" />

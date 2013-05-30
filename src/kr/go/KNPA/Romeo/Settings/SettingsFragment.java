@@ -60,12 +60,12 @@ public class SettingsFragment extends Fragment {
 		view.addView(cNotiVib);
 		
 		
-		// 데이터 //
+		/*// 데이터 //
 		final RelativeLayout hData 		= SettingsCellMaker.makeSectionHeader(inflater, container, "데이터");
 		view.addView(hData);
 		final RelativeLayout cClearData	= SettingsCellMaker.makeCell(inflater, container, SettingsCellMaker.ONE_LINE, SettingsCellMaker.CONTROL_NONE);
 		view.addView(cClearData);
-		
+		*/
 		
 		// 정보 //
 		final RelativeLayout hInfo 		= SettingsCellMaker.makeSectionHeader(inflater, container, "정보");
@@ -219,7 +219,7 @@ public class SettingsFragment extends Fragment {
 					}
 				});
 		
-		SettingsCellMaker.setTitle(cClearData, "캐시 데이터 삭제");
+		/*SettingsCellMaker.setTitle(cClearData, "캐시 데이터 삭제");
 		SettingsCellMaker.setOnClickListner(	cClearData, 
 				new OnClickListener() {
 					
@@ -230,7 +230,7 @@ public class SettingsFragment extends Fragment {
 						// TODO : 캐시 데이터 초기화
 						WaiterView.dismissDialog(getActivity());
 					}
-				});
+				});*/
 		
 		SettingsCellMaker.setTitle(cDevInfo, "개발 정보");
 		SettingsCellMaker.setOnClickListner(	cDevInfo, 

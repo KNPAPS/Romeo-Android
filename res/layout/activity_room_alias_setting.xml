@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:background="@drawable/romeo_edittext_background"
             android:ems="10" >
 
             <requestFocus />
@@ -42,6 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/square_gray"
             android:text="@string/ok" />
 
         <TextView

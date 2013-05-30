@@ -35,6 +35,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/question_title_placehold"
+            android:background="@drawable/romeo_edittext_background"
             android:inputType="text"
             android:textColor="@color/text" >
 
