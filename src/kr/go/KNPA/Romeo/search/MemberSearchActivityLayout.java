@@ -87,8 +87,12 @@ public class MemberSearchActivityLayout extends ActivityLayout {
 	{
 		for (int i = 0; i < newbies.size(); i++)
 		{
-			User u = MemberManager.sharedManager().getUser(newbies.get(i));
-			getSearchInput().appendMemberClip(u);
+			if (((MemberSearchTextViewAdapter) getSearchInput().getAdapter()).isExcluded(newbies.get(i)) == false)
+			{
+
+				User u = MemberManager.sharedManager().getUser(newbies.get(i));
+				getSearchInput().appendMemberClip(u);
+			}
 		}
 	}
 }

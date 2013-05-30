@@ -61,7 +61,10 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		if (isGroup == false)
 		{
 			ImageView subIndicator = (ImageView) v.findViewById(R.id.sub_indicator);
-			subIndicator.setVisibility(View.GONE);
+			if (subIndicator != null)
+			{
+				subIndicator.setVisibility(View.GONE);
+			}
 
 			User user = User.getUserWithIdx(idx);
 			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_MEDIUM, idx, userPicIV);

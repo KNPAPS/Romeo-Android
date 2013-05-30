@@ -39,6 +39,11 @@ public class MemberSearchTextViewAdapter extends ArrayAdapter<User> implements F
 		mExcludeIdxs.add(idx);
 	}
 
+	public boolean isExcluded(String idx)
+	{
+		return mExcludeIdxs.contains(idx);
+	}
+
 	public void removeExcludeIdxs(String idx)
 	{
 		mExcludeIdxs.remove(idx);
