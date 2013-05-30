@@ -435,6 +435,8 @@ public class ChatListAdapter extends CursorAdapter {
 							}
 							break;
 						}
+						
+						dialog.dismiss();
 					}
 				}
 			});
