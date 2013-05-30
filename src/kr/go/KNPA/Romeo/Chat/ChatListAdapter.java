@@ -11,9 +11,9 @@ import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
-import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -228,7 +228,14 @@ public class ChatListAdapter extends CursorAdapter {
 					mWaiterViews.remove(messageIdx).restoreView();
 				}
 
-				setUncheckerInfo(goUncheckedBT, arrivalTS);
+				if (mRoom.getType() == Room.TYPE_COMMAND && !userIdx.equals(senderIdx))
+				{
+					goUncheckedBT.setVisibility(View.INVISIBLE);
+				}
+				else
+				{
+					setUncheckerInfo(goUncheckedBT, arrivalTS);
+				}
 
 				break;
 			case Chat.STATE_FAIL:
