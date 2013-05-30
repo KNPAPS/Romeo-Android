@@ -3,27 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/light"
+    android:paddingTop = "4dp"
+    android:paddingBottom="4dp"
     android:orientation="horizontal" >
 
     <Button
         android:id="@+id/appendixBtn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="@dimen/gapSmall"
-        android:layout_marginRight="@dimen/gapSmaller"
-        android:layout_marginLeft="@dimen/gap"
-     		android:background="@drawable/circle_plus_active" />
+        android:layout_width="36sp"
+        android:layout_height="36sp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/gapSmall"
+        android:layout_marginRight="@dimen/gapSmall"
+     	android:background="@drawable/circle_plus_active" />
 
     <EditText
         android:id="@+id/inputET"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gapSmall"
+        android:layout_height="36sp"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:ems="10"
+        android:text="가나다라마바사밝"
         android:inputType="textMultiLine"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:background="@drawable/romeo_edittext_background"
+        android:textSize="16sp"
         android:textColor="@color/text" >
 
     </EditText>
@@ -31,13 +33,12 @@
     <Button
         android:id="@+id/submitBtn"
         android:layout_width="wrap_content"
-        android:layout_height="32dp"
+        android:layout_height="36sp"
+        android:layout_marginRight="@dimen/gapSmall"
+        android:layout_marginLeft="@dimen/gapSmall"
+        android:layout_gravity="center_vertical"
         android:textColor="@color/gray"
-        android:layout_gravity="top"
-        android:layout_marginTop="@dimen/gapSmall"
-        android:layout_marginRight="@dimen/gap"
-        android:layout_marginLeft="@dimen/gapSmaller"
-        android:background="@color/lighter"
+        android:background="@drawable/romeo_button_background_gray"
         android:minWidth="48dp"
         android:enabled="false"
         android:text="@string/send" />

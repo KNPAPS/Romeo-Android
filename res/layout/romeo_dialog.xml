@@ -95,6 +95,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:visibility="gone"
+            android:background="@drawable/romeo_button_background_gray"
             android:layout_height="match_parent" />
         
         <Button
@@ -102,6 +103,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:visibility="gone"
+            android:background="@drawable/romeo_button_background_gray"
             android:layout_height="match_parent" />
 
 
