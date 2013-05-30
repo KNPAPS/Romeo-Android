@@ -118,11 +118,11 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 							String sectionTitle = null;
 							if (isHost == 1)
 							{
-								sectionTitle = "보낸 공지사항";
+								sectionTitle = getResources().getString(R.string.header_title_command_sent);
 							}
 							else
 							{
-								sectionTitle = "받은 공지사항";
+								sectionTitle = getResources().getString(R.string.header_title_command_received);
 							}
 							return sectionTitle;
 						}

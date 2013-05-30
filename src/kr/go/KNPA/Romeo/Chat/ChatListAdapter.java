@@ -208,15 +208,6 @@ public class ChatListAdapter extends CursorAdapter {
 				{
 					WaiterView wv = new WaiterView(context);
 					wv.substituteView(goUncheckedBT);
-					// DisplayMetrics displayMetrics =
-					// context.getResources().getDisplayMetrics();
-					// LayoutParams params = new LayoutParams((int) ((26 *
-					// displayMetrics.density) + 0.5), (int) ((26 *
-					// displayMetrics.density) + 0.5));
-					// params.gravity = Gravity.BOTTOM;
-					// params.bottomMargin = (int) ((18 *
-					// displayMetrics.density) + 0.5);
-					// wv.setLayoutParams(params);
 					mWaiterViews.put(listItem.getTag().toString(), wv);
 				}
 

@@ -19,6 +19,8 @@
     <string name="libraryTitle">자료실</string>
     <string name="settingsTitle">설정</string>
     <string name="fromTo">~</string>
+    <string name="header_title_command_sent">보낸 전달사항</string>
+    <string name="header_title_command_received">받은 전달사항</string>
     <string name="documentFavoriteTitle">중요 메모공지</string>
     <string name="documentReceivedTitle">받은 메모공지</string>
     <string name="documentDepartedTitle">보낸 메모공지</string>
