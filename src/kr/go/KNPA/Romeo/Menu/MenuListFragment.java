@@ -1,7 +1,6 @@
 package kr.go.KNPA.Romeo.Menu;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +41,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethod;
@@ -238,12 +239,20 @@ public class MenuListFragment extends ListFragment {
 				setSearchMode(true);
 			}
 		});
+	
+		searchET.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				Log.d("focus", "getFocus");
+			}
+		});
 		
-		searchBT.setOnKeyListener(new OnKeyListener() {
+		searchET.setOnKeyListener(new OnKeyListener() {
 			
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				
+				Log.d("im", "key pressed");
 				if(event.getAction() == KeyEvent.ACTION_UP && 
 						keyCode == KeyEvent.KEYCODE_ENTER) {
 					if(searchET.getText().toString().trim().length() == 0) {
@@ -291,7 +300,7 @@ public class MenuListFragment extends ListFragment {
 			
 			if(searchET != null)
 				searchET.requestFocus();
-			im.showSoftInput(searchET, InputMethod.SHOW_FORCED);
+			im.showSoftInput(searchET, InputMethod.SHOW_EXPLICIT);
 		} else {
 			cancelSearchBT.setVisibility(View.GONE);
 			searchList.setVisibility(View.INVISIBLE);
