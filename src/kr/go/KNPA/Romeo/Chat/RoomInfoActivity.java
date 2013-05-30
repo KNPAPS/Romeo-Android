@@ -6,8 +6,10 @@ import java.util.Arrays;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -126,14 +128,28 @@ public class RoomInfoActivity extends Activity implements RoomInfoLayout.Listene
 	public void onLeaveRoom()
 	{
 
-		Bundle b = new Bundle();
-		b.putInt(KEY_ACTION, ACTION_LEAVE_ROOM);
+		new RomeoDialog.Builder(this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
+				.setMessage("방에서 나가면 채팅 내역이 모두 삭제됩니다. 방에서 나가시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						dialog.dismiss();
+						Bundle b = new Bundle();
+						b.putInt(KEY_ACTION, ACTION_LEAVE_ROOM);
 
-		Intent intent = new Intent();
-		intent.putExtras(b);
+						Intent intent = new Intent();
+						intent.putExtras(b);
 
-		setResult(RESULT_OK, intent);
-		finish();
+						setResult(RESULT_OK, intent);
+						finish();
+					}
+				}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int whichButton)
+					{
+						dialog.dismiss();
+					}
+				}).show();
 	}
 
 	@Override

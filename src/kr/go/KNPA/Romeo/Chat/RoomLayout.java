@@ -82,7 +82,7 @@ public class RoomLayout extends FragmentLayout {
 				array.add("사진 촬영");
 				array.add("앨범에서 선택");
 
-				ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(getActivity(), R.layout.dialog_menu_cell, array);
+				ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(getActivity(), R.layout.dialog_menu_cell2, array);
 
 				chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener() {
 					@Override

@@ -27,6 +27,7 @@ import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -337,7 +338,7 @@ public class GCMMessageManager {
 		Intent intent = new Intent(mContext, MainActivity.class);
 		Bundle b = new Bundle();
 		b.putInt(KEY.MESSAGE.TYPE, message.type());
-
+		boolean doAlarm = true;
 		if (message.mainType() == Message.MESSAGE_TYPE_CHAT)
 		{
 			String roomCode = ((Chat) message).roomCode;
@@ -348,12 +349,7 @@ public class GCMMessageManager {
 			if (c.moveToNext())
 			{
 				int isAlarmOn = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IS_ALARM_ON));
-
-				if (isAlarmOn != 1)
-				{
-					return;
-				}
-
+				doAlarm = isAlarmOn != 0 ? true : false;
 				String roomTitle = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE));
 				String roomAlias = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS));
 
@@ -395,6 +391,14 @@ public class GCMMessageManager {
 		// message.type(), intent, 0);
 
 		mBuilder.setContentIntent(resultPendingIntent);
+
+		if (doAlarm == true)
+		{
+			if (UserInfo.getAlarmEnabled(mContext) == true)
+			{
+				mBuilder.setDefaults(Notification.DEFAULT_ALL);
+			}
+		}
 		NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		// mId allows you to update the notification later on.

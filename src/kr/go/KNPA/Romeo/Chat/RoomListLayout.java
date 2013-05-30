@@ -61,18 +61,18 @@ public class RoomListLayout extends FragmentLayout {
 				{
 					final String roomCode = view.getTag().toString();
 
-					RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(mContext);
+					final RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(mContext);
 					chooseDlg.setTitle("옵션");
 
 					ArrayList<String> array = new ArrayList<String>();
 					array.add("채팅방 이름 설정");
 					array.add("나가기");
 
-					ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell, array);
+					ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell2, array);
 
 					chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener() {
 						@Override
-						public void onClick(DialogInterface dialog, int which)
+						public void onClick(final DialogInterface menus, int which)
 						{
 							switch (which)
 							{
@@ -80,7 +80,23 @@ public class RoomListLayout extends FragmentLayout {
 								mListener.onGoToSetRoomAliasActivity(roomCode);
 								break;
 							case 1:// 나가기
-								mListener.onDeleteRoom(roomCode);
+								new RomeoDialog.Builder(getActivity()).setIcon(getActivity().getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
+										.setMessage("방에서 나가면 채팅 내역이 모두 삭제됩니다. 방에서 나가시겠습니까? ").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which)
+											{
+												dialog.dismiss();
+												menus.dismiss();
+												mListener.onDeleteRoom(roomCode);
+											}
+										}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int whichButton)
+											{
+												dialog.dismiss();
+												menus.dismiss();
+											}
+										}).show();
 								break;
 							}
 						}
@@ -96,9 +112,12 @@ public class RoomListLayout extends FragmentLayout {
 
 	public void setBackground(Drawable d)
 	{
-		if(Build.VERSION.SDK_INT < 16) {
+		if (Build.VERSION.SDK_INT < 16)
+		{
 			getListView().setBackgroundDrawable(d);
-		} else  {
+		}
+		else
+		{
 			getListView().setBackground(d);
 		}
 	}
