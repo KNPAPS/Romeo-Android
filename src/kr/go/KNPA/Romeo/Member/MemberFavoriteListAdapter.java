@@ -72,9 +72,9 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			{
 				title = user.name;
 			}
-			departmentTV.setText(title);
+			departmentTV.setText(user.department.nameFull);
 			rankTV.setText(User.RANK[user.rank]);
-			nameTV.setText(user.name);
+			nameTV.setText(title);
 			roleTV.setText(user.role);
 
 		}
