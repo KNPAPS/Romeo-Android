@@ -48,6 +48,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -282,6 +283,7 @@ public class MenuListFragment extends ListFragment {
 	}
 	
 	private void setSearchMode(boolean willSearchMode) {
+		InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		if(willSearchMode == true) {
 			cancelSearchBT.setVisibility(View.VISIBLE);
 			searchList.setVisibility(View.VISIBLE);
@@ -289,6 +291,7 @@ public class MenuListFragment extends ListFragment {
 			
 			if(searchET != null)
 				searchET.requestFocus();
+			im.showSoftInput(searchET, InputMethod.SHOW_FORCED);
 		} else {
 			cancelSearchBT.setVisibility(View.GONE);
 			searchList.setVisibility(View.INVISIBLE);
@@ -296,7 +299,7 @@ public class MenuListFragment extends ListFragment {
 			
 			if(searchET != null)
 				searchET.clearFocus();
-			InputMethodManager im = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			
 			im.hideSoftInputFromWindow(searchET.getWindowToken(), 0);
 		}
 	}
