@@ -3,6 +3,8 @@ package kr.go.KNPA.Romeo.search;
 import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Member.MemberFavoriteListActivity;
+import kr.go.KNPA.Romeo.Member.MemberListActivity;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.CacheManager;
 import android.app.Activity;
@@ -65,15 +67,15 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 	@Override
 	public void onGoToDeptTree()
 	{
-		// TODO Auto-generated method stub
-
+		Intent intent = new Intent(this, MemberListActivity.class);
+		startActivityForResult(intent, MemberListActivity.REQUEST_CODE);
 	}
 
 	@Override
-	public void onGoToFavorite()
+	public void onGoToFavoriteList()
 	{
-		// TODO Auto-generated method stub
-
+		Intent intent = new Intent(this, MemberFavoriteListActivity.class);
+		startActivityForResult(intent, MemberFavoriteListActivity.REQUEST_CODE);
 	}
 
 	@Override
@@ -94,5 +96,36 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 	public ArrayList<String> getMembersIdx()
 	{
 		return mLayout.getSearchInput().getMembersIdx();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+
+		ArrayList<String> resIdxs = null;
+
+		switch (requestCode)
+		{
+		case MemberListActivity.REQUEST_CODE:
+			if (resultCode == Activity.RESULT_OK)
+			{
+				resIdxs = data.getExtras().getStringArrayList(MemberListActivity.KEY_RESULT_USERS_IDX);
+			}
+			break;
+		case MemberFavoriteListActivity.REQUEST_CODE:
+			if (resultCode == Activity.RESULT_OK)
+			{
+				resIdxs = data.getExtras().getStringArrayList(MemberFavoriteListActivity.KEY_RESULT_USERS_IDX);
+			}
+			break;
+		}
+
+		if (resIdxs == null)
+		{
+			return;
+		}
+
+		mLayout.appendMemberClips(resIdxs);
 	}
 }

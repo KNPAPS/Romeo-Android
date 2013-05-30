@@ -6,7 +6,7 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Member.MemberSearch;
+import kr.go.KNPA.Romeo.Member.MemberListActivity;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Intent;
@@ -128,17 +128,17 @@ public class DocumentForwardFragment extends Fragment {
 	}
 	
 	private void callMemberSearchActivity() {
-		Intent intent = new Intent(getActivity(), MemberSearch.class);
-		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
+		Intent intent = new Intent(getActivity(), MemberListActivity.class);
+		startActivityForResult(intent, MemberListActivity.REQUEST_CODE);
 	}
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == MemberSearch.REQUEST_CODE) {
-			if(resultCode != MemberSearch.RESULT_OK) {
+		if(requestCode == MemberListActivity.REQUEST_CODE) {
+			if(resultCode != MemberListActivity.RESULT_OK) {
 				// onError
 			} else {
-				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
+				ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberListActivity.KEY_RESULT_USERS_IDX);
 				// 선택한 사람들로 <대체>된다.
 				
 				ArrayList<String> newUsers = new ArrayList<String>();

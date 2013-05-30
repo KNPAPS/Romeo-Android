@@ -1,7 +1,11 @@
 package kr.go.KNPA.Romeo.search;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.ActivityLayout;
+import kr.go.KNPA.Romeo.Member.MemberManager;
+import kr.go.KNPA.Romeo.Member.User;
 import android.app.Activity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,7 +16,7 @@ public class MemberSearchActivityLayout extends ActivityLayout {
 	public interface Listener extends BaseListener {
 		void onGoToDeptTree();
 
-		void onGoToFavorite();
+		void onGoToFavoriteList();
 
 		void onSubmit();
 	}
@@ -49,7 +53,7 @@ public class MemberSearchActivityLayout extends ActivityLayout {
 			{
 				if (mListener != null)
 				{
-					mListener.onGoToFavorite();
+					mListener.onGoToFavoriteList();
 				}
 			}
 		});
@@ -77,5 +81,14 @@ public class MemberSearchActivityLayout extends ActivityLayout {
 	public MemberSearchTextView getSearchInput()
 	{
 		return mSearchTV;
+	}
+
+	public void appendMemberClips(ArrayList<String> newbies)
+	{
+		for (int i = 0; i < newbies.size(); i++)
+		{
+			User u = MemberManager.sharedManager().getUser(newbies.get(i));
+			getSearchInput().appendMemberClip(u);
+		}
 	}
 }

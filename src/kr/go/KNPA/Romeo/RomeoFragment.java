@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo;
 
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Member.MemberSearch;
+import kr.go.KNPA.Romeo.Member.MemberListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -104,7 +104,7 @@ public abstract class RomeoFragment extends Fragment {
 	
 	private void callMemberSearchActivity() {
 		
-		Intent intent = new Intent(getActivity(), MemberSearch.class);
+		Intent intent = new Intent(getActivity(), MemberListActivity.class);
 		
 		startActivityForResult(intent, MainActivity.MEMBER_SEARCH_ACTIVITY);
 	}
@@ -112,7 +112,7 @@ public abstract class RomeoFragment extends Fragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MainActivity.MEMBER_SEARCH_ACTIVITY) {
-			if(resultCode != MemberSearch.RESULT_OK) {
+			if(resultCode != MemberListActivity.RESULT_OK) {
 				// onError
 				Toast.makeText(getActivity(), "Activity Result Error", Toast.LENGTH_SHORT).show();
 			} else {

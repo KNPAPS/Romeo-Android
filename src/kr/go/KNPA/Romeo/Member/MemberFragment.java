@@ -127,20 +127,20 @@ public class MemberFragment extends RomeoFragment {
 
 
 	private void startMemberSearchActivity() {
-		Intent intent = new Intent(getActivity(), MemberSearch.class);
+		Intent intent = new Intent(getActivity(), MemberListActivity.class);
 		startActivityForResult(intent, MainActivity.MEMBER_SEARCH_ACTIVITY);
 	}
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MainActivity.MEMBER_SEARCH_ACTIVITY) {
-			if(resultCode != MemberSearch.RESULT_OK) {
+			if(resultCode != MemberListActivity.RESULT_OK) {
 				// onError
 				Toast.makeText(getActivity(), "선택되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			} else {
 				//data.getExtras().get;
 				Bundle b = data.getExtras();
-				ArrayList<String> usersIdx = b.getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
+				ArrayList<String> usersIdx = b.getStringArrayList(MemberListActivity.KEY_RESULT_USERS_IDX);
 				
 				if(usersIdx == null || usersIdx.size() < 1) {
 					Toast.makeText(getActivity(), "선택되지 않았습니다.", Toast.LENGTH_SHORT).show();

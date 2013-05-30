@@ -2,8 +2,8 @@
 <resources>
 
     <!-- Message -->
-    <string name="command">지시와 보고</string>
-    <string name="document">업무연락</string>
+    <string name="command">전달사항</string>
+    <string name="document">메모공지</string>
     <string name="survey">설문</string>
     <string name="receiver">수신자</string>
     <string name="subTitle">부제목</string>
@@ -12,17 +12,17 @@
     <string name="duration">기간</string>
     <string name="memberListTitle">조직도</string>
     <string name="memberFavoriteTitle">즐겨찾기</string>
-    <string name="commandTitle">지시와 보고</string>
+    <string name="commandTitle">전달사항</string>
     <string name="meetingTitle">회의</string>
-    <string name="documentTitle">업무연락</string>
+    <string name="documentTitle">메모공지</string>
     <string name="surveyTitle">설문</string>
     <string name="libraryTitle">자료실</string>
     <string name="settingsTitle">설정</string>
     <string name="fromTo">~</string>
-    <string name="documentFavoriteTitle">중요 업무연락</string>
-    <string name="documentReceivedTitle">받은 업무연락</string>
-    <string name="documentDepartedTitle">보낸 업무연락</string>
-    <string name="documentForwardTitle">전달 업무연락</string>
+    <string name="documentFavoriteTitle">중요 메모공지</string>
+    <string name="documentReceivedTitle">받은 메모공지</string>
+    <string name="documentDepartedTitle">보낸 메모공지</string>
+    <string name="documentForwardTitle">전달 메모공지</string>
     <string name="surveyDepartedTitle">보낸 설문</string>
     <string name="surveyReceivedTitle">받은 설문</string>
     <string name="surveyComposeTitle">설문 작성</string>
@@ -82,13 +82,13 @@
     <string name="send">전송</string>
 
     <!-- Notification -->
-    <string name="notification_command_ticker">지시와 보고가 도착했습니다.</string>
+    <string name="notification_command_ticker">전달사항이 도착했습니다.</string>
     <string name="notification_command_title"></string>
     <string name="notification_command_content"></string>
     <string name="notification_meeting_ticker">회의가 도착했습니다.</string>
     <string name="notification_meeting_title"></string>
     <string name="notification_meeting_content"></string>
-    <string name="notification_document_ticker">업무연락이 도착했습니다.</string>
+    <string name="notification_document_ticker">메모공지가 도착했습니다.</string>
     <string name="notification_document_title"></string>
     <string name="notification_document_content"></string>
     <string name="notification_survey_ticker">설문이 도착했습니다.</string>
@@ -98,8 +98,8 @@
     <!-- ListView -->
     <string name="checkedChat">읽은 목록</string>
     <string name="unCheckedChat">읽지않은 목록</string>
-    <string name="checkedDocument">확인한 업무연락</string>
-    <string name="unCheckedDocument">확인하지 않은 업무연락</string>
+    <string name="checkedDocument">확인한 메모공지</string>
+    <string name="unCheckedDocument">확인하지 않은 메모공지</string>
     <string name="openedSurvey">진행중인 설문</string>
     <string name="closedSurvey">지난 설문</string>
 

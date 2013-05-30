@@ -44,7 +44,7 @@
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:ems="10"
-                android:hint="검색"
+                android:hint="@string/search"
                 android:inputType="textAutoComplete|textMultiLine"
                 android:popupBackground="@null"
                 android:textColor="@color/black"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:background="@drawable/round_shadow_gray"
-                android:text="조직도"
+                android:text="@string/memberListTitle"
                 android:textColor="@color/black"
                 android:textSize="13sp" />
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:background="@drawable/round_shadow_gray"
-                android:text="즐겨찾기"
+                android:text="@string/memberFavoriteTitle"
                 android:textColor="@color/black"
                 android:textSize="13sp" />
         </LinearLayout>
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/gapSmall"
                 android:background="@drawable/round_shadow_white"
-                android:text="추가"
+                android:text="@string/done"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

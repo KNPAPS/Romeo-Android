@@ -402,7 +402,7 @@ public class GCMMessageManager {
 		NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		// mId allows you to update the notification later on.
-		mNotificationManager.notify((int) System.currentTimeMillis() / 1000, mBuilder.build());
+		mNotificationManager.notify(0, mBuilder.build());
 	}
 
 	private List<ActivityManager.RunningAppProcessInfo> processList(Context context)

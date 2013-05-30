@@ -323,4 +323,17 @@ public class MemberSearchTextView extends MultiAutoCompleteTextView implements O
 		return getText();
 	}
 
+	public void appendMemberClip(User user)
+	{
+		CharSequence chip = createChip(user, false);
+		Editable editable = getText();
+
+		if (chip != null)
+		{
+			editable.append(chip);
+			((MemberSearchTextViewAdapter) getAdapter()).addExcludeIdxs(user.idx);
+		}
+
+		setSelection(editable.length());
+	}
 }

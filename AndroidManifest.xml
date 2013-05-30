@@ -85,7 +85,7 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name="kr.go.KNPA.Romeo.Member.MemberSearch"
+            android:name="kr.go.KNPA.Romeo.Member.MemberListActivity"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden" >
         </activity>
@@ -130,6 +130,8 @@
         <activity android:name="kr.go.KNPA.Romeo.search.MemberSearchActivity" 
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="adjustResize"></activity>
+        <activity android:name="kr.go.KNPA.Romeo.Member.MemberFavoriteListActivity"
+            android:theme="@android:style/Theme.NoTitleBar"></activity>
     </application>
 
 </manifest>

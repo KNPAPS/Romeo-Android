@@ -8,7 +8,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Member.MemberSearch;
+import kr.go.KNPA.Romeo.Member.MemberListActivity;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.IndexPath;
@@ -503,19 +503,19 @@ public class SurveyComposeFragment extends Fragment {
 	}
 
 	private void callMemberSearchActivity() {
-		Intent intent = new Intent(getActivity(), MemberSearch.class);
-		startActivityForResult(intent, MemberSearch.REQUEST_CODE);
+		Intent intent = new Intent(getActivity(), MemberListActivity.class);
+		startActivityForResult(intent, MemberListActivity.REQUEST_CODE);
 	}
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == MemberSearch.REQUEST_CODE) {
-			if(resultCode != MemberSearch.RESULT_OK) {
+		if(requestCode == MemberListActivity.REQUEST_CODE) {
+			if(resultCode != MemberListActivity.RESULT_OK) {
 				// onError
 				Toast.makeText(getActivity(), "선택된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
 			} else {
 				// 대체
-				receiversIdx = data.getExtras().getStringArrayList(MemberSearch.KEY_RESULT_USERS_IDX);
+				receiversIdx = data.getExtras().getStringArrayList(MemberListActivity.KEY_RESULT_USERS_IDX);
 				
 				if (receiversIdx.size() > 1) {
 					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));

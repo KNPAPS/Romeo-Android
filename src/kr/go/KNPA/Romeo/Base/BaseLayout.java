@@ -8,11 +8,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * MVC 중 VIEW 역할을 하는 클래스들의 원형.\n 기본적으로 navigation_bar.xml이 포함되어 있는 Fragment
- * layout을 대상으로 한다.\n 이 클래스의 자식 클래스를 생성하여 VIEW를 출력하는 Fragment는 BaseListener를
- * 상속받은, 자식 클래스 내의 Concrete Listener를 구현해서\n VIEW 단에서 일어나는 이벤트에 대한 처리를 할 수 있다.\n
- * setLeftNavBarBtnText(), setRightNavBarBtnText()를 이용하여 버튼의 텍스트를 설정할 수 있고,\n 만약
- * 아무 텍스트도 설정하지 않는다면 자동으로 해당 버튼은 invisible 상태로 변경되어 출력되지 않는다.
+ * MVC 중 VIEW 역할을 하는 클래스들의 원형.\n 기본적으로 navigation_bar.xml이 포함되어 있는 Fragment,
+ * Activity layout을 대상으로 한다.\n 이 클래스의 자식 클래스를 생성하여 VIEW를 출력하는 Fragment,Activity는
+ * BaseListener를 상속받은, 자식 클래스 내의 Concrete Listener를 구현해서\n VIEW 단에서 일어나는 이벤트에 대한
+ * 처리를 할 수 있다.\n setLeftNavBarBtnText(), setRightNavBarBtnText()를 이용하여 버튼의 텍스트를
+ * 설정할 수 있고,\n 만약 아무 텍스트도 설정하지 않는다면 자동으로 해당 버튼은 invisible 상태로 변경되어 출력되지 않는다.
  */
 public abstract class BaseLayout {
 
