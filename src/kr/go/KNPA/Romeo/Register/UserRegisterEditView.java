@@ -435,11 +435,23 @@ public class UserRegisterEditView extends LinearLayout {
 					int depth = 0;
 					
 					for(int i=0; i<DROPDOWN_MAX_LENGTH; i++) {
+						// i 번째 spinner에 선택된 부서를 가져온다.
 						Department selectedDep = (Department)getDropdown(i).getSelectedItem();
-						if(  (selectedDep.idx == null && !selectedDep.name.equals(context.getString(R.string.none))) ){ 
+						
+						// idx가 없고, 해당없음 값과 일치하는 경우.
+						if(  (selectedDep.idx == null && !selectedDep.name.equals(context.getString(R.string.none))) ){
+							 
 								//|| selectedDep.name.equals(context.getString(R.string.letSelect))) {
-							allRight = false;
-							selectedDeps[i] = null;
+							//allRight = false;
+							//selectedDeps[i] = null;
+							if(	i == (DROPDOWN_MAX_LENGTH -1) ||
+								i < (DROPDOWN_MAX_LENGTH -1) && 
+									((Department)getDropdown(i).getSelectedItem()).name.equals(context.getString(R.string.none)) )
+								break;
+							else {
+								allRight = false;
+								selectedDeps[i] = null;
+							}
 						} else {
 							if(selectedDep.name.equals(context.getString(R.string.none))) {
 								selectedDeps[i] = null;
