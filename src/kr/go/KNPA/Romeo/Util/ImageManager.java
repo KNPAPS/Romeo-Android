@@ -167,6 +167,59 @@ public class ImageManager {
 		}
 	}
 
+	public Bitmap load(int imageType, String imageHash)
+	{
+		// 이미지 타입에 따라 경로 설정
+		String path = null;
+		switch (imageType)
+		{
+		case PROFILE_SIZE_SMALL:
+			path = ConnectionConfig.UploadPath.PROFILE_IMG_SMALL + imageHash + ".jpg";
+			break;
+		case PROFILE_SIZE_MEDIUM:
+			path = ConnectionConfig.UploadPath.PROFILE_IMG_MEDIUM + imageHash + ".jpg";
+			break;
+		case PROFILE_SIZE_ORIGINAL:
+			path = ConnectionConfig.UploadPath.PROFILE_IMG_ORIGINAL + imageHash + ".jpg";
+			break;
+		case CHAT_SIZE_SMALL:
+			path = ConnectionConfig.UploadPath.CHAT_IMG_SMALL + imageHash + ".jpg";
+			break;
+		case CHAT_SIZE_ORIGINAL:
+			path = ConnectionConfig.UploadPath.CHAT_IMG_ORIGINAL + imageHash + ".jpg";
+			break;
+		default:
+			Log.e(TAG, "잘못된 이미지 타입 :" + String.valueOf(imageType));
+			return null;
+		}
+
+		// 캐시에서 먼저 검사
+		final String imageKey = getImageCacheKey(imageHash, imageType);
+		final Bitmap bitmap = CacheManager.getBitmapFromMemCache(imageKey);
+		final String fPath = path;
+		if (bitmap == null)
+		{
+			new Thread() {
+				public void run()
+				{
+					Bitmap bitmap = downloadImage(fPath);
+
+					if (bitmap != null)
+					{
+						CacheManager.addBitmapToMemCache(imageKey, bitmap);
+					}
+
+				}
+			}.start();
+
+			return CacheManager.getBitmapFromMemCache(imageKey);
+		}
+		else
+		{
+			return bitmap;
+		}
+	}
+
 	/**
 	 * LruCache를 이용해 메모리에 캐싱할 때의 key값을 만듬\n 키 규칙 : 유저해시+사이즈타입
 	 * 

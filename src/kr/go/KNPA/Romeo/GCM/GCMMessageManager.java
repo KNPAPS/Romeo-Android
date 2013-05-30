@@ -12,6 +12,7 @@ import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Chat.RoomFragment;
 import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.Chat.RoomModel;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -21,6 +22,8 @@ import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -28,9 +31,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 /**
  * GCMIntentService 의 {@link GCMIntentService#onMessage(Context, Intent)
@@ -333,21 +340,65 @@ public class GCMMessageManager {
 
 		if (message.mainType() == Message.MESSAGE_TYPE_CHAT)
 		{
-			b.putString(KEY.CHAT.ROOM_CODE, ((Chat) message).roomCode);
-		}
+			String roomCode = ((Chat) message).roomCode;
+			b.putString(KEY.CHAT.ROOM_CODE, roomCode);
 
+			Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomInfo(roomCode);
+
+			if (c.moveToNext())
+			{
+				int isAlarmOn = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IS_ALARM_ON));
+
+				if (isAlarmOn != 1)
+				{
+					return;
+				}
+
+				String roomTitle = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE));
+				String roomAlias = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS));
+
+				if (roomAlias == null || roomAlias.trim().equals(""))
+				{
+					content = roomTitle;
+				}
+				else
+				{
+					content = roomAlias;
+				}
+
+				content = Formatter.makeEllipsis(content, Constants.CHAT_ROOM_TITLE_MAX_LEN);
+			}
+		}
 		intent.putExtras(b);
 
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext).setTicker(ticker).setSmallIcon(R.drawable.icon).setContentTitle(title).setContentText(content)
-				.setAutoCancel(true);
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+		// Adds the back stack
+		stackBuilder.addParentStack(MainActivity.class);
+		// Adds the Intent to the top of the stack
+		stackBuilder.addNextIntent(intent);
 
-		PendingIntent contentIntent = PendingIntent.getActivity(mContext, message.type(), intent, 0);
+		// Gets a PendingIntent containing the entire back stack
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		mBuilder.setContentIntent(contentIntent);
+		ImageManager im = new ImageManager();
+
+		Bitmap profileImg = im.load(ImageManager.PROFILE_SIZE_SMALL, message.senderIdx);
+		if (profileImg == null)
+		{
+			profileImg = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.user_pic_default);
+		}
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext).setLargeIcon(profileImg).setTicker(ticker).setSmallIcon(R.drawable.icon).setContentTitle(title)
+				.setContentText(content).setAutoCancel(true);
+
+		// PendingIntent contentIntent = PendingIntent.getActivity(mContext,
+		// message.type(), intent, 0);
+
+		mBuilder.setContentIntent(resultPendingIntent);
 		NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		// mId allows you to update the notification later on.
-		mNotificationManager.notify(0, mBuilder.build());
+		mNotificationManager.notify((int) System.currentTimeMillis() / 1000, mBuilder.build());
 	}
 
 	private List<ActivityManager.RunningAppProcessInfo> processList(Context context)

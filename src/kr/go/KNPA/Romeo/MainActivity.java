@@ -34,7 +34,7 @@ public class MainActivity extends BaseActivity {
 	public boolean			isRegistered			= false;
 
 	public MainActivity()
-	{ // 생성자
+	{
 		super(R.string.app_name);
 
 		if (_sharedActivity != null)
@@ -64,17 +64,12 @@ public class MainActivity extends BaseActivity {
 		// set the Behind View
 		setBehindContentView(R.layout.menu_frame); // 비하인드 프레임은, 메뉴 뷰다. 프레그먼트를
 													// 대입하기 위해 빈것으로 존재(베이스에서는)
-
-		Fragment fragment = null;
-		// set the Above View
-		if (savedInstanceState != null)
-			fragment = getSupportFragmentManager().getFragment(savedInstanceState, "currentFragment"); // restore
-		if (fragment == null)
-			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST); // 첫화면
-
 		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame, new MenuListFragment()).commit();
 
+		Fragment fragment = null;
+
 		Intent intent = getIntent();
+
 		if (intent != null && intent.getExtras().containsKey(KEY.MESSAGE.TYPE))
 		{
 			try
@@ -84,6 +79,7 @@ public class MainActivity extends BaseActivity {
 
 				int mainType = type / Message.MESSAGE_TYPE_DIVIDER;
 				int subType = type % Message.MESSAGE_TYPE_DIVIDER;
+
 				switch (mainType)
 				{
 				case Message.MESSAGE_TYPE_CHAT:
@@ -97,29 +93,34 @@ public class MainActivity extends BaseActivity {
 					goSurveyFragment();
 					break;
 				}
-				// currentFragment = new
-				// MemberFragment(MemberFragment.TYPE_MEMBERLIST);
 			}
 			catch (Exception e)
 			{
+
+				fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST); // 첫화면
 				getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 			}
 		}
 		else
 		{
+			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST); // 첫화면
 			getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 		}
 
 		setUpDeviceSpec();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setUpDeviceSpec()
 	{
 		Point outSize = new Point();
-		if(Build.VERSION.SDK_INT < 13) {
-			outSize.y = getWindowManager().getDefaultDisplay().getHeight();
+		if (Build.VERSION.SDK_INT < 13)
+		{
 			outSize.x = getWindowManager().getDefaultDisplay().getWidth();
-		} else {
+			outSize.y = getWindowManager().getDefaultDisplay().getHeight();
+		}
+		else
+		{
 			getWindowManager().getDefaultDisplay().getSize(outSize);
 		}
 		Constants.DEVICE_WIDTH = outSize.x;
@@ -139,10 +140,10 @@ public class MainActivity extends BaseActivity {
 
 	public void goRoomFragment(int subType, Room room)
 	{
-		RoomListFragment roomListController = new RoomListFragment(subType);
-		switchContent(roomListController);
-		RoomFragment roomController = new RoomFragment(room);
-		pushContent(roomController);
+		RoomListFragment roomListFragment = new RoomListFragment(subType);
+		switchContent(roomListFragment);
+		RoomFragment roomFragment = new RoomFragment(room);
+		pushContent(roomFragment);
 	}
 
 	public void goDocumentFragment()
@@ -188,9 +189,6 @@ public class MainActivity extends BaseActivity {
 		{
 			MenuListFragment.setMode(false);
 		}
-		else
-		{
-		}
 	}
 
 	@Override
@@ -208,15 +206,14 @@ public class MainActivity extends BaseActivity {
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
 
+			if (getSlidingMenu().isMenuShowing() == true)
+			{
+				toggle();
+				return true;
+			}
+
 			if (count == 0)
 			{
-
-				if (getSlidingMenu().isMenuShowing() == true)
-				{
-					toggle();
-					return true;
-				}
-
 				new RomeoDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
 						.setMessage("종료하시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
