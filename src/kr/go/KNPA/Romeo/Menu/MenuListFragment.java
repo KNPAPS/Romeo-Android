@@ -242,18 +242,9 @@ public class MenuListFragment extends ListFragment {
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.settingsTitle), "iconImage", "" + R.drawable.icon_gear, "code", "settings"));
 
 		List<Map<String, String>> l = null;
-
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member:MemberList"));
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberFavoriteTitle), "iconImage", "" + R.drawable.icon_star, "code", "member:Favorite"));
-		childData.add(l);
-
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_chat, "code", "chat:Command"));
-		childData.add(l);
-
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
 		childData.add(l);
 
 		l = new ArrayList<Map<String, String>>();
@@ -265,6 +256,14 @@ public class MenuListFragment extends ListFragment {
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.surveyReceivedTitle), "iconImage", "" + R.drawable.icon_pie_graph_received, "code", "survey:Received"));
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.surveyDepartedTitle), "iconImage", "" + R.drawable.icon_pie_graph_departed, "code", "survey:Departed"));
+		childData.add(l);
+
+		l = new ArrayList<Map<String, String>>();
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_chat, "code", "chat:Command"));
+		childData.add(l);
+
+		l = new ArrayList<Map<String, String>>();
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
 		childData.add(l);
 
 		l = new ArrayList<Map<String, String>>();
