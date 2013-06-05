@@ -1277,7 +1277,7 @@ public class DBProcManager {
 			long gpId = lastInsertId();
 			String gpHash = Encrypter.sharedEncrypter().md5(DBSchema.USER_FAVORITE.TABLE_NAME + String.valueOf(gpId));
 
-			sql = "update " + DBSchema.USER_FAVORITE.TABLE_NAME + " set hash = " + gpHash + " where _id = " + String.valueOf(gpId);
+			sql = "update " + DBSchema.USER_FAVORITE.TABLE_NAME + " set hash = \"" + gpHash + "\" where _id = " + String.valueOf(gpId);
 			db.execSQL(sql);
 
 			db.beginTransaction();

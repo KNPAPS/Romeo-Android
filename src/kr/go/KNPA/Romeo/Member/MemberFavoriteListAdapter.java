@@ -86,10 +86,9 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			{
 				title = "";
 				Cursor cursor_favMemberList = mpm.getFavoriteGroupMemberList(idx);
-				cursor_favMemberList.moveToFirst();
-				while (!cursor_favMemberList.isAfterLast())
+				while (cursor_favMemberList.moveToNext())
 				{
-					User user = User.getUserWithIdx(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_IDX)));
+					User user = User.getUserWithIdx(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));
 
 					String _name = user.name;
 					String _rank = User.RANK[user.rank];
@@ -118,9 +117,16 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 				@Override
 				public void onClick(View view)
 				{
+					ArrayList<String> idxs = new ArrayList<String>();
+					Cursor cursor_favMemberList = DBProcManager.sharedManager(ctx).member().getFavoriteGroupMemberList(idx);
+					while (cursor_favMemberList.moveToNext())
+					{
+						idxs.add(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));
+					}
+
 					Intent intent = new Intent(ctx, UserListActivity.class);
 					Bundle b = new Bundle();
-					String idx = (String)view.getTag();
+					String idx = (String) view.getTag();
 					b.putString(UserListActivity.KEY_USERS_IDX, idx);
 					intent.putExtras(b);
 					ctx.startActivity(intent);

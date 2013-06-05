@@ -729,7 +729,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 	@Override
 	public void onFailedChatReSend(String chatIdx)
 	{
-
+		Toast.makeText(getActivity(), "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

@@ -19,11 +19,11 @@
     <EditText
         android:id="@+id/inputET"
         android:layout_width="0dp"
-        android:layout_height="36sp"
-        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/romeo_edittext_background"
         android:inputType="textMultiLine"
+        android:maxLines="4"
         android:textColor="@color/text"
         android:textSize="16sp" >
 

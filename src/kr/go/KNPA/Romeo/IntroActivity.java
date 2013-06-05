@@ -15,6 +15,7 @@ import kr.go.KNPA.Romeo.Register.StatusChecker;
 import kr.go.KNPA.Romeo.Register.UserRegisterActivity;
 import kr.go.KNPA.Romeo.Util.CacheManager;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,6 +80,7 @@ public class IntroActivity extends Activity {// extends BaseActivity{
 		Data reqData = new Data();
 		reqData.add(0, KEY.DEPT.IDX, "");
 		reqData.add(0, KEY.DEPT.FETCH_RECURSIVE, 1);
+		reqData.add(0, KEY.USER.IDX, UserInfo.getUserIdx(this));
 
 		Payload request = new Payload().setData(reqData).setEvent(Event.USER_GET_MEMBERS);
 		Payload response = new Connection().requestPayload(request).async(false).request().getResponsePayload();
@@ -96,6 +98,7 @@ public class IntroActivity extends Activity {// extends BaseActivity{
 
 				CacheManager.addUserToMemCache(u);
 			}
+
 		}
 	}
 
