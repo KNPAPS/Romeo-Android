@@ -234,10 +234,10 @@ public class MenuListFragment extends ListFragment {
 		List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_arrow_side, "code", "chat:Command"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.documentTitle), "iconImage", "" + R.drawable.icon_document, "code", "document"));
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.surveyTitle), "iconImage", "" + R.drawable.icon_pie_graph, "code", "survey"));
+		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_arrow_side, "code", "chat:Command"));
+		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.libraryTitle), "iconImage", "" + R.drawable.icon_folder, "code", "library"));
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.settingsTitle), "iconImage", "" + R.drawable.icon_gear, "code", "settings"));
 
