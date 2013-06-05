@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 class RoomListAdapter extends CursorAdapter {
-
+	public static final int CONTENT_SUMMARY_LENGTH = 14;
 	/**
 	 * @name Constructors
 	 * @{
@@ -108,8 +108,11 @@ class RoomListAdapter extends CursorAdapter {
 
 		// About Message
 		// Content Summary
-		final int CONTENT_SUMMARY_LENGTH = 10;
+		//final int CONTENT_SUMMARY_LENGTH = 10;
 		String content = lastContent.substring(0, Math.min(CONTENT_SUMMARY_LENGTH, lastContent.length()));
+		if(lastContent.length() > CONTENT_SUMMARY_LENGTH) {
+			content +=  "...";
+		} 
 		contentTV.setText(content);
 
 		String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);

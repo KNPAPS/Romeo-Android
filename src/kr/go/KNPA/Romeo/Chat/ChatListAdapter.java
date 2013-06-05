@@ -460,6 +460,8 @@ public class ChatListAdapter extends CursorAdapter {
 							mListener.onChatDelete(chatHash);
 							break;
 						}
+						
+						dialog.dismiss();
 					}
 					dialog.dismiss();
 				}
