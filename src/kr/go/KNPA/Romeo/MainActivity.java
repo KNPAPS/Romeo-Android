@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
@@ -105,9 +106,22 @@ public class MainActivity extends BaseActivity {
 		{
 			fragment = MemberFragment.memberFragment(MemberFragment.TYPE_MEMBERLIST); // 첫화면
 			getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
-		}
 
+		}
 		setUpDeviceSpec();
+	}
+
+	@Override
+	public void onPostCreate(Bundle savedInstanceState)
+	{
+		super.onPostCreate(savedInstanceState);
+		new Handler().post(new Runnable() {
+			@Override
+			public void run()
+			{
+				toggle();
+			}
+		});
 	}
 
 	@SuppressWarnings("deprecation")
@@ -167,6 +181,7 @@ public class MainActivity extends BaseActivity {
 	{
 		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName()).commit();
 		getSlidingMenu().showContent();
+
 	}
 
 	public void pushContent(Fragment fragment)
@@ -206,36 +221,50 @@ public class MainActivity extends BaseActivity {
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
 
-			if (getSlidingMenu().isMenuShowing() == true)
+			if (getSlidingMenu().isMenuShowing() == false)
 			{
-				toggle();
-				return true;
-			}
 
-			if (count == 0)
-			{
-				new RomeoDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
-						.setMessage("종료하시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which)
-							{
-								dialog.dismiss();
-								android.os.Process.killProcess(android.os.Process.myPid());
-							}
-						}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int whichButton)
-							{
-								dialog.dismiss();
-							}
-						}).show();
-				return true;
+				if (count == 0)
+				{
+					toggle();
+					return true;
+				}
+				else
+				{
+					this.popContent();
+					return true;
+				}
 			}
 			else
 			{
-				this.popContent();
-				return true;
+
+				if (count == 0)
+				{
+					new RomeoDialog.Builder(MainActivity.this).setIcon(this.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
+							.setMessage("종료하시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which)
+								{
+									dialog.dismiss();
+									android.os.Process.killProcess(android.os.Process.myPid());
+								}
+							}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int whichButton)
+								{
+									dialog.dismiss();
+								}
+							}).show();
+					return true;
+				}
+				else
+				{
+					toggle();
+					this.popContent();
+					return true;
+				}
 			}
+
 		}
 
 		return super.onKeyDown(keyCode, event);
