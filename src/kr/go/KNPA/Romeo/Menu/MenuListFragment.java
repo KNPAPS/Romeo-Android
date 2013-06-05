@@ -252,6 +252,7 @@ public class MenuListFragment extends ListFragment {
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"집회시위 현장매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:HandBook"));
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"4대 사회악 근절 전담부대 매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:SocialEvil"));
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"샘플 EBook 뷰어", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:ebook"));
 		childData.add(l);
 		
 		

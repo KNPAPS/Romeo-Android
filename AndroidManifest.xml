@@ -132,6 +132,9 @@
             android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name="kr.go.KNPA.Romeo.Member.MemberFavoriteListActivity"
             android:theme="@android:style/Theme.NoTitleBar"></activity>
+        
+        <provider android:name="EPUBImageProvider"  android:authorities="kr.go.KNPA.Romeo.EBook" />
+        
     </application>
 
 </manifest>

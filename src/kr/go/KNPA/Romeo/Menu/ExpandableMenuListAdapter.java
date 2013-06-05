@@ -11,6 +11,7 @@ import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.EBook.EBookFragment;
 import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Library.SocialEvilManualBook;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
@@ -138,6 +139,8 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 				fragment = new HandBookFragment();
 			} else if(codes[1].equalsIgnoreCase("SOCIALEVIL")) {
 				fragment = new SocialEvilManualBook();
+			} else if(codes[1].equalsIgnoreCase("EBOOK")) {
+				fragment = new EBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
 			}
 		} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 			// NOTHING
