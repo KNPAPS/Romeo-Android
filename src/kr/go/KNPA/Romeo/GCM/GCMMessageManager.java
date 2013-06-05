@@ -95,13 +95,13 @@ public class GCMMessageManager {
 
 		// Specify Event
 		String event = payload.getEvent().trim();
-		if (event.equalsIgnoreCase(Event.PUSH_UPDATE_LAST_READ_TS))
+		if (event.equals(Event.PUSH_UPDATE_LAST_READ_TS))
 		{
 			Long lastReadTS = Long.valueOf((Integer) payload.getData().get(0, KEY.CHAT.LAST_READ_TS));
 
 			onUpdateLastReadTS(payload.getData().get(0, KEY.USER.IDX).toString(), payload.getData().get(0, KEY.CHAT.ROOM_CODE).toString(), lastReadTS);
 		}
-		else if (event.equalsIgnoreCase(Event.Message.received()))
+		else if (event.equals(Event.PUSH_MESSAGE))
 		{
 			// payload 속에 담겨있는 Message 객체
 			Message message = (Message) payload.getData().get(0, KEY._MESSAGE);
@@ -119,7 +119,7 @@ public class GCMMessageManager {
 				break;
 			}
 		}
-		else if (event.equalsIgnoreCase(Event.PUSH_USER_JOIN_ROOM))
+		else if (event.equals(Event.PUSH_USER_JOIN_ROOM))
 		{
 			@SuppressWarnings("unchecked")
 			ArrayList<String> newUsers = (ArrayList<String>) payload.getData().get(0, KEY.CHAT.ROOM_MEMBER);
@@ -128,7 +128,7 @@ public class GCMMessageManager {
 
 			onUserJoinRoom(userIdx, roomCode, newUsers);
 		}
-		else if (event.equalsIgnoreCase(Event.PUSH_USER_LEAVE_ROOM))
+		else if (event.equals(Event.PUSH_USER_LEAVE_ROOM))
 		{
 			onUserLeaveRoom(payload.getData().get(0, KEY.USER.IDX).toString(), payload.getData().get(0, KEY.CHAT.ROOM_CODE).toString());
 		}
@@ -150,8 +150,7 @@ public class GCMMessageManager {
 		{
 			RoomFragment currentRoomFragment = RoomListFragment.getCurrentRoom();
 
-			if (currentRoomFragment != null && currentRoomFragment.getRoom() != null && currentRoomFragment.getRoom().getCode() != null
-					&& currentRoomFragment.getRoom().getCode().equalsIgnoreCase(roomCode))
+			if (currentRoomFragment != null && currentRoomFragment.getRoom() != null && currentRoomFragment.getRoom().getCode() != null && currentRoomFragment.getRoom().getCode().equals(roomCode))
 			{
 				currentRoomFragment.onUpdateLastTS(userIdx, lastReadTS);
 			}
@@ -178,7 +177,7 @@ public class GCMMessageManager {
 			for (int i = 0; i < chat.receiversIdx.size(); i++)
 			{
 				String chatterIdx = chat.receiversIdx.get(i);
-				if (!chatterIdx.equalsIgnoreCase(userIdx))
+				if (!chatterIdx.equals(userIdx))
 				{
 					chattersIdx.add(chatterIdx);
 				}
@@ -248,7 +247,7 @@ public class GCMMessageManager {
 			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
 			RoomFragment roomController = (RoomFragment) fm.findFragmentByTag(RoomFragment.class.getSimpleName());
 
-			if (roomController != null && roomController.getRoom().getCode().equalsIgnoreCase(roomCode))
+			if (roomController != null && roomController.getRoom().getCode().equals(roomCode))
 			{
 				roomController.onChatterJoin(inviterIdx, newbies);
 				return;
@@ -276,7 +275,7 @@ public class GCMMessageManager {
 			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
 			RoomFragment roomController = (RoomFragment) fm.findFragmentByTag(RoomFragment.class.getSimpleName());
 
-			if (roomController != null && roomController.getRoom().getCode().equalsIgnoreCase(roomCode))
+			if (roomController != null && roomController.getRoom().getCode().equals(roomCode))
 			{
 				roomController.onChatterLeave(userIdx);
 				return;

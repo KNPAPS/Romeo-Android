@@ -236,10 +236,41 @@ public class ChatListAdapter extends CursorAdapter {
 					@Override
 					public void onClick(View v)
 					{
-						if (mListener != null)
-						{
-							mListener.onFailedChatReSend(messageIdx);
-						}
+						RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(mContext);
+						chooseDlg.setTitle("작업선택");
+
+						ArrayList<String> array = new ArrayList<String>();
+						array.add("재전송");
+						array.add("삭제");
+
+						ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell2, array);
+
+						chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								switch (which)
+								{
+								case 0:// 재전송
+									if (mListener != null)
+									{
+										if (mListener != null)
+										{
+											mListener.onFailedChatReSend(messageIdx);
+										}
+									}
+									break;
+								case 1:// 삭제
+									if (mListener != null)
+									{
+										mListener.onChatDelete(messageIdx);
+									}
+									break;
+								}
+								dialog.dismiss();
+							}
+						});
+
 					}
 				});
 
@@ -410,7 +441,7 @@ public class ChatListAdapter extends CursorAdapter {
 			array.add("복사");
 			array.add("삭제");
 
-			ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell, array);
+			ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(mContext, R.layout.dialog_menu_cell2, array);
 
 			chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener() {
 				@Override
@@ -422,20 +453,15 @@ public class ChatListAdapter extends CursorAdapter {
 						{
 						case 0:// 복사
 							String text = ((TextView) view).getText().toString();
-							if (mListener != null)
-							{
-								mListener.onChatTextCopy(text);
-							}
+							mListener.onChatTextCopy(text);
 							break;
 						case 1:// 삭제
 							String chatHash = (String) ((View) view.getParent().getParent()).getTag();
-							if (mListener != null)
-							{
-								mListener.onChatDelete(chatHash);
-							}
+							mListener.onChatDelete(chatHash);
 							break;
 						}
 					}
+					dialog.dismiss();
 				}
 			});
 

@@ -16,6 +16,7 @@
 	    android:layout_weight="1"
 	    android:cacheColorHint="#00000000"
 	    android:divider="#00000000"
+	    android:dividerHeight="@dimen/gapSmall"
 	    android:drawSelectorOnTop="false"
 	    android:footerDividersEnabled="false"
 	    android:headerDividersEnabled="false"

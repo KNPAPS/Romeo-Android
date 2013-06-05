@@ -14,7 +14,6 @@ public class Event {
 	public static final String	USER_UPLOAD_PROFILE_IMG				= "USER:UPLOAD_PROFILE_IMG";
 
 	public static final String	MESSAGE_SEND						= "MESSAGE:SEND";
-	public static final String	MESSAGE_RECEIVED					= "MESSAGE:RECEIVED";
 	public static final String	MESSAGE_SET_CHECKED					= "MESSAGE:SET_CHECKED";
 	public static final String	MESSAGE_GET_UNCHECKERS				= "MESSAGE:GET_UNCHECKERS";
 	public static final String	MESSAGE_SURVEY_ANSWER_SURVEY		= "MESSAGE:SURVEY:ANSWER_SURVEY";
@@ -27,6 +26,7 @@ public class Event {
 	public static final String	MESSAGE_CHAT_LEAVE_ROOM				= "MESSAGE:CHAT:LEAVE_ROOM";
 	public static final String	MESSAGE_CHAT_INVITE					= "MESSAGE:CHAT:INVITE";
 
+	public static final String	PUSH_MESSAGE						= "PUSH:MESSAGE";
 	public static final String	PUSH_USER_LEAVE_ROOM				= "PUSH:USER_LEAVE_ROOM";
 	public static final String	PUSH_USER_JOIN_ROOM					= "PUSH:USER_JOIN_ROOM";
 	public static final String	PUSH_UPDATE_LAST_READ_TS			= "PUSH:UPDATE_LAST_READ_TS";
@@ -116,11 +116,6 @@ public class Event {
 		public static String getUncheckers()
 		{
 			return MESSAGE_GET_UNCHECKERS;
-		}
-
-		public static String received()
-		{
-			return MESSAGE_RECEIVED;
 		}
 
 		public static String Survey()
