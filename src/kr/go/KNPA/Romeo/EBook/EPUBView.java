@@ -138,7 +138,7 @@ public class EPUBView extends WebView {
 				
 				try {
 					
-					// 책 자체에 대한 디렉토리가 존재하지 않을 경우 만든다.
+					// 책 자체에 대한 디렉토리가 존재하지 않을 경우를 대비해서 디렉토리를 만든다.
 					File f = new File( targetDir );
 					if(!f.isDirectory()) {
 						f.mkdirs();
