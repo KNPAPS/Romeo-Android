@@ -26,11 +26,6 @@ public class EBookFragment extends Fragment {
 		this.shortTitle = shortTitle;
 	}
 	
-	@Override
-	public void onResume() {
-		super.onResume();
-		showContentsListDialog();
-	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,12 +52,13 @@ public class EBookFragment extends Fragment {
 		initNavigationBar(view, this.fullTitle, true, true, "메뉴", "목차", lbbOnClickListener, rbbOnClickListener);
 		
 		epubView = (EPUBView)view.findViewById(R.id.epubView);
+		epubView.setController(this);
 		epubView.initEPUB(fileName);
 		
 		return view;
 	}
 	
-	private void showContentsListDialog() {
+	void showContentsListDialog() {
 		RomeoDialog contents = null;
 		EPUBView.ContentListAdapter contentsListAdapter = new EPUBView.ContentListAdapter(getActivity(), this.epubView);
 		

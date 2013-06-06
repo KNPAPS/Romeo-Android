@@ -61,6 +61,13 @@ public class WaiterView extends ImageView {
     	if(progressTV.getVisibility() == View.VISIBLE) {
 			progressTV.setVisibility(View.INVISIBLE);
 		}
+    	
+    	TextView titleTV = (TextView)_waiterDialog.findViewById(R.id.title);
+    	titleTV.setText("");
+    	if(titleTV.getVisibility() == View.VISIBLE) {
+			titleTV.setVisibility(View.INVISIBLE);
+		}
+    	
     	_waiterDialog.dismiss();
     }
     
@@ -71,6 +78,22 @@ public class WaiterView extends ImageView {
 		}
 		progressTV.setText(percent+" %");
 	}
+    
+    public static void setTitle(String title) {
+		TextView titleTV = (TextView)_waiterDialog.findViewById(R.id.title);
+		if(titleTV.getVisibility() != View.VISIBLE) {
+			titleTV.setVisibility(View.VISIBLE);
+		}
+		titleTV.setText(title);
+	}
+    
+    public static String getTitle(String title) {
+    	TextView titleTV = (TextView)_waiterDialog.findViewById(R.id.title);
+    	if(titleTV.getVisibility() != View.VISIBLE) {
+			return null;
+		}
+    	return titleTV.getText().toString();
+    }
 
     private void setAnimation(Context context, AttributeSet attrs) {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WaiterView);
