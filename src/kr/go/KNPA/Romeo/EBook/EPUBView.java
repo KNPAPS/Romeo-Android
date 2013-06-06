@@ -65,24 +65,43 @@ public class EPUBView extends WebView {
 		this.getSettings().setJavaScriptEnabled(true);
 		this.getSettings().setSupportZoom(true);
 		this.getSettings().setBuiltInZoomControls(true);
+		//this.getSettings().set
 		
+		WaiterView.showDialog(getContext());
+		WaiterView.setTitle("eBook 뷰어를 로드합니다");
+		unzipHandler = new Handler();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				AssetManager am = getContext().getAssets();
+				
+				try {
+					InputStream epubIS = am.open(BOOKS_DIR + EPUBView.this.name + ".epub");
+					EPUBView.this.book = (new EpubReader()).readEpub(epubIS);
+				} catch(IOException e) {
+					log(e.getMessage());
+				}
+				
+				unzipHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						WaiterView.dismissDialog(getContext());
+						
+						log("isUnzipped? : " + isUnzipped());
+						if(!isUnzipped()) {
+							unzipEPUB();
+						} else {
+							if(EPUBView.this.controller != null)
+								EPUBView.this.controller.showContentsListDialog();	
+						}
+					}
+				});
+				
+			}
+		}).start();
 		
-		AssetManager am = getContext().getAssets();
-		
-		try {
-			InputStream epubIS = am.open(BOOKS_DIR + name + ".epub");
-			this.book = (new EpubReader()).readEpub(epubIS);
-		} catch(IOException e) {
-			log(e.getMessage());
-		}
-		
-		log("isUnzipped? : " + isUnzipped());
-		if(!isUnzipped()) {
-			unzipEPUB();
-		} else {
-			if(this.controller != null)
-				this.controller.showContentsListDialog();	
-		}
 		//downloadResources();	
 	}
 	
@@ -91,19 +110,23 @@ public class EPUBView extends WebView {
 	}
 	
 	private boolean isUnzipped() {
+		WaiterView.showDialog(getContext());
+		WaiterView.setTitle("데이터를 확인중입니다");
 		File f = new File( this.getBookDirectory() );
 		if (f.exists() && f.list().length > 0) {
+			WaiterView.dismissDialog(getContext());
 			return true; 
 		} else {
+			WaiterView.dismissDialog(getContext());
 			return false; 
 		}
+		
+		
 	}
 	
 	private void unzipEPUB() {
 		WaiterView.showDialog(getContext());
 		WaiterView.setTitle("첫 사용 준비중입니다");
-		
-		unzipHandler = new Handler();
 		
 		new Thread(new Runnable() {
 			

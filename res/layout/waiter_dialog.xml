@@ -41,7 +41,6 @@
             android:textColor="@color/sub"
             android:visibility="invisible"
             android:gravity="center_horizontal"
-            android:textAlignment="center"
             android:textSize="12dp" />
  
     </RelativeLayout>
