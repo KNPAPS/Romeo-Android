@@ -9,21 +9,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
-import nl.siegmann.epublib.domain.Resources;
 import nl.siegmann.epublib.domain.TOCReference;
 import nl.siegmann.epublib.domain.TableOfContents;
-import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.service.MediatypeService;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.DataSetObserver;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -68,21 +63,18 @@ public class EPUBView extends WebView {
 		
 		unzipHandler = new Handler();
 		
-		deleteCache(this.getBookDirectory());
+		//deleteCache(this.getBookDirectory());
 		
 		log("isUnzipped? : " + isUnzipped());
 		if(!isUnzipped()) {
-			//unzipEPUB();
 			downloadResources();
 		} else {
 			if(EPUBView.this.controller != null)
 				EPUBView.this.controller.showContentsListDialog();	
 		}
-		
-		//downloadResources();	
 	}
 	
-	private boolean deleteCache(String fileName) {
+	private static boolean deleteCache(String fileName) {
 		File f = new File( fileName );
 		String[] list = null;
 		String path = fileName;
@@ -113,114 +105,6 @@ public class EPUBView extends WebView {
 		
 	}
 	
-	private void unzipEPUB() {
-		WaiterView.showDialog(getContext());
-		WaiterView.setTitle("첫 사용 준비중입니다");
-		
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				AssetManager am = getContext().getAssets();
-				
-				String targetDir = getBookDirectory();
-				
-				try {
-					
-					// 책 자체에 대한 디렉토리가 존재하지 않을 경우를 대비해서 디렉토리를 만든다.
-					File f = new File( targetDir );
-					if(!f.isDirectory()) {
-						f.mkdirs();
-					}
-
-					// 파일 전체의 길이를 구하기 위해 루프를 한번 돌린다.
-					ZipInputStream countZIN = new ZipInputStream( am.open(BOOKS_DIR + name + ".epub") );
-					long totalLength = 1;
-					int totalCnt = 0;
-					try {
-						ZipEntry countZE = null;
-						while ( ( countZE = countZIN.getNextEntry() ) != null ) {
-							totalLength += countZE.getSize();
-							totalCnt ++;
-						}
-					} finally {
-						countZIN.close();
-					}
-					
-					
-					// ASSET 디렉토리에서 Epub 파일을 로드한다.
-					//ZipInputStream zin = new ZipInputStream(new FileInputStream(ASSET_DIR + BOOKS_DIR + this.name + ".epub"));
-					ZipInputStream zin = new ZipInputStream( am.open(BOOKS_DIR + name + ".epub") );
-					ZipEntry ze = null;
-					long accumedLength = 1;
-					int accumedCnt = 0;
-					try {
-						// 모든 엔트리를 순회하며 작업을 진행한다.
-						while ((ze = zin.getNextEntry()) != null) {
-							String path = targetDir + ze.getName();
-
-							// 내부 파일 구조에 따른, 디렉토리가 존재하지 않을 경우 디렉토리를 생성해준다.
-							if (path.lastIndexOf('/') != -1) {
-							    File d = new File(path.substring(0, path.lastIndexOf('/')));
-							    d.mkdirs();
-							}
-
-							// 파일을 뽑아내어 저장한다.
-							if (!ze.isDirectory()) {
-								byte[] buffer = new byte[2048];
-								FileOutputStream fout = new FileOutputStream(path, false);
-								try {
-									for (int c = zin.read(buffer); c != -1; c = zin.read(buffer)) {
-										fout.write(c);
-									}
-									zin.closeEntry();
-								} finally {
-									fout.close();
-								}
-							}
-
-							
-							// WaiterView에 압축해제 진행 정도를 표시해준다.
-							accumedLength += ze.getSize();
-							accumedCnt++;
-							final long acc = accumedLength;
-							final long tot = totalLength;
-							log("unzipped : " + (int)( (100*acc)/tot) + "%, bytes : " + accumedLength + "/" + totalLength + ", cnt : " + accumedCnt + "/" + totalCnt );
-							
-							unzipHandler.post(new Runnable() {
-								
-								@Override
-								public void run() {
-									WaiterView.setProgress( (int)( (100*acc)/tot) );
-									
-								}
-							});
-							
-						}	// while END
-					
-					} finally {
-						zin.close();
-					}	// while을 커버하는 try-catch END
-					
-				} catch (Exception e) {
-					log("Unzip exception : "+ e.getMessage());
-				}	// 전체 작업에 대한 try-catch END
-				
-				// 모든 작업을 마쳤으므로 unzzipedEPUB()을 호출하여 마무리를 해준다. 
-				unzipHandler.post(new Runnable() {
-					
-					@Override
-					public void run() {
-						unzippedEPUB();
-					}
-				}); 
-				
-			}	// Runnable Object in Thread End
-			
-		}).start();	// Thread End
-		
-		
-	}
 	
 	private void unzippedEPUB() {
 		WaiterView.dismissDialog(getContext());
