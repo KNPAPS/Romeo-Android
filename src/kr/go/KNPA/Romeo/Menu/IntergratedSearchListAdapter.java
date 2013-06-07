@@ -4,21 +4,26 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Member.MemberDetailActivity;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-class IntergratedSearchListAdatper extends BaseAdapter {
+class IntergratedSearchListAdatper extends BaseAdapter implements OnItemClickListener {
 	private String keyword = null;
 	private ArrayList<User> users;
 	private ArrayList<Document> documents;
@@ -145,6 +150,22 @@ class IntergratedSearchListAdatper extends BaseAdapter {
 			
 			return new View(context);
 		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int pos, long pos_l) {
+		Object item = getItem(pos);
+		if(item instanceof User) {
+			Intent intent = new Intent(this.context, MemberDetailActivity.class);
+
+			Bundle b = new Bundle();
+			b.putString(MemberDetailActivity.KEY_IDX, ((User)getItem(pos)).idx );
+			b.putInt(MemberDetailActivity.KEY_IDX_TYPE, MemberDetailActivity.IDX_TYPE_USER);
+			intent.putExtras(b);	
+			
+			this.context.startActivity(intent);
+		}
+		
 	}
 	
 	
