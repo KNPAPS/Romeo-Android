@@ -240,7 +240,7 @@ public class MenuListFragment extends ListFragment {
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.libraryTitle), "iconImage", "" + R.drawable.icon_folder, "code", "library"));
 		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.settingsTitle), "iconImage", "" + R.drawable.icon_gear, "code", "settings"));
-
+		
 		List<Map<String, String>> l = null;
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member:MemberList"));
@@ -277,6 +277,13 @@ public class MenuListFragment extends ListFragment {
 		l = new ArrayList<Map<String, String>>();
 		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", "설정", "iconImage", "" + R.drawable.indentation, "code", "settings"));
 		childData.add(l);
+		
+		// TODO : BugReport
+		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", "버그리포트", "iconImage", "" + R.drawable.icon_mail, "code", "bug:report"));
+		l = new ArrayList<Map<String, String>>();
+		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", "버그 리포트", "iconImage", "" + R.drawable.indentation, "code", "bug:report"));
+		childData.add(l);
+		
 		l = null;
 
 		this.gData = groupData;

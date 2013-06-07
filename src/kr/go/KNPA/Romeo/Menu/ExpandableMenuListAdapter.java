@@ -16,6 +16,7 @@ import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Library.SocialEvilManualBook;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Settings.BugReportFragment;
 import kr.go.KNPA.Romeo.Settings.SettingsFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
@@ -87,6 +88,11 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 			// do nothing, expand
 		} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 			fragment = new SettingsFragment();
+		} 
+		
+		// TODO : Bug Report
+		else if (codes[0].equalsIgnoreCase("BUG")) {
+			fragment = new BugReportFragment();
 		}
 		
 		if (fragment != null) {
