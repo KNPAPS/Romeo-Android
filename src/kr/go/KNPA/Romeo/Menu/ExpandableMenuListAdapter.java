@@ -140,7 +140,8 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 			} else if(codes[1].equalsIgnoreCase("SOCIALEVIL")) {
 				fragment = new SocialEvilManualBook();
 			} else if(codes[1].equalsIgnoreCase("EBOOK")) {
-				fragment = new EBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
+				//fragment = new EBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
+				fragment = EBookFragment.getEBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
 			}
 		} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 			// NOTHING

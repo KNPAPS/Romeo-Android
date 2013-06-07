@@ -1,7 +1,5 @@
 package kr.go.KNPA.Romeo.EBook;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,8 +40,8 @@ import android.widget.TextView;
 
 public class EPUBView extends WebView {
 
-	private static final String ASSET_DIR = "file:"+File.separator+File.separator+"android_asset"+File.separator;
-	private static final String BOOKS_DIR = "books/";
+	static final String ASSET_DIR = "file://android_asset/";
+	static final String BOOKS_DIR = "books/";
 	private String name = null;
 	
 	private Handler unzipHandler = null;
@@ -60,53 +58,44 @@ public class EPUBView extends WebView {
 		this.controller = controller;
 	}
 	
-	public void initEPUB(String name) {
+	public void initEPUB(Book book, String name) {
+		this.book = book;
 		this.name = name;
 		this.getSettings().setJavaScriptEnabled(true);
 		this.getSettings().setSupportZoom(true);
 		this.getSettings().setBuiltInZoomControls(true);
 		//this.getSettings().set
 		
-		WaiterView.showDialog(getContext());
-		WaiterView.setTitle("eBook 뷰어를 로드합니다");
 		unzipHandler = new Handler();
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				
-				AssetManager am = getContext().getAssets();
-				
-				try {
-					InputStream epubIS = am.open(BOOKS_DIR + EPUBView.this.name + ".epub");
-					EPUBView.this.book = (new EpubReader()).readEpub(epubIS);
-				} catch(IOException e) {
-					log(e.getMessage());
-				}
-				
-				unzipHandler.post(new Runnable() {
-					@Override
-					public void run() {
-						WaiterView.dismissDialog(getContext());
-						
-						log("isUnzipped? : " + isUnzipped());
-						if(!isUnzipped()) {
-							unzipEPUB();
-						} else {
-							if(EPUBView.this.controller != null)
-								EPUBView.this.controller.showContentsListDialog();	
-						}
-					}
-				});
-				
-			}
-		}).start();
+		
+		deleteCache(this.getBookDirectory());
+		
+		log("isUnzipped? : " + isUnzipped());
+		if(!isUnzipped()) {
+			//unzipEPUB();
+			downloadResources();
+		} else {
+			if(EPUBView.this.controller != null)
+				EPUBView.this.controller.showContentsListDialog();	
+		}
 		
 		//downloadResources();	
 	}
 	
-	public TableOfContents getTableOfContents() {
-		return this.book.getTableOfContents();
+	private boolean deleteCache(String fileName) {
+		File f = new File( fileName );
+		String[] list = null;
+		String path = fileName;
+		if(f.isDirectory()) {
+			list = f.list();
+			for(int i=0; i<list.length; i++)
+				deleteCache(path + File.separator + list[i]);
+		}
+		
+		if(!f.exists())
+			return false;
+		
+		return f.delete();
 	}
 	
 	private boolean isUnzipped() {
@@ -189,30 +178,7 @@ public class EPUBView extends WebView {
 									fout.close();
 								}
 							}
-//			             
-//							if (!ze.isDirectory()) {
-//								byte[] buffer = new byte[2048];
-//								FileOutputStream fout = new FileOutputStream(path, false);
-//								BufferedOutputStream bos = new BufferedOutputStream(fout, buffer.length);
-//								
-//								int c = 0;
-//								int size;
-//								
-//								while ( (size = zin.read(buffer, 0, buffer.length)) != -1) {
-//									bos.write(buffer, 0, size);
-//								}
-//								
-//								bos.flush();
-//								bos.close();
-//								
-//								fout.flush();
-//								fout.close();
-//								zin.closeEntry();
-//								
-//							}
-			             
-							
-							
+
 							
 							// WaiterView에 압축해제 진행 정도를 표시해준다.
 							accumedLength += ze.getSize();
@@ -262,7 +228,99 @@ public class EPUBView extends WebView {
 			this.controller.showContentsListDialog();
 	}
 	
-	public void loadEPUB(Resource res) {
+
+	private void downloadResources() {
+		WaiterView.showDialog(getContext());
+		WaiterView.setTitle("첫 사용 준비중입니다");
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				// baseURL이 되는 Text 폴더를 만들도록 한다.
+				// html 파일들은 리소스 쓰기 중 취급되지 않으므로 생성되지 않는다.
+				String textPath = getBookDirectory() + "Text" + File.separator;
+				File textDir = new File(textPath);
+				if(!textDir.exists()) 
+					textDir.mkdirs();
+				
+				Collection<Resource> resources = book.getResources().getAll();
+				Iterator<Resource> itr = resources.iterator();
+				
+				int totalCnt = resources.size();
+				int accumedCnt = 0;
+				// 모든 리소스를 순회하며 필요한 파일만 쓰도록 한다.
+				while (itr.hasNext()) {
+					Resource res = itr.next();
+					if (
+						(res.getMediaType() == MediatypeService.JPG) || 
+						(res.getMediaType() == MediatypeService.PNG) || 
+						(res.getMediaType() == MediatypeService.GIF) || 
+						(res.getMediaType() == MediatypeService.CSS)	)  {
+					        
+						try {
+							writeFile(res);
+						} catch (Exception e) {
+							log(e.getMessage());
+						}
+				   	 
+					}
+					
+					accumedCnt++;
+					final int percent = 100*accumedCnt/totalCnt;
+					unzipHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							WaiterView.setProgress(percent);
+						}
+					}); 
+					
+					
+				}	// while End
+				
+				// 필요한 파일들을 다 썼으면, 마무리를 위해 함수를 호출한다.
+				unzipHandler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						unzippedEPUB();
+					}
+				});
+			}
+		}).start();
+		
+	}
+	
+	private void writeFile(Resource res) throws FileNotFoundException, IOException {
+		
+		String targetDir = getBookDirectory();
+		String path = targetDir + res.getHref();
+		
+		File resFile = new File( path );
+		
+		if (path.lastIndexOf('/') != -1) {
+		    File d = new File(path.substring(0, path.lastIndexOf('/')));
+		    d.mkdirs();
+		}
+		
+		if( resFile.exists() && ( !resFile.canRead() || resFile.length() != res.getData().length ) ) 
+			resFile.delete();
+		
+		if(resFile.exists() == false) {
+			resFile.createNewFile();
+			
+			FileOutputStream fos = new FileOutputStream(resFile);
+	        fos.write(res.getData());
+	        fos.close();
+		} else {
+			log("file " +  res.getHref() +  " Exsists");
+		}
+			
+		
+	}
+	
+	public void loadEPUBPage(Resource res) {
 		String line = "";
 		String linez = "";
 		try {
@@ -293,101 +351,6 @@ public class EPUBView extends WebView {
 		super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
 	}
 
-	private void downloadResources() {
-		makeDirectoryForBookCache();
-		
-		Resources resources = book.getResources();
-		Collection<Resource> resList = resources.getAll();
-		Iterator<Resource> itr = resList.iterator();
-		
-		while (itr.hasNext()) {
-			Resource res = itr.next();
-			if (
-				(res.getMediaType() == MediatypeService.JPG) || 
-				(res.getMediaType() == MediatypeService.PNG) || 
-				(res.getMediaType() == MediatypeService.GIF) || 
-				(res.getMediaType() == MediatypeService.CSS)	)  {
-			        
-				try {
-					writeFile(res);
-				} catch (Exception e) {
-					log(e.getMessage());
-				}
-		   	 
-			} 
-		}
-	}
-	
-	private boolean makeDirectoryForBookCache() {
-		
-		Log.d("check Downlod path", getBookDirectory());
-		
-		String imagesPath = getBookDirectory() + "Images" + File.separator;
-		String stylesPath = getBookDirectory() + "Styles" + File.separator;
-		String textPath = getBookDirectory() + "Text" + File.separator;
-		
-		boolean images = false;
-		File imagesDir = new File(imagesPath);
-		if(imagesDir.exists()) {
-			images = (imagesDir.list().length > 0)? true : false;
-		} else {
-			imagesDir.mkdirs();
-			images = false;
-		}
-		
-		boolean styles = false;
-		File stylesDir = new File(stylesPath);
-		if(stylesDir.exists()) {
-			styles = (stylesDir.list().length > 0)? true : false;
-		} else {
-			stylesDir.mkdirs();
-			styles = false;
-		}
-
-
-		File textDir = new File(textPath);
-		if(!textDir.exists()) 
-			textDir.mkdirs();
-
-		return images && styles;
-	}
-	
-	private boolean isFileExists(String filePath) {
-		File file = new File(getBookDirectory() + filePath);
-		boolean exists = file.exists() && (file.length() > 0);
-		if(exists) {
-			if(file.canRead())
-				return true;
-			else {
-				file.delete();
-				return false;
-			}
-		} else 
-			return false;
-	}
-	
-	private void writeFile(Resource res) throws FileNotFoundException, IOException {
-		String filePath = res.getHref();
-		File resFile = new File( getBookDirectory() + filePath );
-        
-		//log(resFile.getAbsolutePath());
-		
-		
-		if( isFileExists(res.getHref()) && resFile.length() == res.getData().length ) {
-			log("file " +  res.getHref() +  " Exsists");
-		} else {
-			//log("file " +  res.getHref() +  " NOT Exsists. write.");
-			resFile.delete();
-			resFile.createNewFile();
-			
-			FileOutputStream fos = new FileOutputStream(resFile);
-	        fos.write(res.getData());
-	        fos.close();
-		}
-		
-		
-	}
-	
 	public String getBookDirectory() {
 		return getContext().getFilesDir().getAbsolutePath() + File.separator + BOOKS_DIR +  this.name + File.separator;
 	}
@@ -404,7 +367,7 @@ public class EPUBView extends WebView {
 		
 		public ContentListAdapter(Context context, EPUBView epubView) {
 			this.epubView = epubView; 
-			this.root = epubView.getTableOfContents();	
+			this.root = epubView.book.getTableOfContents();	
 			//this.dialog = dialog;	
 			this.context = context;
 		}
@@ -471,7 +434,7 @@ public class EPUBView extends WebView {
 			if( hasChildren(groupPosition) ) {
 				return false;
 			} else {
-				epubView.loadEPUB(((TOCReference)getGroup(groupPosition)).getResource());
+				epubView.loadEPUBPage(((TOCReference)getGroup(groupPosition)).getResource());
 				dialog.dismiss();
 				return true;
 			}
@@ -479,7 +442,7 @@ public class EPUBView extends WebView {
 
 		@Override
 		public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-			epubView.loadEPUB( ((TOCReference)getChild(groupPosition, childPosition)).getResource() );
+			epubView.loadEPUBPage( ((TOCReference)getChild(groupPosition, childPosition)).getResource() );
 			dialog.dismiss();
 			return true;
 		}
