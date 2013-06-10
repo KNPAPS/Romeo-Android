@@ -12,6 +12,7 @@ public class Event {
 	public static final String	USER_GET_MEMBERS					= "USER:GET_MEMBERS";
 	public static final String	USER_GET_PROFILE_IMG				= "USER:GET_PROFILE_IMG";
 	public static final String	USER_UPLOAD_PROFILE_IMG				= "USER:UPLOAD_PROFILE_IMG";
+	public static final String	USER_BUG_REPORT						= "USER:BUG_REPORT";
 
 	public static final String	MESSAGE_SEND						= "MESSAGE:SEND";
 	public static final String	MESSAGE_SET_CHECKED					= "MESSAGE:SET_CHECKED";

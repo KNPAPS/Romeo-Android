@@ -26,90 +26,108 @@ import android.widget.Toast;
 
 public class BugReportFragment extends Fragment {
 
-	private EditText content;
-	
-	public BugReportFragment() {
+	private EditText	content;
+
+	public BugReportFragment()
+	{
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		View view = inflater.inflate(R.layout.bug_report_fragment, container, false);
-		
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+
+		final View view = inflater.inflate(R.layout.bug_report_fragment, container, false);
+
 		OnClickListener lbbOnClickListener = new OnClickListener() {
-			
+
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				MainActivity.sharedActivity().toggle();
 			}
 		};
-		
+
 		OnClickListener rbbOnClickListener = new OnClickListener() {
-			
+
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				submit();
+				((EditText) view.findViewById(R.id.content)).setText("");
 			}
 		};
-		
+
 		initNavigationBar(view, "버그 리포트", true, true, "메뉴", "전송", lbbOnClickListener, rbbOnClickListener);
-		
-		this.content = (EditText)view.findViewById(R.id.content);
+
+		this.content = (EditText) view.findViewById(R.id.content);
 		return view;
 	}
-	
-	private void submit() {
 
-		Data reqData = new Data()
-		.add(0, KEY.MESSAGE.SENDER_IDX, UserInfo.getUserIdx(getActivity()))
-		.add(0, KEY.MESSAGE.CREATED_TS, Calendar.getInstance().getTime())
-		.add(0, KEY.MESSAGE.CONTENT, content.getText().toString());
-		
-		Payload request = new Payload().setEvent("BUG:REPORT").setData(reqData);
+	private void submit()
+	{
+
+		Data reqData = new Data().add(0, KEY.USER.IDX, UserInfo.getUserIdx(getActivity())).add(0, KEY.MESSAGE.CREATED_TS, Calendar.getInstance().getTime())
+				.add(0, KEY.MESSAGE.CONTENT, content.getText().toString());
+
+		Payload request = new Payload().setEvent(Event.USER_BUG_REPORT).setData(reqData);
 
 		CallbackEvent<Payload, Integer, Payload> callback = new CallbackEvent<Payload, Integer, Payload>() {
 			@Override
-			public void onPreExecute(Payload params) {
+			public void onPreExecute(Payload params)
+			{
 				WaiterView.showDialog(getActivity());
 				WaiterView.setTitle("전송중입니다");
 			}
-			
+
 			@Override
-			public void onPostExecute(Payload result) {
+			public void onPostExecute(Payload result)
+			{
+
 				WaiterView.dismissDialog(getActivity());
 				String toastMSG = "";
-				if( result.getStatusCode() == StatusCode.SUCCESS ) {
+				if (result.getStatusCode() == StatusCode.SUCCESS)
+				{
 					toastMSG = "성공적으로 전송했습니다";
-				} else {
+				}
+				else
+				{
 					toastMSG = "오류가 발생!\n다시 시도해 주세요";
 				}
-				
+
 				Toast.makeText(getActivity(), toastMSG, Toast.LENGTH_SHORT).show();
 			}
 		};
-		
-		Connection conn = new Connection().requestPayload(request).async(true).callBack(callback).request();
 
+		new Connection().requestPayload(request).async(true).callBack(callback).request();
 	}
-	
-	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener, OnClickListener rbbOnClickListener) {
-		
-		Button lbb = (Button)parentView.findViewById(R.id.left_bar_button);
-		Button rbb = (Button)parentView.findViewById(R.id.right_bar_button);
-		
-		lbb.setVisibility((lbbVisible?View.VISIBLE:View.INVISIBLE));
-		rbb.setVisibility((rbbVisible?View.VISIBLE:View.INVISIBLE));
-		
-		if(lbb.getVisibility() == View.VISIBLE) { lbb.setText(lbbTitle);	}
-		if(rbb.getVisibility() == View.VISIBLE) { rbb.setText(rbbTitle);	}
-		
-		TextView titleView = (TextView)parentView.findViewById(R.id.title);
+
+	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener,
+			OnClickListener rbbOnClickListener)
+	{
+
+		Button lbb = (Button) parentView.findViewById(R.id.left_bar_button);
+		Button rbb = (Button) parentView.findViewById(R.id.right_bar_button);
+
+		lbb.setVisibility((lbbVisible ? View.VISIBLE : View.INVISIBLE));
+		rbb.setVisibility((rbbVisible ? View.VISIBLE : View.INVISIBLE));
+
+		if (lbb.getVisibility() == View.VISIBLE)
+		{
+			lbb.setText(lbbTitle);
+		}
+		if (rbb.getVisibility() == View.VISIBLE)
+		{
+			rbb.setText(rbbTitle);
+		}
+
+		TextView titleView = (TextView) parentView.findViewById(R.id.title);
 		titleView.setText(titleText);
-		
-		if(lbb.getVisibility() == View.VISIBLE) lbb.setOnClickListener(lbbOnClickListener);
-		if(rbb.getVisibility() == View.VISIBLE) rbb.setOnClickListener(rbbOnClickListener);
+
+		if (lbb.getVisibility() == View.VISIBLE)
+			lbb.setOnClickListener(lbbOnClickListener);
+		if (rbb.getVisibility() == View.VISIBLE)
+			rbb.setOnClickListener(rbbOnClickListener);
 	}
 
 }
