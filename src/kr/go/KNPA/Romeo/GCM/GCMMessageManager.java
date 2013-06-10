@@ -212,7 +212,7 @@ public class GCMMessageManager {
 		}
 
 		// Chat 저장
-		//proc.saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
+		proc.saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
 
 		// 앱이 실행 중이면 callback 호출
 		if (isRunningProcess(mContext) && MainActivity.sharedActivity() != null)
