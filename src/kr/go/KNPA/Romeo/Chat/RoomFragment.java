@@ -75,59 +75,49 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 	 */
 
 	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		if (mHandler == null)
+		{
+			mHandler = new Handler();
+		}
+
+		mModel = new RoomModel(getActivity(), mRoom);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
-		Thread t = new Thread() {
-			@Override
-			public void run()
-			{
-				super.run();
-
-				mModel = new RoomModel(getActivity(), mRoom);
-			}
-		};
-
-		t.start();
-		try
-		{
-			t.join();
-		}
-		catch (InterruptedException e)
-		{
-			Log.e(TAG, "모델 생성 쓰레드 interrupted");
-			e.printStackTrace();
-			return null;
-		}
-
 		// 레이아웃 설정
 		mLayout = new RoomFragmentLayout(getActivity(), inflater, container, savedInstanceState);
 		mLayout.setListener(this);
 		mLayout.setLeftNavBarBtnText(R.string.menu);
 		mLayout.setRightNavBarBtnText(R.string.edit);
 
-		// 방 이름 설정
-		setNavBarTitle();
+		return mLayout.getView();
+	}
 
-		if (mHandler == null)
-		{
-			mHandler = new Handler();
-		}
+	@Override
+	public void onStart()
+	{
+		super.onStart();
 
 		new Thread() {
 			@Override
 			public void run()
 			{
+				mModel.init();
 				// listview에 adpater를 설정하고 초기 채팅 목록 불러오기
 				mListAdapter = new ChatListAdapter(getActivity(), null, mModel.getRoom());
 				mListAdapter.setListener(RoomFragment.this);
-				mLayout.getListView().setAdapter(mListAdapter);
-
 				final Cursor c = mListAdapter.query(ChatListAdapter.NUM_CHAT_PER_PAGE);
 
 				mHandler.post(new Runnable() {
 					public void run()
 					{
+						mLayout.getListView().setAdapter(mListAdapter);
+						setNavBarTitle();
 						mListAdapter.changeCursor(c);
 						mListAdapter.notifyDataSetChanged();
 						mLayout.getListView().scrollToItem(0);
@@ -137,8 +127,6 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 				super.run();
 			}
 		}.start();
-
-		return mLayout.getView();
 	}
 
 	@Override
@@ -735,7 +723,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 	@Override
 	public void onScrollToTop()
 	{
-		if (mModel.getRoom().getStatus() != Room.STATUS_CREATED)
+		if (mModel.getRoom().getStatus() != Room.STATUS_CREATED || mListAdapter == null)
 		{
 			return;
 		}

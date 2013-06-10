@@ -63,7 +63,6 @@
         android:layout_toRightOf="@+id/arrivalDT"
         android:background="@drawable/bubble_active"
         android:gravity="center_vertical|center_horizontal"
-        android:text="1"
         android:textSize="12sp" />
 
     <TextView

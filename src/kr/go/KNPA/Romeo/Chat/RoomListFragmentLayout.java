@@ -78,7 +78,8 @@ public class RoomListFragmentLayout extends FragmentLayout {
 							{
 							case 0:// 채팅방 이름 설정
 								mListener.onGoToSetRoomAliasActivity(roomCode);
-								break;
+								menus.dismiss();
+								return;
 							case 1:// 나가기
 								new RomeoDialog.Builder(getActivity()).setIcon(getActivity().getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
 										.setMessage("방에서 나가면 채팅 내역이 모두 삭제됩니다. 방에서 나가시겠습니까? ").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {

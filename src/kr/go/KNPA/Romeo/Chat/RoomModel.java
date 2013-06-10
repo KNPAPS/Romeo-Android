@@ -41,7 +41,11 @@ public class RoomModel extends BaseModel {
 
 		mRoom = room;
 
-		if (room.getStatus() == Room.STATUS_CREATED)
+	}
+
+	public void init()
+	{
+		if (mRoom.getStatus() == Room.STATUS_CREATED)
 		{
 			fetchBaseInfo();
 			fetchChatters();

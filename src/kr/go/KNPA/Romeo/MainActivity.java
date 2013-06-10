@@ -179,15 +179,16 @@ public class MainActivity extends BaseActivity {
 
 	public void switchContent(Fragment fragment)
 	{
-		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName()).commit();
+		getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
+				.replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName()).commit();
 		getSlidingMenu().showContent();
 
 	}
 
 	public void pushContent(Fragment fragment)
 	{
-		getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right)
-				.replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName())
+				.setCustomAnimations(R.anim.slide_in_right, R.anim.stay, R.anim.stay, R.anim.slide_out_right).addToBackStack(null).commit();
 	}
 
 	public void popContent()
@@ -260,7 +261,6 @@ public class MainActivity extends BaseActivity {
 				else
 				{
 					toggle();
-					this.popContent();
 					return true;
 				}
 			}

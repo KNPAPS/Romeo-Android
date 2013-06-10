@@ -186,6 +186,7 @@ public class GCMMessageManager {
 			room.addChatters(chattersIdx);
 
 			RoomModel model = new RoomModel(mContext, room);
+			model.init();
 			model.createRoom(false);
 		}
 
@@ -257,7 +258,7 @@ public class GCMMessageManager {
 		Room room = new Room(roomCode);
 
 		RoomModel model = new RoomModel(mContext, room);
-
+		model.init();
 		// DB Operation
 		model.addChatters(inviterIdx, newbies);
 
@@ -286,7 +287,7 @@ public class GCMMessageManager {
 		Room room = new Room(roomCode);
 
 		RoomModel model = new RoomModel(mContext, room);
-
+		model.init();
 		// DB Operation
 		model.removeChatter(userIdx);
 

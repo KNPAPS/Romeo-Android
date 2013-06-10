@@ -66,6 +66,7 @@ public class RoomAliasSettingActivity extends Activity {
 			{
 				super.run();
 				mModel = new RoomModel(RoomAliasSettingActivity.this, new Room(roomCode));
+				mModel.init();
 				final String roomTitle = mModel.getRoom().getTitle();
 				final String prevAlias = mModel.getRoom().getAlias() == null || mModel.getRoom().getAlias().trim().equals("") ? roomTitle : mModel.getRoom().getAlias();
 
@@ -86,6 +87,7 @@ public class RoomAliasSettingActivity extends Activity {
 						chatterTV.setText(chatterText);
 						aliasET.setHint(roomTitle);
 						aliasET.setText(prevAlias);
+						aliasET.setSelection(prevAlias.length());
 						submitBtn.setOnClickListener(new OnClickListener() {
 
 							@Override

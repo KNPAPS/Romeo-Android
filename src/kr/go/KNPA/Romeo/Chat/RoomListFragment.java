@@ -349,5 +349,7 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 		{
 			((SimpleSectionAdapter<Cursor>) mLayout.getListView().getAdapter()).notifyDataSetChanged();
 		}
+
+		mLayout.getListView().requestLayout();
 	}
 }
