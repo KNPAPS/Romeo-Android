@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -43,7 +44,7 @@ public class SurveyComposeFragment extends Fragment {
 	EditText titleET;
 	EditText receiversET;
 	Button receiversSearchBT;
-	EditText[] openETs;
+	//EditText[] openETs;
 	EditText[] closeETs;
 	EditText contentET;
 	
@@ -64,18 +65,6 @@ public class SurveyComposeFragment extends Fragment {
 		return view;
 	}
 
-	@Override
-	public void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-	
-	@Override
-	public void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-	
 //	@Override
 //	public void onStop() {
 //		super.onStop();
@@ -118,11 +107,11 @@ public class SurveyComposeFragment extends Fragment {
 		receiversET = (EditText)((ViewGroup)rootLayout.getChildAt(1)).findViewById(R.id.receivers);
 		receiversSearchBT = (Button)((ViewGroup)rootLayout.getChildAt(1)).findViewById(R.id.receivers_search);
 		
-		openETs = new EditText[3];
+		//openETs = new EditText[3];
 		closeETs = new EditText[3];
-		openETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_year);
-		openETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_month);
-		openETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_day);
+		//openETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_year);
+		//openETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_month);
+		//openETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_day);
 		closeETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_year);
 		closeETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_month);
 		closeETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_day);
@@ -342,11 +331,11 @@ public class SurveyComposeFragment extends Fragment {
 		}
 		
 		boolean openTSValid = true;
-		for(int i=0; i< openETs.length; i++) {
-			String open = openETs[i].getText().toString();
-			if(open == null || open.trim().length() ==0 )
-				openTSValid = false;
-		}
+//		for(int i=0; i< openETs.length; i++) {
+//			String open = openETs[i].getText().toString();
+//			if(open == null || open.trim().length() ==0 )
+//				openTSValid = false;
+//		}
 		
 		boolean closeTSValid = true;
 		for(int i=0; i< closeETs.length; i++) {
@@ -359,13 +348,13 @@ public class SurveyComposeFragment extends Fragment {
 			//if( openETs[0] )
 			//	closeETs[0];
 			
-			if( Integer.parseInt( openETs[1].getText().toString() ) < 1 
-					|| Integer.parseInt( openETs[1].getText().toString() ) > 12) {
-				WaiterView.dismissDialog(getActivity());
-				openETs[1].setText("");
-				Toast.makeText(getActivity(), "설문 시작 월이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
-				return;
-			}
+//			if( Integer.parseInt( openETs[1].getText().toString() ) < 1 
+//					|| Integer.parseInt( openETs[1].getText().toString() ) > 12) {
+//				WaiterView.dismissDialog(getActivity());
+//				openETs[1].setText("");
+//				Toast.makeText(getActivity(), "설문 시작 월이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
+//				return;
+//			}
 			
 			if( Integer.parseInt( closeETs[1].getText().toString() ) < 1 
 					|| Integer.parseInt( closeETs[1].getText().toString() ) > 12) {
@@ -376,13 +365,13 @@ public class SurveyComposeFragment extends Fragment {
 			}
 			
 			
-			if( Integer.parseInt( openETs[2].getText().toString() ) < 1 
-					|| Integer.parseInt( openETs[2].getText().toString() ) > 31) {
-				WaiterView.dismissDialog(getActivity());
-				openETs[1].setText("");
-				Toast.makeText(getActivity(), "설문 시작 일이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
-				return;
-			}
+//			if( Integer.parseInt( openETs[2].getText().toString() ) < 1 
+//					|| Integer.parseInt( openETs[2].getText().toString() ) > 31) {
+//				WaiterView.dismissDialog(getActivity());
+//				openETs[1].setText("");
+//				Toast.makeText(getActivity(), "설문 시작 일이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
+//				return;
+//			}
 			
 			if( Integer.parseInt( closeETs[2].getText().toString() ) < 1 
 					|| Integer.parseInt( closeETs[2].getText().toString() ) > 31) {
@@ -392,30 +381,30 @@ public class SurveyComposeFragment extends Fragment {
 				return;
 			}
 			
-			long openTS = getTSFrom(openETs);
-			long closeTS = getTSFrom(closeETs);
+			long openTS = Calendar.getInstance().getTimeInMillis() / 1000; //getTSFrom(openETs);
+			long closeTS = getTSFrom(closeETs) + 86400;
 			long currentTS = new Date().getTime() / 1000;
 			
-			if( openTS < currentTS) {
+			/*if( openTS < currentTS) {
 				WaiterView.dismissDialog(getActivity());
 				Toast.makeText(getActivity(), "설문 시작 시간이 현재보다 이전입니다.", Toast.LENGTH_SHORT).show();
 				return;
-			} else if( closeTS < currentTS) {
+			} else */if( closeTS < currentTS) {
 				WaiterView.dismissDialog(getActivity());
 				Toast.makeText(getActivity(), "설문 종료 시간이 현재보다 이전입니다.", Toast.LENGTH_SHORT).show();
 				return;
-			} else if( closeTS < openTS ) {
+			}/* else if( closeTS < openTS ) {
 				WaiterView.dismissDialog(getActivity());
 				Toast.makeText(getActivity(), "설문 종료 시간이 설문 시작시간보다 이전입니다.", Toast.LENGTH_SHORT).show();
 				return;
-			}
+			}*/
 			
+			// 양식에 실제로 시간이 들어가는 부분
 			form.put(KEY.SURVEY.OPEN_TS, openTS);
 			form.put(KEY.SURVEY.CLOSE_TS, closeTS);
 		} else {
 			Toast.makeText(getActivity(), "설문 기간이 정확히 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			WaiterView.dismissDialog(getActivity());
-			// TODO : NumberFormatException
 			return;
 		}
 		

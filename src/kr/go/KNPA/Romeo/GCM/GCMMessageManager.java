@@ -20,6 +20,8 @@ import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Member.MemberManager;
+import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -39,6 +41,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * GCMIntentService 의 {@link GCMIntentService#onMessage(Context, Intent)
@@ -67,7 +75,7 @@ public class GCMMessageManager {
 	// // On Process Variables
 	//
 	private Context	mContext	= null;
-
+	private Toast 	mToast		= null;
 	/**
 	 * 푸시로 받은 메시지가 도착했을 때 호출되는 메서드이다.\n 클래스내에 존재하는 private member
 	 * {@link dbManager}, {@link db}, {@link payload}, {@link events}에 대해 메서드
@@ -303,6 +311,11 @@ public class GCMMessageManager {
 		String title = "";
 		String content = "";
 
+		String toastContent = "";
+		String toastDepartment = "";
+		String toastRank = "";
+		String toastName = "";
+		
 		switch (message.mainType())
 		{
 		case Message.MESSAGE_TYPE_CHAT:
@@ -317,18 +330,24 @@ public class GCMMessageManager {
 				ticker = mContext.getString(R.string.notification_command_ticker);
 			}
 			title = message.content;
+			
+			toastContent = message.content;
 			break;
 
 		case Message.MESSAGE_TYPE_DOCUMENT:
 			ticker = mContext.getString(R.string.notification_document_ticker);
 			title = message.title;
 			content = message.content;
+			
+			toastContent = message.title;
 			break;
 
 		case Message.MESSAGE_TYPE_SURVEY:
 			ticker = mContext.getString(R.string.notification_survey_ticker);
 			title = message.title;
 			content = message.content;
+			
+			toastContent = message.title;
 			break;
 		}
 
@@ -403,8 +422,57 @@ public class GCMMessageManager {
 
 		// mId allows you to update the notification later on.
 		mNotificationManager.notify(0, mBuilder.build());
+		
+		
+		
+		User user = MemberManager.sharedManager().getUser(message.senderIdx);
+		toastName = user.name;
+		toastRank = User.RANK[user.rank];
+		toastDepartment = user.department.nameFull;
+		makeToast(mContext, profileImg, toastDepartment, toastRank, toastName, toastContent).show();
+		
 	}
 
+	private Toast makeToast(Context context, Bitmap userPic, String department, String rank, String name, String content) {
+		
+		if(mToast == null) {
+			mToast = new Toast(context.getApplicationContext());
+			mToast.setGravity(Gravity.CENTER_VERTICAL, 0, 80);
+			mToast.setDuration(Toast.LENGTH_SHORT);
+		}
+		
+		View toastView = mToast.getView();
+		if(toastView == null) {
+			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			toastView = inflater.inflate(R.layout.romeo_toast, null, false);
+			mToast.setView(toastView);
+		}
+		
+		ImageView userPicIV = (ImageView) toastView.findViewById(R.id.userPic);
+		if(userPic != null)
+			userPicIV.setImageBitmap(userPic);
+		else
+			userPicIV.setImageResource(R.drawable.user_pic_default);
+		
+		TextView departmentTV = (TextView) toastView.findViewById(R.id.department);
+		department = department != null ? department : "";
+		departmentTV.setText(department);
+		
+		TextView rankNameTV = (TextView) toastView.findViewById(R.id.rankName);
+		rank = rank != null ? rank : "";
+		name = name != null ? name : "";
+		String rankName = rank + " " + name;
+		rankNameTV.setText(rankName);
+		
+		TextView contentTV = (TextView) toastView.findViewById(R.id.content);
+		content = content != null ? content : "";
+		content = content.substring(0, Math.min(content.length(), 24));
+		contentTV.setText(content);
+		
+		//mToast.show();
+		return mToast;
+	}
+	
 	private List<ActivityManager.RunningAppProcessInfo> processList(Context context)
 	{
 		/* 실행중인 process 목록 보기 */

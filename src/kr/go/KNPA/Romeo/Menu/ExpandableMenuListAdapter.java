@@ -16,6 +16,7 @@ import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Library.SocialEvilManualBook;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.Settings.BugReportFragment;
 import kr.go.KNPA.Romeo.Settings.SettingsFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
@@ -87,6 +88,11 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 			// do nothing, expand
 		} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 			fragment = new SettingsFragment();
+		} 
+		
+		// TODO : Bug Report
+		else if (codes[0].equalsIgnoreCase("BUG")) {
+			fragment = new BugReportFragment();
 		}
 		
 		if (fragment != null) {
@@ -140,7 +146,8 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 			} else if(codes[1].equalsIgnoreCase("SOCIALEVIL")) {
 				fragment = new SocialEvilManualBook();
 			} else if(codes[1].equalsIgnoreCase("EBOOK")) {
-				fragment = new EBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
+				//fragment = new EBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
+				fragment = EBookFragment.getEBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
 			}
 		} else if (codes[0].equalsIgnoreCase("SETTINGS")) {
 			// NOTHING
