@@ -25,11 +25,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 	// Variables
 	public int subType = Survey.NOT_SPECIFIED;
@@ -43,31 +43,138 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int subType) 	{	super(context, c, autoRequery);	this.subType = subType;	this.context = context;	}
 	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);								this.context = context;	}
 
+	private Survey getSurvey(Cursor cSurvey) {
+		HashMap<String, Survey> surveys = SurveyFragment.surveyFragment(this.subType).getListView().surveys;//null;
+//		if (this.subType == Survey.TYPE_DEPARTED ) {
+//			surveys = SurveyFragment.surveyFragment(this.subType).getListView()//.departedSurveyArrayList;
+//		} else if (this.subType == Survey.TYPE_RECEIVED) {
+//			surveys = SurveyFragment.receivedSurveyArrayList;
+//		}
+//		
+		if(surveys != null) {
+			String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+			if(surveys.containsKey(surveyIdx))
+				return surveys.get(surveyIdx);
+		}
+		
+		return null;
+	}
+	
 	@Override
 	public void bindView(final View v, final Context context, final Cursor c) {
 		// Animation	// TODO
 		
-		final Handler surveyHandler = new SurveyHandler(subType);
-		final Survey survey = new Survey(context, c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX)));
+		final Survey survey = getSurvey(c);
 		
+		Survey.Form form = survey.form; 
+
+		// Title
+		TextView titleTV = (TextView)v.findViewById(R.id.title);
+		titleTV.setText(survey.title);
+
+		// USER Thread
+		final Handler handler = new Handler();
 		new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				android.os.Message message = surveyHandler.obtainMessage();
-				message.what = WHAT_SURVEY;
-				HashMap<String, Object> obj = new HashMap<String, Object>();
-				obj.put("survey", survey);
-				obj.put("view", v);
-				obj.put("context", context);
-				message.obj = obj;
-				surveyHandler.sendMessage(message);
-						
+				final User sender = User.getUserWithIdx(survey.senderIdx);
+				
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						TextView senderTV = (TextView)v.findViewById(R.id.sender);
+						String senderInfo = sender.department.nameFull +" "+User.RANK[sender.rank]+" " +sender.name;
+						senderTV.setText(senderInfo);
+					}
+				});
+				
 			}
 		}).start();
+
+		
+		// Open ~ Close Date Time
+		TextView openDTTV = (TextView)v.findViewById(R.id.openDT);
+		String openDT = "";
+		try {
+			openDT = Formatter.timeStampToStringWithFormat((Long)form.get(KEY.SURVEY.OPEN_TS), context.getString(R.string.formatString_openDT)); 
+		} catch(Exception e) {
+			openDT = "-";
+		}
+		openDTTV.setText(openDT);
+
+		TextView closeDTTV = (TextView)v.findViewById(R.id.closeDT);
+		String closeDT = "";
+		try {
+			closeDT = Formatter.timeStampToStringWithFormat((Long)form.get(KEY.SURVEY.CLOSE_TS), context.getString(R.string.formatString_closeDT));
+		} catch(Exception e) {
+			closeDT = "-";
+		}
+		closeDTTV.setText(closeDT);
 		
 		
-		
+		// Departed : set Uncheckers Button
+		if(this.subType == Survey.TYPE_DEPARTED) {
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					final ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(survey.type(), survey.idx);
+					
+					handler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							
+							Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);
+							goUnchecked.setText(""+idxs.size());
+							goUnchecked.setOnClickListener(new OnClickListener() {
+							
+								@Override
+								public void onClick(View view) {
+									
+									if(idxs != null) {
+										Intent intent = new Intent(context, UserListActivity.class);
+										Bundle b = new Bundle();
+										b.putStringArrayList(UserListActivity.KEY_USERS_IDX, idxs);
+										
+										intent.putExtras(b);
+										context.startActivity(intent);
+									}
+								}
+							});
+
+						}
+					});
+					
+				}
+			}).start();
+
+		// Received : go Result	
+		} else if(this.subType == Survey.TYPE_RECEIVED) {
+			
+			boolean isAnswered = survey.isAnswered(context);
+			
+			int answeredColor = context.getResources().getColor(R.color.black);
+			String answeredStatus = null;
+
+			if(isAnswered) {
+				answeredStatus 	= context.getString(R.string.statusAnswered);
+				answeredColor 	= context.getResources().getColor(R.color.grayDark);
+			} else {
+				answeredStatus 	= context.getString(R.string.statusNotAnswered);
+				answeredColor 	= context.getResources().getColor(R.color.maroon);
+			}
+			
+			Button goResultBT = (Button)v.findViewById(R.id.goResult);
+
+			goResultBT.setText(answeredStatus);
+			goResultBT.setTextColor(answeredColor);
+					
+		}
+	
 	}
 
 	@Override
@@ -98,7 +205,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 			
 			super.handleMessage(msg);
 			
-			HashMap<String, Object> obj = (HashMap<String, Object>)msg.obj; 
+			/*HashMap<String, Object> obj = (HashMap<String, Object>)msg.obj; 
 			final View v = (View)obj.get("view") ;
 			final Context context = (Context)obj.get("context");
 			
@@ -186,7 +293,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 					}
 					
 					Button goResultBT = (Button)v.findViewById(R.id.goResult);
-					/*
+					
 					if(isAnswered) {
 						
 						goResultBT.setOnClickListener( new OnClickListener() {
@@ -200,7 +307,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 					
 					} else {	
 					}
-					*/
+					
 					goResultBT.setText(answeredStatus);
 					goResultBT.setTextColor(answeredColor);
 					
@@ -235,7 +342,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 				TextView senderTV = (TextView)v.findViewById(R.id.sender);
 				String senderInfo = sender.department.nameFull +" "+User.RANK[sender.rank]+" " +sender.name;
 				senderTV.setText(senderInfo);
-			}
+			}*/
 			
 		}
 	}

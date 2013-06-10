@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ListView;
 
 public abstract class RomeoListView extends ListView {

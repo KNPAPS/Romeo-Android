@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         android:textColor="@color/text"
         android:maxWidth="294dp"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
     
     <TextView
         android:id="@+id/chat_content"
@@ -23,7 +23,7 @@
         android:layout_marginBottom="8dp"
         android:textColor="#FF444444"
         android:maxWidth="294dp"
-        android:textSize="16sp" />
+        android:textSize="12sp" />
 
 
 </RelativeLayout>

@@ -14,7 +14,7 @@
         android:textColor="@color/text"
         android:textSize="16sp"
         android:layout_margin="11dp"
-        android:text=" 다온에 불편한 점이 있으면 알려주세요.\n오류의 전후 상황을 자세히 설명해 주시면 큰 도움이 됩니다" />
+        android:text=" 사용 중 불편한 점이 있으면 알려주세요.\n\n오류의 전후 상황을 자세히 설명해 주시면 큰 도움이 됩니다." />
     
     <EditText
         android:id="@+id/content"

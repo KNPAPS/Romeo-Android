@@ -1,8 +1,13 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.util.HashMap;
+
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
+import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +19,10 @@ public class SurveyFragment extends RomeoFragment {
 	// Managed Fragments
 	private static SurveyFragment _departedFragment = null;
 	private static SurveyFragment _receivedFragment = null;
-	
+//	
+//	static HashMap<String, Survey> departedSurveyArrayList = null;
+//	static HashMap<String, Survey> receivedSurveyArrayList = null;
+//	
 	// Constructor
 	public SurveyFragment() {
 		this(Survey.TYPE_RECEIVED);
@@ -64,6 +72,7 @@ public class SurveyFragment extends RomeoFragment {
 		
 		return lv;
 	}
+	
 	
 	// Fragment Life-cycle Management
 	@Override

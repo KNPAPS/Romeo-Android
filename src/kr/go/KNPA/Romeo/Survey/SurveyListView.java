@@ -1,26 +1,23 @@
 package kr.go.KNPA.Romeo.Survey;
 
-import java.util.Date;
+import java.util.HashMap;
 
-import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
 import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.app.Fragment;
+import android.os.Handler;
+import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListAdapter;
-import android.widget.Toast;
 
 public class SurveyListView extends RomeoListView {
+	
+	HashMap<String, Survey> surveys;
 	
 	// Constructor
 	public SurveyListView(Context context)	 									{	this(context, null);				}
@@ -34,7 +31,7 @@ public class SurveyListView extends RomeoListView {
 		
 		switch(this.subType) {
 		case Survey.TYPE_DEPARTED :
-			listAdapter = new SurveyListAdapter(getContext(), query(), false, this.subType);
+			listAdapter = new SurveyListAdapter(getContext(), null, false, this.subType);
 			this.setAdapter(listAdapter);
 			this.setOnItemClickListener((android.widget.AdapterView.OnItemClickListener) listAdapter);
 			break;
@@ -60,7 +57,6 @@ public class SurveyListView extends RomeoListView {
 			break;
 		}
 		
-		
 		return this;
 	}
 	
@@ -78,6 +74,77 @@ public class SurveyListView extends RomeoListView {
 	public void onPostExecute(boolean isValidCursor) {
 		//WaiterView.dismissDialog(getContext());
 		
+	}
+	
+	@Override
+	public void refresh(Cursor c) {
+		if(listAdapter == null) return;
+		 
+		if(listAdapter instanceof CursorAdapter) {
+			fetch(c);
+			
+//			if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
+//				((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
+		} else {
+			listAdapter.notifyDataSetChanged();
+			
+			if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
+				((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
+		}
+		
+	}
+	
+	private void fetch(final Cursor c) {
+		final Handler handler = new Handler();
+		WaiterView.showDialog(getContext());
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Cursor cSurvey = DBProcManager.sharedManager(getContext()).survey().getSurveyList(SurveyListView.this.subType);
+				
+				if(cSurvey.getCount() > 0) {
+					if(surveys == null ) {
+						surveys = new HashMap<String, Survey>();
+					} else {
+						surveys.clear();
+					}
+				}
+				
+				cSurvey.moveToFirst();
+				while ( !cSurvey.isAfterLast() ) {
+					String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+					Survey survey = new Survey(getContext(), surveyIdx); 
+					cSurvey.moveToNext();
+					
+					surveys.put(survey.idx, survey);
+					
+				}
+				
+				cSurvey.close();
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						afterLoad(c);
+					}
+				});
+			}
+		}).start();
+		
+		
+		
+	}
+	
+	private void afterLoad(Cursor c) {
+		WaiterView.dismissDialog(getContext());
+		setListBackground( c );
+		if(c != null) {
+			listAdapter.changeCursor(c);
+		}
+		
+		if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
+			((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
 	}
 
 }
