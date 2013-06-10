@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.GCM;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import kr.go.KNPA.Romeo.GCMIntentService;
@@ -38,6 +39,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -75,7 +77,14 @@ public class GCMMessageManager {
 	// // On Process Variables
 	//
 	private Context	mContext	= null;
-	private Toast 	mToast		= null;
+	private static Toast 	mToast		= null;
+	private static Handler toastHandler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			Bundle b = msg.getData();
+			Toast toast = GCMMessageManager.makeToast((Context)msg.obj, (Bitmap)b.getParcelable("userPic"), b.getString("department"), b.getString("rank"), b.getString("name"), b.getString("content"));
+			toast.show();
+		};
+	};
 	/**
 	 * 푸시로 받은 메시지가 도착했을 때 호출되는 메서드이다.\n 클래스내에 존재하는 private member
 	 * {@link dbManager}, {@link db}, {@link payload}, {@link events}에 대해 메서드
@@ -90,12 +99,24 @@ public class GCMMessageManager {
 	 *            GCMIntentService.onMessage(Context, Intent)에서 넘어오는 Intent형
 	 *            변수로, extra에 GCM 메시지가 담겨있다.
 	 */
-	public void onMessage(Context context, Intent intent)
+	public void onMessage(final Context context, Intent intent)
 	{
-
+		
 		// Context Setting
 		this.mContext = context;
+		
+		showToast();
 
+		
+//		Handler handler = new Handler();
+//		handler.post(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				Toast.makeText(mContext.getApplicationContext(), Calendar.getInstance().getTimeInMillis() + " Message", Toast.LENGTH_SHORT).show();
+//			}
+//		});
+				
 		// Payload
 		Bundle b = intent.getExtras();
 		String _payload = b.getString("payload");
@@ -199,7 +220,7 @@ public class GCMMessageManager {
 		}
 
 		// Chat 저장
-		proc.saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
+		//proc.saveChatOnReceived(chat.roomCode, chat.idx, chat.senderIdx, chat.content, chat.contentType, chat.TS);
 
 		// 앱이 실행 중이면 callback 호출
 		if (isRunningProcess(mContext) && MainActivity.sharedActivity() != null)
@@ -429,11 +450,11 @@ public class GCMMessageManager {
 		toastName = user.name;
 		toastRank = User.RANK[user.rank];
 		toastDepartment = user.department.nameFull;
-		makeToast(mContext, profileImg, toastDepartment, toastRank, toastName, toastContent).show();
+		//showToast(mContext, profileImg, toastDepartment, toastRank, toastName, toastContent);
 		
 	}
 
-	private Toast makeToast(Context context, Bitmap userPic, String department, String rank, String name, String content) {
+	private static Toast makeToast(Context context, Bitmap userPic, String department, String rank, String name, String content) {
 		
 		if(mToast == null) {
 			mToast = new Toast(context.getApplicationContext());
@@ -471,6 +492,49 @@ public class GCMMessageManager {
 		
 		//mToast.show();
 		return mToast;
+	}
+	
+	private void showToast() {
+		
+		Handler handler = new Handler();
+		handler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				if(mToast == null) {
+					mToast = new Toast(mContext.getApplicationContext());
+					mToast.setGravity(Gravity.CENTER_VERTICAL, 0, 80);
+					mToast.setDuration(Toast.LENGTH_SHORT);
+				}
+				
+				mToast.setText(Calendar.getInstance().getTimeInMillis() + " Message");
+				mToast.show();
+			}
+		});
+	}
+	private void showToast(final Context context, final Bitmap userPic, final String department, final String rank, final String name, final String content) {
+		//final Toast toast = makeToast(context, userPic, department, rank, name, content);
+		new Thread( new Runnable() {
+			
+			@Override
+			public void run() {
+				android.os.Message msg = toastHandler.obtainMessage();
+				
+				Bundle b = new Bundle();
+				b.putParcelable("userPic", userPic);
+				b.putString("department", department);
+				b.putString("rank", rank);
+				b.putString("name", name);
+				b.putString("content", content);
+				msg.setData(b);
+				
+				msg.obj = context;
+				
+				//msg.obj = toast;
+				toastHandler.sendMessage(msg);
+			}
+			
+		}).start();
 	}
 	
 	private List<ActivityManager.RunningAppProcessInfo> processList(Context context)
