@@ -21,7 +21,7 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
-				            android:layout_width="40dp"
+				            android:layout_width="48dp"
 				            android:layout_height="wrap_content"
 				            android:layout_marginLeft="5dp"
 				            android:layout_marginRight="5dp"
@@ -50,7 +50,7 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
-				            android:layout_width="40dp"
+				            android:layout_width="48dp"
 				            android:layout_height="wrap_content"
 				            android:layout_gravity="center_vertical"
 				            android:layout_marginLeft="5dp"
@@ -96,67 +96,13 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
-				            android:layout_width="40dp"
+				            android:layout_width="48dp"
 				            android:layout_height="wrap_content"
 				            android:layout_gravity="center_vertical"
 				            android:layout_marginLeft="5dp"
 				            android:layout_marginRight="5dp"
 				            android:gravity="center_horizontal"
-				            android:text="@string/duration"
-				            android:textColor="@color/text" />
-				
-				        <EditText
-				            android:id="@+id/open_year"
-				            android:layout_width="0dp"
-				            android:layout_height="wrap_content"
-				            android:layout_weight="2"
-				            android:ems="10"
-				            android:gravity="center"
-				            android:hint="@string/survey_open_year_placehold"
-            android:background="@drawable/romeo_edittext_background"
-				            android:inputType="number"
-				            android:nextFocusDown="@+id/open_month"
-				            android:padding="@dimen/gapSmaller"
-				            android:textColor="@color/text"
-				            android:maxLength="4"
-				            android:textSize="12sp" />
-				
-				        <EditText
-				            android:id="@+id/open_month"
-				            android:layout_width="0dp"
-				            android:layout_height="wrap_content"
-				            android:layout_weight="1"
-				            android:ems="10"
-				            android:gravity="center"
-				            android:hint="@string/survey_open_month_placehold"
-            android:background="@drawable/romeo_edittext_background"
-				            android:inputType="number"
-				            android:nextFocusDown="@+id/open_day"
-				            android:padding="@dimen/gapSmaller"
-				            android:textColor="@color/text"
-				            android:maxLength="2"
-				            android:textSize="12sp" />
-				
-				        <EditText
-				            android:id="@+id/open_day"
-				            android:layout_width="0dp"
-				            android:layout_height="wrap_content"
-				            android:layout_weight="1"
-				            android:ems="10"
-				            android:gravity="center"
-				            android:hint="@string/survey_open_day_placehold"
-            android:background="@drawable/romeo_edittext_background"
-				            android:inputType="number"
-				            android:nextFocusDown="@+id/close_year"
-				            android:padding="@dimen/gapSmaller"
-				            android:textColor="@color/text"
-				            android:maxLength="2"
-				            android:textSize="12sp" />
-				
-				        <TextView
-				            android:layout_width="wrap_content"
-				            android:layout_height="wrap_content"
-				            android:text="@string/fromTo"
+				            android:text="마감시간"
 				            android:textColor="@color/text" />
 				
 				        <EditText
