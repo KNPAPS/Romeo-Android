@@ -100,6 +100,7 @@ public class RoomFragmentLayout extends FragmentLayout {
 								break;
 							}
 						}
+						dialog.dismiss();
 					}
 				});
 

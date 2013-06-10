@@ -16,6 +16,7 @@ import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
 import kr.go.KNPA.Romeo.Member.MemberDetailActivity;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -31,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -78,10 +80,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		if (mHandler == null)
-		{
-			mHandler = new Handler();
-		}
+
 
 		mModel = new RoomModel(getActivity(), mRoom);
 	}
@@ -112,7 +111,12 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 				mListAdapter = new ChatListAdapter(getActivity(), null, mModel.getRoom());
 				mListAdapter.setListener(RoomFragment.this);
 				final Cursor c = mListAdapter.query(ChatListAdapter.NUM_CHAT_PER_PAGE);
-
+		
+				if (mHandler == null)
+				{
+					mHandler = new Handler(Looper.getMainLooper());
+				}
+				
 				mHandler.post(new Runnable() {
 					public void run()
 					{
@@ -360,7 +364,6 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 			MainActivity.sharedActivity().popContent();
 		}
 
-		WaiterView.showDialog(getActivity());
 		new Thread() {
 			public void run()
 			{
@@ -371,7 +374,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 					public void run()
 					{
 						MainActivity.sharedActivity().popContent();
-						WaiterView.dismissDialog(getActivity());
+
 					};
 				});
 			}
@@ -537,7 +540,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 		}
 
 		final Chat chat = new Chat(chatIdx, mModel.getRoom().getType(), chatContent, senderIdx, receivers, false, System.currentTimeMillis() / 1000, true, System.currentTimeMillis() / 1000, mModel
-				.getRoom().getCode(), Chat.CONTENT_TYPE_TEXT);
+				.getRoom().getCode(), contentType);
 
 		new Thread() {
 			public void run()
@@ -715,9 +718,32 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 	}
 
 	@Override
-	public void onFailedChatReSend(String chatIdx)
+	public void onFailedChatReSend(final String chatIdx)
 	{
-		Toast.makeText(getActivity(), "아직 구현되지 않은 기능입니다.", Toast.LENGTH_SHORT).show();
+		new Thread(){
+			public void run() {
+				Cursor c = DBProcManager.sharedManager(getActivity()).chat().getChatInfo(chatIdx);
+				String content = "";
+				int contentType = Chat.CONTENT_TYPE_TEXT;
+				if (c.moveToNext())
+				{
+					content = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
+					contentType = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+				}
+
+				final String fcontent = content;
+				final int fcontentType = contentType;
+				DBProcManager.sharedManager(getActivity()).chat().deleteChat(chatIdx);
+				
+				mHandler.post(new Runnable(){
+					@Override
+					public void run()
+					{
+						sendChat(fcontentType, fcontent);
+					}
+				});
+			}
+		}.start();
 	}
 
 	@Override

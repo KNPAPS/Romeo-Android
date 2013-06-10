@@ -79,7 +79,7 @@ public class Room {
 		for (int i = 0; i < chatters.size(); i++)
 		{
 			Chatter c = chatters.get(i);
-			if (c.idx.equalsIgnoreCase(chatterIdx))
+			if (c.idx.equals(chatterIdx))
 			{
 				c.lastReadTS = TS;
 				chatters.set(i, c);

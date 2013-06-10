@@ -33,6 +33,7 @@ public class MainActivity extends BaseActivity {
 	public static final int	MEMBER_SEARCH_ACTIVITY	= 1;
 
 	public boolean			isRegistered			= false;
+	public boolean			showMenu				= true;
 
 	public MainActivity()
 	{
@@ -73,6 +74,7 @@ public class MainActivity extends BaseActivity {
 
 		if (intent != null && intent.getExtras().containsKey(KEY.MESSAGE.TYPE))
 		{
+			showMenu = false;
 			try
 			{
 				Bundle b = intent.getExtras();
@@ -115,6 +117,8 @@ public class MainActivity extends BaseActivity {
 	public void onPostCreate(Bundle savedInstanceState)
 	{
 		super.onPostCreate(savedInstanceState);
+		if (showMenu == false)
+			return;
 		new Handler().post(new Runnable() {
 			@Override
 			public void run()

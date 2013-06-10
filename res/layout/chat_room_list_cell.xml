@@ -27,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:text="Department"
             android:textColor="@color/text"
             android:textSize="12sp" />
 
@@ -35,7 +34,6 @@
 				    android:id="@+id/room_list_cell_room_name"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
-				    android:text="방 제목입니다."
 				    android:textColor="@color/text"
 				    android:textSize="14sp"
 				    android:singleLine="true"
@@ -55,7 +53,6 @@
 					    android:background="@drawable/bubble_active"
 					    android:gravity="center_vertical|center_horizontal"
 					    android:src="@drawable/bubble_active"
-					    android:text="15"
 					    android:textColor="@color/black"
 					    android:textSize="12sp" />
 
@@ -65,7 +62,6 @@
 					    android:layout_height="wrap_content"
 					    android:layout_gravity="bottom"
 					    android:orientation="vertical"
-					    android:text="Content"
 					    android:textColor="@color/sub"
 					    android:textSize="12dp" 
 					    android:singleLine="true"
@@ -79,7 +75,6 @@
         android:id="@+id/numChatters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="(4 명)"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="12dp" />
 
@@ -90,7 +85,6 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="11dp"
         android:gravity="center_vertical"
-        android:text="arrivalDT"
         android:textColor="@color/text"
         android:textSize="10dp" />
 

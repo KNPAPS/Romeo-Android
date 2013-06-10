@@ -330,10 +330,9 @@ public class RoomModel extends BaseModel {
 	public void fetchChatters()
 	{
 		Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomChatters(mRoom.getCode());
-
+		mRoom.chatters = new ArrayList<Chatter>();
 		while (c.moveToNext())
 		{
-
 			String idx = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_USER_IDX));
 			User user = MemberManager.sharedManager().getUser(idx);
 			Chatter chatter = new Chatter(user);

@@ -115,11 +115,11 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
-                android:padding = "1dp"
                 android:layout_weight="1"
-                android:textSize="16sp"
                 android:background="@drawable/square_gray"
-                android:text="@string/meeting" />
+                android:padding="1dp"
+                android:text="@string/command"
+                android:textSize="16sp" />
             
             <Button
                 android:id="@+id/goMeeting"
@@ -130,13 +130,13 @@
                 android:layout_marginRight="22dp"
                 android:layout_marginTop="0dp"
                 android:layout_weight="1"
-                android:paddingTop = "5dp"
-                android:paddingBottom = "5dp"
-                android:paddingLeft = "15dp"
-                android:paddingRight = "0dp"
-                android:textSize="16sp"
                 android:background="@drawable/square_gray"
-                android:text="@string/command" />
+                android:paddingBottom="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="0dp"
+                android:paddingTop="5dp"
+                android:text="@string/meeting"
+                android:textSize="16sp" />
 
         </LinearLayout>
     </LinearLayout>

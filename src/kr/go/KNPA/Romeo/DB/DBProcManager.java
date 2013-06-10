@@ -667,6 +667,18 @@ public class DBProcManager {
 			return db.rawQuery(sql, null);
 		}
 
+		public Cursor getChatInfo(String chatIdx){
+			String sql = "select "+
+					DBSchema.CHAT.COLUMN_SENDER_IDX+COLUMN_CHAT_SENDER_IDX+", "+
+					DBSchema.CHAT.COLUMN_CONTENT+COLUMN_CHAT_CONTENT+", "+
+					DBSchema.CHAT.COLUMN_CREATED_TS+COLUMN_CHAT_TS+", "+
+					DBSchema.CHAT.COLUMN_CONTENT_TYPE+COLUMN_CHAT_CONTENT_TYPE+", "+
+					DBSchema.CHAT.COLUMN_STATE+COLUMN_CHAT_STATE+
+					" FROM "+DBSchema.CHAT.TABLE_NAME+" WHERE "+DBSchema.CHAT.COLUMN_IDX+" = ?";
+			String[] val = {chatIdx};
+			return db.rawQuery(sql, val);
+		}
+		
 		/**
 		 * 개별채팅삭제
 		 * 

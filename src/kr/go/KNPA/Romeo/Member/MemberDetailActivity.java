@@ -183,7 +183,8 @@ public class MemberDetailActivity extends Activity {
 
 		goMeeting = (Button) findViewById(R.id.goMeeting);
 		goCommand = (Button) findViewById(R.id.goCommand);
-
+		goMeeting.setTag("meeting");
+		goCommand.setTag("command");
 		background.setOnClickListener(finish);
 		close.setOnClickListener(finish);
 
@@ -230,7 +231,7 @@ public class MemberDetailActivity extends Activity {
 															public void run()
 															{
 																super.run();
-																final int roomType = btn.equals(goCommand) ? Chat.TYPE_COMMAND : Chat.TYPE_MEETING;
+																final int roomType = btn.getTag().toString().equals("meeting") ? Chat.TYPE_MEETING : Chat.TYPE_COMMAND;
 
 																String roomCode = DBProcManager.sharedManager(MemberDetailActivity.this).chat().getPairRoomCode(roomType, idx);
 

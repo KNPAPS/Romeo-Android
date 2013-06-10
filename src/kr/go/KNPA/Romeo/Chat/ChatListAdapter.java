@@ -270,7 +270,7 @@ public class ChatListAdapter extends CursorAdapter {
 								dialog.dismiss();
 							}
 						});
-
+						chooseDlg.show();
 					}
 				});
 
