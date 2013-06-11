@@ -212,9 +212,7 @@ public class SurveyResultFragment extends Fragment {
 
 			// ChartView
 			ArrayList<Integer> qVote = _votes.get(qi);
-			// ArrayList<Integer> qVote = new ArrayList<Integer>();
-			// qVote.add(10);
-			// qVote.add(20);
+
 
 			// 그래프를 그린다.
 			drawChart(questionLL, qVote);

@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
@@ -49,9 +50,16 @@ public class Survey extends Message {// implements Parcelable{
 				Data reqData = new Data().add(0, KEY.MESSAGE.IDX, surveyIdx);
 				Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
 				Connection conn = new Connection().async(false).requestPayload(request).request();
+				
 				Payload response = conn.getResponsePayload();
-				Data respData = response.getData();
-				surveyFromServer = (Survey)respData.get(0, KEY._MESSAGE);
+				
+				if( response.getStatusCode() == StatusCode.SUCCESS ) { 
+					Data respData = response.getData();
+					surveyFromServer = (Survey)respData.get(0, KEY._MESSAGE);
+				} else {
+					surveyFromServer = null;
+				}
+				
 			}
 		};
 		
@@ -109,6 +117,10 @@ public class Survey extends Message {// implements Parcelable{
 				context, 
 				idx, 
 				subType);
+		
+		if(fromServer == null) {
+			// TODO
+		}
 		
 		this.idx 			= idx;
 		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
