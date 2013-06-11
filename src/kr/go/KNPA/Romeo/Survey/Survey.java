@@ -215,6 +215,12 @@ public class Survey extends Message {// implements Parcelable{
 		if(successful) {
 			// Success
 			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx);
+			
+			SurveyFragment departedFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+			if( departedFragment != null && departedFragment.listView != null) {
+				departedFragment.listView.refresh();
+			}
+			
 		}  else {
 			// Failure
 		}

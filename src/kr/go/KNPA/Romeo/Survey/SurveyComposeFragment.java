@@ -462,10 +462,10 @@ public class SurveyComposeFragment extends Fragment {
 		
 		// FragmentManager fm = getActivity().getSupportFragmentManager();
 		// fm.getBackStackEntryAt(fm.getBackStackEntryCount()-2).;
-		SurveyFragment departedFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
-		if( departedFragment != null && departedFragment.listView != null) {
-			departedFragment.listView.refresh();
-		}
+//		SurveyFragment departedFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+//		if( departedFragment != null && departedFragment.listView != null) {
+//			departedFragment.listView.refresh();
+//		}
 		MainActivity.sharedActivity().popContent();
 	}
 	

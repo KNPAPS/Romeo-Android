@@ -3,7 +3,9 @@ package kr.go.KNPA.Romeo;
 import java.lang.ref.WeakReference;
 
 import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Document.DocumentListView;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Survey.SurveyListView;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,7 +16,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ListView;
 
 public abstract class RomeoListView extends ListView {
@@ -132,7 +133,14 @@ public abstract class RomeoListView extends ListView {
 			
 			if ( listView != null ) {
 				Cursor c = (Cursor)msg.obj;
-				listView.refresh(c);
+				if(listView instanceof DocumentListView) {
+					((DocumentListView)listView).refresh(c);
+				} else if(listView instanceof SurveyListView) {
+					((SurveyListView)listView).refresh(c);
+				} else {
+					listView.refresh(c);
+				}
+				
 			}
 			
 			listView.onPostExecute( msg.arg1==1?true:false );
