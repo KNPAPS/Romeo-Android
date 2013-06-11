@@ -47,6 +47,7 @@ public class SurveyComposeFragment extends Fragment {
 	//EditText[] openETs;
 	EditText[] closeETs;
 	EditText contentET;
+	CheckBox isResultPublicCB;
 	
 	LinearLayout questionsLL;
 	Button addQuestionBT;
@@ -116,6 +117,9 @@ public class SurveyComposeFragment extends Fragment {
 		closeETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_month);
 		closeETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_day);
 		contentET = (EditText)rootLayout.findViewById(R.id.chat_content);
+		isResultPublicCB = (CheckBox)rootLayout.findViewById(R.id.isResultPublic);
+		
+		
 		ImageView hrIV = (ImageView)rootLayout.findViewById(R.id.hr);
 		hrIV.setVisibility(View.INVISIBLE);
 		// TODO  갯수차면 자동으로 넘어가도록.
@@ -323,6 +327,8 @@ public class SurveyComposeFragment extends Fragment {
 			WaiterView.dismissDialog(getActivity());
 			return;
 		}
+		
+		boolean isResultPublic = isResultPublicCB.isChecked();
 		
 		if(receiversIdx == null || receiversIdx.size() == 0 ) {
 			Toast.makeText(getActivity(), "설문 수신자가 지정되지 않았습니다.", Toast.LENGTH_SHORT).show();

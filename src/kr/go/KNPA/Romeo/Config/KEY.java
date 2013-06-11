@@ -74,6 +74,7 @@ public class KEY {
 
 		public static final String	FORM				= Survey.class.getSimpleName() + "_form";
 		public static final String	QUESTIONS			= "questions";
+		public static final String	IS_RESULT_PUBLIC	= Survey.class.getSimpleName() + "_isResultPublic";
 		public static final String	IS_MULTIPLE			= Survey.class.getSimpleName() + "_isMultiple";
 		public static final String	QUESTION_TITLE		= Question.class.getSimpleName() + "_title";
 		public static final String	QUESTION_CONTENT	= Question.class.getSimpleName() + "_content";

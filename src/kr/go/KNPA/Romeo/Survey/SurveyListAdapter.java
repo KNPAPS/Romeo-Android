@@ -379,7 +379,21 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 				boolean isAnswered = survey.isAnswered(context);
 				boolean isChecked = survey.checked;
 				
-				if(currentTS < openTS) {
+				boolean isResultPublic = false;
+				if( survey.form.containsKey(KEY.SURVEY.IS_RESULT_PUBLIC)) {
+					isResultPublic = (Boolean) survey.form.get(KEY.SURVEY.IS_RESULT_PUBLIC);
+				} else {
+					isResultPublic = true;
+				}
+				
+				if(isAnswered && isResultPublic) {
+					Fragment f = new SurveyResultFragment(survey);
+					if(f != null)
+						MainActivity.sharedActivity().pushContent(f);
+					return;
+					
+					
+				} else if(currentTS < openTS) {
 					Toast.makeText(context, "아직 설문 기간이 아닙니다.", Toast.LENGTH_SHORT).show();
 					
 				} else if(currentTS >= openTS && currentTS < closeTS) {
@@ -409,20 +423,8 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 				Fragment f = new SurveyResultFragment(survey);
 				if(f != null)
 					MainActivity.sharedActivity().pushContent(f);
+				return;
 			}
 						
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-
-			
 		}
 }

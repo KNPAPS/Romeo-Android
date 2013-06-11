@@ -252,7 +252,8 @@ public class Survey extends Message {// implements Parcelable{
 			
 			form.put( KEY.SURVEY.OPEN_TS ,  jo.getLong(KEY.SURVEY.OPEN_TS) );
 			form.put( KEY.SURVEY.CLOSE_TS,  jo.getLong(KEY.SURVEY.CLOSE_TS) );
-			
+			if(jo.has(KEY.SURVEY.IS_RESULT_PUBLIC))
+				form.put( KEY.SURVEY.IS_RESULT_PUBLIC, jo.getInt(KEY.SURVEY.IS_RESULT_PUBLIC) > 0? true : false );
 			
 			JSONArray jQuestions = jo.getJSONArray(KEY.SURVEY.QUESTIONS);
 			
