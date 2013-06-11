@@ -198,6 +198,7 @@ public class SurveyResultFragment extends Fragment {
 		ArrayList<Question> _questions = form.questions();
 		for (int qi = 0; qi < _questions.size(); qi++)
 		{
+			// Question 단계의 작업
 			Question question = _questions.get(qi);
 			LinearLayout questionLL = (LinearLayout) inflater.inflate(R.layout.survey_question_result, _questionsLL, false);
 
@@ -213,10 +214,10 @@ public class SurveyResultFragment extends Fragment {
 			// ChartView
 			ArrayList<Integer> qVote = _votes.get(qi);
 
-
 			// 그래프를 그린다.
 			drawChart(questionLL, qVote);
-			
+
+			// Option들에 대한 처리
 			LinearLayout _optionsLL = (LinearLayout) questionLL.findViewById(R.id.options);
 			ArrayList<String> options = question.options();
 			// nResponders = options.size();
