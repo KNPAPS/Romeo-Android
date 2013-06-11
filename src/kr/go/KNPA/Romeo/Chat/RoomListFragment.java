@@ -129,7 +129,7 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 					};
 
 					final SimpleSectionAdapter<Cursor> sectionAdapter = new SimpleSectionAdapter<Cursor>(getActivity(), mListAdapter, R.layout.section_header, R.id.title, sectionizer);
-
+					
 					final Cursor c = mListAdapter.query(subType);
 					mHandler.post(new Runnable() {
 						public void run()

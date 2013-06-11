@@ -58,7 +58,7 @@ public class ConnectionConfig {
 	public static String requestPayloadJSON = null;
 	public static boolean fetchFile = false;
 	public static int HTTPStatusCode = Constants.NOT_SPECIFIED;
-	public static int timeout = 5000;
+	public static int timeout = 10000;
 	public static String type = ConnectionConfig.HTTP_TYPE_POST;
 	/**@}*/
 }

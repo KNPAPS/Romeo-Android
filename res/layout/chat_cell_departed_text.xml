@@ -19,7 +19,6 @@
         android:paddingLeft="@dimen/gapSmall"
         android:paddingRight="15dp"
         android:paddingTop="@dimen/gapSmall"
-        android:text="@string/loremIpsumLong"
         android:textColor="@color/text"
         android:textSize="16sp" />
 

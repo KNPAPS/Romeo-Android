@@ -256,14 +256,14 @@ public class ChatListAdapter extends CursorAdapter {
 									{
 										if (mListener != null)
 										{
-											mListener.onFailedChatReSend(messageIdx);
+											mListener.onFailedChatReSend(listItem.getTag().toString());
 										}
 									}
 									break;
 								case 1:// 삭제
 									if (mListener != null)
 									{
-										mListener.onChatDelete(messageIdx);
+										mListener.onChatDelete(listItem.getTag().toString());
 									}
 									break;
 								}
@@ -456,7 +456,7 @@ public class ChatListAdapter extends CursorAdapter {
 							mListener.onChatTextCopy(text);
 							break;
 						case 1:// 삭제
-							String chatHash = (String) ((View) view.getParent().getParent()).getTag();
+							String chatHash = (String) ((View) view.getParent()).getTag();
 							mListener.onChatDelete(chatHash);
 							break;
 						}

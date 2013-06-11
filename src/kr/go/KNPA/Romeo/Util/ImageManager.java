@@ -105,7 +105,7 @@ public class ImageManager {
 		reqData.add(0, KEY.UPLOAD.FILE_IDX, imageHash);
 		reqData.add(0, KEY.UPLOAD.FILE_TYPE, imageType);
 		requestPayload.setData(reqData);
-		Connection conn = new Connection().requestPayload(requestPayload).async(async).contentType(contentType).attachFile(fileName).callBack(callBack);
+		Connection conn = new Connection().timeout(30000).requestPayload(requestPayload).async(async).contentType(contentType).attachFile(fileName).callBack(callBack);
 		conn.request();
 		return conn.successful;
 	}

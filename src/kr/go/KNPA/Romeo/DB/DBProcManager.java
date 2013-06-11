@@ -632,8 +632,7 @@ public class DBProcManager {
 					" from " + DBSchema.ROOM.TABLE_NAME + " r " + " left join " + DBSchema.CHAT.TABLE_NAME + " lc " + " on lc._id = r." + DBSchema.ROOM.COLUMN_LAST_CHAT_ID +
 
 					" where " + DBSchema.ROOM.COLUMN_TYPE + " = " + String.valueOf(roomType) +
-
-					" order by lc." + DBSchema.CHAT.COLUMN_CREATED_TS + " desc ";
+					" order by r."+DBSchema.ROOM.COLUMN_AM_I_HOST+" desc, lc." + DBSchema.CHAT.COLUMN_CREATED_TS + " desc ";
 			String[] val = { UserInfo.getUserIdx(context) };
 			Cursor c = db.rawQuery(sql, val);
 			return c;
@@ -686,9 +685,30 @@ public class DBProcManager {
 		 */
 		public void deleteChat(String chatHash)
 		{
-			String sql = "delete from " + DBSchema.CHAT.TABLE_NAME + " where " + DBSchema.CHAT.COLUMN_IDX + " = ?";
+			if (chatHash == null) return;
+			
+			String sql = "select "+DBSchema.CHAT.COLUMN_ROOM_ID+" from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_IDX+" = ?";
 			String[] val = { chatHash };
+			Cursor c = db.rawQuery(sql, val);
+			if (!c.moveToNext())
+			{
+				return;
+			}
+			
+			int roomId = c.getInt(0);
+			c.close();
+			sql = "delete from " + DBSchema.CHAT.TABLE_NAME + " where " + DBSchema.CHAT.COLUMN_IDX + " = ?";
 			db.execSQL(sql, val);
+			
+			sql = "select _id from "+DBSchema.CHAT.TABLE_NAME+" where "+DBSchema.CHAT.COLUMN_ROOM_ID+" = "+String.valueOf(roomId)+" order by "+DBSchema.CHAT.COLUMN_CREATED_TS+" desc limit 1";
+			Cursor cc = db.rawQuery(sql, null);
+			if (cc.moveToNext())
+			{
+				int lastChatId = cc.getInt(0);
+				sql = "update "+DBSchema.ROOM.TABLE_NAME+" set "+DBSchema.ROOM.COLUMN_LAST_CHAT_ID+" = "+String.valueOf(lastChatId)+" where _id = "+String.valueOf(roomId);
+				db.execSQL(sql);
+			}
+			
 		}
 
 		public static final String	COLUMN_ROOM_IDX					= "room_idx";
