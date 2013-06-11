@@ -104,6 +104,7 @@ class RoomListAdapter extends CursorAdapter {
 		{
 			// 빈 방
 			departmentTV.setText("");
+			numChatters.setText("(빈 방)");
 		}
 
 		// About Message

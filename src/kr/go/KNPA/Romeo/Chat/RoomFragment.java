@@ -636,6 +636,10 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 		{
 			mLayout.setNavBarTitleTV(ellipsedName);
 		}
+		else if (n == 1)
+		{
+			mLayout.setNavBarTitleTV(ellipsedName + " (빈 방)");
+		}
 		else
 		{
 			mLayout.setNavBarTitleTV(ellipsedName + " (" + String.valueOf(n) + "명)");

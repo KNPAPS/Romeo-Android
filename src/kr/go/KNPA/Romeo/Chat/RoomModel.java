@@ -366,7 +366,8 @@ public class RoomModel extends BaseModel {
 		}
 		else
 		{
-			title = "빈 방";
+			// 빈 방일 경우 마지막 타이틀을 유지한다.
+			title = mRoom.getTitle();
 		}
 
 		DBProcManager.sharedManager(mContext).chat().setRoomTitle(mRoom.getCode(), title);
