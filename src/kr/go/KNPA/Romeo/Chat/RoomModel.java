@@ -131,7 +131,14 @@ public class RoomModel extends BaseModel {
 		String roomName = null;
 		if (mRoom.getStatus() == Room.STATUS_VIRTUAL)
 		{
-			roomName = mRoom.getType() == Room.TYPE_MEETING ? mContext.getString(R.string.meetingTitle) : mContext.getString(R.string.commandTitle);
+			if (mRoom.chatters.size() == 1)
+			{
+				roomName = Constants.POLICE_RANK[ mRoom.chatters.get(0).rank ] + " " + mRoom.chatters.get(0).name;
+			}
+			else
+			{
+				roomName = mRoom.getType() == Room.TYPE_MEETING ? mContext.getString(R.string.meetingTitle) : mContext.getString(R.string.commandTitle);
+			}
 		}
 		else
 		{

@@ -67,7 +67,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 			}
 
 			User user = User.getUserWithIdx(idx);
-			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_MEDIUM, idx, userPicIV);
+			new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, idx, userPicIV);
 			if (title == null || title.length() < 1)
 			{
 				title = user.name;

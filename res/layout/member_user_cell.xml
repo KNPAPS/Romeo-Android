@@ -21,10 +21,9 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_gravity="center_vertical"
-      	android:layout_margin="11dp"
-      	android:contentDescription="@string/dummy"
-        android:src="@color/black" />
-
+        android:layout_margin="11dp"
+        android:contentDescription="@string/dummy"
+        android:src="@drawable/user_pic_default" />
 		
     <LinearLayout
         android:layout_width="0dp"

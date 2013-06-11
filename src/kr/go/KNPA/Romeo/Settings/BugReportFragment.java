@@ -1,7 +1,5 @@
 package kr.go.KNPA.Romeo.Settings;
 
-import java.util.Calendar;
-
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Event;
@@ -67,7 +65,7 @@ public class BugReportFragment extends Fragment {
 	private void submit()
 	{
 
-		Data reqData = new Data().add(0, KEY.USER.IDX, UserInfo.getUserIdx(getActivity())).add(0, KEY.MESSAGE.CREATED_TS, Calendar.getInstance().getTime())
+		Data reqData = new Data().add(0, KEY.USER.IDX, UserInfo.getUserIdx(getActivity())).add(0, KEY.MESSAGE.CREATED_TS, System.currentTimeMillis() / 1000)
 				.add(0, KEY.MESSAGE.CONTENT, content.getText().toString());
 
 		Payload request = new Payload().setEvent(Event.USER_BUG_REPORT).setData(reqData);
