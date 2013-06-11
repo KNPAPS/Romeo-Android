@@ -10,5 +10,5 @@ public class StatusCode {
 	public static final int INSUFFICIENT_INFORMATION=2; /*!< 전달한 정보가 불충분함 */
 	public static final int NO_DATA=3;/*!< db에 원하는 데이터가 없음. 유저가 등록되지 않았거나 삭제하려는 데이터가 없거나.. */
 	public static final int FAILED_TO_UPLOAD=4; /*!< 파일 업로드 실패 */
-	
+	public static final int NETWORK_ERROR = 5;
 }

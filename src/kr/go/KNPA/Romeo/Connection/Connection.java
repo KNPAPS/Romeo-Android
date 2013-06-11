@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.Config.ConnectionConfig;
 import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import android.os.Handler;
@@ -199,6 +200,8 @@ public class Connection {
 			}
 			else
 			{ // HTTP 에러
+				responsePayload = new Payload();
+				responsePayload.setStatusCode(StatusCode.NETWORK_ERROR);
 				callBack.onError("서버와 통신 중 오류가 발생했습니다", new Exception("HTTP response Code : " + HTTPStatusCode));
 			}
 
@@ -396,11 +399,15 @@ public class Connection {
 			}
 			else
 			{
+				responsePayload = new Payload();
+				responsePayload.setStatusCode(StatusCode.NETWORK_ERROR);
 				Log.e(TAG, "HTTP response code : " + statusCode + " " + requestPayloadJSON);
 			}
 		}
 		catch (IOException e)
 		{
+			responsePayload = new Payload();
+			responsePayload.setStatusCode(StatusCode.NETWORK_ERROR);
 			Log.e(TAG, e.getMessage());
 			throw new RuntimeException(e);
 		}

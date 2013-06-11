@@ -663,7 +663,7 @@ public class DBProcManager {
 			String sql = "select * from (select _id, " + DBSchema.CHAT.COLUMN_IDX + COLUMN_CHAT_IDX + ", " + DBSchema.CHAT.COLUMN_SENDER_IDX + COLUMN_CHAT_SENDER_IDX + ", "
 					+ DBSchema.CHAT.COLUMN_CREATED_TS + COLUMN_CHAT_TS + ", " + DBSchema.CHAT.COLUMN_CONTENT + COLUMN_CHAT_CONTENT + ", " + DBSchema.CHAT.COLUMN_STATE + COLUMN_CHAT_STATE + ", "
 					+ DBSchema.CHAT.COLUMN_CONTENT_TYPE + COLUMN_CHAT_CONTENT_TYPE + " from " + DBSchema.CHAT.TABLE_NAME + " where " + DBSchema.CHAT.COLUMN_ROOM_ID + " = " + String.valueOf(roomId)
-					+ " order by " + DBSchema.CHAT.COLUMN_CREATED_TS + " desc " + " limit " + String.valueOf(start) + ", " + String.valueOf(count) + ") tmp order by " + COLUMN_CHAT_TS + " asc ";
+					+ " order by " + DBSchema.CHAT.COLUMN_CREATED_TS + " desc " + " limit " + String.valueOf(start) + ", " + String.valueOf(count) + ") tmp order by case "+COLUMN_CHAT_STATE+" when "+Chat.STATE_FAIL+" then 1 else 0 end asc," + COLUMN_CHAT_TS + " asc ";
 			return db.rawQuery(sql, null);
 		}
 
