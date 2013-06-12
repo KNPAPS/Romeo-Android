@@ -544,7 +544,7 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		for(int i = 0; i < getCount(); i++) {
 			ImageView imageView = new ImageView(getActivity());
 			LayoutParams lp = imageView.getLayoutParams();
-			if(lp == null) {
+//			if(lp == null) {
 //				lp = new LayoutParams(, height)
 //			}
 //			pagerIndicator.addView(child)
