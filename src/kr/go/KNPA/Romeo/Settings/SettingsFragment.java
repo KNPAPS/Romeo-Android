@@ -6,9 +6,8 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.VibrationPattern;
-import kr.go.KNPA.Romeo.Util.UserInfo;
-import kr.go.KNPA.Romeo.Util.WaiterView;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -243,7 +242,7 @@ public class SettingsFragment extends Fragment {
 					}
 				});*/
 		
-		SettingsCellMaker.setTitle(cDevInfo, "개발 정보");
+		SettingsCellMaker.setTitle(cDevInfo, "최신 버전 다운로드");
 		SettingsCellMaker.setOnClickListner(	cDevInfo, 
 				new OnClickListener() {
 					

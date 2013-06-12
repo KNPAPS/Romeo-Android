@@ -30,7 +30,6 @@ import android.os.Build.VERSION;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -51,10 +50,14 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 	int maxHeight;
 	Point screenSize;
 	LinearLayout pagerIndicator;
+
+	boolean scrolling = false; 
 	
 	private final static int ChartType_Pie = 0;
 	private final static int ChartType_Bar = 1;
 
+	private final static String PagerIndicatorTagPrefix = "indicator"; 
+	
 	private Resources getResources() {
 		return controller.getResources();
 	}
@@ -93,7 +96,7 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		}
 		
 		this.pagerIndicator = pagerIndicator;
-				
+		initPagerIndicator();
 	}
 	
 //	public void renderChart() {
@@ -521,20 +524,32 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 //	}
 
 	@Override
-	public void onPageScrollStateChanged(int position) {
-		//Log.e("VP", "onPageScrollStateChanged : " + position);
-		// 기본/up : 0, down : 1, moved : 2 
+	public void onPageScrollStateChanged(int state) {
+		//Log.e("VP", "onPageScrollStateChanged : " + state);
+		// 기본/up : 0, down : 1, moved : 2
+		
+		scrolling = (state % 2 == 1) ? true : false;
 	}
 
 	@Override
 	public void onPageScrolled(int position, float ratio, int posPX) {
 		//Log.e("VP", "onPageScrolled : " + position + ", " + ratio + ", " + posPX);
+		if(scrolling) {
+			if(0.1 < ratio && ratio < 0.3 ) {
+				pager.setCurrentItem( 1 , true);
+				scrolling = false;
+			} else if( 0.7 < ratio && ratio < 0.9 ) {
+				pager.setCurrentItem( 0 , true);
+				scrolling = false;
+			}
+			return;
+		}
 	}
 
 	@Override
 	public void onPageSelected(int position) {
-		Log.e("VP", "onPageSelected" + position);
-		
+		//Log.e("VP", "onPageSelected" + position);
+		activePagerIndicator(position);
 	}
 
 	
@@ -542,13 +557,33 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 	
 	private void initPagerIndicator() {
 		for(int i = 0; i < getCount(); i++) {
-			ImageView imageView = new ImageView(getActivity());
-			LayoutParams lp = imageView.getLayoutParams();
-//			if(lp == null) {
-//				lp = new LayoutParams(, height)
-//			}
-//			pagerIndicator.addView(child)
+
+			ImageView bubble = new ImageView(getActivity());
+			bubble.setTag(PagerIndicatorTagPrefix + i);
+			LayoutParams lp = bubble.getLayoutParams();
+			int diameter =  (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getActivity().getResources().getDisplayMetrics());
+			int padding = (int)(0.2 * diameter);
+			if(lp == null) {
+				lp = new LayoutParams(diameter, diameter);
+			} else {
+				lp.width = diameter;
+				lp.height = diameter;
+			}
+			bubble.setLayoutParams(lp);
+			bubble.setPadding(padding, padding, padding, padding);
+			bubble.setImageResource(R.drawable.pager_indicator_bubble_inactive);
+			
+			pagerIndicator.addView(bubble);
 		}
 		
+		activePagerIndicator(0);
+	}
+	
+	private void activePagerIndicator (int position) {
+		for(int i=0; i< pagerIndicator.getChildCount(); i++) {
+			((ImageView)pagerIndicator.getChildAt(i)).setImageResource(R.drawable.pager_indicator_bubble_inactive);
+		}
+		ImageView selected = (ImageView)pagerIndicator.findViewWithTag(PagerIndicatorTagPrefix + position);
+		selected.setImageResource(R.drawable.pager_indicator_bubble_active);
 	}
 }

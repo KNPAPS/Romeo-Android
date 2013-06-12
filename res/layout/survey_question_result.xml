@@ -49,11 +49,12 @@
 			 />
 	    <LinearLayout
 	        android:layout_alignParentTop="true"
-	        android:background="@color/red"
+	        android:layout_centerHorizontal="true"
 	        android:id="@+id/pager_indicator"
 	        android:layout_marginTop="235dp"
 	        android:layout_width="200dp" 
 	        android:layout_height="16dp"
+	        android:gravity="center"
 	        android:orientation="horizontal"
 	        />
     </RelativeLayout>
