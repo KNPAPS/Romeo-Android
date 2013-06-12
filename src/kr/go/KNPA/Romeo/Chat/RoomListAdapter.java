@@ -2,8 +2,8 @@ package kr.go.KNPA.Romeo.Chat;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Constants;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.DB.ChatDAO;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -40,22 +40,22 @@ class RoomListAdapter extends CursorAdapter {
 	{
 
 		// 룸코드
-		String roomCode = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_IDX));
+		String roomCode = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_IDX));
 		v.setTag(roomCode);
 		// 채팅방 제목
-		String title = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_TITLE));
+		String title = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_TITLE));
 		// 채팅방 별칭
-		String alias = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_ALIAS));
+		String alias = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_ALIAS));
 		// 채팅방에 있는 사람 수
-		int nUsers = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_NUM_CHATTER)) + 1;
+		int nUsers = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_ROOM_NUM_CHATTER)) + 1;
 		// 읽지 않은 채팅 수
-		int nUnchecked = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_NUM_NEW_CHAT));
+		int nUnchecked = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_ROOM_NUM_NEW_CHAT));
 		// 마지막 채팅이 도착한 시간 TS
-		long arrivalTS = c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_LAST_CHAT_TS));
+		long arrivalTS = c.getLong(c.getColumnIndex(ChatDAO.COLUMN_ROOM_LAST_CHAT_TS));
 		// 마지막 채팅의 내용
-		String lastContent = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_ROOM_LAST_CHAT_CONTENT));
+		String lastContent = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_LAST_CHAT_CONTENT));
 		// 1:1채팅의 경우 상대방 idx
-		String chatterIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_USER_IDX));
+		String chatterIdx = c.getString(c.getColumnIndex(ChatDAO.COLUMN_USER_IDX));
 
 		// 실제 출력될 채팅방 이름
 		String roomTitle = null;
@@ -144,7 +144,7 @@ class RoomListAdapter extends CursorAdapter {
 		}
 
 		Cursor c = (Cursor) getItem(position);
-		String roomIdx = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IDX));
+		String roomIdx = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_IDX));
 
 		View v = null;
 
@@ -175,6 +175,6 @@ class RoomListAdapter extends CursorAdapter {
 
 	public Cursor query(int roomType)
 	{
-		return DBProcManager.sharedManager(mContext).chat().getRoomList(roomType);
+		return DAO.chat(mContext).getRoomList(roomType);
 	}
 }

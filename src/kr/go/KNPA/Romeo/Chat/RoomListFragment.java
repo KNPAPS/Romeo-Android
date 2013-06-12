@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.ChatDAO;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
@@ -19,8 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class RoomListFragment extends Fragment implements RoomListFragmentLayout.Listener {
-	private static RoomListFragment	mCommandListController	= null;
-	private static RoomListFragment	mMeetingListController	= null;
+	private static RoomListFragment	mCommandListFragment	= null;
+	private static RoomListFragment	mMeetingListFragment	= null;
 	private static RoomFragment		mCurrentRoom			= null;
 
 	private static Handler			mHandler;
@@ -39,26 +40,26 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 
 		if (subType == Chat.TYPE_COMMAND)
 		{
-			if (mCommandListController == null)
+			if (mCommandListFragment == null)
 			{
-				mCommandListController = new RoomListFragment(Chat.TYPE_COMMAND);
+				mCommandListFragment = new RoomListFragment(Chat.TYPE_COMMAND);
 			}
 
-			f = mCommandListController;
+			f = mCommandListFragment;
 		}
 		else
 		{
-			if (mMeetingListController == null)
+			if (mMeetingListFragment == null)
 			{
-				mMeetingListController = new RoomListFragment(Chat.TYPE_MEETING);
+				mMeetingListFragment = new RoomListFragment(Chat.TYPE_MEETING);
 			}
 
-			f = mMeetingListController;
+			f = mMeetingListFragment;
 		}
 
 		return f;
 	}
-
+	
 	public static RoomFragment getCurrentRoom()
 	{
 		return mCurrentRoom;
@@ -70,17 +71,23 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
 		mHandler = null;
 		if (subType == Chat.TYPE_COMMAND)
 		{
-			mCommandListController = null;
+			mCommandListFragment = null;
 		}
 		else if (subType == Chat.TYPE_MEETING)
 		{
-			mMeetingListController = null;
+			mMeetingListFragment = null;
 		}
 	}
 
@@ -114,7 +121,7 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 						@Override
 						public String getSectionTitleForItem(Cursor c)
 						{
-							int isHost = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_IS_HOST));
+							int isHost = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_IS_HOST));
 							String sectionTitle = null;
 							if (isHost == 1)
 							{
@@ -186,7 +193,7 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 				}
 				else if (receiversIdxs.size() == 1)
 				{
-					roomCode = DBProcManager.sharedManager(getActivity()).chat().getPairRoomCode(subType, receiversIdxs.get(0));
+					roomCode = DAO.chat(getActivity()).getPairRoomCode(subType, receiversIdxs.get(0));
 
 				}
 

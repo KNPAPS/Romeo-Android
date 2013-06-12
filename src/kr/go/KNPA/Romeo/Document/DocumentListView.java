@@ -3,8 +3,8 @@ package kr.go.KNPA.Romeo.Document;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.DocuDAO;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.WaiterView;
@@ -35,7 +35,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 				@Override
 				public String getSectionTitleForItem(Cursor c) {
 					boolean checked = (c.getInt(c.getColumnIndex(
-										DBProcManager.sharedManager(getContext()).document().COLUMN_IS_CHECKED
+										DAO.document(getContext()).COLUMN_IS_CHECKED
 										)) >0 ? true : false);
 					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 				}
@@ -61,14 +61,14 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 	@Override
 	protected Cursor query() {
 		
-		DBProcManager dbm = DBProcManager.sharedManager(getContext());
-		Cursor c = dbm.document().getDocumentList(this.subType);
+		Cursor c = DAO.document(getContext()).getDocumentList(this.subType);
 		return c;
 		
 		//return DBProcManager.sharedManager(getContext()).document().getDocumentList(this.type);
 	}	
 
 	// Click Listener
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
 		ListAdapter adapter = listAdapter;
@@ -77,7 +77,7 @@ public class DocumentListView extends RomeoListView implements android.widget.Ad
 		
 		Cursor c = (Cursor)adapter.getItem(position);
 	
-		String documentIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
+		String documentIdx = c.getString(c.getColumnIndex(DocuDAO.COLUMN_DOC_IDX));
 		
 		DocumentDetailFragment fragment = new DocumentDetailFragment(documentIdx);//, type);
 		MainActivity.sharedActivity().pushContent(fragment);

@@ -12,8 +12,8 @@ import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.DocuDAO;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.User;
@@ -409,17 +409,17 @@ public class MenuListFragment extends ListFragment {
 	private ArrayList<Document> searchInDocuments(String keyword)
 	{
 		// // 문서
-		Cursor cDoc = DBProcManager.sharedManager(getActivity()).document().search(keyword);
+		Cursor cDoc = DAO.document(getActivity()).search(keyword);
 		ArrayList<Document> resDocs = new ArrayList<Document>();
 		cDoc.moveToFirst();
 		while (cDoc.getCount() > 0 && !cDoc.isAfterLast())
 		{
-			Document doc = new Document(cDoc.getString(cDoc.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX)), cDoc.getInt(cDoc.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE)),
-					cDoc.getString(cDoc.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE)), cDoc.getString(cDoc.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT)), cDoc.getString(cDoc
-							.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX)), null, (cDoc.getInt(cDoc.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE)) != Document.TYPE_DEPARTED) ? true
-							: false, cDoc.getLong(cDoc.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS)), (cDoc.getInt(cDoc.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) == 1) ? true
-							: false, cDoc.getLong(cDoc.getColumnIndex(DocumentProcManager.COLUMN_CHECKED_TS)), null, null,
-					(cDoc.getInt(cDoc.getColumnIndex(DocumentProcManager.COLUMN_IS_FAVORITE)) == 1) ? true : false);
+			Document doc = new Document(cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_IDX)), cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE)),
+					cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TITLE)), cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_CONTENT)), cDoc.getString(cDoc
+							.getColumnIndex(DocuDAO.COLUMN_SENDER_IDX)), null, (cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE)) != Document.TYPE_DEPARTED) ? true
+							: false, cDoc.getLong(cDoc.getColumnIndex(DocuDAO.COLUMN_CREATED_TS)), (cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_IS_CHECKED)) == 1) ? true
+							: false, cDoc.getLong(cDoc.getColumnIndex(DocuDAO.COLUMN_CHECKED_TS)), null, null,
+					(cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_IS_FAVORITE)) == 1) ? true : false);
 			resDocs.add(doc);
 			cDoc.moveToNext();
 		}

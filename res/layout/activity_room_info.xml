@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/gap"
-                android:background="@drawable/rounded_square"
+                android:background="@drawable/room_info_cell"
                 android:fadingEdge="horizontal"
                 android:orientation="vertical"
                 android:padding="@dimen/gap" >
@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/gap"
-                android:background="@drawable/rounded_square"
+                android:background="@drawable/room_info_cell"
                 android:fadingEdge="horizontal"
                 android:orientation="horizontal"
                 android:padding="@dimen/gap" >
@@ -113,10 +113,12 @@
 			        android:id="@+id/btn_full_chatter_list"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:background="@drawable/round_shadow_white"
+			        android:background="@drawable/room_info_button"
+			        android:padding="15dp"
 			        android:text="전체 참여자 목록"
 			        android:textColor="@color/black"
 			        android:textSize="16sp" />
+
 			</LinearLayout>
 
 			<LinearLayout
@@ -129,7 +131,8 @@
 				    android:id="@+id/btn_invite_chatter"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
-				    android:background="@drawable/round_shadow_white"
+				    android:background="@drawable/room_info_button"
+				    android:padding="15dp"
 				    android:text="참여자 추가하기"
 				    android:textColor="@color/black"
 				    android:textSize="16sp" />
@@ -151,7 +154,8 @@
                     android:id="@+id/btn_leave_room"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/round_shadow_gray"
+                    android:background="@drawable/room_info_button"
+                    android:padding="15dp"
                     android:text="방 나가기"
                     android:textColor="@color/black"
                     android:textSize="16sp" />

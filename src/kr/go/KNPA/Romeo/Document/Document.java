@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.DocuDAO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,23 +99,23 @@ public class Document extends Message {// implements Parcelable{
 	public Document(Context context, Cursor c) {
 		//super(c);
 		
-		this.idx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
+		this.idx = c.getString(c.getColumnIndex(DocuDAO.COLUMN_DOC_IDX));
 		
-		DocumentProcManager dpm = DBProcManager.sharedManager(context).document();
+		DocuDAO dpm = DBProcManager.sharedManager(context).document();
 		
 		//// getDocumentContent(String docHash) 한 문서의 기본 정보 조회(포워딩,파일빼고)////
 		// 제목 (String)
 		Cursor cursor_documentInfo = dpm.getDocumentContent(this.idx);
 		cursor_documentInfo.moveToFirst();
-		this.title = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
+		this.title = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_TITLE));
 		// 내용 (String)
-		this.content = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
+		this.content = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_CONTENT));
 		// 발신자 (String)
-		this.senderIdx = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX));
+		this.senderIdx = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_SENDER_IDX));
 		// 발신일시 (long)
-		this.TS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		this.TS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_TS));
 		// 문서카테고리 (int) Document.TYPE_DEPARTED, Document.TYPE_RECEIVED
-		int subType = cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE));
+		int subType = cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE));
 		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
 		if(subType == Document.TYPE_DEPARTED) {
 			this.received = false; 
@@ -126,10 +126,10 @@ public class Document extends Message {// implements Parcelable{
 		}
 		
 		// 즐겨찾기여부 (int)
-		this.favorite = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
+		this.favorite = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
 		
-		this.checked = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
-		this.checkTS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_CHECKED_TS));
+		this.checked = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_IS_CHECKED)) > 0) ? true : false;
+		this.checkTS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_CHECKED_TS));
 						
 		//// getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 ////
 		Cursor cursor_forwardInfo = dpm.getDocumentForwardInfo(this.idx);
@@ -139,11 +139,11 @@ public class Document extends Message {// implements Parcelable{
 			while( !cursor_forwardInfo.isAfterLast() ) {
 				HashMap<String, Object> fwd = new HashMap<String, Object>();
 				// 포워더 (String)
-				fwd.put(KEY.DOCUMENT.FORWARDER_IDX,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_IDX)) );
+				fwd.put(KEY.DOCUMENT.FORWARDER_IDX,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocuDAO.COLUMN_FORWARDER_IDX)) );
 				// 코멘트 (String)
-				fwd.put(KEY.DOCUMENT.FORWARD_TS,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT)) );
+				fwd.put(KEY.DOCUMENT.FORWARD_TS,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocuDAO.COLUMN_FORWARD_COMMENT)) );
 				// 포워딩한 시간 (long)
-				fwd.put(KEY.DOCUMENT.FORWARD_TS, cursor_forwardInfo.getLong(cursor_forwardInfo.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS)) );
+				fwd.put(KEY.DOCUMENT.FORWARD_TS, cursor_forwardInfo.getLong(cursor_forwardInfo.getColumnIndex(DocuDAO.COLUMN_FORWARD_TS)) );
 				
 				fwds.add(fwd);
 			}
@@ -159,13 +159,13 @@ public class Document extends Message {// implements Parcelable{
 				HashMap<String, Object> f = new HashMap<String, Object>();
 				
 				// 파일이름 (String)
-				f.put( KEY.DOCUMENT.FILE_NAME , cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME)) );
+				f.put( KEY.DOCUMENT.FILE_NAME , cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_NAME)) );
 				// 파일종류 (int)
-				f.put( KEY.DOCUMENT.FILE_TYPE, cursor_attInfo.getInt(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE)) );
+				f.put( KEY.DOCUMENT.FILE_TYPE, cursor_attInfo.getInt(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_TYPE)) );
 				// 파일사이즈 (long)
-				f.put( KEY.DOCUMENT.FILE_SIZE, cursor_attInfo.getLong(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE)) );
+				f.put( KEY.DOCUMENT.FILE_SIZE, cursor_attInfo.getLong(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_SIZE)) );
 				// 파일 hash (String)
-				f.put( KEY.DOCUMENT.FILE_IDX, cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_IDX)) );
+				f.put( KEY.DOCUMENT.FILE_IDX, cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_IDX)) );
 				
 				fs.add(f);
 			}
@@ -179,21 +179,21 @@ public class Document extends Message {// implements Parcelable{
 	public Document(Context context, String documentIdx) {
 		this.idx = documentIdx;
 		
-		DocumentProcManager dpm = DBProcManager.sharedManager(context).document();
+		DocuDAO dpm = DAO.document(context);
 		
 		/*getDocumentContent(String docHash) 한 문서의 기본 정보 조회(포워딩,파일빼고) */
 		// 제목 (String)
 		Cursor cursor_documentInfo = dpm.getDocumentContent(this.idx);
 		cursor_documentInfo.moveToFirst();
-		this.title = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
+		this.title = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_TITLE));
 		// 내용 (String)
-		this.content = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_CONTENT));
+		this.content = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_CONTENT));
 		// 발신자 (String)
-		this.senderIdx = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX));
+		this.senderIdx = cursor_documentInfo.getString(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_SENDER_IDX));
 		// 발신일시 (long)
-		this.TS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_TS));
+		this.TS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_TS));
 		// 문서카테고리 (int) Document.TYPE_DEPARTED, Document.TYPE_RECEIVED
-		int subType = cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_DOC_TYPE));
+		int subType = cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE));
 		this.type = Message.MESSAGE_TYPE_DOCUMENT * Message.MESSAGE_TYPE_DIVIDER + subType;
 		if(subType == Document.TYPE_DEPARTED) {
 			this.received = false; 
@@ -204,10 +204,10 @@ public class Document extends Message {// implements Parcelable{
 		}
 		
 		// 즐겨찾기여부 (int)
-		this.favorite = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
+		this.favorite = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_IS_FAVORITE)) > 0 ) ? true : false;
 		
-		this.checked = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_IS_CHECKED)) > 0) ? true : false;
-		this.checkTS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocumentProcManager.COLUMN_CHECKED_TS));
+		this.checked = ( cursor_documentInfo.getInt(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_IS_CHECKED)) > 0) ? true : false;
+		this.checkTS = cursor_documentInfo.getLong(cursor_documentInfo.getColumnIndex(DocuDAO.COLUMN_CHECKED_TS));
 						
 		/* getDocumentForwardInfo(String docHash) 문서의 포워딩 정보	 */
 		Cursor cursor_forwardInfo = dpm.getDocumentForwardInfo(this.idx);
@@ -217,11 +217,11 @@ public class Document extends Message {// implements Parcelable{
 			while( !cursor_forwardInfo.isAfterLast() ) {
 				HashMap<String, Object> fwd = new HashMap<String, Object>();
 				// 포워더 (String)
-				fwd.put(KEY.DOCUMENT.FORWARDER_IDX,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocumentProcManager.COLUMN_FORWARDER_IDX)) );
+				fwd.put(KEY.DOCUMENT.FORWARDER_IDX,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocuDAO.COLUMN_FORWARDER_IDX)) );
 				// 코멘트 (String)
-				fwd.put(KEY.DOCUMENT.FORWARD_TS,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_COMMENT)) );
+				fwd.put(KEY.DOCUMENT.FORWARD_TS,  cursor_forwardInfo.getString(cursor_forwardInfo.getColumnIndex(DocuDAO.COLUMN_FORWARD_COMMENT)) );
 				// 포워딩한 시간 (long)
-				fwd.put(KEY.DOCUMENT.FORWARD_TS, cursor_forwardInfo.getLong(cursor_forwardInfo.getColumnIndex(DocumentProcManager.COLUMN_FORWARD_TS)) );
+				fwd.put(KEY.DOCUMENT.FORWARD_TS, cursor_forwardInfo.getLong(cursor_forwardInfo.getColumnIndex(DocuDAO.COLUMN_FORWARD_TS)) );
 				
 				fwds.add(fwd);
 			}
@@ -237,13 +237,13 @@ public class Document extends Message {// implements Parcelable{
 				HashMap<String, Object> f = new HashMap<String, Object>();
 				
 				// 파일이름 (String)
-				f.put( KEY.DOCUMENT.FILE_NAME , cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_NAME)) );
+				f.put( KEY.DOCUMENT.FILE_NAME , cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_NAME)) );
 				// 파일종류 (int)
-				f.put( KEY.DOCUMENT.FILE_TYPE, cursor_attInfo.getInt(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_TYPE)) );
+				f.put( KEY.DOCUMENT.FILE_TYPE, cursor_attInfo.getInt(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_TYPE)) );
 				// 파일사이즈 (long)
-				f.put( KEY.DOCUMENT.FILE_SIZE, cursor_attInfo.getLong(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_SIZE)) );
+				f.put( KEY.DOCUMENT.FILE_SIZE, cursor_attInfo.getLong(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_SIZE)) );
 				// 파일 hash (String)
-				f.put( KEY.DOCUMENT.FILE_IDX, cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocumentProcManager.COLUMN_FILE_IDX)) );
+				f.put( KEY.DOCUMENT.FILE_IDX, cursor_attInfo.getString(cursor_attInfo.getColumnIndex(DocuDAO.COLUMN_FILE_IDX)) );
 				
 				fs.add(f);
 			}
@@ -269,7 +269,7 @@ public class Document extends Message {// implements Parcelable{
 	
 	// Manage if Favorite
 	public void toggleFavorite(Context context) {
-		DBProcManager.sharedManager(context).document().setFavorite(this.idx, !this.favorite);
+		DAO.document(context).setFavorite(this.idx, !this.favorite);
 		this.favorite = !this.favorite;
 	}
 	
@@ -308,7 +308,7 @@ public class Document extends Message {// implements Parcelable{
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).document().saveDocumentOnSend(this.idx, this.senderIdx, this.title, this.content, this.TS, this.files);
+			DAO.document(context).saveDocumentOnSend(this.idx, this.senderIdx, this.title, this.content, this.TS, this.files);
 		}  else {
 			// Failure
 		}

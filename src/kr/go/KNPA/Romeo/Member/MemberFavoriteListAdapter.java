@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.MemberDAO;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import android.content.Context;
 import android.content.Intent;
@@ -45,13 +45,13 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 	public void bindView(View v, final Context ctx, Cursor c)
 	{
 		// 즐겨찾기 목록 가져옴
-		MemberProcManager mpm = DBProcManager.sharedManager(ctx).member();
+		MemberDAO mpm = DAO.member(ctx);
 		// 즐겨찾기 해쉬(유저면 유저해쉬 그룹이면 즐찾그룹해쉬)
-		final String idx = c.getString(c.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_IDX));
+		final String idx = c.getString(c.getColumnIndex(MemberDAO.COLUMN_FAVORITE_IDX));
 		// 즐겨찾기 이름
-		String title = c.getString(c.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_NAME));
+		String title = c.getString(c.getColumnIndex(MemberDAO.COLUMN_FAVORITE_NAME));
 		// 그룹인지 아닌지
-		final boolean isGroup = c.getInt(c.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_IS_GROUP)) == 1 ? true : false;
+		final boolean isGroup = c.getInt(c.getColumnIndex(MemberDAO.COLUMN_FAVORITE_IS_GROUP)) == 1 ? true : false;
 
 		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
 		TextView departmentTV = (TextView) v.findViewById(R.id.department);
@@ -88,7 +88,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 				Cursor cursor_favMemberList = mpm.getFavoriteGroupMemberList(idx);
 				while (cursor_favMemberList.moveToNext())
 				{
-					User user = User.getUserWithIdx(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));
+					User user = User.getUserWithIdx(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberDAO.COLUMN_USER_IDX)));
 
 					String _name = user.name;
 					String _rank = User.RANK[user.rank];
@@ -118,10 +118,10 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 				public void onClick(View view)
 				{
 					ArrayList<String> idxs = new ArrayList<String>();
-					Cursor cursor_favMemberList = DBProcManager.sharedManager(ctx).member().getFavoriteGroupMemberList(idx);
+					Cursor cursor_favMemberList = DAO.member(ctx).getFavoriteGroupMemberList(idx);
 					while (cursor_favMemberList.moveToNext())
 					{
-						idxs.add(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));
+						idxs.add(cursor_favMemberList.getString(cursor_favMemberList.getColumnIndex(MemberDAO.COLUMN_USER_IDX)));
 					}
 
 					Intent intent = new Intent(ctx, UserListActivity.class);
@@ -172,10 +172,10 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 		Cursor c = (Cursor) getItem(position);
 
 		Bundle b = new Bundle();
-		String idx = c.getString(c.getColumnIndex(DBProcManager.MemberProcManager.COLUMN_FAVORITE_IDX));
+		String idx = c.getString(c.getColumnIndex(MemberDAO.COLUMN_FAVORITE_IDX));
 		b.putString(MemberDetailActivity.KEY_IDX, idx);
 
-		boolean isGroup = c.getInt(c.getColumnIndex(DBProcManager.MemberProcManager.COLUMN_FAVORITE_IS_GROUP)) > 0 ? true : false;
+		boolean isGroup = c.getInt(c.getColumnIndex(MemberDAO.COLUMN_FAVORITE_IS_GROUP)) > 0 ? true : false;
 		b.putInt(MemberDetailActivity.KEY_IDX_TYPE, isGroup ? MemberDetailActivity.IDX_TYPE_GROUP : MemberDetailActivity.IDX_TYPE_USER);
 		intent.putExtras(b);
 
@@ -211,7 +211,7 @@ public class MemberFavoriteListAdapter extends CursorAdapter implements OnItemCl
 	{
 
 		// 그룹인지 아닌지
-		boolean isGroup = c.getInt(c.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_IS_GROUP)) == 1 ? true : false;
+		boolean isGroup = c.getInt(c.getColumnIndex(MemberDAO.COLUMN_FAVORITE_IS_GROUP)) == 1 ? true : false;
 
 		LayoutInflater inflater = LayoutInflater.from(ctx);
 		View v = null;

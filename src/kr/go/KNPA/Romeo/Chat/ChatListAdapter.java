@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.Constants;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.DB.ChatDAO;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -86,8 +86,8 @@ public class ChatListAdapter extends CursorAdapter {
 
 	public Cursor query(int nItems)
 	{
-		numTotalChat = DBProcManager.sharedManager(mContext).chat().getNumTotalChat(mRoom.getCode());
-		return DBProcManager.sharedManager(mContext).chat().getChatList(mRoom.getCode(), 0, nItems);
+		numTotalChat = DAO.chat(mContext).getNumTotalChat(mRoom.getCode());
+		return DAO.chat(mContext).getChatList(mRoom.getCode(), 0, nItems);
 	}
 
 	/**
@@ -108,18 +108,18 @@ public class ChatListAdapter extends CursorAdapter {
 		 * 커서에서 정보 가져오기 {{{
 		 */
 
-		final String messageIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_IDX));
+		final String messageIdx = c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_IDX));
 		// 채팅 해쉬로 태그 설정
 		listItem.setTag(messageIdx);
 
 		// 센더해쉬
-		final String senderIdx = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_SENDER_IDX));
+		final String senderIdx = c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_SENDER_IDX));
 		// 채팅TS
-		long arrivalTS = c.getLong(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_TS));
+		long arrivalTS = c.getLong(c.getColumnIndex(ChatDAO.COLUMN_CHAT_TS));
 		// 내용
-		String content = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
+		String content = c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_CONTENT));
 		// 내용의 종류 Chat.CONTENT_TYPE_TEXT, Chat.CONTENT_TYPE_PICTURE
-		int contentType = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+		int contentType = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_CHAT_CONTENT_TYPE));
 
 		/**
 		 * }}}
@@ -197,7 +197,7 @@ public class ChatListAdapter extends CursorAdapter {
 			/**
 			 * 채팅의 상태에 따라 WatierView, UnChecker 버튼, 재전송 버튼을 설정한다
 			 */
-			int chatStatus = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_STATE));
+			int chatStatus = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_CHAT_STATE));
 			final Button goUncheckedBT = (Button) listItem.findViewById(R.id.goUnchecked);
 
 			switch (chatStatus)
@@ -321,7 +321,7 @@ public class ChatListAdapter extends CursorAdapter {
 		}
 
 		Cursor c = (Cursor) getItem(position);
-		String chatIdx = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_IDX));
+		String chatIdx = c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_IDX));
 
 		View v = null;
 
@@ -345,7 +345,7 @@ public class ChatListAdapter extends CursorAdapter {
 
 		int rId = R.layout.chat_cell_received_text;
 
-		int contentType = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+		int contentType = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_CHAT_CONTENT_TYPE));
 
 		switch (contentType)
 		{
@@ -354,7 +354,7 @@ public class ChatListAdapter extends CursorAdapter {
 			rId = R.layout.chat_info_cell;
 			break;
 		case Chat.CONTENT_TYPE_TEXT:
-			if (userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))))
+			if (userIdx.equals(c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_SENDER_IDX))))
 			{
 				rId = R.layout.chat_cell_departed_text;
 			}
@@ -364,7 +364,7 @@ public class ChatListAdapter extends CursorAdapter {
 			}
 			break;
 		case Chat.CONTENT_TYPE_PICTURE:
-			if (userIdx.equals(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_CHAT_SENDER_IDX))))
+			if (userIdx.equals(c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_SENDER_IDX))))
 			{
 				rId = R.layout.chat_cell_departed_image;
 			}

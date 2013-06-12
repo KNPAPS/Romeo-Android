@@ -129,7 +129,7 @@
  <!-- 서비스명 변경하면 안됨 -->
         <activity android:name="kr.go.KNPA.Romeo.search.MemberSearchActivity" 
             android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="stateVisible|adjustResize"></activity>
         <activity android:name="kr.go.KNPA.Romeo.Member.MemberFavoriteListActivity"
             android:theme="@android:style/Theme.NoTitleBar"></activity>
         

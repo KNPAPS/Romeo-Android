@@ -22,6 +22,7 @@
             android:id="@+id/ll_invitee_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:background="@drawable/round_shadow_white"
             android:orientation="horizontal"
             android:padding="15dp" >
@@ -71,8 +72,10 @@
                 android:id="@+id/btn_invite_from_dept_tree"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/round_shadow_gray"
+                android:layout_margin="5dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/romeo_button_background_white_bordered"
+                android:padding="10dp"
                 android:text="@string/memberListTitle"
                 android:textColor="@color/black"
                 android:textSize="13sp" />
@@ -81,11 +84,14 @@
                 android:id="@+id/btn_invite_from_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:background="@drawable/round_shadow_gray"
+                android:layout_margin="5dp"
+                android:layout_weight="0.45"
+                android:background="@drawable/romeo_button_background_white_bordered"
+                android:padding="10dp"
                 android:text="@string/memberFavoriteTitle"
                 android:textColor="@color/black"
                 android:textSize="13sp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -106,7 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/gapSmall"
-                android:background="@drawable/round_shadow_white"
+                android:background="@drawable/romeo_button_background_white_bordered"
+                android:padding="10dp"
                 android:text="@string/done"
                 android:textColor="@color/black"
                 android:textSize="16sp" />

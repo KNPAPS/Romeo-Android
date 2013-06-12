@@ -8,7 +8,7 @@ import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 import kr.go.KNPA.Romeo.Member.User;
@@ -274,10 +274,10 @@ public class Message implements Parcelable{
 	
 	private static void setCheckedOnLocal(Context context, Message message) {
 		if(message.mainType() == MESSAGE_TYPE_DOCUMENT)  {
-			DBProcManager.sharedManager(context).document().updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
+			DAO.document(context).updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
 			message.checked = true;
 		} else if(message.mainType() == MESSAGE_TYPE_SURVEY) {
-			DBProcManager.sharedManager(context).survey().updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
+			DAO.survey(context).updateCheckedTS(message.idx, System.currentTimeMillis()/1000);
 			message.checked = true;
 		}
 	}

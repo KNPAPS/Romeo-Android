@@ -103,9 +103,22 @@ public class DBManager extends SQLiteOpenHelper {
 	private static final String	SQL_CREATE_INDEX_USER_FAV				= "CREATE INDEX USER_FAV_IDX ON " + DBSchema.USER_FAVORITE_GROUP.TABLE_NAME + " ("
 																				+ DBSchema.USER_FAVORITE_GROUP.COLUMN_FAVORITE_ID + " ASC)";
 
-	public DBManager(Context context)
+
+	private static DBManager mInstance;
+	
+	private DBManager(Context context)
 	{
 		super(context, DBSchema.DATABASE_NAME, null, DATABASE_VERSION);
+	}
+	
+	public static synchronized DBManager getInstance(Context context)
+	{
+		if (mInstance == null)
+		{
+			mInstance = new DBManager(context);
+		}
+		
+		return mInstance;
 	}
 
 	@Override

@@ -11,8 +11,8 @@ import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.SurveyDAO;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 
 import org.json.JSONArray;
@@ -75,11 +75,11 @@ public class Survey extends Message {// implements Parcelable{
 	}
 	/*
 	public Survey(Context context, Cursor c) {
-		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
+		SurveyDAO spm = DBProcManager.sharedManager(context).survey();
 		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
 		
-		String idx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
-		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
+		String idx = c.getString(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
+		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_TYPE));
 		
 		Survey fromServer = surveyFromServer(
 				context, 
@@ -101,17 +101,17 @@ public class Survey extends Message {// implements Parcelable{
 		}
 
 		this.TS			= fromServer.TS;
-		this.checked 	= c.getInt(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
-		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
+		this.checked 	= c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
+		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_CHECKED_TS));
 	}
 	*/
 	public Survey(Context context, String surveyIdx) {
-		SurveyProcManager spm = DBProcManager.sharedManager(context).survey();
+		SurveyDAO spm = DAO.survey(context);
 		Cursor cursor_surveyInfo = spm.getSurveyInfo(surveyIdx);
 		
 		String idx = surveyIdx;
 		cursor_surveyInfo.moveToFirst();
-		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_TYPE));
+		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_TYPE));
 		
 		Survey fromServer = surveyFromServer(
 				context, 
@@ -137,8 +137,8 @@ public class Survey extends Message {// implements Parcelable{
 		}
 
 		this.TS			= fromServer.TS;
-		this.checked 	= cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
-		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_CHECKED_TS));
+		this.checked 	= cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
+		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_CHECKED_TS));
 
 		this.form = fromServer.form;
 	}
@@ -191,10 +191,10 @@ public class Survey extends Message {// implements Parcelable{
 	}
 
 	public static boolean isAnswered(Context context, String surveyIdx) {
-		Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
+		Cursor cursor_surveyInfo = DAO.survey(context).getSurveyInfo(surveyIdx);
 		cursor_surveyInfo.moveToFirst();
 		
-		return (cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false);
+		return (cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false);
 	}
 	
 	public boolean isAnswered(Context context) {
@@ -212,9 +212,9 @@ public class Survey extends Message {// implements Parcelable{
 	}
 	
 	public void afterSendAnswerSheet(Context context, AnswerSheet answerSheet, boolean status) {
-		DBProcManager.sharedManager(context).survey().updateAnsweredTS(this.idx, System.currentTimeMillis()/1000);
+		DAO.survey(context).updateAnsweredTS(this.idx, System.currentTimeMillis()/1000);
+		
 		MainActivity.sharedActivity().popContent();
-		// TODO : animation
 	}
 	
 	
@@ -226,8 +226,7 @@ public class Survey extends Message {// implements Parcelable{
 	public void afterSend(Context context, boolean successful) {
 		if(successful) {
 			// Success
-			DBProcManager.sharedManager(context).survey().saveSurveyOnSend(this.idx);
-			
+			DAO.survey(context).saveSurveyOnSend(this.idx);
 			SurveyFragment departedFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
 			if( departedFragment != null && departedFragment.listView != null) {
 				departedFragment.listView.refresh();

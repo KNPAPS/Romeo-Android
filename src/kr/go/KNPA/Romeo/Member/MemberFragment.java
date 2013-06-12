@@ -10,8 +10,7 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.Member.MemberListView;
+import kr.go.KNPA.Romeo.DB.DAO;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -147,10 +146,10 @@ public class MemberFragment extends RomeoFragment {
 					return;
 				}
 					
-				if(usersIdx.size() == 1 && DBProcManager.sharedManager(getActivity()).member().isUserFavorite(usersIdx.get(0))) {
-					DBProcManager.sharedManager(getActivity()).member().setFavorite(usersIdx.get(0), true);
+				if(usersIdx.size() == 1 && DAO.member(getActivity()).isUserFavorite(usersIdx.get(0))) {
+					DAO.member(getActivity()).setFavorite(usersIdx.get(0), true);
 				} else {
-					DBProcManager.sharedManager(getActivity()).member().addFavoriteGroup(usersIdx);
+					DAO.member(getActivity()).addFavoriteGroup(usersIdx);
 				}
 							
 			}

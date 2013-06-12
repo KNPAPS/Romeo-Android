@@ -6,8 +6,8 @@ import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.Room;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.MemberProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.MemberDAO;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.ImageViewActivity;
 import android.app.Activity;
@@ -105,7 +105,7 @@ public class MemberDetailActivity extends Activity {
 		vg.setLayoutParams(lp);
 
 		// 주어진 idx가 즐겨찾기 되어있는지 판단한다.
-		MemberProcManager mpm = DBProcManager.sharedManager(MemberDetailActivity.this).member();
+		MemberDAO mpm = DAO.member(MemberDetailActivity.this);
 		boolean isFavorite = mpm.isUserFavorite(idx);
 
 		favorite = (Button) findViewById(R.id.favorite);
@@ -127,7 +127,7 @@ public class MemberDetailActivity extends Activity {
 		String title = null;
 		if (cursor_favoriteInfo.moveToNext())
 		{
-			title = cursor_favoriteInfo.getString(cursor_favoriteInfo.getColumnIndex(MemberProcManager.COLUMN_FAVORITE_NAME));
+			title = cursor_favoriteInfo.getString(cursor_favoriteInfo.getColumnIndex(MemberDAO.COLUMN_FAVORITE_NAME));
 		}
 		if (idxType == IDX_TYPE_USER)
 		{
@@ -161,7 +161,7 @@ public class MemberDetailActivity extends Activity {
 				Cursor cursor_favoriteUsers = mpm.getFavoriteGroupMemberList(idx);
 				while (cursor_favoriteUsers.moveToNext())
 				{
-					User user = User.getUserWithIdx(cursor_favoriteUsers.getString(cursor_favoriteUsers.getColumnIndex(MemberProcManager.COLUMN_USER_IDX)));
+					User user = User.getUserWithIdx(cursor_favoriteUsers.getString(cursor_favoriteUsers.getColumnIndex(MemberDAO.COLUMN_USER_IDX)));
 					title += user.rank + " " + user.name;
 					if (title.length() > 20)
 					{
@@ -193,7 +193,7 @@ public class MemberDetailActivity extends Activity {
 			@Override
 			public void onClick(View v)
 			{
-				MemberProcManager mpm = DBProcManager.sharedManager(MemberDetailActivity.this).member();
+				MemberDAO mpm = DAO.member(MemberDetailActivity.this);
 				boolean isFavorite = mpm.isUserFavorite(idx);
 				mpm.setFavorite(idx, !isFavorite);
 
@@ -233,7 +233,7 @@ public class MemberDetailActivity extends Activity {
 																super.run();
 																final int roomType = btn.getTag().toString().equals("meeting") ? Chat.TYPE_MEETING : Chat.TYPE_COMMAND;
 
-																String roomCode = DBProcManager.sharedManager(MemberDetailActivity.this).chat().getPairRoomCode(roomType, idx);
+																String roomCode = DAO.chat(MemberDetailActivity.this).getPairRoomCode(roomType, idx);
 
 																Room room = null;
 																if (roomCode != null)

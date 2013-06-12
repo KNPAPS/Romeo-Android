@@ -1,7 +1,6 @@
 package kr.go.KNPA.Romeo.GCM;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import kr.go.KNPA.Romeo.GCMIntentService;
@@ -17,8 +16,8 @@ import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.DB.ChatDAO;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Document.Document;
 import kr.go.KNPA.Romeo.Document.DocumentFragment;
 import kr.go.KNPA.Romeo.Member.MemberManager;
@@ -181,7 +180,7 @@ public class GCMMessageManager {
 	// 채팅 메세지가 도착했을 때
 	private void onReceiveChat(Chat chat)
 	{
-		ChatProcManager proc = DBProcManager.sharedManager(mContext).chat();
+		ChatDAO proc = DAO.chat(mContext);
 
 		// 방이 존재하지 않으면 DB상에 새로 만든다.
 		if (proc.isRoomExists(chat.roomCode) == false)
@@ -244,7 +243,7 @@ public class GCMMessageManager {
 
 	private void onDocument(Document document)
 	{
-		DBProcManager.sharedManager(mContext).document().saveDocumentOnReceived(document.idx, document.senderIdx, document.title, document.content, document.TS, document.forwards, document.files);
+		DAO.document(mContext).saveDocumentOnReceived(document.idx, document.senderIdx, document.title, document.content, document.TS, document.forwards, document.files);
 
 		if (isRunningProcess(mContext))
 			DocumentFragment.receive(document); // 리스트뷰에 notify
@@ -254,7 +253,7 @@ public class GCMMessageManager {
 
 	private void onSurvey(Survey survey)
 	{
-		DBProcManager.sharedManager(mContext).survey().saveSurveyOnReceived(survey.idx);
+		DAO.survey(mContext).saveSurveyOnReceived(survey.idx);
 
 		if (isRunningProcess(mContext))
 			SurveyFragment.receive(survey); // 리스트뷰에 notify
@@ -376,14 +375,14 @@ public class GCMMessageManager {
 			String roomCode = ((Chat) message).roomCode;
 			b.putString(KEY.CHAT.ROOM_CODE, roomCode);
 
-			Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomInfo(roomCode);
+			Cursor c = DAO.chat(mContext).getRoomInfo(roomCode);
 
 			if (c.moveToNext())
 			{
-				int isAlarmOn = c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IS_ALARM_ON));
+				int isAlarmOn = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_ROOM_IS_ALARM_ON));
 				doAlarm = isAlarmOn != 0 ? true : false;
-				String roomTitle = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE));
-				String roomAlias = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS));
+				String roomTitle = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_TITLE));
+				String roomAlias = c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_ALIAS));
 
 				if (roomAlias == null || roomAlias.trim().equals(""))
 				{

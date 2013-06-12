@@ -1,8 +1,7 @@
 package kr.go.KNPA.Romeo.Document;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.DocumentProcManager;
+import kr.go.KNPA.Romeo.DB.DocuDAO;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -28,17 +27,15 @@ class DocumentListAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View v, final Context ctx, Cursor c) {
 		
-		DBProcManager.sharedManager(ctx).document();
-		
 		// 문서제목 (String)
-		String title = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_TITLE));
+		String title = c.getString(c.getColumnIndex(DocuDAO.COLUMN_DOC_TITLE));
 		
 		TextView titleTV = (TextView)v.findViewById(R.id.title);
 		titleTV.setText(title);
 		
 		
 		// 발신자 (String) TODO 통신
-		final String userIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_SENDER_IDX));
+		final String userIdx = c.getString(c.getColumnIndex(DocuDAO.COLUMN_SENDER_IDX));
 		
 		final View _givenView = v;
 		
@@ -62,7 +59,7 @@ class DocumentListAdapter extends CursorAdapter {
 		
 		
 		// 발신일시 (long)
-		long TS =  c.getLong(c.getColumnIndex(DocumentProcManager.COLUMN_CREATED_TS));
+		long TS =  c.getLong(c.getColumnIndex(DocuDAO.COLUMN_CREATED_TS));
 		String DT = Formatter.timeStampToRecentString(TS);
 		
 		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
@@ -71,7 +68,7 @@ class DocumentListAdapter extends CursorAdapter {
 		
 		
 		// 문서해쉬 (String)
-		final String docIdx = c.getString(c.getColumnIndex(DocumentProcManager.COLUMN_DOC_IDX));
+		final String docIdx = c.getString(c.getColumnIndex(DocuDAO.COLUMN_DOC_IDX));
 		
 		if(this.type == Document.TYPE_DEPARTED) {
 			Button goUnchecked = (Button)v.findViewById(R.id.goUnchecked);

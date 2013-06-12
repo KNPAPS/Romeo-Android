@@ -7,7 +7,7 @@ import java.util.HashMap;
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
+import kr.go.KNPA.Romeo.DB.SurveyDAO;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
@@ -52,7 +52,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 //		}
 //		
 		if(surveys != null) {
-			String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+			String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
 			if(surveys.containsKey(surveyIdx))
 				return surveys.get(surveyIdx);
 		}
@@ -366,7 +366,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 				adapter= ((SimpleSectionAdapter)parent.getAdapter());
 			
 			Cursor c = (Cursor)adapter.getItem(position);
-			String surveyIdx = c.getString(c.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+			String surveyIdx = c.getString(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
 			
 			Survey survey = new Survey(context, surveyIdx);
 			

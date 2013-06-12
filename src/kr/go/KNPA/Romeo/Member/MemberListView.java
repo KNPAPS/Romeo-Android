@@ -3,7 +3,6 @@ package kr.go.KNPA.Romeo.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.Config.Event;
@@ -12,7 +11,7 @@ import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.WaiterView;
@@ -52,7 +51,7 @@ public class MemberListView extends RomeoListView {
 	public MemberListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle); this.context = context; }
 
 	// Database management
-	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).member().getFavoriteList();	}
+	protected Cursor query() {	return DAO.member(getContext()).getFavoriteList();	}
 	
 	// View management
 	@Override

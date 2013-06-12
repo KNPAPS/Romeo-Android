@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import kr.go.KNPA.Romeo.R;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
@@ -107,7 +107,7 @@ public class RoomInfoActivity extends Activity implements RoomInfoActivityLayout
 		new Thread() {
 			public void run()
 			{
-				DBProcManager.sharedManager(RoomInfoActivity.this).chat().setRoomAlarm(mRoom.getCode(), mRoom.isAlarmOn());
+				DAO.chat(RoomInfoActivity.this).setRoomAlarm(mRoom.getCode(), mRoom.isAlarmOn());
 			}
 		}.start();
 
@@ -199,7 +199,7 @@ public class RoomInfoActivity extends Activity implements RoomInfoActivityLayout
 			public void run()
 			{
 				super.run();
-				DBProcManager.sharedManager(RoomInfoActivity.this).chat().setRoomAlias(mRoom.getCode(), newAlias);
+				DAO.chat(RoomInfoActivity.this).setRoomAlias(mRoom.getCode(), newAlias);
 			}
 		}.start();
 	}

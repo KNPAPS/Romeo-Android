@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.SurveyProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.SurveyDAO;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.WaiterView;
@@ -42,7 +42,7 @@ public class SurveyListView extends RomeoListView {
 				public String getSectionTitleForItem(Cursor c) {
 					boolean checked= false;
 					if ( c.moveToFirst() == true ) {
-						checked = c.getLong(c.getColumnIndex(DBProcManager.SurveyProcManager.COLUMN_SURVEY_IS_CHECKED)) > 0 ? true : false;
+						checked = c.getLong(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED)) > 0 ? true : false;
 						return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 					}
 					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
@@ -62,7 +62,7 @@ public class SurveyListView extends RomeoListView {
 	
 	// Database management
 	@Override
-	protected Cursor query() {	return DBProcManager.sharedManager(getContext()).survey().getSurveyList(this.subType);	}
+	protected Cursor query() {	return DAO.survey(getContext()).getSurveyList(this.subType);	}
 
 	
 	@Override
@@ -101,7 +101,7 @@ public class SurveyListView extends RomeoListView {
 			
 			@Override
 			public void run() {
-				Cursor cSurvey = DBProcManager.sharedManager(getContext()).survey().getSurveyList(SurveyListView.this.subType);
+				Cursor cSurvey = DAO.survey(getContext()).getSurveyList(SurveyListView.this.subType);
 				
 				if(cSurvey.getCount() > 0) {
 					if(surveys == null ) {
@@ -113,7 +113,7 @@ public class SurveyListView extends RomeoListView {
 				
 				cSurvey.moveToFirst();
 				while ( !cSurvey.isAfterLast() ) {
-					String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyProcManager.COLUMN_SURVEY_IDX));
+					String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
 					Survey survey = new Survey(getContext(), surveyIdx); 
 					cSurvey.moveToNext();
 					

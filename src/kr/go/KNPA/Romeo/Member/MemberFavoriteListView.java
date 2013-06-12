@@ -1,7 +1,7 @@
 package kr.go.KNPA.Romeo.Member;
 
 import kr.go.KNPA.Romeo.RomeoListView;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
+import kr.go.KNPA.Romeo.DB.DAO;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.AttributeSet;
@@ -39,7 +39,7 @@ public class MemberFavoriteListView extends RomeoListView {
 	@Override
 	protected Cursor query()
 	{
-		return DBProcManager.sharedManager(getContext()).member().getFavoriteList();
+		return DAO.member(getContext()).getFavoriteList();
 	}
 
 	@Override

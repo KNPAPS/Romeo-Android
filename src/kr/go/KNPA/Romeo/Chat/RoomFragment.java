@@ -15,8 +15,8 @@ import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.DB.ChatDAO;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Member.MemberDetailActivity;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
 import kr.go.KNPA.Romeo.Util.Formatter;
@@ -546,7 +546,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 			public void run()
 			{
 				// local db에 저장
-				DBProcManager.sharedManager(getActivity()).chat().saveChatOnSend(chat.idx, chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
+				DAO.chat(getActivity()).saveChatOnSend(chat.idx, chat.roomCode, chat.senderIdx, chat.content, chat.contentType, chat.TS, Chat.STATE_SENDING);
 
 				// 채팅 리스목록에 보내고 있는 채팅 추가
 				final Cursor c = mListAdapter.query(mListAdapter.getCount() + 1);
@@ -567,7 +567,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 					// 업로드 실패시 해당 채팅의 상태를 fail로 변경하고 서버로 보내지 말고 종료
 					if (im.upload(ImageManager.CHAT_SIZE_ORIGINAL, chat.idx, content, false) == false)
 					{
-						DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, Chat.STATE_FAIL);
+						DAO.chat(getActivity()).updateChatState(chat.idx, Chat.STATE_FAIL);
 
 						// 채팅 상태가 변경되었으므로 채팅 리스트 커서 새로고침
 						final Cursor cursor = mListAdapter.query(mListAdapter.getCount());
@@ -595,7 +595,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 				// 응답 여부에 따라 채팅의 상태를 success 또는 fail로 변경
 				int chatStatus = response.getStatusCode() == StatusCode.SUCCESS ? Chat.STATE_SUCCESS : Chat.STATE_FAIL;
 
-				DBProcManager.sharedManager(getActivity()).chat().updateChatState(chat.idx, chatStatus);
+				DAO.chat(getActivity()).updateChatState(chat.idx, chatStatus);
 
 				// 채팅 상태가 변경되었으므로 채팅 리스트 커서 새로고침
 				final Cursor cursor = mListAdapter.query(mListAdapter.getCount());
@@ -655,7 +655,7 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 			public void run()
 			{
 
-				DBProcManager.sharedManager(getActivity()).chat().deleteChat(chatIdx);
+				DAO.chat(getActivity()).deleteChat(chatIdx);
 
 				final Cursor cursor = mListAdapter.query(mListAdapter.getCount() - 1);
 
@@ -726,18 +726,18 @@ public class RoomFragment extends Fragment implements RoomFragmentLayout.Listene
 	{
 		new Thread(){
 			public void run() {
-				Cursor c = DBProcManager.sharedManager(getActivity()).chat().getChatInfo(chatIdx);
+				Cursor c = DAO.chat(getActivity()).getChatInfo(chatIdx);
 				String content = "";
 				int contentType = Chat.CONTENT_TYPE_TEXT;
 				if (c.moveToNext())
 				{
-					content = c.getString(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT));
-					contentType = c.getInt(c.getColumnIndex(ChatProcManager.COLUMN_CHAT_CONTENT_TYPE));
+					content = c.getString(c.getColumnIndex(ChatDAO.COLUMN_CHAT_CONTENT));
+					contentType = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_CHAT_CONTENT_TYPE));
 				}
 
 				final String fcontent = content;
 				final int fcontentType = contentType;
-				DBProcManager.sharedManager(getActivity()).chat().deleteChat(chatIdx);
+				DAO.chat(getActivity()).deleteChat(chatIdx);
 				
 				mHandler.post(new Runnable(){
 					@Override

@@ -11,8 +11,8 @@ import kr.go.KNPA.Romeo.Config.StatusCode;
 import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
-import kr.go.KNPA.Romeo.DB.DBProcManager;
-import kr.go.KNPA.Romeo.DB.DBProcManager.ChatProcManager;
+import kr.go.KNPA.Romeo.DB.ChatDAO;
+import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.Encrypter;
@@ -72,7 +72,7 @@ public class RoomModel extends BaseModel {
 		Payload request = new Payload().setEvent(Event.MESSAGE_CHAT_LEAVE_ROOM).setData(reqData);
 		new Connection().async(false).requestPayload(request).request();
 
-		DBProcManager.sharedManager(mContext).chat().deleteRoom(mRoom.getCode());
+		DAO.chat(mContext).deleteRoom(mRoom.getCode());
 	}
 
 	public boolean createRoom(boolean isHost)
@@ -112,7 +112,7 @@ public class RoomModel extends BaseModel {
 			roomCode = mRoom.getCode();
 		}
 
-		ChatProcManager proc = DBProcManager.sharedManager(mContext).chat();
+		ChatDAO proc = DAO.chat(mContext);
 		proc.createRoom(mRoom.getType(), roomCode, isHost);
 		proc.addUsersToRoom(mRoom.getChattersIdx(), roomCode);
 
@@ -157,12 +157,12 @@ public class RoomModel extends BaseModel {
 		{
 			adjustTitle();
 
-			DBProcManager.sharedManager(mContext).chat().addUsersToRoom(chattersIdx, mRoom.getCode());
+			DAO.chat(mContext).addUsersToRoom(chattersIdx, mRoom.getCode());
 
 			String chatIdx = Chat.makeChatIdx(mContext);
 			String newbiesStr = Formatter.join(chattersIdx, ":");
 
-			DBProcManager.sharedManager(mContext).chat()
+			DAO.chat(mContext)
 					.saveChatOnSend(chatIdx, mRoom.getCode(), inviterIdx, newbiesStr, Chat.CONTENT_TYPE_USER_JOIN, System.currentTimeMillis() / 1000, Chat.STATE_SUCCESS);
 
 			// 자신이 초대했다면 서버를 통해 다른 사람들에게 알림
@@ -187,6 +187,7 @@ public class RoomModel extends BaseModel {
 					return false;
 				}
 			}
+			
 		}
 
 		return true;
@@ -195,7 +196,7 @@ public class RoomModel extends BaseModel {
 	public void removeChatter(String chatterIdx)
 	{
 
-		ChatProcManager proc = DBProcManager.sharedManager(mContext).chat();
+		ChatDAO proc = DAO.chat(mContext);
 
 		String chatIdx = Chat.makeChatIdx(mContext);
 
@@ -263,7 +264,7 @@ public class RoomModel extends BaseModel {
 			return;
 		}
 
-		DBProcManager.sharedManager(mContext).chat().updateLastEnteredTS(mRoom.getCode(), System.currentTimeMillis() / 1000);
+		DAO.chat(mContext).updateLastEnteredTS(mRoom.getCode(), System.currentTimeMillis() / 1000);
 
 		Data reqData = new Data();
 		reqData.add(0, KEY.CHAT.ROOM_CODE, mRoom.getCode());
@@ -295,21 +296,21 @@ public class RoomModel extends BaseModel {
 	public void changeAlias(String alias)
 	{
 		mRoom.setAlias(alias);
-		DBProcManager.sharedManager(mContext).chat().setRoomAlias(mRoom.getCode(), alias);
+		DAO.chat(mContext).setRoomAlias(mRoom.getCode(), alias);
 	}
 
 	public void fetchBaseInfo()
 	{
-		Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomInfo(mRoom.getCode());
+		Cursor c = DAO.chat(mContext).getRoomInfo(mRoom.getCode());
 
 		if (c.moveToNext() == true)
 		{
-			mRoom.setTitle(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TITLE)));
-			mRoom.setAlias(c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_ALIAS)));
-			mRoom.setType(c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_TYPE)));
+			mRoom.setTitle(c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_TITLE)));
+			mRoom.setAlias(c.getString(c.getColumnIndex(ChatDAO.COLUMN_ROOM_ALIAS)));
+			mRoom.setType(c.getInt(c.getColumnIndex(ChatDAO.COLUMN_ROOM_TYPE)));
 
 			boolean isAlarmOn = true;
-			if (c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_ROOM_IS_ALARM_ON)) == 1)
+			if (c.getInt(c.getColumnIndex(ChatDAO.COLUMN_ROOM_IS_ALARM_ON)) == 1)
 			{
 				isAlarmOn = true;
 			}
@@ -320,7 +321,7 @@ public class RoomModel extends BaseModel {
 			mRoom.setAlarm(isAlarmOn);
 
 			boolean isHost = true;
-			if (c.getInt(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_IS_HOST)) == 1)
+			if (c.getInt(c.getColumnIndex(ChatDAO.COLUMN_IS_HOST)) == 1)
 			{
 				isHost = true;
 			}
@@ -336,11 +337,11 @@ public class RoomModel extends BaseModel {
 
 	public void fetchChatters()
 	{
-		Cursor c = DBProcManager.sharedManager(mContext).chat().getRoomChatters(mRoom.getCode());
+		Cursor c = DAO.chat(mContext).getRoomChatters(mRoom.getCode());
 		mRoom.chatters = new ArrayList<Chatter>();
 		while (c.moveToNext())
 		{
-			String idx = c.getString(c.getColumnIndex(DBProcManager.ChatProcManager.COLUMN_USER_IDX));
+			String idx = c.getString(c.getColumnIndex(ChatDAO.COLUMN_USER_IDX));
 			User user = MemberManager.sharedManager().getUser(idx);
 			Chatter chatter = new Chatter(user);
 			mRoom.chatters.add(chatter);
@@ -377,7 +378,7 @@ public class RoomModel extends BaseModel {
 			title = mRoom.getTitle();
 		}
 
-		DBProcManager.sharedManager(mContext).chat().setRoomTitle(mRoom.getCode(), title);
+		DAO.chat(mContext).setRoomTitle(mRoom.getCode(), title);
 		mRoom.setTitle(title);
 	}
 
