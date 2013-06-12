@@ -144,7 +144,8 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 			if(codes[1].equalsIgnoreCase("HANDBOOK")) {
 				fragment = new HandBookFragment();
 			} else if(codes[1].equalsIgnoreCase("SOCIALEVIL")) {
-				fragment = new SocialEvilManualBook();
+				//fragment = new SocialEvilManualBook();
+				fragment = EBookFragment.getEBookFragment("socialEvilManual", "4대 사회악 근절 전담부대 매뉴얼", "4대악 근절 매뉴얼");
 			} else if(codes[1].equalsIgnoreCase("EBOOK")) {
 				//fragment = new EBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
 				fragment = EBookFragment.getEBookFragment("styleTemplateGuide", "샘플 이북 뷰어", "이북");
