@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="@dimen/gap"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="@dimen/gap" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,6 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textColor="@color/text" />
-
     </LinearLayout>
 
     <TextView
@@ -38,24 +37,26 @@
         android:text="@string/question_is_multiple"
         android:textColor="@color/text" />
 
-    <ImageView
-        android:id="@+id/graphView"
-        android:layout_gravity="center_horizontal"
+    <RelativeLayout 
         android:layout_width="match_parent"
-        android:layout_height="240dp" />
-
-    <LinearLayout
-        android:id="@+id/options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-        <!-- 
-	        ViewGroup v = (ViewGroup)getLayoutInflater().inflate(R.layout.image_preview,vg);
-					ImageView imv = (ImageView) v.getChildAt(0);    
-					TextView dt = (TextView) v.getChildAt(1);
-					TextView ttl = (TextView) v.getChildAt(2);
-				-->
-				<!-- <include layout="@layout/survey_option_result"></include>  -->
-    </LinearLayout>
+        android:layout_height="wrap_content">
+	    
+	    <android.support.v4.view.ViewPager
+	        android:layout_alignParentTop="true"
+			android:id="@+id/pager"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			 />
+	    <LinearLayout
+	        android:layout_alignParentTop="true"
+	        android:background="@color/red"
+	        android:id="@+id/pager_indicator"
+	        android:layout_marginTop="235dp"
+	        android:layout_width="200dp" 
+	        android:layout_height="16dp"
+	        android:orientation="horizontal"
+	        />
+    </RelativeLayout>
+    <!-- <include layout="@layout/survey_graph_unit" /> -->
 
 </LinearLayout>

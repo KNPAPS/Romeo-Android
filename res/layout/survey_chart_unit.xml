@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/graphWrapper"
+      android:layout_width="match_parent"
+      android:layout_height="480dp"
+      android:orientation="vertical" >
+       
+      <ImageView
+      android:id="@+id/graphView"
+      android:layout_gravity="center_horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/survey_chart_height" />
+
+   <LinearLayout
+       android:id="@+id/options"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical" >
+   </LinearLayout>
+   
+</LinearLayout>

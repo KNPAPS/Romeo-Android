@@ -48,4 +48,7 @@
 	<dimen name="settings_cell_height">60dp</dimen>
 	
 	<dimen name="navigationBarHeight">50dp</dimen>
+	
+	<dimen name="survey_option_result_content_height">36dp</dimen>
+	<dimen name="survey_chart_height">240dp</dimen>
 </resources>

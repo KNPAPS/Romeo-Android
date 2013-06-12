@@ -433,7 +433,7 @@ public class Connection {
 		public void handleMessage(Message msg)
 		{
 			Connection connection = mConnection.get();
-			if (mConnection != null)
+			if (connection != null)
 			{
 				if (msg.what == 0)
 				{
@@ -445,12 +445,16 @@ public class Connection {
 				}
 				else
 				{
-					@SuppressWarnings("unchecked")
-					Pair<Integer, Payload> pair = (Pair<Integer, Payload>) msg.obj;
-					connection.HTTPStatusCode = pair.first;
-					connection.responsePayload = pair.second;
-					connection.successful = true;
-					connection.callBack.onPostExecute(connection.responsePayload);
+					//try {
+						@SuppressWarnings("unchecked")
+						Pair<Integer, Payload> pair = (Pair<Integer, Payload>) msg.obj;
+						connection.HTTPStatusCode = pair.first;
+						connection.responsePayload = pair.second;
+						connection.successful = true;
+						connection.callBack.onPostExecute(connection.responsePayload);
+//					} catch (NullPointerException e) {
+//						e.printStackTrace();
+//					}
 				}
 			}
 			else

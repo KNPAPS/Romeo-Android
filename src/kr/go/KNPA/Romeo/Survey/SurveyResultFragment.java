@@ -13,29 +13,18 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey.Form.Question;
 import kr.go.KNPA.Romeo.Util.CallbackEvent;
 import kr.go.KNPA.Romeo.Util.Formatter;
-import kr.go.KNPA.Romeo.Util.UserInfo;
-
-import org.achartengine.chart.PieChart;
-import org.achartengine.model.CategorySeries;
-import org.achartengine.renderer.DefaultRenderer;
-import org.achartengine.renderer.SimpleSeriesRenderer;
-
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -87,9 +76,9 @@ public class SurveyResultFragment extends Fragment {
 	{
 
 		this.view = inflater.inflate(R.layout.survey_result, null, false);
-
+		
 		initNavigationBar(view, R.string.surveyTitle, true, false, R.string.menu, R.string.dummy, lbbOnClickListener, null);
-
+				
 		TextView titleTV = (TextView) view.findViewById(R.id.title);
 		titleTV.setText(this.survey.title);
 
@@ -185,22 +174,17 @@ public class SurveyResultFragment extends Fragment {
 		int nResponders = (Integer) resData.get(0, KEY.SURVEY.NUM_RESPONDERS); // 응답자수
 		// int nBlank = (Integer)resData.get(0, KEY.SURVEY.NUM_GIVE_UP); // 기권자
 		// 수 (확인후 응답X)
-		ArrayList<ArrayList<Integer>> _votes = (ArrayList<ArrayList<Integer>>) resData.get(0, KEY.SURVEY.RESULT); // 문항/선택지별
-																													// 투표
-																													// 수를
-																													// 담고
-																													// 있는
-																													// 배열
+		ArrayList<ArrayList<Integer>> _votes = (ArrayList<ArrayList<Integer>>) resData.get(0, KEY.SURVEY.RESULT); // 문항/선택지별 투표수를 담고 있는 배열
 
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+		
 		LinearLayout _questionsLL = (LinearLayout) this.view.findViewById(R.id.questions);
 		ArrayList<Question> _questions = form.questions();
 		for (int qi = 0; qi < _questions.size(); qi++)
 		{
+			
 			// Question 단계의 작업
 			Question question = _questions.get(qi);
-			LinearLayout questionLL = (LinearLayout) inflater.inflate(R.layout.survey_question_result, _questionsLL, false);
+			LinearLayout questionLL = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.survey_question_result, _questionsLL, false);
 
 			TextView qIndexTV = (TextView) questionLL.findViewById(R.id.index);
 			qIndexTV.setText((qi + 1) + ".");
@@ -215,40 +199,19 @@ public class SurveyResultFragment extends Fragment {
 			ArrayList<Integer> qVote = _votes.get(qi);
 
 			// 그래프를 그린다.
-			drawChart(questionLL, qVote);
-
-			// Option들에 대한 처리
-			LinearLayout _optionsLL = (LinearLayout) questionLL.findViewById(R.id.options);
-			ArrayList<String> options = question.options();
-			// nResponders = options.size();
-			for (int oi = 0; oi < options.size(); oi++)
-			{
-				String option = options.get(oi);
-				LinearLayout optionLL = (LinearLayout) inflater.inflate(R.layout.survey_option_result, _optionsLL, false);
-				TextView optionTitleTV = (TextView) optionLL.findViewById(R.id.title);
-				optionTitleTV.setText(option);
-
-				TextView optionContentTV = (TextView) optionLL.findViewById(R.id.chat_content);
-				int nThisOption = qVote.get(oi);
-				float percent = ((float) nThisOption / (float) nResponders * (float) 100.0);
-				optionContentTV.setText(((int) Math.round(percent)) + " %");
-				optionContentTV.setTextColor(COLORS[oi % (COLORS.length)]);
-
-				_optionsLL.addView(optionLL);
-			}
-
+			renderChart(questionLL, nResponders, question, qVote);
+			//renderOptions(questionLL, question, nResponders, qVote);
+			
 			_questionsLL.addView(questionLL);
-
+			
 			// TODO : 수평선 이미지 뷰
 			View ruler = new View(getActivity());
 			ruler.setBackgroundColor(0x55EEEEEE);
 			LinearLayout.LayoutParams rulerLP = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
 			rulerLP.leftMargin = rulerLP.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 54, getActivity().getResources().getDisplayMetrics());
 			_questionsLL.addView(ruler, rulerLP);
-			// ImageView hrIV = (ImageView)inflater.inflate(R.layout.hr_view,
-			// _questionsLL, false);
-			// _questionsLL.addView(hrIV);
 
+			
 		}
 
 	}
@@ -262,92 +225,23 @@ public class SurveyResultFragment extends Fragment {
 													}
 												};
 
-	protected void drawChart(ViewGroup questionLL, ArrayList<Integer> qVote) {
-		// 그래프를 담당하는 부분
-		DefaultRenderer renderer = new DefaultRenderer();
-		String dummyLabel = "";
+	protected void renderChart(ViewGroup questionLL, int nResponders, Question question, ArrayList<Integer> qVote) {
+		ViewPager pager = (ViewPager) questionLL.findViewById(R.id.pager);
+		LinearLayout pagerIndicator = (LinearLayout) questionLL.findViewById(R.id.pager_indicator);
+		
+		SurveyChartViewPagerAdapter adapter = new SurveyChartViewPagerAdapter(SurveyResultFragment.this, pager, pagerIndicator, nResponders, question, qVote);
+		pager.setAdapter(adapter);
+		pager.setOnPageChangeListener(adapter);
 		
 		
-		// 그래프 각 portion에 대한 설정
-		CategorySeries series = new CategorySeries(dummyLabel);
-		for (int i = 0; i < qVote.size(); i++)
-		{
-			SimpleSeriesRenderer ssr = new SimpleSeriesRenderer();
-			ssr.setColor(COLORS[i % (COLORS.length)]);
-			renderer.addSeriesRenderer(ssr);
-			
-			series.add(dummyLabel, qVote.get(i));
-		}
-
 		
-		// 차트 전체에 대한 설정
-		renderer.setDisplayValues(false);
-		renderer.setShowLabels(false);
-		renderer.setShowLegend(false);
-		renderer.setShowAxes(false);
-		renderer.setShowCustomTextGrid(false);
-		renderer.setShowGrid(false);
-		renderer.setZoomEnabled(false);
-		renderer.setExternalZoomEnabled(false);
-		renderer.setClickEnabled(false);
-		renderer.setPanEnabled(false);
-		renderer.setMargins(new int[] { 0, 0, 0, 0 });
-		renderer.setScale(1.25f);
-
-		PieChart qChart = new PieChart(series, renderer);
-
-
-		int diameter = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
-		int viewWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
-		int viewHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics());
-		int marginW = (viewWidth - diameter) / 2;
-		int marginH = (viewHeight - diameter) / 2;
-
-		Bitmap bm = Bitmap.createBitmap(viewWidth, viewHeight, Config.ARGB_8888);
-		Canvas c = new Canvas(bm);
-		Paint p = new Paint();
-		qChart.draw(c, marginW, marginH, diameter + marginW, diameter + marginH, p);
-		
-		makeDonutEffect(c, viewWidth, viewHeight, diameter, 0.5f);
-		ImageView qChartContainer = (ImageView) questionLL.findViewById(R.id.graphView);
-		qChartContainer.setImageBitmap(bm);
-		// qChartContainer.setBackgroundResource(R.color.blue);
-
+		//adapter.renderChart();
 	}
 
-	protected void makeDonutEffect(Canvas c, int viewW, int viewH, int original_diameter, float thickness) {
-		// 도넛 효과를 위한 가운데 흰 원그래프에 대한 설정
-		
-		// 차트 전체에 대한 설정
-		DefaultRenderer dummyRenderer =   new DefaultRenderer();
-		dummyRenderer.setDisplayValues(false);
-		dummyRenderer.setShowLabels(false);
-		dummyRenderer.setShowLegend(false);
-		dummyRenderer.setShowAxes(false);
-		dummyRenderer.setShowCustomTextGrid(false);
-		dummyRenderer.setShowGrid(false);
-		dummyRenderer.setZoomEnabled(false);
-		dummyRenderer.setExternalZoomEnabled(false);
-		dummyRenderer.setClickEnabled(false);
-		dummyRenderer.setPanEnabled(false);
-		dummyRenderer.setMargins(new int[] { 0, 0, 0, 0 });
-		dummyRenderer.setScale(1.25f);
-
-		SimpleSeriesRenderer ssr = new SimpleSeriesRenderer();
-		ssr.setColor(Color.parseColor("#FFFFFF"));
-		dummyRenderer.addSeriesRenderer(ssr);
-		
-		CategorySeries dummySeries = new CategorySeries("DUMMY");
-		dummySeries.add("DUMMY", 1);
-		
-		PieChart dummyChart = new PieChart(dummySeries, dummyRenderer);
-		
-		int diameter = (int)(original_diameter * thickness);
-		int marginW = ( viewW - diameter )/2;
-		int marginH = ( viewH - diameter )/2;
-		
-		dummyChart.draw(c, marginW, marginH, diameter , diameter, new Paint());
-	}
+//	protected void renderChart(ViewGroup questionLL, int nResponders, Survey survey, int questionIndex) {
+//		
+//	}
+	
 	
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener,
 			OnClickListener rbbOnClickListener)
