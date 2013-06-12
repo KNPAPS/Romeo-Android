@@ -116,7 +116,7 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 				NotScrollableViewPager p = SurveyChartViewPagerAdapter.this.pager;
 				int nextItem = (p.getCurrentItem() + 1) % p.getChildCount();
 				p.setCurrentItem( nextItem , false);
-				((Button)view).setText( nextItem % 2 == 0 ? showPieChart : showBarChart );
+				((Button)view).setText( nextItem % 2 == 1 ? showPieChart : showBarChart );
 			}
 		});
 	}
@@ -491,6 +491,9 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 			String option = options.get(oi);
 			LinearLayout optionLL = (LinearLayout) inflater.inflate(R.layout.survey_option_result, _optionsLL, false);
 			
+			TextView optionIndexTV = (TextView) optionLL.findViewById(R.id.index);
+			optionIndexTV.setText((oi+1) + "번 ");
+			
 			TextView optionTitleTV = (TextView) optionLL.findViewById(R.id.title);
 			optionTitleTV.setText(option);
 
@@ -498,16 +501,29 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 			int nThisOption = qVote.get(oi);
 			String content = "";
 			
-			switch(type) {
-			case ChartType_Pie :
-				float percent = ((float) nThisOption / (float) nResponders * (float) 100.0);
-				content = ((int) Math.round(percent)) + " %";
-				break;
-				
-			case ChartType_Bar :
-				content = nThisOption + " 명";
-				break;
-			}
+//			switch(type) {
+//			case ChartType_Pie :
+//				float percent = ((float) nThisOption / (float) nResponders * (float) 100.0);
+//				content = ((int) Math.round(percent)) + " %";
+//				break;
+//				
+//			case ChartType_Bar :
+//				content = nThisOption + " 명";
+//				break;
+//			}
+			
+			int percent = ((int) Math.round( ((float) nThisOption / (float) nResponders * (float) 100.0) ));
+			
+			content += nThisOption + " 명";
+			content += "( ";
+			if( percent < 10 )
+				content += "  ";
+			else if (percent < 100)
+				content += " ";
+			
+			content += percent + " % )";
+			
+			
 			optionContentTV.setText(content);
 			optionContentTV.setTextColor(controller.COLORS[oi % (controller.COLORS.length)]);
 			
