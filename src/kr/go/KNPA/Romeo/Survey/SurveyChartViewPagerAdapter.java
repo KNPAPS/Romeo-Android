@@ -515,13 +515,18 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 			int percent = ((int) Math.round( ((float) nThisOption / (float) nResponders * (float) 100.0) ));
 			
 			content += nThisOption + " 명";
-			content += "( ";
-			if( percent < 10 )
-				content += "  ";
-			else if (percent < 100)
-				content += " ";
 			
-			content += percent + " % )";
+			if( percent < 10 ) {
+				content += "  (";
+				content += "  ";
+			} else if (percent < 100) {
+				content += " (";
+				content += " ";
+			} else {
+				content += "(";
+				content += "";
+			}
+			content += percent + " %)";
 			
 			
 			optionContentTV.setText(content);
