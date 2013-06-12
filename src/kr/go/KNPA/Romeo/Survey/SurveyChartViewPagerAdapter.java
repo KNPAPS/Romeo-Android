@@ -537,10 +537,10 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		//Log.e("VP", "onPageScrolled : " + position + ", " + ratio + ", " + posPX);
 		if(scrolling) {
 			if(0.1 < ratio && ratio < 0.3 ) {
-				pager.setCurrentItem( 1 , true);
+				pager.setCurrentItem( 1 , false);
 				scrolling = false;
 			} else if( 0.7 < ratio && ratio < 0.9 ) {
-				pager.setCurrentItem( 0 , true);
+				pager.setCurrentItem( 0 , false);
 				scrolling = false;
 			}
 			return;
