@@ -97,6 +97,9 @@ public class SurveyListView extends RomeoListView {
 	private void fetch(final Cursor c) {
 		final Handler handler = new Handler();
 		WaiterView.showDialog(getContext());
+		String surveyName = getResources().getString(R.string.survey);
+		WaiterView.setTitle(surveyName + " 정보를 불러옵니다");
+		
 		new Thread(new Runnable() {
 			
 			@Override
