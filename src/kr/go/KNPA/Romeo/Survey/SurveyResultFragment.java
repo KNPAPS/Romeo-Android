@@ -18,7 +18,6 @@ import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -226,10 +225,11 @@ public class SurveyResultFragment extends Fragment {
 												};
 
 	protected void renderChart(ViewGroup questionLL, int nResponders, Question question, ArrayList<Integer> qVote) {
-		ViewPager pager = (ViewPager) questionLL.findViewById(R.id.pager);
+		NotScrollableViewPager pager = (NotScrollableViewPager) questionLL.findViewById(R.id.pager);
 		LinearLayout pagerIndicator = (LinearLayout) questionLL.findViewById(R.id.pager_indicator);
 		
-		SurveyChartViewPagerAdapter adapter = new SurveyChartViewPagerAdapter(SurveyResultFragment.this, pager, pagerIndicator, nResponders, question, qVote);
+		Button switchChartTypeBT = (Button)questionLL.findViewById(R.id.switch_chart_type);
+		SurveyChartViewPagerAdapter adapter = new SurveyChartViewPagerAdapter(SurveyResultFragment.this, pager, pagerIndicator, switchChartTypeBT, false, nResponders, question, qVote);
 		pager.setAdapter(adapter);
 		pager.setOnPageChangeListener(adapter);
 		
