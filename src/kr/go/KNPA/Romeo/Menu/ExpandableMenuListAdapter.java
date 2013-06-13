@@ -1,7 +1,6 @@
 package kr.go.KNPA.Romeo.Menu;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
@@ -34,14 +32,8 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements OnGroupClickListener, OnChildClickListener {
-//	private List<Map<String, String>> gData;
-//	private List<List<Map<String, String>>> cData;
-	
-	private List<MenuListItem> menus;
+
 	private Context context;
-	private int expandedGroupLayout;
-	private int collapsedGroupLayout;
-	private int childLayout;
 	
 	private ExpandableMenuListAdapter(
 			Context context,
@@ -56,57 +48,41 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 			int[] childTo) {
 		super(context, groupData, expandedGroupLayout, collapsedGroupLayout, groupFrom,
 				groupTo, childData, childLayout, childFrom, childTo);
-		this.menus = (List<MenuListItem>)groupData;
 		this.context = context;
-		this.expandedGroupLayout = expandedGroupLayout;
-		this.collapsedGroupLayout = collapsedGroupLayout;
-		this.childLayout = childLayout;
 	}
 
 	
 	public static ExpandableMenuListAdapter getExpandableMenuListAdapter(Context context, List<MenuListItem> data) {
+		
+		ArrayList< MenuListItem > groupData = new ArrayList<MenuListItem>();
+		ArrayList < ArrayList< MenuListItem > > childrenData = new ArrayList< ArrayList<MenuListItem > >();
+		for( int gi = 0; gi < data.size(); gi++ ) {
+			MenuListItem group = data.get(gi);
+			groupData.add( group );
+			
+			ArrayList< MenuListItem > children = new ArrayList< MenuListItem >();
+			for( int ci = 0; group.children() != null && ci < group.children().size(); ci++ ) {
+				MenuListItem child = group.children().get(ci);
+				children.add(child);
+			}
+			
+			childrenData.add(children);
+		}
+		
 		ExpandableMenuListAdapter adapter = 
 				new ExpandableMenuListAdapter(
-						context, data, 
+						context, groupData, 
 						R.layout.menu_list_cell_section_unfolded, R.layout.menu_list_cell_section_folded, 
 						new String[] { "section" }, new int[] { R.id.title }, 
-						null, R.layout.menu_list_cell_item, 
+						childrenData, R.layout.menu_list_cell_item, 
 						new String[] { "title", "code" }, new int[] { R.id.title, R.id.code });
 		return adapter;
 	}
 	
-	
-	@Override	public Object getGroup(int groupPosition) {	return menus.get(groupPosition);	}
-	@Override	public Object getChild(int groupPosition, int childPosition) {	return menus.get(groupPosition).children().get(childPosition);	}
-	
-	@Override	public int getGroupCount() {	return menus.size();	}
-	@Override	public int getChildrenCount(int groupPosition) {
-		List<MenuListItem> children = menus.get(groupPosition).children();
-		return children != null ? children.size() : 0;	
-	}
-	
-	
-	@Override	public int getGroupTypeCount() {	return 1;	}
-	@Override	public int getGroupType(int groupPosition) {	return 1;	}
-	@Override	public long getGroupId(int groupPosition) {	 return (groupPosition * 100);	}
-	@Override	public int getChildTypeCount() {	return 1;	}
-	@Override	public int getChildType(int groupPosition, int childPosition) {	return 10;	}
-	@Override	public long getChildId(int groupPosition, int childPosition) {	return groupPosition + 100 + childPosition;	}
-	
-	@Override
-	public View newChildView(boolean isLastChild, ViewGroup parent) {
-		return getLayoutInflater().inflate(this.childLayout, parent, false);
-	}
-	
-	@Override
-	public View newGroupView(boolean isExpanded, ViewGroup parent) {
-		return getLayoutInflater().inflate( isExpanded ? expandedGroupLayout : collapsedGroupLayout, parent, false);
-	}
-	
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-		//View view = super.getGroupView(groupPosition, isExpanded, convertView, parent);
-		View view = newGroupView(isExpanded, parent);
+		View view = super.getGroupView(groupPosition, isExpanded, convertView, parent);
+		//View view = newGroupView(isExpanded, parent);
 		MenuListItem item = (MenuListItem) getGroup(groupPosition);
 		ImageView iconView = (ImageView)view.findViewById(R.id.icon);
 		iconView.setImageResource( item.iconImage() );
@@ -117,7 +93,7 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 	
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-		View view = newChildView(isLastChild, parent);
+		View view = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
 		MenuListItem item = ( MenuListItem ) getChild(groupPosition, childPosition);
 		ImageView iconView = (ImageView)view.findViewById(R.id.icon);
 		iconView.setImageResource( item.iconImage() );
@@ -129,12 +105,9 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 	@Override
 	public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
 		Fragment fragment = null;
-		//HashMap<String, String> g = (HashMap<String, String>) getGroup(groupPosition);//(HashMap<String, String>) gData.get(groupPosition);
 		
 		MenuListItem item = (MenuListItem)getGroup(groupPosition);
 		String[] codes = item.code().split(":");
-		
-		//String[] codes = g.get("code").split(":");
 		
 		if(codes[0].equalsIgnoreCase("CHAT")) {
 			if(codes[1].equalsIgnoreCase("COMMAND")) {
@@ -171,14 +144,9 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 
 		
 		Fragment fragment = null;
-		
-		//HashMap<String, String> g = (HashMap<String, String>) getGroup(groupPosition);//(HashMap<String, String>) gData.get(groupPosition);
-		//HashMap<String, String> c = (HashMap<String, String>) getChild(groupPosition, childPosition);//(HashMap<String, String>) cData.get(groupPosition).get(childPosition);
-		
+
 		MenuListItem item = (MenuListItem)getChild(groupPosition, childPosition);
 		String[] codes = item.code().split(":");
-		
-		//String[] codes = c.get("code").split(":");
 		
 		if(codes[0].equalsIgnoreCase("CHAT")) {
 			if(codes[1].equalsIgnoreCase("COMMAND")) {
@@ -218,7 +186,7 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 		}
 		
 		if(fragment == null) {
-			fragment = new ContentFragment(item.code()/*c.get("code")*/);
+			fragment = new ContentFragment(item.code());
 		}
 		
 		if (fragment != null)
@@ -238,13 +206,6 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 	// the meat of switching the above fragment
 		private void switchFragment(Fragment fragment) {
 			MainActivity.sharedActivity().switchContent(fragment);
-//			if (getActivity() == null)
-//				return;
-//			
-//			if (getActivity() instanceof MainActivity) {
-//				MainActivity fca = (MainActivity) getActivity();
-//				fca.switchContent(fragment);
-//			}
 		}
 	
 		
