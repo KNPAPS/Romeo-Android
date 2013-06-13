@@ -3,6 +3,7 @@ package kr.go.KNPA.Romeo.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Config.StatusCode;
@@ -10,7 +11,6 @@ import kr.go.KNPA.Romeo.Connection.Connection;
 import kr.go.KNPA.Romeo.Connection.Data;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.Util.CacheManager;
-
 public class MemberManager {
 
 	private static MemberManager	mInstance	= null;
@@ -282,11 +282,13 @@ public class MemberManager {
 		if (depIdx != null)
 		{
 			reqData.add(0, KEY.DEPT.IDX, depIdx);
+			reqData.add(0, KEY.USER.IDX, Constants.USER_IDX);
 			reqData.add(0, KEY.DEPT.FETCH_RECURSIVE, doRecursive == true ? 1 : 0);
 		}
 		else
 		{
 			// Root Department
+			reqData.add(0, KEY.USER.IDX, Constants.USER_IDX);
 			reqData.add(0, KEY.DEPT.IDX, "");
 			reqData.add(0, KEY.DEPT.FETCH_RECURSIVE, doRecursive == true ? 1 : 0);
 		}

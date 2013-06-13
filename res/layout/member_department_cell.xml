@@ -3,8 +3,8 @@
     android:id="@+id/member_department_cell"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:orientation="horizontal" 
-    android:background="@color/lighter"
+    android:background="@drawable/list_cell_highlight"
+    android:orientation="horizontal"
     android:padding="11dp" >
 
     <ImageView

@@ -119,6 +119,7 @@ public class MemberListView extends RomeoListView {
 			case User.TYPE_MEMBERLIST :
 				listAdapter = new MemberListAdapter(context);
 				this.setOnItemClickListener((MemberListAdapter) listAdapter);
+				this.setOnItemLongClickListener((MemberListAdapter) listAdapter);
 				this.setAdapter(listAdapter);
 				break;		
 		}

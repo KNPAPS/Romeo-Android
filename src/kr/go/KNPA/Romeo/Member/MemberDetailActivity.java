@@ -246,7 +246,7 @@ public class MemberDetailActivity extends Activity {
 																	room.setType(roomType);
 																	ArrayList<String> idxs = new ArrayList<String>();
 																	idxs.add(idx);
-																	room.addChatters(idxs);
+																	room.addChattersIdx(idxs);
 																}
 
 																final Room fRoom = room;

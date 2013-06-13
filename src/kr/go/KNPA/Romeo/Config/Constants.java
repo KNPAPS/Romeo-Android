@@ -20,5 +20,5 @@ public class Constants {
 	public static final int			CHAT_ROOM_TITLE_MAX_LEN	= 15;
 	public static int				DEVICE_WIDTH;
 	public static int				DEVICE_HEIGHT;
-
+	public static String USER_IDX = "";
 }

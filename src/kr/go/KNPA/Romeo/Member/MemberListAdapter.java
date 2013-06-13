@@ -2,37 +2,48 @@ package kr.go.KNPA.Romeo.Member;
 
 import java.util.ArrayList;
 
+import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Chat.Chat;
+import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Config.Constants;
+import kr.go.KNPA.Romeo.Survey.Survey;
+import kr.go.KNPA.Romeo.Survey.SurveyComposeFragment;
+import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
+import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //Inner Class Member List Adapter //
-public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClickListener {
+public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClickListener, OnItemLongClickListener {
 	
 	private ArrayList<String> exeptionList;
 	
 	// related with SEARCH
 	public static int[] search;
+
+	private static Handler	mHandler = new Handler();
 	
 	// Constructor
 	public MemberListAdapter(final Context context) {
@@ -76,6 +87,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+
 		
 		IndexPath path = getIndexPathFromPosition(position);
 		Object model = objectForRowAtIndexPath(path);
@@ -83,7 +95,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 		Department department = null;
 		User user = null;
 		
-		CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
+		final CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
 		
 		if(convertView == null || getItemViewType(position) != node.type()) {			// re-usable test
 			switch(node.type()) {
@@ -105,9 +117,8 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			if(node.isUnfolded() == true) {
 				convertView.setBackgroundResource(R.color.lighter);
 			} else {
-				convertView.setBackgroundResource(R.color.white);
+				convertView.setBackgroundResource(R.drawable.list_cell_highlight);
 			}
-			
 			
 		} else if (node.type() == CellNode.CN_USER) {
 			user = (User)model;
@@ -133,7 +144,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			TextView departmentTV = (TextView)convertView.findViewById(R.id.department);
 			departmentTV.setText(uDepartment.nameFull);
 			
-			convertView.setBackgroundResource(R.color.white);
+			convertView.setBackgroundResource(R.drawable.list_cell_highlight);
 		}
 		
 		if(node.type() == CellNode.CN_DEPARTMENT || node.type() == CellNode.CN_USER) {
@@ -155,16 +166,6 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 		
 		return convertView;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	// ClickListener
 	
@@ -217,21 +218,141 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 		this.notifyDataSetChanged();
 	}
 	
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long l_position)
+	{
+		IndexPath path = getIndexPathFromPosition(position-1);
+		Object model = objectForRowAtIndexPath(path);
+		
+		
+		final CellNode node = CellNode.nodeAtIndexPath(this.rootNode(), path);
+		
+		
+		if(node.type() == CellNode.CN_DEPARTMENT) {
+			Department department = (Department)model;
+		
+			RomeoDialog.Builder chooseDlg = new RomeoDialog.Builder(context);
+			chooseDlg.setTitle("단체 전송");
+	
+			ArrayList<String> array = new ArrayList<String>();
+			array.add(context.getResources().getString(R.string.commandTitle));
+			array.add(context.getResources().getString(R.string.meetingTitle));
+			array.add(context.getResources().getString(R.string.surveyTitle));
+	
+			ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(context, R.layout.dialog_menu_cell2, array);
+			final String deptIdx = department.idx;
+			Log.d("test","onlongclick"+deptIdx);
+			chooseDlg.setAdapter(arrayAdt, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, final int which)
+				{
+					
+					final ProgressDialog pd = ProgressDialog.show(context, "사용자 검색", "잠시만 기다려주세요..");
+					new Thread(){
+						public void run() 
+						{
+							Log.d("test","in thread"+deptIdx);
+							final ArrayList<User> members = MemberManager.sharedManager().getDeptMembers(deptIdx, true);
+							
+							if (members == null)
+							{
+								mHandler.post(new Runnable(){
+									public void run() 
+									{
+										Toast.makeText(context, "오류가 발생했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+										pd.dismiss();
+									}
+								});
+								return;
+							}
+							
+							if (members.size()==0) 				
+							{
+								mHandler.post(new Runnable(){
+									public void run() 
+									{
+										Toast.makeText(context, "선택된 부서에 속한 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
+										pd.dismiss();
+									}
+								});
+								return;
+							}
+
+							switch(which)
+							{
+							case 0:
+								final Room room = new Room();
+								room.addChatters(members);
+								room.setType(Chat.TYPE_COMMAND);
+								
+								mHandler.post(new Runnable(){
+									public void run() 
+									{
+										pd.dismiss();
+										MainActivity.sharedActivity().goRoomFragment(Chat.TYPE_COMMAND, room);
+									}
+								});
+								break;
+							case 1:
+								final Room room2 = new Room();
+								room2.addChatters(members);
+								room2.setType(Chat.TYPE_MEETING);
+								
+								mHandler.post(new Runnable(){
+									public void run() 
+									{
+										pd.dismiss();
+										MainActivity.sharedActivity().goRoomFragment(Chat.TYPE_MEETING, room2);
+									}
+								});
+								break;
+							case 2:
+								
+								mHandler.post(new Runnable(){
+									public void run() 
+									{
+										pd.dismiss();
+										SurveyFragment survFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+										MainActivity.sharedActivity().getSupportFragmentManager().beginTransaction()
+										.replace(R.id.content_frame, survFragment, survFragment.getClass().getSimpleName()).commit();
+										MainActivity.sharedActivity().getSlidingMenu().showContent();
+										
+										ArrayList<String> receiversIdx = new ArrayList<String>();
+										for (int i=0; i<members.size(); i++)
+										{
+											receiversIdx.add(members.get(i).idx);
+										}
+										
+										SurveyComposeFragment fragment = new SurveyComposeFragment(receiversIdx);
+										MainActivity.sharedActivity().getSupportFragmentManager().beginTransaction()
+										.replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName()).commit();
+									}
+								});
+								
+								break;
+							}
+							
+
+							
+						}
+					}.start();
+					
+					dialog.dismiss();
+				}
+	
+			});
+	
+			chooseDlg.setCancelable(true);
+			chooseDlg.show();
+		}
+		
+		return false;
+	}
 	
 	@Override
 	protected void getSubNodes(final CellNode nodeClicked) {
 		WaiterView.showDialog(context);
-		
-		final Handler handler = new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				super.handleMessage(msg);
-
-				WaiterView.dismissDialog(context);
-				notifyDataSetChanged();
-			}
-		};
-		
+				
 		new Thread(new Runnable() {
 			
 			@Override
@@ -274,7 +395,14 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 				nodeClicked.isUnfolded(true);
 				
 				
-				handler.sendMessage(handler.obtainMessage());
+				mHandler.post(new Runnable(){
+					@Override
+					public void run()
+					{
+						WaiterView.dismissDialog(context);
+						notifyDataSetChanged();
+					}
+				});
 			}
 		}).start();
 				
@@ -290,5 +418,4 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			return Constants.NOT_SPECIFIED;
 		}
 	}
-
 }

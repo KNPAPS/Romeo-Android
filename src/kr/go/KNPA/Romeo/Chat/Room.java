@@ -137,7 +137,7 @@ public class Room {
 		this.mStatus = status;
 	}
 
-	public void addChatters(ArrayList<String> chattersIdx)
+	public void addChattersIdx(ArrayList<String> chattersIdx)
 	{
 		ArrayList<User> newbies = MemberManager.sharedManager().getUsers(chattersIdx);
 		for (int i = 0; i < newbies.size(); i++)
@@ -148,6 +148,17 @@ public class Room {
 		}
 	}
 
+	public void addChatters(ArrayList<User> users)
+	{
+		for (int i = 0; i < users.size(); i++)
+		{
+			User u = users.get(i);
+			Chatter c = new Chatter(u);
+			chatters.add(c);
+		}
+	}
+
+	
 	public boolean isAlarmOn()
 	{
 		return isAlarmOn;

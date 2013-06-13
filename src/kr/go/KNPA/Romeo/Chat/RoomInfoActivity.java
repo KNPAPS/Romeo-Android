@@ -44,7 +44,7 @@ public class RoomInfoActivity extends Activity implements RoomInfoActivityLayout
 		mRoom = new Room();
 		mRoom.setStatus(b.getInt(KEY_ROOM_STATUS));
 		mRoom.setType(b.getInt(KEY_ROOM_TYPE));
-		mRoom.addChatters(new ArrayList<String>(Arrays.asList(b.getStringArray(KEY_CHATTERS_IDX))));
+		mRoom.addChattersIdx(new ArrayList<String>(Arrays.asList(b.getStringArray(KEY_CHATTERS_IDX))));
 
 		if (mRoom.getStatus() == Room.STATUS_CREATED)
 		{

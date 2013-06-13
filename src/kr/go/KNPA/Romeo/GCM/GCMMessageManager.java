@@ -203,7 +203,7 @@ public class GCMMessageManager {
 				}
 			}
 
-			room.addChatters(chattersIdx);
+			room.addChattersIdx(chattersIdx);
 
 			RoomModel model = new RoomModel(mContext, room);
 			model.init();

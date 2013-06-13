@@ -56,13 +56,31 @@ public class SurveyComposeFragment extends Fragment {
 
 	public SurveyComposeFragment() {
 	}
+	
+	/**
+	 * 초기에 수신자를 외부에서 정해서 시작할 때 이 생성자로 호출
+	 * @param receivers
+	 */
+	public SurveyComposeFragment(ArrayList<String> receivers)
+	{
+		receiversIdx = receivers;
+	}
 
 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = init(inflater, container, savedInstanceState);
-		receiversIdx = new ArrayList<String>();
+		
+		if (receiversIdx != null && receiversIdx.size() > 0)
+		{
+			setReceiverET();
+		}
+		else
+		{
+			receiversIdx = new ArrayList<String>();
+		}
+		
 		return view;
 	}
 
@@ -511,18 +529,23 @@ public class SurveyComposeFragment extends Fragment {
 				// 대체
 				receiversIdx = data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
 				
-				if (receiversIdx.size() > 1) {
-					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receiversIdx.size()+"명");
-				} else if(receiversIdx.size() > 0) {
-					User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
-					receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
-				} else {
-					receiversET.setText("선택된 사용자가 없습니다.");
-				}
+				setReceiverET();
 			}
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	private void setReceiverET()
+	{
+		if (receiversIdx.size() > 1) {
+			User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
+			receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receiversIdx.size()+"명");
+		} else if(receiversIdx.size() > 0) {
+			User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
+			receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
+		} else {
+			receiversET.setText("선택된 사용자가 없습니다.");
 		}
 	}
 	

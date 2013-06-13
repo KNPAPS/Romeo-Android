@@ -13,6 +13,7 @@ import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyFragment;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -58,7 +59,7 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 
 		// customize the SlidingMenu
-		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 
 		// set the Above View
 		setContentView(R.layout.content_frame); // 레이아웃만 있는 빈 뷰
@@ -117,6 +118,7 @@ public class MainActivity extends BaseActivity {
 	public void onPostCreate(Bundle savedInstanceState)
 	{
 		super.onPostCreate(savedInstanceState);
+		Constants.USER_IDX = UserInfo.getUserIdx(this);
 		if (showMenu == false)
 			return;
 		new Handler().post(new Runnable() {

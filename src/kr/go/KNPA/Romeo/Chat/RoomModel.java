@@ -151,7 +151,7 @@ public class RoomModel extends BaseModel {
 
 	public boolean addChatters(String inviterIdx, ArrayList<String> chattersIdx)
 	{
-		mRoom.addChatters(chattersIdx);
+		mRoom.addChattersIdx(chattersIdx);
 
 		if (mRoom.getStatus() == Room.STATUS_CREATED)
 		{

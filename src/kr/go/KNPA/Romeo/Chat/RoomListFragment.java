@@ -204,7 +204,7 @@ public class RoomListFragment extends Fragment implements RoomListFragmentLayout
 				else
 				{
 					room = new Room();
-					room.addChatters(receiversIdxs);
+					room.addChattersIdx(receiversIdxs);
 					room.setType(subType);
 				}
 
