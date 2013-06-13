@@ -1,6 +1,7 @@
 package kr.go.KNPA.Romeo.Menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,9 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 
 	private Context context;
 	Handler unCheckedHandler;
+	
+	HashMap<String, Integer> nUnChecked;
+	
 	private ExpandableMenuListAdapter(
 			Context context,
 			List<? extends Map<String, ?>> groupData,
@@ -55,6 +60,15 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 		unCheckedHandler = new Handler();
 	}
 
+	@Override
+	public View newChildView(boolean isLastChild, ViewGroup parent) {
+		return getLayoutInflater().inflate( R.layout.menu_list_cell_item, parent, false);
+	}
+
+	@Override
+	public View newGroupView(boolean isExpanded, ViewGroup parent) {
+		return getLayoutInflater().inflate( isExpanded ? R.layout.menu_list_cell_section_unfolded : R.layout.menu_list_cell_section_folded, parent, false);
+	}
 	
 	public static ExpandableMenuListAdapter getExpandableMenuListAdapter(Context context, List<MenuListItem> data) {
 		
@@ -85,8 +99,8 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 	
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-		View view = super.getGroupView(groupPosition, isExpanded, convertView, parent);
-		//View view = newGroupView(isExpanded, parent);
+		//View view = super.getGroupView(groupPosition, isExpanded, convertView, parent);
+		View view = newGroupView(isExpanded, parent);
 		MenuListItem item = (MenuListItem) getGroup(groupPosition);
 		ImageView iconView = (ImageView)view.findViewById(R.id.icon);
 		iconView.setImageResource( item.iconImage() );
@@ -95,7 +109,7 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 		
 		final TextView nUncheckedTV = (TextView)view.findViewById(R.id.nUnchecked);
 		final String[] codes = item.code().split(":");
-		
+		Log.i("getGroupView", item.code());
 		if(
 				codes[0].equalsIgnoreCase("CHAT") || 
 				codes[0].equalsIgnoreCase("DOCUMENT") || 
@@ -139,7 +153,7 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 	
 	@Override
 	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-		View view = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
+		View view = newChildView(isLastChild, parent);//super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
 		MenuListItem item = ( MenuListItem ) getChild(groupPosition, childPosition);
 		ImageView iconView = (ImageView)view.findViewById(R.id.icon);
 		iconView.setImageResource( item.iconImage() );
@@ -148,7 +162,7 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 		
 		final TextView nUncheckedTV = (TextView)view.findViewById(R.id.nUnchecked);
 		final String[] codes = item.code().split(":");
-		
+		Log.i("getChildView", item.code());
 		if(
 				codes[0].equalsIgnoreCase("CHAT") || 
 				codes[0].equalsIgnoreCase("DOCUMENT") || 
@@ -347,4 +361,24 @@ class ExpandableMenuListAdapter extends SimpleExpandableListAdapter implements O
 		return menus;
 	}
 
+	private void numUnChecked() {
+		if(nUnChecked == null)
+			nUnChecked = new HashMap<String, Integer>();
+		
+		int nCommand = DAO.chat(getContext()).getNumUnchecked(Chat.TYPE_COMMAND);
+		int nMeeting = DAO.chat(getContext()).getNumUnchecked(Chat.TYPE_MEETING);
+		int nDocument = DAO.document(getContext()).getNumUnchecked();
+		int nSurvey = DAO.survey(getContext()).getNumUnchecked();
+	}
+	
+	private Integer getUnChecked(String code) {
+		if(nUnChecked == null || !nUnChecked.containsKey(code))
+			return null;
+		return nUnChecked.get(code);
+	}
+	
+	public void refresh() {
+		numUnChecked();
+		this.notifyDataSetChanged();
+	}
 }
