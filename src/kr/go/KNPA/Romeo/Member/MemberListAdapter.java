@@ -115,7 +115,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 			titleTV.setText(department.name);
 			
 			if(node.isUnfolded() == true) {
-				convertView.setBackgroundResource(R.color.lighter);
+				convertView.setBackgroundResource(R.drawable.list_cell_highlight_lighter);
 			} else {
 				convertView.setBackgroundResource(R.drawable.list_cell_highlight);
 			}

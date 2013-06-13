@@ -42,9 +42,7 @@ public class SurveyComposeFragment extends Fragment {
 	private final static int MODE_REMOVE = 1;
 	
 	EditText titleET;
-	EditText receiversET;
-	Button receiversSearchBT;
-	//EditText[] openETs;
+	TextView receiversTV;
 	EditText[] closeETs;
 	EditText contentET;
 	CheckBox isResultPublicCB;
@@ -84,15 +82,6 @@ public class SurveyComposeFragment extends Fragment {
 		return view;
 	}
 
-//	@Override
-//	public void onStop() {
-//		super.onStop();
-//		RomeoListView received = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView();
-//		if(received != null) received.refresh();
-//		RomeoListView departed = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED).getListView(); 
-//		if(departed != null) departed.refresh();
-//	}
-
 	public View init(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		// Bar Button 리스너
@@ -123,14 +112,9 @@ public class SurveyComposeFragment extends Fragment {
 		ViewGroup rootLayout = (ViewGroup)view.findViewById(R.id.rootLayout);
 		
 		titleET = (EditText)((ViewGroup)rootLayout.getChildAt(0)).findViewById(R.id.title);
-		receiversET = (EditText)((ViewGroup)rootLayout.getChildAt(1)).findViewById(R.id.receivers);
-		receiversSearchBT = (Button)((ViewGroup)rootLayout.getChildAt(1)).findViewById(R.id.receivers_search);
+		receiversTV = (TextView)((ViewGroup)rootLayout.getChildAt(1)).findViewById(R.id.receivers);
 		
-		//openETs = new EditText[3];
 		closeETs = new EditText[3];
-		//openETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_year);
-		//openETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_month);
-		//openETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.open_day);
 		closeETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_year);
 		closeETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_month);
 		closeETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_day);
@@ -145,7 +129,7 @@ public class SurveyComposeFragment extends Fragment {
 		addQuestionBT = (Button)rootLayout.findViewById(R.id.add_question);
 		addQuestionBT.setOnClickListener(addNewQuestion);
 		
-		receiversSearchBT.setOnClickListener(new OnClickListener() {
+		receiversTV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				callMemberSearchActivity(); 
@@ -539,12 +523,12 @@ public class SurveyComposeFragment extends Fragment {
 	{
 		if (receiversIdx.size() > 1) {
 			User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
-			receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receiversIdx.size()+"명");
+			receiversTV.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name+" 등 "+receiversIdx.size()+"명");
 		} else if(receiversIdx.size() > 0) {
 			User fReceiver = User.getUserWithIdx(receiversIdx.get(0));
-			receiversET.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
+			receiversTV.setText(User.RANK[fReceiver.rank]+" "+fReceiver.name);
 		} else {
-			receiversET.setText("선택된 사용자가 없습니다.");
+			receiversTV.setText("선택된 사용자가 없습니다.");
 		}
 	}
 	
