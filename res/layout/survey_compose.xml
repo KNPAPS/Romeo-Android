@@ -21,7 +21,7 @@
 		        android:layout_height="wrap_content" >
 		
 		        <TextView
-		            android:layout_width="52dp"
+		            android:layout_width="56dp"
 		            android:layout_height="wrap_content"
 		            android:layout_marginLeft="5dp"
 		            android:layout_marginRight="5dp"
@@ -46,11 +46,13 @@
 		    </LinearLayout>
 				
 		    <LinearLayout
+		        android:layout_marginTop = "2dp"
+		        android:layout_marginBottom = "2dp"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content" >
 		
 		        <TextView
-		            android:layout_width="52dp"
+		            android:layout_width="56dp"
 		            android:layout_height="wrap_content"
 		            android:layout_gravity="center_vertical"
 		            android:layout_marginLeft="5dp"
@@ -76,8 +78,7 @@
 				    		<Button
 		                android:id="@+id/receivers_search"
 		                android:layout_width="match_parent"
-		                android:layout_height="48dp"
-		                android:layout_marginRight="@dimen/gap"
+		                android:layout_height="36dp"
 		                android:background="@color/transparent" />
               
 		            <Button
@@ -96,7 +97,7 @@
 				        android:layout_height="wrap_content" >
 				
 				        <TextView
-				            android:layout_width="52dp"
+				            android:layout_width="56dp"
 				            android:layout_height="wrap_content"
 				            android:layout_gravity="center_vertical"
 				            android:layout_marginLeft="5dp"
@@ -118,14 +119,15 @@
 				            android:nextFocusDown="@+id/close_month"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
-				            android:maxLength="4"
-				            android:textSize="12sp" />
+				            android:maxLength="4" />
 				
 				        <EditText
 				            android:id="@+id/close_month"
 				            android:layout_width="0dp"
 				            android:layout_height="wrap_content"
 				            android:layout_weight="1"
+				            android:layout_marginLeft="2dp"
+				            android:layout_marginRight="2dp"
 				            android:ems="10"
 				            android:gravity="center"
 				            android:hint="@string/survey_close_month_placehold"
@@ -134,8 +136,7 @@
 				            android:nextFocusDown="@+id/close_day"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
-				            android:maxLength="2"
-				            android:textSize="12sp" />
+				            android:maxLength="2" />
 				
 				        <EditText
 				            android:id="@+id/close_day"
@@ -150,8 +151,7 @@
 				            android:nextFocusDown="@+id/chat_content"
 				            android:padding="@dimen/gapSmaller"
 				            android:textColor="@color/text"
-				            android:maxLength="2"
-				            android:textSize="12sp" />
+				            android:maxLength="2" />
 				
 				    </LinearLayout>
 			
@@ -160,7 +160,7 @@
 		        android:layout_height="wrap_content" >
 		
 		        <TextView
-		            android:layout_width="52dp"
+		            android:layout_width="56dp"
 		            android:layout_height="wrap_content"
 		            android:layout_marginLeft="5dp"
 		            android:layout_marginRight="5dp"
