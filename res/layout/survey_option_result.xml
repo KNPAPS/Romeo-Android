@@ -8,6 +8,15 @@
     android:orientation="horizontal" >
 
     <TextView
+        android:id="@+id/index"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/survey_option_result_content_height"
+        android:layout_marginLeft="@dimen/gap"
+        android:gravity="center_vertical"
+        android:textSize="16dp"
+        android:textColor="@color/text" />
+
+    <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/survey_option_result_content_height"

@@ -28,14 +28,15 @@ import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.os.Build.VERSION;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,12 +47,16 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 	Question question;
 	int nResponders;
 	SurveyResultFragment controller;
-	ViewPager pager;
+	NotScrollableViewPager pager;
 	int maxHeight;
 	Point screenSize;
 	LinearLayout pagerIndicator;
-
+	Button switchChartTypeBT;
+	
+	final static private String showPieChart = "원 그래프 보기";
+	final static private String showBarChart = "막대 그래프 보기";
 	boolean scrolling = false; 
+	boolean scrollable = true;
 	
 	private final static int ChartType_Pie = 0;
 	private final static int ChartType_Bar = 1;
@@ -78,14 +83,20 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		return view.equals(object);
 	}
 	
-	public SurveyChartViewPagerAdapter(SurveyResultFragment controller, ViewPager pager, LinearLayout pagerIndicator, int nResponders, Question question, ArrayList<Integer> qVote) {
+	public SurveyChartViewPagerAdapter(SurveyResultFragment controller, NotScrollableViewPager pager, LinearLayout pagerIndicator, Button switchChartTypeBT, boolean scrollable, int nResponders, Question question, ArrayList<Integer> qVote) {
 		this.controller = controller;
+		this.scrollable = scrollable;
 		this.pager = pager;
+		this.pager.setScrollable(scrollable);
+		this.pagerIndicator = pagerIndicator;
+		this.pagerIndicator.setVisibility( scrollable ? View.VISIBLE : View.GONE);
+		if(scrollable) 
+			initPagerIndicator();
+		
 		this.question = question;
 		this.nResponders = nResponders;
 		this.qVote = qVote;
 		maxHeight = 0;
-		
 		Display display = getActivity().getWindowManager().getDefaultDisplay();
 		this.screenSize = new Point();
 		if(VERSION.SDK_INT < 13 ) {
@@ -95,8 +106,19 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 			display.getSize(screenSize);
 		}
 		
-		this.pagerIndicator = pagerIndicator;
-		initPagerIndicator();
+		
+		this.switchChartTypeBT = switchChartTypeBT;
+		this.switchChartTypeBT.setText(showBarChart);
+		this.switchChartTypeBT.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				NotScrollableViewPager p = SurveyChartViewPagerAdapter.this.pager;
+				int nextItem = (p.getCurrentItem() + 1) % p.getChildCount();
+				p.setCurrentItem( nextItem , false);
+				((Button)view).setText( nextItem % 2 == 1 ? showPieChart : showBarChart );
+			}
+		});
 	}
 	
 //	public void renderChart() {
@@ -469,6 +491,9 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 			String option = options.get(oi);
 			LinearLayout optionLL = (LinearLayout) inflater.inflate(R.layout.survey_option_result, _optionsLL, false);
 			
+			TextView optionIndexTV = (TextView) optionLL.findViewById(R.id.index);
+			optionIndexTV.setText((oi+1) + "번 ");
+			
 			TextView optionTitleTV = (TextView) optionLL.findViewById(R.id.title);
 			optionTitleTV.setText(option);
 
@@ -476,16 +501,34 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 			int nThisOption = qVote.get(oi);
 			String content = "";
 			
-			switch(type) {
-			case ChartType_Pie :
-				float percent = ((float) nThisOption / (float) nResponders * (float) 100.0);
-				content = ((int) Math.round(percent)) + " %";
-				break;
-				
-			case ChartType_Bar :
-				content = nThisOption + " 명";
-				break;
+//			switch(type) {
+//			case ChartType_Pie :
+//				float percent = ((float) nThisOption / (float) nResponders * (float) 100.0);
+//				content = ((int) Math.round(percent)) + " %";
+//				break;
+//				
+//			case ChartType_Bar :
+//				content = nThisOption + " 명";
+//				break;
+//			}
+			
+			int percent = ((int) Math.round( ((float) nThisOption / (float) nResponders * (float) 100.0) ));
+			
+			content += nThisOption + " 명";
+			
+			if( percent < 10 ) {
+				content += "  (";
+				content += "  ";
+			} else if (percent < 100) {
+				content += " (";
+				content += " ";
+			} else {
+				content += "(";
+				content += "";
 			}
+			content += percent + " %)";
+			
+			
 			optionContentTV.setText(content);
 			optionContentTV.setTextColor(controller.COLORS[oi % (controller.COLORS.length)]);
 			
@@ -525,31 +568,34 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
+		return;
 		//Log.e("VP", "onPageScrollStateChanged : " + state);
 		// 기본/up : 0, down : 1, moved : 2
 		
-		scrolling = (state % 2 == 1) ? true : false;
+//		scrolling = (state % 2 == 1) ? true : false;
 	}
 
 	@Override
 	public void onPageScrolled(int position, float ratio, int posPX) {
+		return;
 		//Log.e("VP", "onPageScrolled : " + position + ", " + ratio + ", " + posPX);
-		if(scrolling) {
-			if(0.1 < ratio && ratio < 0.3 ) {
-				pager.setCurrentItem( 1 , false);
-				scrolling = false;
-			} else if( 0.7 < ratio && ratio < 0.9 ) {
-				pager.setCurrentItem( 0 , false);
-				scrolling = false;
-			}
-			return;
-		}
+//		if(scrolling) {
+//			if(0.1 < ratio && ratio < 0.3 ) {
+//				pager.setCurrentItem( 1 , true);
+//				scrolling = false;
+//			} else if( 0.7 < ratio && ratio < 0.9 ) {
+//				pager.setCurrentItem( 0 , true);
+//				scrolling = false;
+//			}
+//			return;
+//		}
 	}
 
 	@Override
 	public void onPageSelected(int position) {
 		//Log.e("VP", "onPageSelected" + position);
-		activePagerIndicator(position);
+		if(this.scrollable)
+			activePagerIndicator(position);
 	}
 
 	

@@ -37,11 +37,17 @@
         android:text="@string/question_is_multiple"
         android:textColor="@color/text" />
 
+    <Button
+        android:id="@+id/switch_chart_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right" />
+
     <RelativeLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 	    
-	    <android.support.v4.view.ViewPager
+	    <kr.go.KNPA.Romeo.Survey.NotScrollableViewPager
 	        android:layout_alignParentTop="true"
 			android:id="@+id/pager"
 			android:layout_width="match_parent"

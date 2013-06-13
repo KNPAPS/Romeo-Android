@@ -126,9 +126,10 @@
     <string name="sampleSurveyCloseDT">2013.07.11</string>
     <string name="sampleTime">12:34</string>
     <string name="labelReceiver">수신자 : </string>
-    <string name="labelSurveyDuration">설문기간</string>
+    <string name="labelSurveyDuration">설문기간 : </string>
     <string name="labelForwarder">전달자 : </string>
     <string name="labelSender">발신자 : </string>
+    <string name="labelSurveyResponseStatus">설문현황 : </string>
     <string name="formatString_openDT">yyyy.MM.dd</string>
     <string name="formatString_closeDT">yyyy.MM.dd</string>
     <string name="formatString_regular">yyyy.MM.dd HH:mm:ss</string>

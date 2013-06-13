@@ -79,34 +79,34 @@
 				            android:src="@drawable/hr" />
 						    
 				        <LinearLayout
-				        		android:id="@+id/timestamp"
-						        android:layout_width="match_parent"
-						        android:layout_height="wrap_content" 
-						        android:paddingTop="5dp"
-						        android:paddingBottom="5dp"
-						        android:orientation="horizontal" >
-								    <TextView
-						            android:text="@string/labelSurveyDuration"
-						            android:textColor="@color/gray"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content" />
-						        <TextView
-						            android:id="@+id/openDT"
-						            android:text="@string/sampleSurveyOpenDT"
-						            android:textColor="@color/gray"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content" />
-						        <TextView
-						            android:text="@string/fromTo"
-						            android:textColor="@color/gray"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content" />
-						        <TextView
-						            android:id="@+id/closeDT"
-						            android:text="@string/sampleSurveyCloseDT"
-						            android:textColor="@color/gray"
-						            android:layout_width="wrap_content"
-						            android:layout_height="wrap_content" />
+			        		android:id="@+id/timestamp"
+					        android:layout_width="match_parent"
+					        android:layout_height="wrap_content" 
+					        android:paddingTop="5dp"
+					        android:paddingBottom="5dp"
+					        android:orientation="horizontal" >
+						    <TextView
+					            android:text="@string/labelSurveyDuration"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+					        <TextView
+					            android:id="@+id/openDT"
+					            android:text="@string/sampleSurveyOpenDT"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+					        <TextView
+					            android:text="@string/fromTo"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+					        <TextView
+					            android:id="@+id/closeDT"
+					            android:text="@string/sampleSurveyCloseDT"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
 				        </LinearLayout>
 				        
 				        <ImageView
@@ -116,14 +116,63 @@
 				            android:contentDescription="@string/dummy"
 				            android:src="@drawable/hr" />
 				        
-				    		<TextView
-				    		    android:id="@+id/chat_content"
-				    		    android:layout_width="match_parent"
-				    		    android:layout_height="wrap_content"
-				    		    android:layout_marginBottom="5dp"
-				    		    android:layout_marginTop="5dp"
-				    		    android:text="@string/loremIpsumShort"
-				    		    android:textColor="@color/text" />
+				        <LinearLayout
+			        		android:id="@+id/survey_resonse_status"
+					        android:layout_width="match_parent"
+					        android:layout_height="wrap_content" 
+					        android:paddingTop="5dp"
+					        android:paddingBottom="5dp"
+					        android:orientation="horizontal" >
+						    <TextView
+					            android:text="@string/labelSurveyResponseStatus"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+						    <TextView
+					            android:text=" "
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+					        <TextView
+					            android:id="@+id/receiverCount"
+					            android:text="100"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+					        <TextView
+					            android:text="명 중 "
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+							<TextView
+					            android:id="@+id/responderCount"
+					            android:text="100"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+							<TextView
+					            android:text="명 설문 참여"
+					            android:textColor="@color/gray"
+					            android:layout_width="wrap_content"
+					            android:layout_height="wrap_content" />
+							
+				        </LinearLayout>
+				        
+				        <ImageView
+				            android:layout_width="match_parent"
+				            android:layout_height="2dp"
+				            android:layout_margin="@dimen/gapSmaller"
+				            android:contentDescription="@string/dummy"
+				            android:src="@drawable/hr" />
+				        
+			    		<TextView
+			    		    android:id="@+id/chat_content"
+			    		    android:layout_width="match_parent"
+			    		    android:layout_height="wrap_content"
+			    		    android:layout_marginBottom="5dp"
+			    		    android:layout_marginTop="5dp"
+			    		    android:text="@string/loremIpsumShort"
+			    		    android:textColor="@color/text" />
 				    
 				    </LinearLayout>
 				

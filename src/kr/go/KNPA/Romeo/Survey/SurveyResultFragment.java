@@ -18,7 +18,6 @@ import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -165,7 +164,7 @@ public class SurveyResultFragment extends Fragment {
 			return;
 		Survey.Form form = survey.form;
 
-		// int nReceivers = (Integer)resData.get(0, KEY.SURVEY.NUM_RECEIVERS);
+		 int nReceivers = (Integer)resData.get(0, KEY.SURVEY.NUM_RECEIVERS);
 		// // 총 수신자 수(확인X+확인O)
 		// int nUncheckers = (Integer)resData.get(0, KEY.SURVEY.NUM_UNCHECKERS);
 		// // 확인 안한사람 수
@@ -176,6 +175,11 @@ public class SurveyResultFragment extends Fragment {
 		// 수 (확인후 응답X)
 		ArrayList<ArrayList<Integer>> _votes = (ArrayList<ArrayList<Integer>>) resData.get(0, KEY.SURVEY.RESULT); // 문항/선택지별 투표수를 담고 있는 배열
 
+		LinearLayout surveyResponseStatusLL = (LinearLayout) this.view.findViewById(R.id.survey_resonse_status);
+		TextView nReceiversTV = (TextView)surveyResponseStatusLL.findViewById(R.id.receiverCount);
+		nReceiversTV.setText(""+nReceivers);
+		TextView nRespondersTV = (TextView)surveyResponseStatusLL.findViewById(R.id.responderCount);
+		nRespondersTV.setText(""+nResponders);
 		
 		LinearLayout _questionsLL = (LinearLayout) this.view.findViewById(R.id.questions);
 		ArrayList<Question> _questions = form.questions();
@@ -226,10 +230,11 @@ public class SurveyResultFragment extends Fragment {
 												};
 
 	protected void renderChart(ViewGroup questionLL, int nResponders, Question question, ArrayList<Integer> qVote) {
-		ViewPager pager = (ViewPager) questionLL.findViewById(R.id.pager);
+		NotScrollableViewPager pager = (NotScrollableViewPager) questionLL.findViewById(R.id.pager);
 		LinearLayout pagerIndicator = (LinearLayout) questionLL.findViewById(R.id.pager_indicator);
 		
-		SurveyChartViewPagerAdapter adapter = new SurveyChartViewPagerAdapter(SurveyResultFragment.this, pager, pagerIndicator, nResponders, question, qVote);
+		Button switchChartTypeBT = (Button)questionLL.findViewById(R.id.switch_chart_type);
+		SurveyChartViewPagerAdapter adapter = new SurveyChartViewPagerAdapter(SurveyResultFragment.this, pager, pagerIndicator, switchChartTypeBT, false, nResponders, question, qVote);
 		pager.setAdapter(adapter);
 		pager.setOnPageChangeListener(adapter);
 		
