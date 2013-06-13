@@ -32,6 +32,8 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 		mLayout.setNavBarTitleTV("사용자 검색");
 
 		Bundle b = getIntent().getExtras();
+		ArrayList<User> users = CacheManager.getCachedUsers();
+		
 
 		if (b == null)
 		{
@@ -45,19 +47,23 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 				mExcludeIdxs = new ArrayList<String>();
 			}
 			
+
+		}
+		
+		MemberSearchTextViewAdapter adapter = new MemberSearchTextViewAdapter(MemberSearchActivity.this, users);
+		
+		adapter.setExcludeIdxs(mExcludeIdxs);
+		mLayout.getSearchInput().setAdapter(adapter);
+
+		if (b != null)
+		{
 			ArrayList<String> initials = b.getStringArrayList(KEY_INITIAL_IDXS);
 			if (initials != null)
 			{
 				mLayout.appendMemberClips(initials);
 			}
 		}
-
-		ArrayList<User> users = CacheManager.getCachedUsers();
-
-		MemberSearchTextViewAdapter adapter = new MemberSearchTextViewAdapter(MemberSearchActivity.this, users);
-
-		adapter.setExcludeIdxs(mExcludeIdxs);
-		mLayout.getSearchInput().setAdapter(adapter);
+		
 	}
 
 	@Override

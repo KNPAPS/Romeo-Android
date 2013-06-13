@@ -517,7 +517,7 @@ public class SurveyComposeFragment extends Fragment {
 
 	private void callMemberSearchActivity() {
 		Intent intent = new Intent(getActivity(), MemberSearchActivity.class);
-		
+		intent.putExtra(MemberSearchActivity.KEY_INITIAL_IDXS, receiversIdx);
 		startActivityForResult(intent, MemberSearchActivity.REQUEST_CODE);
 	}
 	
