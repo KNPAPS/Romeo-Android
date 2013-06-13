@@ -51,9 +51,9 @@ import android.widget.TextView;
 
 public class MenuListFragment extends ListFragment {
 
-	private List<Map<String, String>>			gData;
-	private List<List<Map<String, String>>>		cData;
-
+//	private List<Map<String, String>>			gData;
+//	private List<List<Map<String, String>>>		cData;
+	
 	private LinearLayout						userLL;
 	private View								searchBar;
 	private EditText							searchET;
@@ -65,31 +65,13 @@ public class MenuListFragment extends ListFragment {
 	private static MenuListFragment				sharedFragment;
 
 	private SimpleSectionAdapter<MenuListItem>	sectionAdapter;
-	private BaseAdapter							emptyAdapter	= new BaseAdapter() {
-																	@Override
-																	public int getCount()
-																	{
-																		return 0;
-																	}
-
-																	@Override
-																	public Object getItem(int arg0)
-																	{
-																		return null;
-																	}
-
-																	@Override
-																	public long getItemId(int arg0)
-																	{
-																		return 0;
-																	}
-
-																	@Override
-																	public View getView(int arg0, View arg1, ViewGroup arg2)
-																	{
-																		return null;
-																	}
-																};
+	private BaseAdapter							emptyAdapter	= 
+			new BaseAdapter() {
+								@Override	public int getCount()	{	return 0;	}
+								@Override	public Object getItem(int arg0)	{	return null;	}
+								@Override	public long getItemId(int arg0)	{	return 0;		}
+								@Override	public View getView(int arg0, View arg1, ViewGroup arg2)	{	return null;	}
+							};
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -98,54 +80,11 @@ public class MenuListFragment extends ListFragment {
 
 		View v = inflater.inflate(R.layout.menu_list_fragment, null);
 
-		// //////////////////////
-		// // 간단 프로필 출력!! //
-		// ////////////////////
-		userLL = (LinearLayout) v.findViewById(R.id.user_profile);
-		userLL.setBackgroundResource(R.drawable.menu_user_info_box);
+		showUserInfo(v);
+		List<MenuListItem> menus = ExpandableMenuListAdapter.makeMenuList();
 
-		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
-		new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, UserInfo.getUserIdx(getActivity()), userPicIV);
-
-		TextView rankTV = (TextView) v.findViewById(R.id.rank);
-		rankTV.setTextColor(Color.WHITE);
-		rankTV.setText(User.RANK[UserInfo.getRank(getActivity())]);
-
-		TextView departmentTV = (TextView) v.findViewById(R.id.department);
-		departmentTV.setText(UserInfo.getDepartment(getActivity()));
-		departmentTV.setTextColor(Color.WHITE);
-
-		TextView nameTV = (TextView) v.findViewById(R.id.name);
-		nameTV.setText(UserInfo.getName(getActivity()));
-		nameTV.setTextColor(Color.WHITE);
-
-		TextView roleTV = (TextView) v.findViewById(R.id.role);
-		roleTV.setText("");
-		roleTV.setTextColor(Color.WHITE);
-
-		userLL.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v)
-			{
-				UserProfileFragment profile = new UserProfileFragment();
-				MainActivity.sharedActivity().switchContent(profile);
-			}
-		});
-
-		makeMenuList();
-
-		ExpandableMenuListAdapter adapter = new ExpandableMenuListAdapter(getActivity(),
-
-		gData, R.layout.menu_list_cell_section_unfolded, R.layout.menu_list_cell_section_folded, new String[] { "section" },// ,
-																															// "iconImage"},
-				new int[] { R.id.title },// , R.id.cell_icon},
-
-				cData, R.layout.menu_list_cell_item, new String[] { "title", "code" },// "iconImage"
-																						// }
-																						// ,
-				new int[] { R.id.title, R.id.code }// R.id.cell_icon,}
-		);
-
+		ExpandableMenuListAdapter adapter = ExpandableMenuListAdapter.getExpandableMenuListAdapter(getActivity(), menus);
+		
 		menuList = (ExpandableListView) v.findViewById(android.R.id.list);
 		menuList.setAdapter(adapter);
 		menuList.setOnGroupClickListener(adapter);
@@ -224,79 +163,124 @@ public class MenuListFragment extends ListFragment {
 		return v;
 	}
 
-	public void makeMenuList()
-	{
-		// /////////////
-		// MENU LIST //
-		// /////////////
+	public void showUserInfo(View v) {
+		// //////////////////////
+		// // 간단 프로필 출력!! //
+		// ////////////////////
+		userLL = (LinearLayout) v.findViewById(R.id.user_profile);
+		userLL.setBackgroundResource(R.drawable.menu_user_info_box);
 
-		List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
-		List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
+		// 프로필 사진
+		ImageView userPicIV = (ImageView) v.findViewById(R.id.userPic);
+		new ImageManager().loadToImageView(ImageManager.PROFILE_SIZE_SMALL, UserInfo.getUserIdx(getActivity()), userPicIV);
 
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.documentTitle), "iconImage", "" + R.drawable.icon_document, "code", "document"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.surveyTitle), "iconImage", "" + R.drawable.icon_pie_graph, "code", "survey"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_arrow_side, "code", "chat:Command"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.libraryTitle), "iconImage", "" + R.drawable.icon_folder, "code", "library"));
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.settingsTitle), "iconImage", "" + R.drawable.icon_gear, "code", "settings"));
-		
-		List<Map<String, String>> l = null;
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member:MemberList"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberFavoriteTitle), "iconImage", "" + R.drawable.icon_star, "code", "member:Favorite"));
-		childData.add(l);
+		// 계급
+		TextView rankTV = (TextView) v.findViewById(R.id.rank);
+		rankTV.setTextColor(Color.WHITE);
+		rankTV.setText(User.RANK[UserInfo.getRank(getActivity())]);
 
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.documentFavoriteTitle), "iconImage", "" + R.drawable.icon_document_star, "code", "document:Favorite"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.documentReceivedTitle), "iconImage", "" + R.drawable.icon_document_received, "code", "document:Received"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.documentDepartedTitle), "iconImage", "" + R.drawable.icon_document_departed, "code", "document:Departed"));
-		childData.add(l);
+		// 부서
+		TextView departmentTV = (TextView) v.findViewById(R.id.department);
+		departmentTV.setText(UserInfo.getDepartment(getActivity()));
+		departmentTV.setTextColor(Color.WHITE);
 
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.surveyReceivedTitle), "iconImage", "" + R.drawable.icon_pie_graph_received, "code", "survey:Received"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.surveyDepartedTitle), "iconImage", "" + R.drawable.icon_pie_graph_departed, "code", "survey:Departed"));
-		childData.add(l);
+		// 이름
+		TextView nameTV = (TextView) v.findViewById(R.id.name);
+		nameTV.setText(UserInfo.getName(getActivity()));
+		nameTV.setTextColor(Color.WHITE);
 
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_chat, "code", "chat:Command"));
-		childData.add(l);
+		// 직책
+		TextView roleTV = (TextView) v.findViewById(R.id.role);
+		roleTV.setText("");
+		roleTV.setTextColor(Color.WHITE);
 
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
-		childData.add(l);
+		userLL.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				UserProfileFragment profile = new UserProfileFragment();
+				MainActivity.sharedActivity().switchContent(profile);
+			}
+		});
 
-		l = new ArrayList<Map<String, String>>();
-
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"집회시위 현장매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:HandBook"));
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"4대 사회악 근절 전담부대 매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:SocialEvil"));
-
-		childData.add(l);
-
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", "설정", "iconImage", "" + R.drawable.indentation, "code", "settings"));
-		childData.add(l);
-		
-		// TODO : BugReport
-		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", "버그리포트", "iconImage", "" + R.drawable.icon_mail, "code", "bug:report"));
-		l = new ArrayList<Map<String, String>>();
-		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", "버그 리포트", "iconImage", "" + R.drawable.indentation, "code", "bug:report"));
-		childData.add(l);
-		
-		l = null;
-
-		this.gData = groupData;
-		this.cData = childData;
 	}
+	
+//	public void makeMenuList()
+//	{
+//		// /////////////
+//		// MENU LIST //
+//		// /////////////
+//
+//		List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
+//		List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
+//
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member"));
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.documentTitle), "iconImage", "" + R.drawable.icon_document, "code", "document"));
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.surveyTitle), "iconImage", "" + R.drawable.icon_pie_graph, "code", "survey"));
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_arrow_side, "code", "chat:Command"));
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.libraryTitle), "iconImage", "" + R.drawable.icon_folder, "code", "library"));
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", getString(R.string.settingsTitle), "iconImage", "" + R.drawable.icon_gear, "code", "settings"));
+//		
+//		List<Map<String, String>> l = null;
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberListTitle), "iconImage", "" + R.drawable.icon_people, "code", "member:MemberList"));
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.memberFavoriteTitle), "iconImage", "" + R.drawable.icon_star, "code", "member:Favorite"));
+//		childData.add(l);
+//
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.documentFavoriteTitle), "iconImage", "" + R.drawable.icon_document_star, "code", "document:Favorite"));
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.documentReceivedTitle), "iconImage", "" + R.drawable.icon_document_received, "code", "document:Received"));
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.documentDepartedTitle), "iconImage", "" + R.drawable.icon_document_departed, "code", "document:Departed"));
+//		childData.add(l);
+//
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.surveyReceivedTitle), "iconImage", "" + R.drawable.icon_pie_graph_received, "code", "survey:Received"));
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.surveyDepartedTitle), "iconImage", "" + R.drawable.icon_pie_graph_departed, "code", "survey:Departed"));
+//		childData.add(l);
+//
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.commandTitle), "iconImage", "" + R.drawable.icon_chat, "code", "chat:Command"));
+//		childData.add(l);
+//
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", getString(R.string.meetingTitle), "iconImage", "" + R.drawable.icon_circle, "code", "chat:Meeting"));
+//		childData.add(l);
+//
+//		l = new ArrayList<Map<String, String>>();
+//
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"집회시위 현장매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:HandBook"));
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title",		"4대 사회악 근절 전담부대 매뉴얼", 		"iconImage", ""+R.drawable.icon_folder, 			"code", "library:SocialEvil"));
+//
+//		childData.add(l);
+//
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", "설정", "iconImage", "" + R.drawable.indentation, "code", "settings"));
+//		childData.add(l);
+//		
+//		// TODO : BugReport
+//		groupData.add(CollectionFactory.hashMapWithKeysAndStrings("section", "버그리포트", "iconImage", "" + R.drawable.icon_mail, "code", "bug:report"));
+//		l = new ArrayList<Map<String, String>>();
+//		l.add(CollectionFactory.hashMapWithKeysAndStrings("title", "버그 리포트", "iconImage", "" + R.drawable.indentation, "code", "bug:report"));
+//		childData.add(l);
+//		
+//		l = null;
+//
+//		this.gData = groupData;
+//		this.cData = childData;
+//	}
 
-	public static void setMode(boolean willSearchMode)
-	{
+		/**
+	 * @name Switch between Search - Menu Modes 
+	 * 메뉴모드/검색모드 간의 전환에 필요한 메서드들
+	 * @{
+	 */
+	public static void setMode(boolean willSearchMode) {
 		if (sharedFragment != null)
 			sharedFragment.setSearchMode(willSearchMode);
 	}
 
-	private void setSearchMode(boolean willSearchMode)
-	{
+	private void setSearchMode(boolean willSearchMode) {
 		InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (willSearchMode == true)
 		{
@@ -320,7 +304,12 @@ public class MenuListFragment extends ListFragment {
 			im.hideSoftInputFromWindow(searchET.getWindowToken(), 0);
 		}
 	}
-
+	/** @} */
+	
+	/**
+	 *  @name Search
+	 *  @{
+	 */
 	private void searchResult()
 	{
 		final String keyword = searchET.getText().toString().trim();
@@ -330,99 +319,12 @@ public class MenuListFragment extends ListFragment {
 			@Override
 			public void run()
 			{
-				searchResult(keyword);
+				IntergratedSearchListAdatper.searchResult(getActivity(), keyword, searchList);
 
 			}
 		}).start();
 
 	}
 
-	private void searchResult(String keyword)
-	{
-		// 각 섹션별로 정보 얻어오기
-		// 얻어온 정보들을 ArrayList로 만들기
-
-		ArrayList<User> resUsers = searchInMembers(keyword);
-		ArrayList<Document> resDocs = searchInDocuments(keyword);
-
-		// SimpleSectionList
-
-		BaseAdapter listAdapter = new IntergratedSearchListAdatper(getActivity(), keyword, resUsers, resDocs, null);
-
-		Sectionizer<Object> sectionizer = new Sectionizer<Object>() {
-
-			@Override
-			public String getSectionTitleForItem(Object obj)
-			{
-				String sectionTitle = "";
-				if (obj instanceof User)
-				{
-					sectionTitle = "사용자";
-				}
-				else if (obj instanceof Document)
-				{
-					sectionTitle = getString(R.string.document);
-				}
-				else if (obj instanceof Survey)
-				{
-					sectionTitle = getString(R.string.survey);
-				}
-				else
-				{
-					sectionTitle = "기타";
-				}
-				return sectionTitle;
-			}
-
-		};
-
-		final SimpleSectionAdapter<Object> resultAdapter = new SimpleSectionAdapter<Object>(getActivity(), listAdapter, R.layout.section_header, R.id.title, sectionizer);
-		getActivity().runOnUiThread(new Runnable() {
-
-			@Override
-			public void run()
-			{
-				searchList.setAdapter(resultAdapter);
-				WaiterView.dismissDialog(getActivity());
-			}
-		});
-	}
-
-	private ArrayList<User> searchInMembers(String keyword)
-	{
-		// // 유저
-		Payload request = new Payload().setEvent(Event.Search.user()).setData(new Data().add(0, KEY.SEARCH.QUERY, keyword));
-		Data resData = new Connection().async(false).requestPayload(request).request().getResponsePayload().getData();
-		ArrayList<User> resUsers = new ArrayList<User>();
-		for (int i = 0; i < resData.size(); i++)
-		{
-			HashMap<String, Object> _user = resData.get(i);
-
-			Department department = new Department((String) _user.get(KEY.DEPT.IDX), (String) _user.get(KEY.DEPT.NAME), (String) _user.get(KEY.DEPT.FULL_NAME), (String) _user.get(KEY.DEPT.PARENT_IDX));
-			User user = new User((String) _user.get(KEY.USER.IDX), (String) _user.get(KEY.USER.NAME), (Integer) _user.get(KEY.USER.RANK), (String) _user.get(KEY.USER.ROLE), department);
-			resUsers.add(user);
-		}
-		return resUsers;
-	}
-
-	private ArrayList<Document> searchInDocuments(String keyword)
-	{
-		// // 문서
-		Cursor cDoc = DAO.document(getActivity()).search(keyword);
-		ArrayList<Document> resDocs = new ArrayList<Document>();
-		cDoc.moveToFirst();
-		while (cDoc.getCount() > 0 && !cDoc.isAfterLast())
-		{
-			Document doc = new Document(cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_IDX)), cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE)),
-					cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TITLE)), cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_CONTENT)), cDoc.getString(cDoc
-							.getColumnIndex(DocuDAO.COLUMN_SENDER_IDX)), null, (cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE)) != Document.TYPE_DEPARTED) ? true
-							: false, cDoc.getLong(cDoc.getColumnIndex(DocuDAO.COLUMN_CREATED_TS)), (cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_IS_CHECKED)) == 1) ? true
-							: false, cDoc.getLong(cDoc.getColumnIndex(DocuDAO.COLUMN_CHECKED_TS)), null, null,
-					(cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_IS_FAVORITE)) == 1) ? true : false);
-			resDocs.add(doc);
-			cDoc.moveToNext();
-		}
-		return resDocs;
-	}
-
+	/** @} */
 }

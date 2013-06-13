@@ -1,67 +1,70 @@
 package kr.go.KNPA.Romeo.Menu;
 
-public class MenuListItem {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class MenuListItem extends HashMap<String, String>{
 	// 단순 텍스트가 아닌 다양한 정보를 셀에 넣기 위하여 MenuListAdapter에 사용될 Object를 정의한다.
 
-	private MenuListItem(Builder builder)
-	{
-		section = builder.section;
-		title = builder.title;
-		iconImage = builder.iconImage;
-		code = builder.code;
+	private final static String KEY_TITLE = "title";
+	private final static String KEY_ICON_IMAGE = "iconImage";
+	private final static String KEY_CODE = "code";
+
+//	private String	title;		// 이름
+//	private int		iconImage;	// 아이콘
+//	private String	code;
+
+	private ArrayList<MenuListItem> children;
+	
+	public MenuListItem(int title, int iconImage, String code) {
+		// 생성자
+//		this.title = title;
+//		this.iconImage = iconImg;
+//		this.code = code;
+		this.put(KEY_TITLE, ""+title);
+		this.put(KEY_ICON_IMAGE, ""+iconImage);
+		this.put(KEY_CODE, code);
+	}
+	
+	public int section() {
+		return this.title();
+	}
+	public int title() {
+		return Integer.parseInt(this.get(KEY_TITLE));
+	}
+	public int iconImage() {
+		return Integer.parseInt(this.get(KEY_ICON_IMAGE));
+	}
+	public String code() {
+		return this.get(KEY_CODE);
+	}
+	
+	public ArrayList<MenuListItem> children() {
+		return children;
 	}
 
-	public String toString()
-	{
-
-		return super.toString() + "\n" + "section : " + section + ", title : " + title + ", iconImage : " + iconImage + ", code : " + code;
+	public void children(ArrayList<MenuListItem> children) {
+		this.children = children;
+	}
+	
+	public void addChild(MenuListItem child) {
+		if(children == null)
+			children = new ArrayList<MenuListItem>();
+		children.add(child);
 	}
 
-	public String	section;	// 섹션
-	public String	title;		// 이름
-	public int		iconImage;	// 아이콘
-	public String	code;
-
-	public MenuListItem(String _section, String _title, int _iconImg)
-	{ // 생성자
-		this.section = _section;
-		this.title = _title;
-		this.iconImage = _iconImg;
+	public String toString() {
+		String title = this.get(KEY_TITLE);
+		String iconImage  = this.get(KEY_ICON_IMAGE);
+		String code = this.get(KEY_CODE);
+		
+		title = title != null && title.length() > 0 ? title : "null";  
+		iconImage = iconImage != null && iconImage.length() > 0 ? iconImage : "null";
+		code = code != null && code.length() > 0 ? code : "null";
+		
+		return super.toString() + "\n" + "title : " + title + ", iconImage : " + iconImage + ", code : " + code;
 	}
 
-	public static class Builder {
-		private String	section;
-		private String	title;
-		private int		iconImage;
-		private String	code;
 
-		public Builder section(String _section)
-		{
-			this.section = _section;
-			return this;
-		}
-
-		public Builder title(String _title)
-		{
-			this.title = _title;
-			return this;
-		}
-
-		public Builder iconImage(int _iconImage)
-		{
-			this.iconImage = _iconImage;
-			return this;
-		}
-
-		public Builder code(String _code)
-		{
-			this.code = _code.toUpperCase();
-			return this;
-		}
-
-		public MenuListItem build()
-		{
-			return new MenuListItem(this);
-		}
-	}
 }
