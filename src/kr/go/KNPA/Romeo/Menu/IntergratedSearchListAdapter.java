@@ -1,18 +1,32 @@
 package kr.go.KNPA.Romeo.Menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
+import kr.go.KNPA.Romeo.DB.DAO;
+import kr.go.KNPA.Romeo.DB.DocuDAO;
 import kr.go.KNPA.Romeo.Document.Document;
+import kr.go.KNPA.Romeo.Member.Department;
 import kr.go.KNPA.Romeo.Member.MemberDetailActivity;
 import kr.go.KNPA.Romeo.Member.User;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
+import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 class IntergratedSearchListAdatper extends BaseAdapter implements OnItemClickListener {
@@ -44,6 +59,99 @@ class IntergratedSearchListAdatper extends BaseAdapter implements OnItemClickLis
 		this.surveys = surveys;
 	}
 
+	static void searchResult(final Context context, String keyword, final ListView searchList)
+	{
+		// 각 섹션별로 정보 얻어오기
+		// 얻어온 정보들을 ArrayList로 만들기
+
+		ArrayList<User> resUsers = searchInMembers(context, keyword);
+		ArrayList<Document> resDocs = searchInDocuments(context, keyword);
+
+		// SimpleSectionList
+
+		BaseAdapter listAdapter = new IntergratedSearchListAdatper(context, keyword, resUsers, resDocs, null);
+
+		Sectionizer<Object> sectionizer = new Sectionizer<Object>() {
+
+			@Override
+			public String getSectionTitleForItem(Object obj)
+			{
+				String sectionTitle = "";
+				if (obj instanceof User)
+				{
+					sectionTitle = "사용자";
+				}
+				else if (obj instanceof Document)
+				{
+					sectionTitle = context.getString(R.string.document);
+				}
+				else if (obj instanceof Survey)
+				{
+					sectionTitle = context.getString(R.string.survey);
+				}
+				else
+				{
+					sectionTitle = "기타";
+				}
+				return sectionTitle;
+			}
+
+		};
+
+		final SimpleSectionAdapter<Object> resultAdapter = new SimpleSectionAdapter<Object>(context, listAdapter, R.layout.section_header, R.id.title, sectionizer);
+		
+		Handler handler = new Handler(Looper.getMainLooper());
+		
+		handler.post(new Runnable() {
+
+			@Override
+			public void run()
+			{
+				searchList.setAdapter(resultAdapter);
+				WaiterView.dismissDialog(context);
+			}
+		});
+		
+		
+	}
+	
+	private static ArrayList<User> searchInMembers(Context context, String keyword)
+	{
+		// // 유저
+		Payload request = new Payload().setEvent(Event.Search.user()).setData(new Data().add(0, KEY.SEARCH.QUERY, keyword));
+		Data resData = new Connection().async(false).requestPayload(request).request().getResponsePayload().getData();
+		ArrayList<User> resUsers = new ArrayList<User>();
+		for (int i = 0; i < resData.size(); i++)
+		{
+			HashMap<String, Object> _user = resData.get(i);
+
+			Department department = new Department((String) _user.get(KEY.DEPT.IDX), (String) _user.get(KEY.DEPT.NAME), (String) _user.get(KEY.DEPT.FULL_NAME), (String) _user.get(KEY.DEPT.PARENT_IDX));
+			User user = new User((String) _user.get(KEY.USER.IDX), (String) _user.get(KEY.USER.NAME), (Integer) _user.get(KEY.USER.RANK), (String) _user.get(KEY.USER.ROLE), department);
+			resUsers.add(user);
+		}
+		return resUsers;
+	}
+
+	private static ArrayList<Document> searchInDocuments(Context context, String keyword)
+	{
+		// // 문서
+		Cursor cDoc = DAO.document(context).search(keyword);
+		ArrayList<Document> resDocs = new ArrayList<Document>();
+		cDoc.moveToFirst();
+		while (cDoc.getCount() > 0 && !cDoc.isAfterLast())
+		{
+			Document doc = new Document(cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_IDX)), cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE)),
+					cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TITLE)), cDoc.getString(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_CONTENT)), cDoc.getString(cDoc
+							.getColumnIndex(DocuDAO.COLUMN_SENDER_IDX)), null, (cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_DOC_TYPE)) != Document.TYPE_DEPARTED) ? true
+							: false, cDoc.getLong(cDoc.getColumnIndex(DocuDAO.COLUMN_CREATED_TS)), (cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_IS_CHECKED)) == 1) ? true
+							: false, cDoc.getLong(cDoc.getColumnIndex(DocuDAO.COLUMN_CHECKED_TS)), null, null,
+					(cDoc.getInt(cDoc.getColumnIndex(DocuDAO.COLUMN_IS_FAVORITE)) == 1) ? true : false);
+			resDocs.add(doc);
+			cDoc.moveToNext();
+		}
+		return resDocs;
+	}
+	
 	@Override
 	public int getCount() {
 		return users.size() + documents.size() + surveys.size();
