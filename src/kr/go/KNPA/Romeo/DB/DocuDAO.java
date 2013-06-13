@@ -358,6 +358,22 @@ public class DocuDAO extends DAO {
 		String[] val = { bind, bind };
 		return db.rawQuery(sql, val);
 	}
+	
+	public Integer getNumUnchecked()
+	{
+		String sql = "SELECT count(_id) n FROM "+DBSchema.DOCUMENT.TABLE_NAME+
+					" WHERE "+DBSchema.DOCUMENT.COLUMN_IS_CHECKED+" = 0" +
+					" AND "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+Document.TYPE_RECEIVED;
+		Cursor c = db.rawQuery(sql, null);
+		Integer n = 0;
+		if (c.moveToNext())
+		{
+			n = c.getInt(0);
+		}
+		
+		c.close();
+		return n;
+	}
 
 	public static final String	COLUMN_DOC_IDX			= "doc_idx";
 	public static final String	COLUMN_DOC_TITLE		= "doc_title";

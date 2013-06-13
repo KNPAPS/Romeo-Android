@@ -483,9 +483,11 @@ public class ChatDAO extends DAO {
 
 		" (select count(rc._id) " + "from " + DBSchema.ROOM_CHATTER.TABLE_NAME + " rc " + "where rc." + DBSchema.ROOM_CHATTER.COLUMN_ROOM_ID + "= r._id ) " + COLUMN_ROOM_NUM_CHATTER + ", " +
 
-		" (select count(c._id) " + "from " + DBSchema.CHAT.TABLE_NAME + " c " + "where c." + DBSchema.CHAT.COLUMN_ROOM_ID + " = r._id and r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " < c."
-				+ DBSchema.CHAT.COLUMN_CREATED_TS + " and  c." + DBSchema.CHAT.COLUMN_SENDER_IDX + " != ? and c." + DBSchema.CHAT.COLUMN_CONTENT_TYPE + " NOT IN (" + Chat.CONTENT_TYPE_USER_JOIN
-				+ "," + Chat.CONTENT_TYPE_USER_LEAVE + ") ) " + COLUMN_ROOM_NUM_NEW_CHAT + ", " +
+		" (select count(c._id) from " + DBSchema.CHAT.TABLE_NAME + " c " + 
+			"where c." + DBSchema.CHAT.COLUMN_ROOM_ID + " = r._id " +
+			" and r." + DBSchema.ROOM.COLUMN_LAST_ENTERED_TS + " < c." + DBSchema.CHAT.COLUMN_CREATED_TS + 
+			" and c." + DBSchema.CHAT.COLUMN_SENDER_IDX + " != ? " +
+			" and c." + DBSchema.CHAT.COLUMN_CONTENT_TYPE + " IN (" + Chat.CONTENT_TYPE_TEXT+ "," + Chat.CONTENT_TYPE_PICTURE + ") ) " + COLUMN_ROOM_NUM_NEW_CHAT + ", " +
 
 				" lc." + DBSchema.CHAT.COLUMN_CREATED_TS + COLUMN_ROOM_LAST_CHAT_TS + ", " +
 
@@ -577,6 +579,28 @@ public class ChatDAO extends DAO {
 		
 	}
 
+	public Integer getNumUnchecked(Integer type)
+	{
+		String sql = "SELECT count(c._id) n FROM "+DBSchema.CHAT.TABLE_NAME+" c "+
+					" LEFT JOIN "+DBSchema.ROOM.TABLE_NAME+" r ON c."+DBSchema.CHAT.COLUMN_ROOM_ID+" = r._id "+
+					" WHERE c."+DBSchema.ROOM.COLUMN_TYPE+" = "+type.toString()+
+					" AND c."+DBSchema.CHAT.COLUMN_SENDER_IDX+" != ?"+
+					" AND c."+DBSchema.CHAT.COLUMN_CONTENT_TYPE+" IN ("+Chat.CONTENT_TYPE_TEXT+","+Chat.CONTENT_TYPE_PICTURE+") "+
+					" AND c."+DBSchema.CHAT.COLUMN_CREATED_TS+" > r."+DBSchema.ROOM.COLUMN_LAST_ENTERED_TS;
+		Cursor c = db.rawQuery(sql, new String[]{UserInfo.getUserIdx(context)});
+		if (c.moveToNext())
+		{
+			Integer n = c.getInt(0);
+			c.close();
+			return n;
+		}
+		else
+		{
+			c.close();
+			return 0;
+		}
+	}
+	
 	public static final String	COLUMN_ROOM_IDX					= "room_idx";
 	public static final String	COLUMN_ROOM_TYPE				= "room_type";
 	public static final String	COLUMN_ROOM_TITLE				= "room_title";

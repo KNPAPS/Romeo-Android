@@ -149,34 +149,27 @@ public class SurveyDAO extends DAO {
 		return db.rawQuery(sql, val);
 	}
 
-	/**
-	 * 설문조사 수신자 정보 가져오기
-	 * 
-	 * @b 커서구조
-	 * @b COLUMN_USER_IDX 수신자해쉬\n
-	 * @param hash
-	 *            설문조사 해쉬
-	 * @return
-	 * @deprecated 필요없어짐
-	 */
-	public Cursor getReceivers(String hash)
+	public Integer getNumUnchecked()
 	{
-		long id = hashToId(DBSchema.SURVEY.TABLE_NAME, DBSchema.SURVEY.COLUMN_IDX, hash);
-
-		String sql = "select _id, " + DBSchema.SURVEY_RECEIVER.COLUMN_RECEIVER_IDX + " from" + DBSchema.SURVEY_RECEIVER.TABLE_NAME + " where " + DBSchema.SURVEY_RECEIVER.COLUMN_SURVEY_ID + " = "
-				+ String.valueOf(id);
-		return db.rawQuery(sql, null);
+		String sql = "SELECT count(_id) n FROM "+DBSchema.SURVEY.TABLE_NAME+
+				" WHERE "+DBSchema.SURVEY.COLUMN_IS_CHECKED+" = 0" +
+				" AND "+DBSchema.SURVEY.COLUMN_CATEGORY+" = "+Survey.TYPE_RECEIVED;
+		Cursor c = db.rawQuery(sql, null);
+		Integer n = 0;
+		if (c.moveToNext())
+		{
+			n = c.getInt(0);
+		}
+		
+		c.close();
+		return n;
 	}
 
-	// public static final String COLUMN_SURVEY_NAME = "survey_name";
 	public static final String	COLUMN_SURVEY_IDX			= "survey_idx";
 	public static final String	COLUMN_USER_IDX				= "user_idx";
-	// public static final String COLUMN_SURVEY_SENDER_IDX = "sender_idx";
 	public static final String	COLUMN_SURVEY_IS_CHECKED	= "is_checked";
 	public static final String	COLUMN_SURVEY_CHECKED_TS	= "checked_ts";
 	public static final String	COLUMN_SURVEY_IS_ANSWERED	= "is_answered";
 	public static final String	COLUMN_SURVEY_ANSWERED_TS	= "answered_ts";
-	// public static final String COLUMN_SURVEY_CONTENT = "survey_content";
-	// public static final String COLUMN_SURVEY_CREATED_TS = "created_ts";
 	public static final String	COLUMN_SURVEY_TYPE			= "survey_type";
 }
