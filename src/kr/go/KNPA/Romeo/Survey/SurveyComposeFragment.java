@@ -524,11 +524,9 @@ public class SurveyComposeFragment extends Fragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == MemberSearchActivity.REQUEST_CODE) {
-			if(resultCode != MemberSearchActivity.RESULT_OK) {
-				Toast.makeText(getActivity(), "선택된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
-			} else {
+			if(resultCode == MemberSearchActivity.RESULT_OK) {
 				// 추가
-				receiversIdx.addAll( data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS) );
+				receiversIdx = data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
 				
 				setReceiverET();
 			}
