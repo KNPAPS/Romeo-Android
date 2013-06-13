@@ -517,6 +517,7 @@ public class SurveyComposeFragment extends Fragment {
 
 	private void callMemberSearchActivity() {
 		Intent intent = new Intent(getActivity(), MemberSearchActivity.class);
+		
 		startActivityForResult(intent, MemberSearchActivity.REQUEST_CODE);
 	}
 	
@@ -526,8 +527,8 @@ public class SurveyComposeFragment extends Fragment {
 			if(resultCode != MemberSearchActivity.RESULT_OK) {
 				Toast.makeText(getActivity(), "선택된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
 			} else {
-				// 대체
-				receiversIdx = data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
+				// 추가
+				receiversIdx.addAll( data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS) );
 				
 				setReceiverET();
 			}

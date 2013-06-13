@@ -583,7 +583,7 @@ public class ChatDAO extends DAO {
 	{
 		String sql = "SELECT count(c._id) n FROM "+DBSchema.CHAT.TABLE_NAME+" c "+
 					" LEFT JOIN "+DBSchema.ROOM.TABLE_NAME+" r ON c."+DBSchema.CHAT.COLUMN_ROOM_ID+" = r._id "+
-					" WHERE c."+DBSchema.ROOM.COLUMN_TYPE+" = "+type.toString()+
+					" WHERE r."+DBSchema.ROOM.COLUMN_TYPE+" = "+type.toString()+
 					" AND c."+DBSchema.CHAT.COLUMN_SENDER_IDX+" != ?"+
 					" AND c."+DBSchema.CHAT.COLUMN_CONTENT_TYPE+" IN ("+Chat.CONTENT_TYPE_TEXT+","+Chat.CONTENT_TYPE_PICTURE+") "+
 					" AND c."+DBSchema.CHAT.COLUMN_CREATED_TS+" > r."+DBSchema.ROOM.COLUMN_LAST_ENTERED_TS;

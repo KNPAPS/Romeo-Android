@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class MemberSearchActivity extends Activity implements MemberSearchActivityLayout.Listener {
-	public static final String			KEY_EXCLUDE_IDXS	= "excludeIdxs";
-	public static final String			KEY_RESULT_IDXS		= "resultsIdxs";
+	public static final String			KEY_EXCLUDE_IDXS	 = "excludeIdxs";
+	public static final String			KEY_RESULT_IDXS		 = "resultsIdxs";
+	public static final String			KEY_INITIAL_IDXS = "initials";
+	
 	public static final int				REQUEST_CODE		= 102;
 
 	private MemberSearchActivityLayout	mLayout;
@@ -40,8 +42,13 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 			mExcludeIdxs = b.getStringArrayList(KEY_EXCLUDE_IDXS);
 			if (mExcludeIdxs == null)
 			{
-
 				mExcludeIdxs = new ArrayList<String>();
+			}
+			
+			ArrayList<String> initials = b.getStringArrayList(KEY_INITIAL_IDXS);
+			if (initials != null)
+			{
+				mLayout.appendMemberClips(initials);
 			}
 		}
 
@@ -86,7 +93,7 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 			Toast.makeText(this, "추가할 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
 			return;
 		}
-
+		
 		Intent intent = new Intent();
 		intent.putExtra(KEY_RESULT_IDXS, getMembersIdx());
 		setResult(Activity.RESULT_OK, intent);
