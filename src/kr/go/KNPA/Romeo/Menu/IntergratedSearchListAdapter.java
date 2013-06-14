@@ -243,7 +243,7 @@ class IntergratedSearchListAdatper extends BaseAdapter implements OnItemClickLis
 				}
 			}).start();
 			
-			TextView arrivalDTTV = (TextView)view.findViewById(R.id.arrivalDT);
+			TextView arrivalDTTV = (TextView)view.findViewById(R.id.tv_arrival_dt);
 			arrivalDTTV.setText(Formatter.timeStampToRecentString(doc.TS));
 			
 			return view;

@@ -32,7 +32,7 @@
     </LinearLayout>
 
 		<TextView
-		    android:id="@+id/arrivalDT"
+		    android:id="@+id/tv_arrival_dt"
 		    android:layout_width="72dp"
 		    android:layout_height="match_parent"
 		    android:layout_gravity="center_vertical"

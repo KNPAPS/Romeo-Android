@@ -2,11 +2,10 @@ package kr.go.KNPA.Romeo.Menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MenuListItem extends HashMap<String, String>{
 	// 단순 텍스트가 아닌 다양한 정보를 셀에 넣기 위하여 MenuListAdapter에 사용될 Object를 정의한다.
-
+	private static final long	serialVersionUID	= -6641836254004025590L;
 	private final static String KEY_TITLE = "title";
 	private final static String KEY_ICON_IMAGE = "iconImage";
 	private final static String KEY_CODE = "code";

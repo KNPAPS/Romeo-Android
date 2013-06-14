@@ -1,7 +1,6 @@
 package kr.go.KNPA.Romeo.Survey;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
@@ -34,9 +33,6 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 	// Variables
 	public int subType = Survey.NOT_SPECIFIED;
 	
-	private static final int WHAT_SURVEY = 0;
-	private static final int WHAT_SENDER = 1;
-	private static final int WHAT_UNCHECKERS = 2;
 	private Context context;
 	// Constructor
 	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery) 				{	super(context, c, autoRequery);							this.context = context;	}
@@ -45,12 +41,6 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 
 	private Survey getSurvey(Cursor cSurvey) {
 		HashMap<String, Survey> surveys = SurveyFragment.surveyFragment(this.subType).getListView().surveys;//null;
-//		if (this.subType == Survey.TYPE_DEPARTED ) {
-//			surveys = SurveyFragment.surveyFragment(this.subType).getListView()//.departedSurveyArrayList;
-//		} else if (this.subType == Survey.TYPE_RECEIVED) {
-//			surveys = SurveyFragment.receivedSurveyArrayList;
-//		}
-//		
 		if(surveys != null) {
 			String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
 			if(surveys.containsKey(surveyIdx))
@@ -374,8 +364,8 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 
 				long openTS = (Long)survey.form.get( KEY.SURVEY.OPEN_TS );
 				long closeTS = (Long)survey.form.get( KEY.SURVEY.CLOSE_TS );
-				long currentTS = new Date().getTime()/1000;
-
+				long currentTS = System.currentTimeMillis() / 1000;
+				
 				boolean isAnswered = survey.isAnswered(context);
 				boolean isChecked = survey.checked;
 				

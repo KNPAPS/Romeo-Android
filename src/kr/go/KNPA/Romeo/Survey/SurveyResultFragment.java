@@ -81,7 +81,7 @@ public class SurveyResultFragment extends Fragment {
 		TextView titleTV = (TextView) view.findViewById(R.id.title);
 		titleTV.setText(this.survey.title);
 
-		TextView arrivalDTTV = (TextView) view.findViewById(R.id.arrivalDT);
+		TextView arrivalDTTV = (TextView) view.findViewById(R.id.tv_arrival_dt);
 		String arrivalDT = Formatter.timeStampToStringInRegularFormat(this.survey.TS, getActivity());
 		arrivalDTTV.setText(arrivalDT);
 

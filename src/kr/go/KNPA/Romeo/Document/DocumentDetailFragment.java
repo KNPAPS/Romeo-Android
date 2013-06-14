@@ -43,10 +43,13 @@ public class DocumentDetailFragment extends Fragment {
 			_initView();
 		};
 	};
-	
-	@Override	public void onCreate(Bundle savedInstanceState) {	super.onCreate(savedInstanceState);									}
-	@Override	public void onResume() 							{	super.onResume();	/*document.setChecked(getActivity());*/				}
-	@Override	public void onPause() 							{	super.onPause(); DocumentFragment.documentFragment(subType).getListView().refresh();	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		DocumentFragment.documentFragment(subType).getListView().refresh();
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -156,7 +159,7 @@ public class DocumentDetailFragment extends Fragment {
 				
 				// 수신 시간 정보
 				String fArrivalDT = Formatter.timeStampToStringInRegularFormat( (Long)forward.get(KEY.DOCUMENT.FORWARD_TS) , context);
-				TextView fArrivalDTTV = (TextView)forwardView.findViewById(R.id.arrivalDT);
+				TextView fArrivalDTTV = (TextView)forwardView.findViewById(R.id.tv_arrival_dt);
 				fArrivalDTTV.setText(fArrivalDT);
 				
 				// 코멘트

@@ -42,13 +42,6 @@ public class SurveyFragment extends RomeoFragment {
 		
 		return f;
 	}
-
-	@Override
-	public void onResume() {
-		// if call super.onResume(), 
-		// cannot edit EditTexts in ComposeFrag
-		super.onResume();
-	}
 	
 	@Override
 	public void onPause() {

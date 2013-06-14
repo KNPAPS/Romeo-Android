@@ -75,7 +75,7 @@ class RoomListAdapter extends CursorAdapter {
 		TextView departmentTV = (TextView) v.findViewById(R.id.department);
 		TextView roomTitleTV = (TextView) v.findViewById(R.id.room_list_cell_room_name);
 		TextView contentTV = (TextView) v.findViewById(R.id.chat_content);
-		TextView arrivalDTTV = (TextView) v.findViewById(R.id.arrivalDT);
+		TextView arrivalDTTV = (TextView) v.findViewById(R.id.tv_arrival_dt);
 		TextView numNewChat = (TextView) v.findViewById(R.id.numNewChat);
 		TextView numChatters = (TextView) v.findViewById(R.id.numChatters);
 

@@ -1,9 +1,11 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
@@ -15,10 +17,15 @@ import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import kr.go.KNPA.Romeo.search.MemberSearchActivity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,10 +33,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class SurveyComposeFragment extends Fragment {
@@ -40,12 +49,13 @@ public class SurveyComposeFragment extends Fragment {
 	
 	private final static int MODE_ADD = 0;
 	private final static int MODE_REMOVE = 1;
-	
-	EditText titleET;
-	TextView receiversTV;
-	EditText[] closeETs;
-	EditText contentET;
-	CheckBox isResultPublicCB;
+
+	private TextView	closeDate;
+	private TextView	closeTime;
+	private EditText titleET;
+	private TextView receiversTV;
+	private EditText contentET;
+	private CheckBox isResultPublicCB;
 	
 	LinearLayout questionsLL;
 	Button addQuestionBT;
@@ -114,13 +124,41 @@ public class SurveyComposeFragment extends Fragment {
 		titleET = (EditText)((ViewGroup)rootLayout.getChildAt(0)).findViewById(R.id.title);
 		receiversTV = (TextView)((ViewGroup)rootLayout.getChildAt(1)).findViewById(R.id.receivers);
 		
-		closeETs = new EditText[3];
-		closeETs[YEAR] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_year);
-		closeETs[MONTH] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_month);
-		closeETs[DAY] = (EditText)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_day);
+		closeDate = (TextView)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_date);
+		closeTime = (TextView)((ViewGroup)rootLayout.getChildAt(2)).findViewById(R.id.close_time);
+		
+		// Use the current time as the default values for the picker
+		final Calendar c = Calendar.getInstance();
+		int hour = c.get(Calendar.HOUR_OF_DAY);
+		int minute = c.get(Calendar.MINUTE);
+
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+		
+        setCloseDate(year, month, day);
+        setCloseTime(hour, minute);
+        
+		closeDate.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				DialogFragment newFragment = new DatePickerFragment();
+				newFragment.show(getActivity().getSupportFragmentManager(), "종료 일자");
+			}
+		});
+		
+		closeTime.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+			    DialogFragment newFragment = new TimePickerFragment();
+			    newFragment.show(getActivity().getSupportFragmentManager(), "종료 시간");
+			}
+		});
+		
 		contentET = (EditText)rootLayout.findViewById(R.id.chat_content);
 		isResultPublicCB = (CheckBox)rootLayout.findViewById(R.id.isResultPublic);
-		
 		
 		ImageView hrIV = (ImageView)rootLayout.findViewById(R.id.hr);
 		hrIV.setVisibility(View.INVISIBLE);
@@ -138,14 +176,9 @@ public class SurveyComposeFragment extends Fragment {
 		
 		addQuestionBT.setOnClickListener(addNewQuestion);
 		questionsLL = (LinearLayout)rootLayout.findViewById(R.id.questions);
-
-		EditText qTitleET = (EditText)questionsLL.getChildAt(0).findViewById(R.id.title);
-		CheckBox qIsMultipleCB = (CheckBox)questionsLL.getChildAt(0).findViewById(R.id.isMultiple);
 		
 		Button qControlBT = (Button)questionsLL.getChildAt(0).findViewById(R.id.control);
 		optionControlSetMode(qControlBT, MODE_ADD);
-		
-		LinearLayout qOptionsLL = (LinearLayout)questionsLL.getChildAt(0).findViewById(R.id.options);
 		
 		
 		return view;
@@ -293,14 +326,13 @@ public class SurveyComposeFragment extends Fragment {
 	
 	private long getTSFrom(EditText yearET, EditText monthET, EditText dayET) {
 		//// Second Unit ////
+//TODO
+		Integer year = Integer.parseInt(yearET.getText().toString());
+		Integer month = Integer.parseInt(monthET.getText().toString());
+		Integer day = Integer.parseInt(dayET.getText().toString());
 		
-		// TODO , input validation
-		
-		GregorianCalendar openGC = new GregorianCalendar(
-				Integer.parseInt(yearET.getText().toString()), 
-				(Integer.parseInt(monthET.getText().toString()) -1), 	//http://widyou.net/299 Month만 -1을 해줘야 한다.
-				Integer.parseInt(dayET.getText().toString()));
-		return (openGC.getTimeInMillis()/1000);
+		Date date = new Date(year,month,day);
+		return 0;
 	}
 
 	
@@ -330,92 +362,35 @@ public class SurveyComposeFragment extends Fragment {
 			return;
 		}
 		
-		boolean isResultPublic = isResultPublicCB.isChecked();
-		
 		if(receiversIdx == null || receiversIdx.size() == 0 ) {
 			Toast.makeText(getActivity(), "설문 수신자가 지정되지 않았습니다.", Toast.LENGTH_SHORT).show();
 			WaiterView.dismissDialog(getActivity());
 			return;
 		}
 		
-		boolean openTSValid = true;
-//		for(int i=0; i< openETs.length; i++) {
-//			String open = openETs[i].getText().toString();
-//			if(open == null || open.trim().length() ==0 )
-//				openTSValid = false;
-//		}
+		long openTS = 0;
+		long closeTS = 0;
 		
-		boolean closeTSValid = true;
-		for(int i=0; i< closeETs.length; i++) {
-			String close = closeETs[i].getText().toString();
-			if(close == null || close.trim().length() == 0)
-				closeTSValid = false;
+		String dateTime = closeDate.getTag().toString()+" "+closeTime.getTag().toString(); // YYYY-MM-DD HH:mm
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.KOREA);
+		Date date;
+		
+		try
+		{
+			date = (Date) formatter.parse(dateTime);
+		}
+		catch (ParseException e)
+		{
+			date = new Date();
+			e.printStackTrace();
 		}
 		
-		if( openTSValid == true && closeTSValid == true) {
-			//if( openETs[0] )
-			//	closeETs[0];
-			
-//			if( Integer.parseInt( openETs[1].getText().toString() ) < 1 
-//					|| Integer.parseInt( openETs[1].getText().toString() ) > 12) {
-//				WaiterView.dismissDialog(getActivity());
-//				openETs[1].setText("");
-//				Toast.makeText(getActivity(), "설문 시작 월이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
-//				return;
-//			}
-			
-			if( Integer.parseInt( closeETs[1].getText().toString() ) < 1 
-					|| Integer.parseInt( closeETs[1].getText().toString() ) > 12) {
-				WaiterView.dismissDialog(getActivity());
-				closeETs[1].setText("");
-				Toast.makeText(getActivity(), "설문 종료 월이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			
-			
-//			if( Integer.parseInt( openETs[2].getText().toString() ) < 1 
-//					|| Integer.parseInt( openETs[2].getText().toString() ) > 31) {
-//				WaiterView.dismissDialog(getActivity());
-//				openETs[1].setText("");
-//				Toast.makeText(getActivity(), "설문 시작 일이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
-//				return;
-//			}
-			
-			if( Integer.parseInt( closeETs[2].getText().toString() ) < 1 
-					|| Integer.parseInt( closeETs[2].getText().toString() ) > 31) {
-				WaiterView.dismissDialog(getActivity());
-				closeETs[1].setText("");
-				Toast.makeText(getActivity(), "설문 종료 일이 정확하지 않습니다.", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			
-			long openTS = Calendar.getInstance().getTimeInMillis() / 1000; //getTSFrom(openETs);
-			long closeTS = getTSFrom(closeETs) + 86400;
-			long currentTS = new Date().getTime() / 1000;
-			
-			/*if( openTS < currentTS) {
-				WaiterView.dismissDialog(getActivity());
-				Toast.makeText(getActivity(), "설문 시작 시간이 현재보다 이전입니다.", Toast.LENGTH_SHORT).show();
-				return;
-			} else */if( closeTS < currentTS) {
-				WaiterView.dismissDialog(getActivity());
-				Toast.makeText(getActivity(), "설문 종료 시간이 현재보다 이전입니다.", Toast.LENGTH_SHORT).show();
-				return;
-			}/* else if( closeTS < openTS ) {
-				WaiterView.dismissDialog(getActivity());
-				Toast.makeText(getActivity(), "설문 종료 시간이 설문 시작시간보다 이전입니다.", Toast.LENGTH_SHORT).show();
-				return;
-			}*/
-			
-			// 양식에 실제로 시간이 들어가는 부분
-			form.put(KEY.SURVEY.OPEN_TS, openTS);
-			form.put(KEY.SURVEY.CLOSE_TS, closeTS);
-		} else {
-			Toast.makeText(getActivity(), "설문 기간이 정확히 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
-			WaiterView.dismissDialog(getActivity());
-			return;
-		}
+		closeTS = date.getTime();
 		
+		// 양식에 실제로 시간이 들어가는 부분
+		form.put(KEY.SURVEY.OPEN_TS, openTS);
+		form.put(KEY.SURVEY.CLOSE_TS, closeTS);
 		
 		// TODO : 나머지 Validation
 		// 돌면서 양식을 취합.
@@ -532,4 +507,71 @@ public class SurveyComposeFragment extends Fragment {
 		}
 	}
 	
+	public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState)
+		{
+			// Use the current time as the default values for the picker
+			final Calendar c = Calendar.getInstance();
+			int hour = c.get(Calendar.HOUR_OF_DAY);
+			int minute = c.get(Calendar.MINUTE);
+
+			// Create a new instance of TimePickerDialog and return it
+			return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
+		}
+
+		public void onTimeSet(TimePicker view, int hourOfDay, int minute)
+		{
+			setCloseTime(hourOfDay, minute);
+		}
+
+	}
+
+	public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState)
+		{
+	        // Use the current date as the default date in the picker
+	        final Calendar c = Calendar.getInstance();
+	        int year = c.get(Calendar.YEAR);
+	        int month = c.get(Calendar.MONTH);
+	        int day = c.get(Calendar.DAY_OF_MONTH);
+
+	        // Create a new instance of DatePickerDialog and return it
+	        return new DatePickerDialog(getActivity(), this, year, month, day);
+		}
+		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
+		{
+			setCloseDate(year, monthOfYear, dayOfMonth);
+		}
+
+	}
+	
+	private void setCloseDate(int year, int monthOfYear, int dayOfMonth)
+	{
+		String data = String.valueOf(year)+"-"+String.valueOf(monthOfYear+1)+"-"+String.valueOf(year);
+		String readable = String.valueOf(year)+"년 "+String.valueOf(monthOfYear+1)+"월 "+String.valueOf(dayOfMonth)+"일";
+		closeDate.setText(readable);
+		closeDate.setTag(data);
+	}
+	
+	private void setCloseTime(int hourOfDay, int minute)
+	{
+		String dataString = String.valueOf(hourOfDay)+":"+String.valueOf(minute);
+		String readableString = "";
+		if (hourOfDay >= 12)
+		{
+			readableString += "오후 "+String.valueOf(hourOfDay==12?12:hourOfDay-12)+"시 "+String.valueOf(minute)+"분";
+		}
+		else
+		{
+			readableString += "오전 "+String.valueOf(hourOfDay)+"시 "+String.valueOf(minute)+"분";
+		}
+		
+		closeTime.setText(readableString);
+		closeTime.setTag(dataString);
+	}
 }

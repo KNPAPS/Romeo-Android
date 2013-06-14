@@ -158,7 +158,7 @@ public class ChatListAdapter extends CursorAdapter {
 
 			}
 
-			TextView arrivalDTTV = (TextView) listItem.findViewById(R.id.arrivalDT);
+			TextView arrivalDTTV = (TextView) listItem.findViewById(R.id.tv_arrival_dt);
 			String arrivalDT = Formatter.timeStampToRecentString(arrivalTS);
 			arrivalDTTV.setText(arrivalDT);
 

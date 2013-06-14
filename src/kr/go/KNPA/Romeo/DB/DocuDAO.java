@@ -362,7 +362,7 @@ public class DocuDAO extends DAO {
 	public Integer getNumUnchecked()
 	{
 		String sql = "SELECT count(_id) n FROM "+DBSchema.DOCUMENT.TABLE_NAME+
-					" WHERE "+DBSchema.DOCUMENT.COLUMN_IS_CHECKED+" = 0" +
+					" WHERE "+DBSchema.DOCUMENT.COLUMN_IS_CHECKED+" != 1" +
 					" AND "+DBSchema.DOCUMENT.COLUMN_CATEGORY+" = "+Document.TYPE_RECEIVED;
 		Cursor c = db.rawQuery(sql, null);
 		Integer n = 0;

@@ -43,8 +43,10 @@
                     android:hint="@string/survey_title_placehold"
                     android:inputType="text"
                     android:nextFocusDown="@+id/open_year"
+                    android:padding="@dimen/gapSmall"
                     android:textColor="@color/text"
                     android:textSize="18sp" >
+
                 </EditText>
             </LinearLayout>
 
@@ -73,6 +75,7 @@
                     android:ems="10"
                     android:hint="@string/survey_receivers_placehold"
                     android:inputType="text"
+                    android:padding="@dimen/gapSmall"
                     android:textSize="18sp" >
 
                     <requestFocus />
@@ -90,55 +93,33 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:gravity="center_horizontal"
-                    android:text="마감시간"
+                    android:text="종료시간"
                     android:textColor="@color/text" />
 
-                <EditText
-                    android:id="@+id/close_year"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/close_date"
+                    android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
                     android:background="@drawable/romeo_edittext_background"
                     android:ems="10"
-                    android:gravity="center"
-                    android:hint="@string/survey_close_year_placehold"
-                    android:inputType="number"
-                    android:maxLength="4"
+                    android:hint="2013년 6월 14일"
                     android:nextFocusDown="@+id/close_month"
-                    android:padding="@dimen/gapSmaller"
-                    android:textColor="@color/text" />
+                    android:padding="@dimen/gapSmall"
+                    android:textColor="@color/text"
+                    android:textSize="15sp" />
 
-                <EditText
-                    android:id="@+id/close_month"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/close_time"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_weight="1"
                     android:background="@drawable/romeo_edittext_background"
                     android:ems="10"
-                    android:gravity="center"
-                    android:hint="@string/survey_close_month_placehold"
-                    android:inputType="number"
-                    android:maxLength="2"
-                    android:nextFocusDown="@+id/close_day"
-                    android:padding="@dimen/gapSmaller"
-                    android:textColor="@color/text" />
+                    android:hint="오전 10:00시"
+                    android:nextFocusDown="@+id/close_month"
+                    android:padding="@dimen/gapSmall"
+                    android:textColor="@color/text"
+                    android:textSize="15sp" />
 
-                <EditText
-                    android:id="@+id/close_day"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/romeo_edittext_background"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="@string/survey_close_day_placehold"
-                    android:inputType="number"
-                    android:maxLength="2"
-                    android:nextFocusDown="@+id/chat_content"
-                    android:padding="@dimen/gapSmaller"
-                    android:textColor="@color/text" />
             </LinearLayout>
 
             <LinearLayout

@@ -37,7 +37,7 @@
 				            android:textSize="16sp" />
 				        
 				        <TextView
-				            android:id="@+id/arrivalDT"
+				            android:id="@+id/tv_arrival_dt"
 				            android:text="@string/sampleDT"
 				            android:textSize="12sp"
 				            android:textColor="@color/gray"

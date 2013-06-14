@@ -44,11 +44,7 @@ public class SurveyDAO extends DAO {
 	public void saveSurveyOnReceived(String surveyHash)
 	{
 		String sql = "insert into " + DBSchema.SURVEY.TABLE_NAME + " (" + DBSchema.SURVEY.COLUMN_IDX + "," +
-		// DBSchema.SURVEY.COLUMN_TITLE+","+
-		// DBSchema.SURVEY.COLUMN_CONTENT+","+
-		// DBSchema.SURVEY.COLUMN_CREATOR_IDX+","+
-		// DBSchema.SURVEY.COLUMN_CREATED_TS+","+
-				DBSchema.SURVEY.COLUMN_CATEGORY + ") " + "values(?," + Survey.TYPE_RECEIVED + ")";
+				DBSchema.SURVEY.COLUMN_CATEGORY + ","+DBSchema.SURVEY.COLUMN_IS_CHECKED+") " + "values(?," + Survey.TYPE_RECEIVED + ", 0)";
 		String[] val = { surveyHash };
 		db.execSQL(sql, val);
 	}
@@ -152,7 +148,7 @@ public class SurveyDAO extends DAO {
 	public Integer getNumUnchecked()
 	{
 		String sql = "SELECT count(_id) n FROM "+DBSchema.SURVEY.TABLE_NAME+
-				" WHERE "+DBSchema.SURVEY.COLUMN_IS_CHECKED+" = 0" +
+				" WHERE "+DBSchema.SURVEY.COLUMN_IS_CHECKED+" != 1" +
 				" AND "+DBSchema.SURVEY.COLUMN_CATEGORY+" = "+Survey.TYPE_RECEIVED;
 		Cursor c = db.rawQuery(sql, null);
 		Integer n = 0;

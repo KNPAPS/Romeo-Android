@@ -62,7 +62,7 @@ class DocumentListAdapter extends CursorAdapter {
 		long TS =  c.getLong(c.getColumnIndex(DocuDAO.COLUMN_CREATED_TS));
 		String DT = Formatter.timeStampToRecentString(TS);
 		
-		TextView arrivalDTTV = (TextView)v.findViewById(R.id.arrivalDT);
+		TextView arrivalDTTV = (TextView)v.findViewById(R.id.tv_arrival_dt);
 		arrivalDTTV.setText(DT);
 		
 		

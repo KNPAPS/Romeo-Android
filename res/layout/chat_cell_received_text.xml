@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/chatBubbleReceived"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="true"
     android:orientation="horizontal"
@@ -53,27 +53,31 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/user_pic_default" />
 
-    <Button
-        android:id="@+id/goUnchecked"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_alignTop="@+id/arrivalDT"
-        android:layout_marginLeft="3dp"
-        android:layout_marginTop="7dp"
-        android:layout_toRightOf="@+id/arrivalDT"
-        android:background="@drawable/bubble_active"
-        android:gravity="center_vertical|center_horizontal"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/arrivalDT"
+    <LinearLayout
+        android:id="@+id/ll_chat_info_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/chat_content"
         android:layout_toRightOf="@id/chat_content"
-        android:padding="@dimen/gapSmaller"
-        android:text="5월20일\n12:12"
-        android:textColor="@color/black"
-        android:textSize="10sp" />
+        android:layout_alignBottom="@id/chat_content" >
+
+        <TextView
+            android:id="@+id/tv_arrival_dt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/gapSmaller"
+            android:text="5월20일\n12:12"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/goUnchecked"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/bubble_active"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </RelativeLayout>

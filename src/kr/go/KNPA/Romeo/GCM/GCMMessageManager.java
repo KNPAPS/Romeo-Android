@@ -78,15 +78,6 @@ public class GCMMessageManager {
 	//
 	private Context	mContext	= null;
 	private static Toast 	mToast		= null;
-	private static Handler toastHandler = new Handler(){
-		public void handleMessage(android.os.Message msg) {
-			Bundle b = msg.getData();
-			Toast toast = GCMMessageManager.makeToast((Context)msg.obj, (Bitmap)b.getParcelable("userPic"), b.getString("department"), b.getString("rank"), b.getString("name"), b.getString("content"));
-			toast.show();
-		};
-	};
-	
-	//private Handler handler = new Handler();
 	
 	/**
 	 * 푸시로 받은 메시지가 도착했을 때 호출되는 메서드이다.\n 클래스내에 존재하는 private member
@@ -237,7 +228,8 @@ public class GCMMessageManager {
 				return;
 			}
 		}
-
+		
+		// notify
 		notifyMessage(chat);
 	}
 

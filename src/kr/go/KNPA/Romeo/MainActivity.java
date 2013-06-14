@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -60,15 +61,24 @@ public class MainActivity extends BaseActivity {
 
 		// customize the SlidingMenu
 		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-
+		
 		// set the Above View
 		setContentView(R.layout.content_frame); // 레이아웃만 있는 빈 뷰
 
 		// set the Behind View
 		setBehindContentView(R.layout.menu_frame); // 비하인드 프레임은, 메뉴 뷰다. 프레그먼트를
 													// 대입하기 위해 빈것으로 존재(베이스에서는)
-		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame, new MenuListFragment()).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame, new MenuListFragment(), "MENU").commit();
 
+		getSlidingMenu().setOnOpenListener(new OnOpenListener() {
+			@Override
+			public void onOpen()
+			{
+				MenuListFragment fragment = (MenuListFragment) getSupportFragmentManager().findFragmentByTag("MENU");
+				fragment.refresh();
+			}
+		});
+		
 		Fragment fragment = null;
 
 		Intent intent = getIntent();

@@ -35,7 +35,7 @@ public class ChatDAO extends DAO {
 		int amIHost = isHost == true ? 1 : 0;
 		// 새 방에 대한 레코드 생성
 		String sql = "insert into " + DBSchema.ROOM.TABLE_NAME + "(" + DBSchema.ROOM.COLUMN_TYPE + "," + DBSchema.ROOM.COLUMN_IS_FAVORITE + "," + DBSchema.ROOM.COLUMN_IDX + ","
-				+ DBSchema.ROOM.COLUMN_IS_ALARM_ON + "," + DBSchema.ROOM.COLUMN_AM_I_HOST + ") values (" + String.valueOf(chatType) + ",0,?,1," + String.valueOf(amIHost) + ")";
+				+ DBSchema.ROOM.COLUMN_IS_ALARM_ON + "," + DBSchema.ROOM.COLUMN_AM_I_HOST + ", "+DBSchema.ROOM.COLUMN_LAST_ENTERED_TS+") values (" + String.valueOf(chatType) + ",0,?,1," + String.valueOf(amIHost) + ",0)";
 		String[] value = { roomHash };
 		db.execSQL(sql, value);
 
@@ -587,7 +587,8 @@ public class ChatDAO extends DAO {
 					" AND c."+DBSchema.CHAT.COLUMN_SENDER_IDX+" != ?"+
 					" AND c."+DBSchema.CHAT.COLUMN_CONTENT_TYPE+" IN ("+Chat.CONTENT_TYPE_TEXT+","+Chat.CONTENT_TYPE_PICTURE+") "+
 					" AND c."+DBSchema.CHAT.COLUMN_CREATED_TS+" > r."+DBSchema.ROOM.COLUMN_LAST_ENTERED_TS;
-		Cursor c = db.rawQuery(sql, new String[]{UserInfo.getUserIdx(context)});
+		String[] val = {UserInfo.getUserIdx(context)};
+		Cursor c = db.rawQuery(sql, val);
 		if (c.moveToNext())
 		{
 			Integer n = c.getInt(0);
