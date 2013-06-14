@@ -55,7 +55,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 		// Animation	// TODO
 		
 		final Survey survey = getSurvey(c);
-		
+		if (survey==null ) return;		
 		Survey.Form form = survey.form; 
 
 		// Title

@@ -16,7 +16,7 @@ public class SurveyFragment extends RomeoFragment {
 	private static SurveyFragment _receivedFragment = null;
 //	
 //	static HashMap<String, Survey> departedSurveyArrayList = null;
-//	static HashMap<String, Survey> receivedSurveyArrayList = null;
+//	static HashMap<String, Survey> receivedSurveyArrayList = null; 
 //	
 	// Constructor
 	public SurveyFragment() {

@@ -368,12 +368,12 @@ public class SurveyComposeFragment extends Fragment {
 			return;
 		}
 		
-		long openTS = 0;
+		long openTS = System.currentTimeMillis()/1000;
 		long closeTS = 0;
 		
 		String dateTime = closeDate.getTag().toString()+" "+closeTime.getTag().toString(); // YYYY-MM-DD HH:mm
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.KOREA);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd HH:mm", Locale.KOREA);
 		Date date;
 		
 		try
@@ -386,7 +386,7 @@ public class SurveyComposeFragment extends Fragment {
 			e.printStackTrace();
 		}
 		
-		closeTS = date.getTime();
+		closeTS = (date.getTime()/1000);
 		
 		// 양식에 실제로 시간이 들어가는 부분
 		form.put(KEY.SURVEY.OPEN_TS, openTS);
@@ -552,7 +552,7 @@ public class SurveyComposeFragment extends Fragment {
 	
 	private void setCloseDate(int year, int monthOfYear, int dayOfMonth)
 	{
-		String data = String.valueOf(year)+"-"+String.valueOf(monthOfYear+1)+"-"+String.valueOf(year);
+		String data = String.valueOf(year)+"-"+String.valueOf(monthOfYear+1)+"-"+String.valueOf(dayOfMonth);
 		String readable = String.valueOf(year)+"년 "+String.valueOf(monthOfYear+1)+"월 "+String.valueOf(dayOfMonth)+"일";
 		closeDate.setText(readable);
 		closeDate.setTag(data);
