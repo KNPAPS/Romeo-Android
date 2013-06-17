@@ -174,6 +174,20 @@ public class UserInfo {
 		return prefs.getBoolean("alarmEnabled", true);
 	}
 	
+	
+	public static void setToastEnabled(Context context, boolean willEnabled) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences.Editor e = prefs.edit();
+		e.putBoolean("toastEnabled", willEnabled);
+		e.commit();
+	}
+	
+	public static boolean getToastEnabled(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+		return prefs.getBoolean("toastEnabled", true);
+	}
+	
+	
 	public static String getUUID(Context context) {			
 		SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
 		String enc = prefs.getString("uuid", null);

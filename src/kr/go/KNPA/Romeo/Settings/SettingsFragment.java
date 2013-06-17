@@ -61,6 +61,9 @@ public class SettingsFragment extends Fragment {
 		// 알림 //
 		final RelativeLayout hNoti 		= SettingsCellMaker.makeSectionHeader(inflater, container, "알림");
 		view.addView(hNoti);
+		final RelativeLayout cPreViewMessage 	= SettingsCellMaker.makeCell(inflater, container, SettingsCellMaker.ONE_LINE, SettingsCellMaker.CONTROL_CHECKBOX);
+		view.addView(cPreViewMessage);
+		view.addView(SettingsCellMaker.makeListCellDivider(getActivity(), view));
 		final RelativeLayout cWillNoti 	= SettingsCellMaker.makeCell(inflater, container, SettingsCellMaker.ONE_LINE, SettingsCellMaker.CONTROL_CHECKBOX);
 		view.addView(cWillNoti);
 		view.addView(SettingsCellMaker.makeListCellDivider(getActivity(), view));
@@ -83,6 +86,19 @@ public class SettingsFragment extends Fragment {
 		view.addView(hInfo);
 		final RelativeLayout cDevInfo 	= SettingsCellMaker.makeCell(inflater, container, SettingsCellMaker.ONE_LINE, SettingsCellMaker.CONTROL_ARROW);
 		view.addView(cDevInfo);
+		
+		boolean isToastEnabled = UserInfo.getToastEnabled(getActivity());
+		((CheckBox)SettingsCellMaker.getCheckBox(cPreViewMessage)).setChecked(isToastEnabled);
+		SettingsCellMaker.setTitle(cPreViewMessage, "메시지 미리보기");
+		SettingsCellMaker.setOnCheckedChangeListener(
+				SettingsCellMaker.getCheckBox(cPreViewMessage),
+				new OnCheckedChangeListener() {
+					
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						UserInfo.setToastEnabled(getActivity(), isChecked);
+					}
+				});
 		
 		
 		

@@ -15,6 +15,7 @@ import kr.go.KNPA.Romeo.Chat.RoomModel;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.VibrationPattern;
 import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.ChatDAO;
 import kr.go.KNPA.Romeo.DB.DAO;
@@ -37,6 +38,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -415,25 +417,38 @@ public class GCMMessageManager {
 
 		mBuilder.setContentIntent(resultPendingIntent);
 
-		if (doAlarm == true)
-		{
-			if (UserInfo.getAlarmEnabled(mContext) == true)
-			{
+		
+		if (UserInfo.getAlarmEnabled(mContext) == true) {
+			
+			if (doAlarm == true) {
 				mBuilder.setDefaults(Notification.DEFAULT_ALL);
+				try {
+					Uri ringtoneURI = UserInfo.getRingtone(mContext);
+					mBuilder.setSound(ringtoneURI);
+				} catch (RuntimeException e) {}
+				
+				try {
+					String vibPatName = UserInfo.getVibrationPattern(mContext);
+					long[] vibPattern = VibrationPattern.getPattern(vibPatName);
+					mBuilder.setVibrate(vibPattern);
+				} catch (RuntimeException e) {}
+			
+			}
+			
+			if( UserInfo.getToastEnabled(mContext) == true) {
+				User user = MemberManager.sharedManager().getUser(message.senderIdx);
+				toastName = user.name;
+				toastRank = User.RANK[user.rank];
+				toastDepartment = user.department.nameFull;
+				showToast(mContext, profileImg, toastDepartment, toastRank, toastName, toastContent);
 			}
 		}
+		
+		
 		NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		// mId allows you to update the notification later on.
 		mNotificationManager.notify(0, mBuilder.build());
-		
-		
-		
-		User user = MemberManager.sharedManager().getUser(message.senderIdx);
-		toastName = user.name;
-		toastRank = User.RANK[user.rank];
-		toastDepartment = user.department.nameFull;
-		showToast(mContext, profileImg, toastDepartment, toastRank, toastName, toastContent);
 		
 	}
 

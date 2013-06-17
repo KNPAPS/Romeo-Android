@@ -387,16 +387,10 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 					Toast.makeText(context, "아직 설문 기간이 아닙니다.", Toast.LENGTH_SHORT).show();
 					
 				} else if(currentTS >= openTS && currentTS < closeTS) {
-					if( isAnswered ) {
-						// 자신이 답변한 것을 보여준다. (TODO)
-					} else {
-						// 응답양식을 보여준다.
-						
-						Fragment f = new SurveyAnswerFragment(survey);
-						if(f != null)
-							MainActivity.sharedActivity().pushContent(f);
-					}
-					
+
+					Fragment f = new SurveyAnswerFragment(survey);
+					if(f != null)
+						MainActivity.sharedActivity().pushContent(f);
 					
 				} else if ( currentTS >= closeTS ){
 					if ( isAnswered || isChecked) {
