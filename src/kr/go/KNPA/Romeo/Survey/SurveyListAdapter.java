@@ -39,7 +39,7 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener{
 	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int subType) 	{	super(context, c, autoRequery);	this.subType = subType;	this.context = context;	}
 	public SurveyListAdapter(Context context, Cursor c, int flags) 							{	super(context, c, flags);								this.context = context;	}
 
-	private Survey getSurvey(Cursor cSurvey) {
+	public Survey getSurvey(Cursor cSurvey) {
 		HashMap<String, Survey> surveys = SurveyFragment.surveyFragment(this.subType).getListView().surveys;//null;
 		if(surveys != null) {
 			String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
