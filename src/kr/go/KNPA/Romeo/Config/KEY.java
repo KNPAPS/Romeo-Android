@@ -82,12 +82,12 @@ public class KEY {
 
 		public static final String	ANSWER_SHEET		= "answerSheet";
 
-		public static final String	NUM_RECEIVERS		= "numReceivers";
-		public static final String	NUM_UNCHECKERS		= "numUnCheckers";
-		public static final String	NUM_CHECKERS		= "numCheckers";
-		public static final String	NUM_RESPONDERS		= "numResponders";
-		public static final String	NUM_GIVE_UP			= "numGiveUp";
-		public static final String	RESULT				= "result";
+		public static final String	NUM_RECEIVERS		= Survey.class.getSimpleName() + "_numReceivers";
+		public static final String	NUM_UNCHECKERS		= Survey.class.getSimpleName() + "_numUncheckers";
+		public static final String	NUM_CHECKERS		= Survey.class.getSimpleName() + "_numCheckers";
+		public static final String	NUM_RESPONDERS		= Survey.class.getSimpleName() + "_numResponders";
+		public static final String	NUM_GIVE_UP			= Survey.class.getSimpleName() + "_numGiveUp";
+		public static final String	RESULT				= Survey.class.getSimpleName() + "_result";
 
 	}
 

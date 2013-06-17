@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Base.Message;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Member.MemberManager;
@@ -208,7 +209,7 @@ class SurveyListAdapter extends BaseAdapter implements OnItemClickListener {
 				}
 			});
 			
-			final ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(mSubType, mIdx);
+			final ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(Message.MESSAGE_TYPE_SURVEY*Message.MESSAGE_TYPE_DIVIDER+mSubType, mIdx);
 			
 			if (idxs== null)
 			{
@@ -231,18 +232,19 @@ class SurveyListAdapter extends BaseAdapter implements OnItemClickListener {
 					WaiterView.dismissDialog(mContext);
 					Intent intent = new Intent(mContext, UserListActivity.class);
 					intent.putExtra(UserListActivity.KEY_USERS_IDX, idxs);
+					intent.putExtra(UserListActivity.KEY_TITLE, "미확인자 목록");
 					mContext.startActivity(intent);
 				}
 			});
 			
 		}
 	}
-
+	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position)
 	{
-
-		Survey survey = mData.get(position);
+		
+		Survey survey = (Survey) view.getTag();
 		if (mSubType == Survey.TYPE_RECEIVED)
 		{
 
@@ -277,7 +279,7 @@ class SurveyListAdapter extends BaseAdapter implements OnItemClickListener {
 			else if (currentTS >= openTS && currentTS < closeTS)
 			{
 
-				if (isAnswered || isChecked)
+				if (isAnswered)
 				{
 					// 자신의 답변을 강조한(TODO) 결과 양식을 보여준다.
 					SurveyResultFragment f = new SurveyResultFragment(survey);

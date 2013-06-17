@@ -107,7 +107,7 @@ public class Survey extends Message {// implements Parcelable{
 			DAO.survey(context).saveSurveyOnSend(this.idx);
 			SurveyListFragment departedFragment = new SurveyListFragment(Survey.TYPE_DEPARTED);
 			if( departedFragment != null && departedFragment.listView != null) {
-				departedFragment.listView.refresh();
+				departedFragment.getListView().refresh();
 			}
 			
 		}  else {

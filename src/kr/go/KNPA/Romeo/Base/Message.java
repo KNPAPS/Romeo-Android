@@ -141,6 +141,11 @@ public class Message implements Parcelable{
 	public static int subType(int type)					{		return type % Message.MESSAGE_TYPE_DIVIDER;		}
 	/** @} */
 	
+	public void setType(int type)
+	{
+		this.type = type;
+	}
+	
 	public Message(Cursor c) {
 		this.idx 		= c.getString(c.getColumnIndex("idx"));
 		// int type		:	Chat, Document, Survey 에서.
@@ -286,7 +291,7 @@ public class Message implements Parcelable{
 		Data reqData = new Data().add(0, KEY.MESSAGE.TYPE, message.type)
 				 .add(0, KEY.MESSAGE.IDX, message.idx)
 				 .add(0, KEY.USER.IDX, UserInfo.getUserIdx(context));
-		Payload request = new Payload().setEvent(Event.Message.setChecked()).setData(reqData);
+		Payload request = new Payload().setEvent(Event.MESSAGE_SET_CHECKED).setData(reqData);
 		
 		CallbackEvent<Payload, Integer, Payload> callback = new CallbackEvent<Payload, Integer, Payload>() {
 			@Override

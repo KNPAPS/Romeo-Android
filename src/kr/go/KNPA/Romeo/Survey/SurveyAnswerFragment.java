@@ -199,11 +199,12 @@ public class SurveyAnswerFragment extends Fragment {
 													@Override
 													public void onClick(View v)
 													{
-														submit();
+														v.setEnabled(false);
+														submit(v);
 													}
 												};
 
-	private void submit()
+	private void submit(View v)
 	{
 		AnswerSheet answerSheet = new AnswerSheet();
 
@@ -229,6 +230,7 @@ public class SurveyAnswerFragment extends Fragment {
 		}
 
 		survey.sendAnswerSheet(getActivity(), answerSheet);
+		v.setEnabled(true);
 	}
 
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener,

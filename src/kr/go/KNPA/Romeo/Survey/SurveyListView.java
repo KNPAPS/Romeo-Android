@@ -81,7 +81,6 @@ public class SurveyListView extends RomeoListView {
 	{
 		new SurveyRefreshThread().start();
 	}
-	
 
 	/**
 	 * 서버와 로컬 DB로부터 서베이 목록을 가져와 mSurvey에 저장한다.
@@ -114,7 +113,7 @@ public class SurveyListView extends RomeoListView {
 				s.idx = idx;
 				s.checked = c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED))==1?true:false;
 				
-				s.isAnswered = c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED))==1?true:false;
+				s.isAnswered = c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_ANSWERED))==1?true:false;
 				
 				surveys.add(s);
 			}
@@ -132,12 +131,17 @@ public class SurveyListView extends RomeoListView {
 					Survey surveyFromServer = (Survey) data.get(i).get(KEY._MESSAGE);
 					Survey s = surveys.get(i);
 					
-					s.senderIdx = surveyFromServer.senderIdx;
-					s.title = surveyFromServer.title;
-					s.content = surveyFromServer.content;
-					s.TS = surveyFromServer.TS;
-					s.form = surveyFromServer.form;
-					s.numUncheckers = surveyFromServer.numUncheckers;
+					if (surveyFromServer != null)
+					{
+						s.setType(surveyFromServer.type());
+						s.senderIdx = surveyFromServer.senderIdx;
+						s.title = surveyFromServer.title;
+						s.content = surveyFromServer.content;
+						s.TS = surveyFromServer.TS;
+						s.form = surveyFromServer.form;
+						s.numUncheckers = surveyFromServer.numUncheckers;
+					}
+					
 					surveys.set(i, s);
 				}
 
