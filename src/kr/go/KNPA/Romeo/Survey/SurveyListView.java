@@ -1,7 +1,5 @@
 package kr.go.KNPA.Romeo.Survey;
 
-import java.util.HashMap;
-
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
 import kr.go.KNPA.Romeo.DB.DAO;
@@ -17,12 +15,21 @@ import android.util.AttributeSet;
 
 public class SurveyListView extends RomeoListView {
 	
-	HashMap<String, Survey> surveys;
-	
 	// Constructor
-	public SurveyListView(Context context)	 									{	this(context, null);				}
-	public SurveyListView(Context context, AttributeSet attrs) 					{	this(context, attrs, 0);			}
-	public SurveyListView(Context context, AttributeSet attrs, int defStyle) 	{	super(context, attrs, defStyle);	}
+	public SurveyListView(Context context)
+	{
+		this(context, null);
+	}
+
+	public SurveyListView(Context context, AttributeSet attrs)
+	{
+		this(context, attrs, 0);
+	}
+
+	public SurveyListView(Context context, AttributeSet attrs, int defStyle)
+	{
+		super(context, attrs, defStyle);
+	}
 
 	// Initialize
 	@Override
@@ -106,23 +113,23 @@ public class SurveyListView extends RomeoListView {
 			public void run() {
 				Cursor cSurvey = DAO.survey(getContext()).getSurveyList(SurveyListView.this.subType);
 				
-				if(cSurvey.getCount() > 0) {
-					if(surveys == null ) {
-						surveys = new HashMap<String, Survey>();
-					} else {
-						surveys.clear();
-					}
-				}
-				
-				cSurvey.moveToFirst();
-				while ( !cSurvey.isAfterLast() ) {
-					String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
-					Survey survey = new Survey(getContext(), surveyIdx); 
-					cSurvey.moveToNext();
-					
-					surveys.put(survey.idx, survey);
-					
-				}
+//				if(cSurvey.getCount() > 0) {
+//					if(surveys == null ) {
+//						surveys = new HashMap<String, Survey>();
+//					} else {
+//						surveys.clear();
+//					}
+//				}
+//				
+//				cSurvey.moveToFirst();
+//				while ( !cSurvey.isAfterLast() ) {
+//					String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
+//					Survey survey = new Survey(getContext(), surveyIdx); 
+//					cSurvey.moveToNext();
+//					
+//					surveys.put(survey.idx, survey);
+//					
+//				}
 				
 				cSurvey.close();
 				handler.post(new Runnable() {

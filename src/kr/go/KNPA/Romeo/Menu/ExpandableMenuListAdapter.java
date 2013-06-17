@@ -268,11 +268,11 @@ public class ExpandableMenuListAdapter extends SimpleExpandableListAdapter imple
 		}
 		else if (code.equals(CODE_SURVEY_DEPARTED))
 		{
-			fragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+			fragment = new SurveyFragment(Survey.TYPE_DEPARTED);
 		}
 		else if (code.equals(CODE_SURVEY_RECEIVED))
 		{
-				fragment = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED);
+			fragment = new SurveyFragment(Survey.TYPE_RECEIVED);
 		}
 		else if (code.equals(CODE_MEMBER_LIST))
 		{

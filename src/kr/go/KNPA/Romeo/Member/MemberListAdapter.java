@@ -312,7 +312,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 									public void run() 
 									{
 										pd.dismiss();
-										SurveyFragment survFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+										SurveyFragment survFragment = new SurveyFragment(Survey.TYPE_DEPARTED);
 										MainActivity.sharedActivity().getSupportFragmentManager().beginTransaction()
 										.replace(R.id.content_frame, survFragment, survFragment.getClass().getSimpleName()).commit();
 										MainActivity.sharedActivity().getSlidingMenu().showContent();

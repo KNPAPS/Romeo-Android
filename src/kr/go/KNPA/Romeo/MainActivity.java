@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity {
 
 	public void goSurveyFragment()
 	{
-		SurveyFragment survFragment = SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED);
+		SurveyFragment survFragment = new SurveyFragment(Survey.TYPE_RECEIVED);
 		switchContent(survFragment);
 	}
 

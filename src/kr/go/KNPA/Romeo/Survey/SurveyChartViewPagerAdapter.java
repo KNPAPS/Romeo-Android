@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Survey.Survey.Form.Question;
 
 import org.achartengine.chart.BarChart;
@@ -25,12 +26,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
-import android.graphics.Point;
-import android.os.Build.VERSION;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,7 +47,6 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 	SurveyResultFragment controller;
 	NotScrollableViewPager pager;
 	int maxHeight;
-	Point screenSize;
 	LinearLayout pagerIndicator;
 	Button switchChartTypeBT;
 	
@@ -97,14 +94,7 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		this.nResponders = nResponders;
 		this.qVote = qVote;
 		maxHeight = 0;
-		Display display = getActivity().getWindowManager().getDefaultDisplay();
-		this.screenSize = new Point();
-		if(VERSION.SDK_INT < 13 ) {
-			screenSize.x = display.getWidth();
-			screenSize.y = display.getHeight();
-		} else {
-			display.getSize(screenSize);
-		}
+		
 		
 		
 		this.switchChartTypeBT = switchChartTypeBT;
@@ -142,7 +132,7 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		
 		
 		
-		final float DIMEN_ChartHeightPX = screenSize.x;//getResources().getDimension(R.dimen.survey_chart_height);
+		final float DIMEN_ChartHeightPX = Constants.DEVICE_WIDTH;//getResources().getDimension(R.dimen.survey_chart_height);
 		final float DIMEN_OptionHeightPX = getResources().getDimension(R.dimen.survey_option_result_content_height);		
 		final float DIMEN_MarginPX = getResources().getDimension(R.dimen.gap);
 		
@@ -290,7 +280,7 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		
 		//renderer.setMargins(new int[] {4,4,4,4});
 		final float screenShirinkFactor = 0.80f;
-		final float barWidthPX = (float) (screenSize.x * screenShirinkFactor / (qVote.size() * 1f));
+		final float barWidthPX = (float) (Constants.DEVICE_WIDTH * screenShirinkFactor / (qVote.size() * 1f));
 		renderer.setBarWidth(barWidthPX);
 		
 		
@@ -298,10 +288,8 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 		final float leftShift = barWidthPX * shiftFactor;
 		renderer.setBarSpacing( -3 * shiftFactor);
 		
-		
-		final int[] margins = renderer.getMargins();
-		
 		BarChart qChart = new BarChart(dataset, renderer, Type.DEFAULT) {
+			private static final long	serialVersionUID	= -4467701335704231536L;
 
 			@Override
 			public void drawSeries(Canvas canvas, Paint paint, List<Float> points,
@@ -367,8 +355,8 @@ public class SurveyChartViewPagerAdapter extends PagerAdapter implements OnPageC
 //			}
 		};
 		
-		int viewWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenSize.x, getResources().getDisplayMetrics());
-		int viewHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenSize.x, getResources().getDisplayMetrics());
+		int viewWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Constants.DEVICE_WIDTH, getResources().getDisplayMetrics());
+		int viewHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Constants.DEVICE_WIDTH, getResources().getDisplayMetrics());
 		int chartWidth = (int)(viewWidth * screenShirinkFactor); 
 		int chartHeight = (int)(viewHeight * 1.0f);
 		

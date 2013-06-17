@@ -111,6 +111,7 @@ public class RoomListFragmentLayout extends FragmentLayout {
 		});
 	}
 
+	@SuppressWarnings("deprecation")
 	public void setBackground(Drawable d)
 	{
 		if (Build.VERSION.SDK_INT < 16)

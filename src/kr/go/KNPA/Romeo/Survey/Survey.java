@@ -219,6 +219,8 @@ public class Survey extends Message {// implements Parcelable{
 	
 	
 	public static class AnswerSheet extends ArrayList<ArrayList<Integer>> {
+
+		private static final long	serialVersionUID	= 7561250833096418688L;
 		
 	}
 
@@ -227,7 +229,7 @@ public class Survey extends Message {// implements Parcelable{
 		if(successful) {
 			// Success
 			DAO.survey(context).saveSurveyOnSend(this.idx);
-			SurveyFragment departedFragment = SurveyFragment.surveyFragment(Survey.TYPE_DEPARTED);
+			SurveyFragment departedFragment = new SurveyFragment(Survey.TYPE_DEPARTED);
 			if( departedFragment != null && departedFragment.listView != null) {
 				departedFragment.listView.refresh();
 			}
@@ -240,6 +242,7 @@ public class Survey extends Message {// implements Parcelable{
 	}
 	
 	public static class Form extends HashMap<String, Object>{
+		private static final long	serialVersionUID	= -3314722287756650866L;
 		private static final String TAG = Form.class.getName();
 
 		/*
@@ -292,6 +295,7 @@ public class Survey extends Message {// implements Parcelable{
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		public ArrayList<Question> questions() {
 			ArrayList<Question> _questions = null;
 			if(this.containsKey(KEY.SURVEY.QUESTIONS) == false) {
