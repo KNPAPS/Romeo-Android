@@ -147,13 +147,5 @@ public abstract class RomeoListView extends ListView {
 			super.handleMessage(msg);
 		}
 	}
-	
 
-/*	/// abstract
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position) {
-		// NOTHING HERE
-	}
-	*/
-	
 }

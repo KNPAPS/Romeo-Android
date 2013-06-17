@@ -4,191 +4,179 @@ import java.util.ArrayList;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.R;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.DB.SurveyDAO;
+import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Member.UserListActivity;
-import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
+import kr.go.KNPA.Romeo.Survey.Survey.Form;
 import kr.go.KNPA.Romeo.Util.Formatter;
+import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-class SurveyListAdapter extends CursorAdapter implements OnItemClickListener {
-	// Variables
-	public int		subType	= Survey.NOT_SPECIFIED;
-
-	private Context	context;
-
-	// Constructor
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery)
+class SurveyListAdapter extends BaseAdapter implements OnItemClickListener {
+	
+	private static final String	TAG	= "SurveyListAdapter";
+	private Context mContext;
+	private ArrayList<Survey> mData;
+	private Integer	mSubType;
+	private static final Handler mHandler = new Handler();
+	public SurveyListAdapter(Context context, Integer subType, ArrayList<Survey> data)
 	{
-		super(context, c, autoRequery);
-		this.context = context;
+		mContext = context;
+		mSubType = subType;
+		
+		if (data == null)
+		{
+			mData = new ArrayList<Survey>();
+		}
+		else
+		{
+			mData = data;
+		}
 	}
 
-	public SurveyListAdapter(Context context, Cursor c, boolean autoRequery, int subType)
+	public void setData(ArrayList<Survey> data)
 	{
-		super(context, c, autoRequery);
-		this.subType = subType;
-		this.context = context;
-	}
-
-	public SurveyListAdapter(Context context, Cursor c, int flags)
-	{
-		super(context, c, flags);
-		this.context = context;
-	}
-
-	public Survey getSurvey(Cursor cSurvey)
-	{
-//		HashMap<String, Survey> surveys = SurveyFragment.getInstance(this.subType).getListView().surveys;// null;
-//		if (surveys != null)
-//		{
-//			String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
-//			if (surveys.containsKey(surveyIdx))
-//				return surveys.get(surveyIdx);
-//		}
-
-		return null;
+		mData = data;
 	}
 
 	@Override
-	public void bindView(final View v, final Context context, final Cursor c)
+	public int getCount()
 	{
-		final Survey survey = getSurvey(c);
-		if (survey == null)
-			return;
-		Survey.Form form = survey.form;
+		return mData.size();
+	}
+
+	@Override
+	public Survey getItem(int position)
+	{
+		return mData.get(position);
+	}
+
+	@Override
+	public long getItemId(int position)
+	{
+		if (mData == null)
+		{
+			return Constants.NOT_SPECIFIED;
+		}
+		else
+		{
+			return mData.get(position).hashCode();
+		}
+	}
+	
+	public View newView(Integer position)
+	{
+		LayoutInflater inflater = LayoutInflater.from(mContext);
+		View v = null;
+		
+		switch (mSubType)
+		{
+		case Survey.TYPE_DEPARTED:
+			v = inflater.inflate(R.layout.survey_list_cell_departed, null);
+			break;
+		case Survey.TYPE_RECEIVED:
+			v = inflater.inflate(R.layout.survey_list_cell_received, null);
+			break;
+		default:
+			Log.wtf(TAG, "mSubType이 정해지지 않음");
+			return null;
+		}
+
+		// 서베이 객체를 해당 view item의 tag로 지정.
+		v.setTag(mData.get(position));
+
+		return v;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent)
+	{
+		String surveyIdx = mData.get(position).idx;
+		
+		View v = null;
+		if (convertView != null && convertView.getTag() != null && convertView.getTag().equals(surveyIdx))
+		{
+			v = convertView;
+		}
+		else
+		{
+			v = newView(position);
+		}
+		
+		bindView(v, position);
+		
+		return v;
+	}
+	
+	public void bindView(final View v, Integer position)
+	{
+		final Survey survey = mData.get(position);
+		final User sender = MemberManager.sharedManager().getUser(survey.senderIdx);
+		Form form = survey.form;
 
 		// Title
 		TextView titleTV = (TextView) v.findViewById(R.id.title);
 		titleTV.setText(survey.title);
-
-		// USER Thread
-		final Handler handler = new Handler();
-		new Thread(new Runnable() {
-
-			@Override
-			public void run()
-			{
-				final User sender = User.getUserWithIdx(survey.senderIdx);
-
-				handler.post(new Runnable() {
-
-					@Override
-					public void run()
-					{
-						TextView senderTV = (TextView) v.findViewById(R.id.sender);
-						String senderInfo = sender.department.nameFull + " " + User.RANK[sender.rank] + " " + sender.name;
-						senderTV.setText(senderInfo);
-					}
-				});
-
-			}
-		}).start();
-
-		// Open ~ Close Date Time
-		TextView openDTTV = (TextView) v.findViewById(R.id.openDT);
-		String openDT = "";
-		try
-		{
-			openDT = Formatter.timeStampToStringWithFormat((Long) form.get(KEY.SURVEY.OPEN_TS), context.getString(R.string.formatString_openDT));
-		}
-		catch (Exception e)
-		{
-			openDT = "-";
-		}
-		openDTTV.setText(openDT);
+		
+		TextView senderTV = (TextView) v.findViewById(R.id.sender);
+		String senderInfo = sender.department.nameFull + " " + User.RANK[sender.rank] + " " + sender.name;
+		senderTV.setText(senderInfo);
 
 		TextView closeDTTV = (TextView) v.findViewById(R.id.closeDT);
 		String closeDT = "";
 		try
 		{
-			closeDT = Formatter.timeStampToStringWithFormat((Long) form.get(KEY.SURVEY.CLOSE_TS), context.getString(R.string.formatString_closeDT));
+			closeDT = Formatter.timeStampToStringWithFormat((Long) form.get(KEY.SURVEY.CLOSE_TS), mContext.getString(R.string.formatString_closeDT));
 		}
 		catch (Exception e)
 		{
 			closeDT = "-";
 		}
-		closeDTTV.setText(closeDT);
+		closeDTTV.setText(closeDT+"까지");
 
 		// Departed : set Uncheckers Button
-		if (this.subType == Survey.TYPE_DEPARTED)
+		if (mSubType == Survey.TYPE_DEPARTED)
 		{
-
-			new Thread(new Runnable() {
-
+			Button goUnchecked = (Button) v.findViewById(R.id.goUnchecked);
+			goUnchecked.setText(survey.numUncheckers.toString());
+			goUnchecked.setOnClickListener(new OnClickListener() {
 				@Override
-				public void run()
+				public void onClick(View view)
 				{
-					final ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(survey.type(), survey.idx);
-
-					handler.post(new Runnable() {
-
-						@Override
-						public void run()
-						{
-
-							Button goUnchecked = (Button) v.findViewById(R.id.goUnchecked);
-							goUnchecked.setText("" + idxs.size());
-							goUnchecked.setOnClickListener(new OnClickListener() {
-
-								@Override
-								public void onClick(View view)
-								{
-
-									if (idxs != null)
-									{
-										Intent intent = new Intent(context, UserListActivity.class);
-										Bundle b = new Bundle();
-										b.putStringArrayList(UserListActivity.KEY_USERS_IDX, idxs);
-
-										intent.putExtras(b);
-										context.startActivity(intent);
-									}
-								}
-							});
-
-						}
-					});
-
+					new GoToUncheckerListThread(survey.idx).start();
 				}
-			}).start();
+			});
 
-			// Received : go Result
 		}
-		else if (this.subType == Survey.TYPE_RECEIVED)
+		else if (mSubType == Survey.TYPE_RECEIVED)
 		{
-
-			boolean isAnswered = survey.isAnswered(context);
-
-			int answeredColor = context.getResources().getColor(R.color.black);
+			int answeredColor = -1;
 			String answeredStatus = null;
 
-			if (isAnswered)
+			if (survey.isAnswered)
 			{
-				answeredStatus = context.getString(R.string.statusAnswered);
-				answeredColor = context.getResources().getColor(R.color.grayDark);
+				answeredStatus = mContext.getString(R.string.statusAnswered);
+				answeredColor = mContext.getResources().getColor(R.color.grayDark);
 			}
 			else
 			{
-				answeredStatus = context.getString(R.string.statusNotAnswered);
-				answeredColor = context.getResources().getColor(R.color.maroon);
+				answeredStatus = mContext.getString(R.string.statusNotAnswered);
+				answeredColor = mContext.getResources().getColor(R.color.maroon);
 			}
 
 			Button goResultBT = (Button) v.findViewById(R.id.goResult);
@@ -200,80 +188,69 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener {
 
 	}
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent)
-	{
-		if (!mCursor.moveToPosition(position))
-		{
-			throw new IllegalStateException("cursor가 position "+String.valueOf(position)+"에 접근할 수 없음");
-		}
-
-		String surveyIdx = mCursor.getString(mCursor.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
+	private final class GoToUncheckerListThread extends Thread {
+		private String mIdx;
 		
-		View v = null;
-		if (convertView != null && convertView.getTag() != null && convertView.getTag().equals(surveyIdx))
+		public GoToUncheckerListThread(String idx)
 		{
-			v = convertView;
-		}
-		else
-		{
-			v = newView(mContext, mCursor, parent);
+			mIdx = idx;
 		}
 		
-		bindView(v, mContext, mCursor);
-		
-		return v;
-	}
-	
-	@Override
-	public View newView(Context context, Cursor c, ViewGroup parent)
-	{
-		LayoutInflater inflater = LayoutInflater.from(context);
-		View v = null;
-		switch (this.subType)
+		@Override
+		public void run()
 		{
-		case Survey.TYPE_DEPARTED:
-			v = inflater.inflate(R.layout.survey_list_cell_departed, parent, false);
-			break;
-		case Survey.TYPE_RECEIVED:
-			v = inflater.inflate(R.layout.survey_list_cell_received, parent, false);
-			break;
+			super.run();
+			mHandler.post(new Runnable(){
+				@Override
+				public void run()
+				{
+					WaiterView.showDialog(mContext);					
+				}
+			});
+			
+			final ArrayList<String> idxs = Survey.getUncheckersIdxsWithMessageTypeAndIndex(mSubType, mIdx);
+			
+			if (idxs== null)
+			{
 
-		default:
-		case Survey.NOT_SPECIFIED:
-			break;
-		// ListView 에서 tableName이 정해진 경우에만 넘어오므로, 이 지점에 도닳할 수 없다.
+				mHandler.post(new Runnable(){
+					@Override
+					public void run()
+					{
+						WaiterView.dismissDialog(mContext);
+						Toast.makeText(mContext, "미확인자 목록을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+					}
+				});
+				return;
+			}
+			
+			mHandler.post(new Runnable(){
+				@Override
+				public void run()
+				{
+					WaiterView.dismissDialog(mContext);
+					Intent intent = new Intent(mContext, UserListActivity.class);
+					intent.putExtra(UserListActivity.KEY_USERS_IDX, idxs);
+					mContext.startActivity(intent);
+				}
+			});
+			
 		}
-
-		// idx로 태그 설정
-		String surveyIdx = c.getString(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
-		v.setTag(surveyIdx);
-
-		return v;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long l_position)
 	{
 
-		ListAdapter adapter = this;
-		if (parent.getAdapter() instanceof SimpleSectionAdapter)
-			adapter = ((SimpleSectionAdapter) parent.getAdapter());
-
-		Cursor c = (Cursor) adapter.getItem(position);
-		String surveyIdx = c.getString(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
-
-		Survey survey = new Survey(context, surveyIdx);
-
-		if (this.subType == Survey.TYPE_RECEIVED)
+		Survey survey = mData.get(position);
+		if (mSubType == Survey.TYPE_RECEIVED)
 		{
 
 			long openTS = (Long) survey.form.get(KEY.SURVEY.OPEN_TS);
 			long closeTS = (Long) survey.form.get(KEY.SURVEY.CLOSE_TS);
 			long currentTS = System.currentTimeMillis() / 1000;
 
-			boolean isAnswered = survey.isAnswered(context);
+			boolean isAnswered = survey.isAnswered;
 			boolean isChecked = survey.checked;
 
 			boolean isResultPublic = false;
@@ -288,46 +265,54 @@ class SurveyListAdapter extends CursorAdapter implements OnItemClickListener {
 
 			if (isAnswered && isResultPublic)
 			{
-				Fragment f = new SurveyResultFragment(survey);
-				if (f != null)
-					MainActivity.sharedActivity().pushContent(f);
+				SurveyResultFragment f = new SurveyResultFragment(survey);
+				MainActivity.sharedActivity().pushContent(f);
 				return;
-
 			}
 			else if (currentTS < openTS)
 			{
-				Toast.makeText(context, "아직 설문 기간이 아닙니다.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, "아직 설문 기간이 아닙니다.", Toast.LENGTH_SHORT).show();
 
 			}
 			else if (currentTS >= openTS && currentTS < closeTS)
 			{
 
-				Fragment f = new SurveyAnswerFragment(survey);
-				if (f != null)
+				if (isAnswered || isChecked)
+				{
+					// 자신의 답변을 강조한(TODO) 결과 양식을 보여준다.
+					SurveyResultFragment f = new SurveyResultFragment(survey);
 					MainActivity.sharedActivity().pushContent(f);
-
+				}
+				else
+				{
+					
+					SurveyAnswerFragment f = new SurveyAnswerFragment(survey);
+					MainActivity.sharedActivity().pushContent(f);
+					
+				}
+				return;
 			}
 			else if (currentTS >= closeTS)
 			{
 				if (isAnswered || isChecked)
 				{
 					// 자신의 답변을 강조한(TODO) 결과 양식을 보여준다.
-					SurveyResultFragment f = new SurveyResultFragment(survey, subType);
+					SurveyResultFragment f = new SurveyResultFragment(survey);
 					MainActivity.sharedActivity().pushContent(f);
 				}
 				else
 				{
-					Toast.makeText(context, "설문 기간이 지났습니다.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, "설문 참여 기간이 지났습니다.", Toast.LENGTH_SHORT).show();
 				}
 
 			}
 
 		}
-		else if (this.subType == Survey.TYPE_DEPARTED)
+		else if (mSubType == Survey.TYPE_DEPARTED)
 		{
-			Fragment f = new SurveyResultFragment(survey);
-			if (f != null)
-				MainActivity.sharedActivity().pushContent(f);
+			SurveyResultFragment f = new SurveyResultFragment(survey);
+			MainActivity.sharedActivity().pushContent(f);
+			
 			return;
 		}
 

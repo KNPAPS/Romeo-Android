@@ -1,7 +1,15 @@
 package kr.go.KNPA.Romeo.Survey;
 
+import java.util.ArrayList;
+
 import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoListView;
+import kr.go.KNPA.Romeo.Config.Event;
+import kr.go.KNPA.Romeo.Config.KEY;
+import kr.go.KNPA.Romeo.Config.StatusCode;
+import kr.go.KNPA.Romeo.Connection.Connection;
+import kr.go.KNPA.Romeo.Connection.Data;
+import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.DB.SurveyDAO;
 import kr.go.KNPA.Romeo.SimpleSectionAdapter.Sectionizer;
@@ -10,11 +18,13 @@ import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Handler;
-import android.support.v4.widget.CursorAdapter;
 import android.util.AttributeSet;
+import android.widget.Toast;
 
 public class SurveyListView extends RomeoListView {
 	
+	private SurveyListAdapter mAdapter;
+	private static Handler mHandler;
 	// Constructor
 	public SurveyListView(Context context)
 	{
@@ -35,126 +45,158 @@ public class SurveyListView extends RomeoListView {
 	@Override
 	public SurveyListView initWithType (int type) {
 		this.subType = type;
+		mHandler = new Handler();
+		mAdapter = new SurveyListAdapter(getContext(), subType, null);
 		
 		switch(this.subType) {
 		case Survey.TYPE_DEPARTED :
-			listAdapter = new SurveyListAdapter(getContext(), null, false, this.subType);
-			this.setAdapter(listAdapter);
-			this.setOnItemClickListener((android.widget.AdapterView.OnItemClickListener) listAdapter);
+			this.setAdapter(mAdapter);
+			this.setOnItemClickListener(mAdapter);
 			break;
 			
 		case Survey.TYPE_RECEIVED :
-			Sectionizer<Cursor> sectionizer = new Sectionizer<Cursor>() {
+			Sectionizer<Survey> sectionizer = new Sectionizer<Survey>() {
 				@Override
-				public String getSectionTitleForItem(Cursor c) {
+				public String getSectionTitleForItem(Survey c) {
 					boolean checked= false;
-					if ( c.moveToFirst() == true ) {
-						checked = c.getLong(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED)) > 0 ? true : false;
+					if ( c != null ) {
+						checked = c.checked;
 						return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 					}
 					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
 				}
 			};
-			listAdapter = new SurveyListAdapter(getContext(), null, false, this.subType);
 
-			SimpleSectionAdapter<Cursor> sectionAdapter
-				= new SimpleSectionAdapter<Cursor>(getContext(), listAdapter, R.layout.section_header, R.id.title, sectionizer);
+			SimpleSectionAdapter<Survey> sectionAdapter
+				= new SimpleSectionAdapter<Survey>(getContext(), mAdapter, R.layout.section_header, R.id.title, sectionizer);
 			this.setAdapter(sectionAdapter);
-			this.setOnItemClickListener((android.widget.AdapterView.OnItemClickListener) listAdapter);
+			this.setOnItemClickListener(mAdapter);
 			break;
 		}
-		
 		return this;
 	}
-	
-	// Database management
-	@Override
-	protected Cursor query() {	return DAO.survey(getContext()).getSurveyList(this.subType);	}
 
-	
 	@Override
-	public void onPreExecute() {
-		//WaiterView.showDialog(getContext());
-		
-	}
-	@Override
-	public void onPostExecute(boolean isValidCursor) {
-		//WaiterView.dismissDialog(getContext());
-		
+	public void refresh()
+	{
+		new SurveyRefreshThread().start();
 	}
 	
-	@Override
-	public void refresh(Cursor c) {
-		if(listAdapter == null) return;
-		 
-		if(listAdapter instanceof CursorAdapter) {
-			fetch(c);
+
+	/**
+	 * 서버와 로컬 DB로부터 서베이 목록을 가져와 mSurvey에 저장한다.
+	 */
+	private final class SurveyRefreshThread extends Thread {
+		@Override
+		public void run()
+		{
+			super.run();
+			mHandler.post(new Runnable() {
+				@Override
+				public void run()
+				{
+					WaiterView.showDialog(getContext());
+					WaiterView.setTitle(getResources().getString(R.string.survey)+" 정보를 불러옵니다");
+				}
+			});
 			
-//			if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
-//				((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
-		} else {
-			listAdapter.notifyDataSetChanged();
+			Cursor c = DAO.survey(getContext()).getSurveyList(SurveyListView.this.subType);
 			
-			if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
-				((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
-		}
-		
-	}
-	
-	private void fetch(final Cursor c) {
-		final Handler handler = new Handler();
-		WaiterView.showDialog(getContext());
-		String surveyName = getResources().getString(R.string.survey);
-		WaiterView.setTitle(surveyName + " 정보를 불러옵니다");
-		
-		new Thread(new Runnable() {
+			final ArrayList<Survey> surveys = new ArrayList<Survey>();
 			
-			@Override
-			public void run() {
-				Cursor cSurvey = DAO.survey(getContext()).getSurveyList(SurveyListView.this.subType);
+			ArrayList<String> surveyIdxs = new ArrayList<String>();
+			
+			while(c.moveToNext())
+			{
+				String idx = c.getString(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
+				surveyIdxs.add(idx);
+				Survey s = new Survey();
+				s.idx = idx;
+				s.checked = c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED))==1?true:false;
 				
-//				if(cSurvey.getCount() > 0) {
-//					if(surveys == null ) {
-//						surveys = new HashMap<String, Survey>();
-//					} else {
-//						surveys.clear();
-//					}
-//				}
-//				
-//				cSurvey.moveToFirst();
-//				while ( !cSurvey.isAfterLast() ) {
-//					String surveyIdx = cSurvey.getString(cSurvey.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
-//					Survey survey = new Survey(getContext(), surveyIdx); 
-//					cSurvey.moveToNext();
-//					
-//					surveys.put(survey.idx, survey);
-//					
-//				}
+				s.isAnswered = c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED))==1?true:false;
 				
-				cSurvey.close();
-				handler.post(new Runnable() {
+				surveys.add(s);
+			}
+			
+			Data reqData = new Data();
+			reqData.add(0, KEY.SURVEY.IDX, surveyIdxs);
+			Payload payload = new Payload();
+			payload.setEvent(Event.MESSAGE_SURVEY_GET_CONTENT).setData(reqData);
+			Payload response = new Connection().requestPayload(payload).async(false).request().getResponsePayload();
+			if (response.getStatusCode() == StatusCode.SUCCESS)
+			{
+				Data data = response.getData();
+				for (int i=0; i<data.size(); i++)
+				{
+					Survey surveyFromServer = (Survey) data.get(i).get(KEY._MESSAGE);
+					Survey s = surveys.get(i);
 					
+					s.senderIdx = surveyFromServer.senderIdx;
+					s.title = surveyFromServer.title;
+					s.content = surveyFromServer.content;
+					s.TS = surveyFromServer.TS;
+					s.form = surveyFromServer.form;
+					s.numUncheckers = surveyFromServer.numUncheckers;
+					surveys.set(i, s);
+				}
+
+				mHandler.post(new Runnable() {
+					@SuppressWarnings("unchecked")
 					@Override
-					public void run() {
-						afterLoad(c);
+					public void run()
+					{
+						WaiterView.dismissDialog(getContext());
+						mAdapter.setData(surveys);
+						mAdapter.notifyDataSetChanged();
+						
+						if (getAdapter() instanceof SimpleSectionAdapter<?>)
+						{
+							((SimpleSectionAdapter<Survey>)getAdapter()).notifyDataSetChanged();
+						}
+						
+						if (surveys.size()==0)
+						{
+							setBackground(getContext().getResources().getDrawable(R.drawable.empty_set_background));
+						}
+						
+						requestLayout();
 					}
 				});
 			}
-		}).start();
-		
-		
-		
+			else
+			{
+				mHandler.post(new Runnable() {
+					@Override
+					public void run()
+					{
+						WaiterView.dismissDialog(getContext());
+						Toast.makeText(getContext(), "목록을 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+		}
 	}
 	
-	private void afterLoad(Cursor c) {
-		WaiterView.dismissDialog(getContext());
-		setListBackground( c );
-		if(c != null) {
-			listAdapter.changeCursor(c);
-		}
+	@Override
+	protected Cursor query()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onPreExecute()
+	{
+		// TODO Auto-generated method stub
 		
-		if(getAdapter() instanceof SimpleSectionAdapter && getAdapter() != listAdapter)
-			((SimpleSectionAdapter)getAdapter()).notifyDataSetChanged();
+	}
+
+	@Override
+	public void onPostExecute(boolean isValidCursor)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

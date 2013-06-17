@@ -95,9 +95,7 @@ public class SurveyDAO extends DAO {
 	 * @b 커서구조
 	 * @b COLUMN_SURVEY_IDX str 해시\n
 	 * @b COLUMN_SURVEY_IS_ANSWERED int 응답여부\n
-	 * @b COLUMN_SURVEY_ANSWERED_TS long 응답한시간\n
 	 * @b COLUMN_SURVEY_IS_CHECKED int 확인여부\n
-	 * @b COLUMN_SURVEY_CHECKED_TS long 확인한시간\n
 	 * @param svyCategory
 	 *            내가받은거면 Survey.TYPE_RECEIVED, 내가보낸거면 Survey.TYPE_DEPARTED
 	 * @return
@@ -105,13 +103,9 @@ public class SurveyDAO extends DAO {
 	public Cursor getSurveyList(int svyCategory)
 	{
 		String sql = "select _id, " + DBSchema.SURVEY.COLUMN_IDX + COLUMN_SURVEY_IDX + ", "
-				+
-				// DBSchema.SURVEY.COLUMN_TITLE+COLUMN_SURVEY_NAME+", "+
-				DBSchema.SURVEY.COLUMN_IS_CHECKED + COLUMN_SURVEY_IS_CHECKED + ", "
-				+
-				// DBSchema.SURVEY.COLUMN_CREATOR_IDX+COLUMN_SURVEY_SENDER_IDX+", "+
-				DBSchema.SURVEY.COLUMN_IS_ANSWERED + COLUMN_SURVEY_IS_ANSWERED + " from" + DBSchema.SURVEY.TABLE_NAME + "where " + DBSchema.SURVEY.COLUMN_CATEGORY + " = "
-				+ String.valueOf(svyCategory);
+				+DBSchema.SURVEY.COLUMN_IS_CHECKED + COLUMN_SURVEY_IS_CHECKED + ", "
+				+DBSchema.SURVEY.COLUMN_IS_ANSWERED + COLUMN_SURVEY_IS_ANSWERED + " from" + DBSchema.SURVEY.TABLE_NAME + "where " + DBSchema.SURVEY.COLUMN_CATEGORY + " = "
+				+ String.valueOf(svyCategory)+" order by "+DBSchema.SURVEY.COLUMN_IS_CHECKED+" DESC";
 		return db.rawQuery(sql, null);
 	}
 
@@ -159,6 +153,19 @@ public class SurveyDAO extends DAO {
 		
 		c.close();
 		return n;
+	}
+	
+	/**
+	 * 서베이 삭제
+	 * @param idx
+	 * @return 성공여부
+	 */
+	public boolean deleteSurvey(String idx)
+	{
+		String sql = "DELETE FROM "+DBSchema.SURVEY.TABLE_NAME+" WHERE "+DBSchema.SURVEY.COLUMN_IDX+" = ?";
+		db.execSQL(sql, new String[]{idx});
+		
+		return true;
 	}
 
 	public static final String	COLUMN_SURVEY_IDX			= "survey_idx";

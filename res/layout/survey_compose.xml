@@ -112,9 +112,12 @@
                     android:id="@+id/close_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
                     android:background="@drawable/romeo_edittext_background"
+                    android:ellipsize="end"
                     android:ems="10"
                     android:hint="오전 10:00시"
+                    android:maxLines="1"
                     android:nextFocusDown="@+id/close_month"
                     android:padding="@dimen/gapSmall"
                     android:textColor="@color/text"
@@ -152,13 +155,12 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="0dp"
-                    android:layout_weight="1"
-                    android:paddingTop="0dp"
                     android:layout_marginTop="-5dp"
-                    android:gravity="center"
+                    android:layout_weight="1"
                     android:focusable="false"
                     android:text="결과 공개 여부"
                     android:textColor="@color/text" />
+
             </LinearLayout>
             
             <LinearLayout

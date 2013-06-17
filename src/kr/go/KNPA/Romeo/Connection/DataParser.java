@@ -42,23 +42,23 @@ public class DataParser {
 	{
 		Data dataNative = null;
 
-		if (event.equalsIgnoreCase(Event.Message.send()))
+		if (event.equals(Event.Message.send()))
 		{
 			dataNative = parse_on_msg_send(dataJSONArray);
 		}
-		else if (event.equalsIgnoreCase(Event.PUSH_MESSAGE))
+		else if (event.equals(Event.PUSH_MESSAGE))
 		{
 			dataNative = parse_on_push_msg(dataJSONArray);
 		}
-		else if (event.equalsIgnoreCase(Event.PUSH_USER_JOIN_ROOM))
+		else if (event.equals(Event.PUSH_USER_JOIN_ROOM))
 		{
 			dataNative = parse_on_user_join_room(dataJSONArray);
 		}
-		else if (event.equalsIgnoreCase(Event.Message.Survey.getContent()))
+		else if (event.equals(Event.MESSAGE_SURVEY_GET_CONTENT))
 		{
-			dataNative = parse_on_push_msg(dataJSONArray);
+			dataNative = parseSurveyGetContent(dataJSONArray);
 		}
-		else if (event.equalsIgnoreCase(Event.Message.Survey.getResult()))
+		else if (event.equals(Event.Message.Survey.getResult()))
 		{
 			dataNative = parse_on_msg_survey_result(dataJSONArray);
 		}
@@ -69,7 +69,6 @@ public class DataParser {
 
 		return dataNative;
 	}
-
 	/**
 	 * 대부분의 event들이 공통적으로 가지는 구조를 parsing 한다.\n "data" : [ {"key1":obj1,
 	 * "key2":obj2, ... }, { ... } ] 와 같은 JSONArray를
@@ -94,6 +93,35 @@ public class DataParser {
 		return dataNative;
 	}
 
+	/**
+	 * MESSAGE:SURVEY:GET_CONTENT
+	 * @param dataJSONArray
+	 * @return
+	 */
+	private Data parseSurveyGetContent(JSONArray dataJSONArray)
+	{	
+		Data data = new Data();
+
+		try
+		{
+			for (int i=0; i<dataJSONArray.length(); i++)
+			{
+				JSONObject jo;
+					jo = dataJSONArray.getJSONObject(i);
+				Survey svy = (Survey) Message.parseMessage(jo.get(KEY._MESSAGE).toString());
+				data.add(i, KEY._MESSAGE, svy);
+			}
+			return data;
+		}
+		catch (JSONException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
 	/**
 	 * MESSAGE:SEND 이벤트에 대한 파싱
 	 * 

@@ -1,111 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/survey_list_cell_departed"
+    android:id="@+id/survey_list_cell_received"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:orientation="horizontal" 
-    android:background="@drawable/list_cell_highlight" >
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_cell_highlight"
+    android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-      	android:layout_gravity="center_vertical"
-      	android:padding="@dimen/gap"
-      	android:gravity="center_vertical"
-      	android:layout_weight="1"
-        android:orientation="vertical" >
+    <RelativeLayout
+        android:id="@+id/ll_survey_info_first_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/gapSmall" >
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/sender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text"
-            android:textSize="11sp" />
-		
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
-      	android:layout_gravity="center_vertical"
-      	android:gravity="center_vertical"
-      	android:padding="@dimen/gap"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/openDT"
+        <LinearLayout
+            android:id="@+id/ll_survey_info_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/text"
-            android:textSize="8sp" />
-        
-				<LinearLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:orientation="horizontal" >
-		                
-		        <TextView
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_marginLeft="@dimen/gapSmall"
-		            android:layout_marginRight="@dimen/gapSmall"
-				        android:textSize="8sp"
-		            android:textColor="@color/gray"
-		            android:text="@string/fromTo" />
-		
-		        <TextView
-		            android:id="@+id/closeDT"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-				        android:textSize="8sp"
-		            android:textColor="@color/sub"  />
-				</LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="전의경관련설문조사"
+                android:textColor="@color/text"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/sender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="본청 경비국 경비 경비3 의경 채호식"
+                android:textColor="@color/text"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/goUnchecked"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignBottom="@id/ll_survey_info_container"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/bubble_active"
+            android:focusable="false"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_survey_info_second_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/gapSmall" >
+
+        <TextView
+            android:id="@+id/tv_closeDT_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="기한"
+            android:textColor="@color/gray"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/closeDT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2013.6.17 10:00 까지"
+            android:textColor="@color/grayDark"
+            android:textSize="13sp" />
     </LinearLayout>
-    
-    <Button
-			    android:id="@+id/goUnchecked"
-			    android:layout_width="32dp"
-			    android:layout_height="32dp"
-			    android:layout_marginRight="@dimen/gap"
-			    android:layout_gravity="center_vertical"
-			    android:focusable="false"
-			    android:background="@drawable/bubble_active"
-			    android:textColor="@color/white"  />
-    <!--  
-		<FrameLayout
-	    android:layout_width="wrap_content"
-	    android:layout_height="match_parent"
-	    android:layout_marginRight="@dimen/gap"
-	    android:layout_gravity="center"
-	    android:padding = "0dp">
-        
-				<Button
-			    android:id="@+id/unchecked"
-			    android:layout_width="32dp"
-			    android:layout_height="32dp"
-			    android:layout_marginRight="@dimen/gap"
-			    android:layout_gravity="center_vertical"
-			    android:background="@drawable/bubble_active"
-			    android:textColor="@color/white"
-			    android:text="20" />
-				
-				<Button
-			    android:id="@+id/unchecked"
-			    android:layout_width="32dp"
-			    android:layout_height="32dp"
-			    android:layout_marginRight="@dimen/gap"
-			    android:layout_gravity="center_vertical"
-			    android:background="@drawable/bubble_inactive"
-			    android:textColor="@color/black"
-			    android:visibility="invisible"
-			    android:text="20" />
-		</FrameLayout>
-		-->
+
 </LinearLayout>

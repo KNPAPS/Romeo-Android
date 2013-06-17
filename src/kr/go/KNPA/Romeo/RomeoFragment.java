@@ -1,6 +1,6 @@
 package kr.go.KNPA.Romeo;
 
-import kr.go.KNPA.Romeo.Base.Message;
+import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Member.MemberListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,50 +16,36 @@ import android.widget.Toast;
 public abstract class RomeoFragment extends Fragment {
 	
 	// Variables
-	public int subType = Message.NOT_SPECIFIED;
+	public int subType = Constants.NOT_SPECIFIED;
 	public RomeoListView listView;
-	// Constructor
-	public RomeoFragment() {}
 
-	public RomeoFragment(int subType) {
+	// Constructor
+	public RomeoFragment()
+	{
+	}
+
+	public RomeoFragment(int subType)
+	{
 		super();
 		this.subType = subType;
 	}
 	
 	// ListView management
 	abstract public RomeoListView getListView();
-	
-	
-	// Fragment Cycle Management
-	// View Life-Cycle
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
 
 	@Override
-	public void onResume() {
+	public void onResume()
+	{
 		super.onResume();
-		
-		
-		
+
 		RomeoListView lv = getListView();
-		
-		if ( lv != null ) {
+
+		if (lv != null)
+		{
 			lv.refresh();
 		}
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

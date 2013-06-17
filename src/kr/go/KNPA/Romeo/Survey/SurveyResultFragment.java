@@ -36,38 +36,17 @@ public class SurveyResultFragment extends Fragment {
 
 	protected final int[]	COLORS	= { Color.parseColor("#AF0452"), Color.parseColor("#FF8500"), Color.parseColor("#008196"), Color.parseColor("#002787"), Color.parseColor("#4903C7") };
 
-	public SurveyResultFragment(){}
-
-	public SurveyResultFragment(Survey survey, int subType)
-	{
-		this.survey = survey;
-		this.subType = subType;
-	}
-
 	public SurveyResultFragment(Survey survey) {
 		this.survey = survey;
 		this.subType = survey.subType();
 	}
-	public SurveyResultFragment(String surveyIdx)
-	{
-		this.survey = new Survey(getActivity(), surveyIdx);
-		this.subType = survey.subType();
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-
-	}
-
+	
 	@Override
 	public void onResume()
 	{
 		super.onResume();
 
 		survey.setChecked(getActivity());
-		// SurveyFragment.surveyFragment(Survey.TYPE_RECEIVED).getListView().refresh();
 	}
 
 	@Override
@@ -124,7 +103,7 @@ public class SurveyResultFragment extends Fragment {
 				reqData.add(0, KEY.USER.IDX, UserInfo.getUserIdx(getActivity()));
 				reqData.add(0, KEY.SURVEY.IDX, survey.idx);
 				Payload request = new Payload().setEvent(Event.Message.Survey.getResult()).setData(reqData);
-				Connection conn = new Connection().async(false).callBack(gotResult).requestPayload(request).request();
+				new Connection().async(false).callBack(gotResult).requestPayload(request).request();
 			}
 		}).start();
 
@@ -132,32 +111,31 @@ public class SurveyResultFragment extends Fragment {
 
 	}
 
-	final CallbackEvent<Payload, Integer, Payload>	gotResult	= new CallbackEvent<Payload, Integer, Payload>() {
-																	public void onError(String errorMsg, Exception e)
-																	{
-																		RomeoDialog dialog = new RomeoDialog.Builder(getActivity()).setIcon(R.drawable.icon_dialog)
-																				.setMessage("결과를 불러올 수 없습니다. 잠시 후 다시 시도해 주세요.").show();
-																		MainActivity.sharedActivity().popContent();
-																		// TODO
-																		// Error
-																		// Handling
-																	};
+	final CallbackEvent<Payload, Integer, Payload>	gotResult	= 
+			new CallbackEvent<Payload, Integer, Payload>() {
+				public void onError(String errorMsg, Exception e)
+				{
+					new RomeoDialog.Builder(getActivity()).setIcon(R.drawable.icon_dialog)
+							.setMessage("결과를 불러올 수 없습니다. 잠시 후 다시 시도해 주세요.").show();
+						MainActivity.sharedActivity().popContent();
+				}
+				
+				public void onPostExecute(Payload result)
+				{
+					final Data resData = result.getData();
+					getActivity().runOnUiThread(new Runnable() {
+			
+						@Override
+						public void run()
+						{
+							makeResult(resData);
+						}
+					});
+			
+				}
+			};
 
-																	public void onPostExecute(Payload result)
-																	{
-																		final Data resData = result.getData();
-																		getActivity().runOnUiThread(new Runnable() {
-
-																			@Override
-																			public void run()
-																			{
-																				makeResult(resData);
-																			}
-																		});
-
-																	};
-																};
-
+	@SuppressWarnings("unchecked")
 	private void makeResult(Data resData)
 	{
 		if (this.view == null || survey == null || survey.form == null)

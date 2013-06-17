@@ -70,9 +70,13 @@ public class GCMMessageSender {
 				}
 			}
 
+			return uncheckers;
+		}
+		else
+		{
+			return null;
 		}
 
-		return uncheckers;
 	}
 
 	public static void sendMessage(final Context context, Message message)

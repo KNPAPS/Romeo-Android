@@ -5,14 +5,8 @@ import java.util.HashMap;
 
 import kr.go.KNPA.Romeo.MainActivity;
 import kr.go.KNPA.Romeo.Base.Message;
-import kr.go.KNPA.Romeo.Config.Event;
 import kr.go.KNPA.Romeo.Config.KEY;
-import kr.go.KNPA.Romeo.Config.StatusCode;
-import kr.go.KNPA.Romeo.Connection.Connection;
-import kr.go.KNPA.Romeo.Connection.Data;
-import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.DAO;
-import kr.go.KNPA.Romeo.DB.SurveyDAO;
 import kr.go.KNPA.Romeo.GCM.GCMMessageSender;
 
 import org.json.JSONArray;
@@ -20,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 public class Survey extends Message {// implements Parcelable{
@@ -30,124 +23,18 @@ public class Survey extends Message {// implements Parcelable{
 	public static final int TYPE_DEPARTED = 1;
 	
 	public Form form;
-	
+	public Boolean isAnswered=false;
+	public Long numUncheckers=0L;
 	// Constructor
 	public Survey() {}
-	
-	public Survey(String json) throws JSONException {
+
+	public Survey(String json) throws JSONException
+	{
 		JSONObject jo = new JSONObject(json);
-		if(jo.has(KEY.SURVEY.FORM))
+		numUncheckers = jo.getLong(KEY.SURVEY.NUM_UNCHECKERS);
+		if (jo.has(KEY.SURVEY.FORM))
 			this.form = Form.parseForm(jo.getJSONObject(KEY.SURVEY.FORM).toString());
 	}
-	
-	private static Survey surveyFromServer;
-	public static Survey surveyFromServer(Context context, final String surveyIdx, int subType) {
-		//Cursor cursor_surveyInfo = DBProcManager.sharedManager(context).survey().getSurveyInfo(surveyIdx);
-		//cursor_surveyInfo.moveToFirst();
-		
-		Thread t = new Thread() {
-			public void run() {
-				Data reqData = new Data().add(0, KEY.MESSAGE.IDX, surveyIdx);
-				Payload request = new Payload().setEvent(Event.Message.Survey.getContent()).setData(reqData);
-				Connection conn = new Connection().async(false).requestPayload(request).request();
-				
-				Payload response = conn.getResponsePayload();
-				
-				if( response.getStatusCode() == StatusCode.SUCCESS ) { 
-					Data respData = response.getData();
-					surveyFromServer = (Survey)respData.get(0, KEY._MESSAGE);
-				} else {
-					surveyFromServer = null;
-				}
-				
-			}
-		};
-		
-		t.start();
-		
-		try {
-			t.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return surveyFromServer;
-	}
-	/*
-	public Survey(Context context, Cursor c) {
-		SurveyDAO spm = DBProcManager.sharedManager(context).survey();
-		Cursor cursor_surveyInfo = spm.getSurveyInfo(this.idx);
-		
-		String idx = c.getString(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IDX));
-		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_TYPE));
-		
-		Survey fromServer = surveyFromServer(
-				context, 
-				idx, 
-				subType);
-		
-		this.idx 			= idx;
-		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
-		
-		this.title 			= fromServer.title;
-		this.content 		= fromServer.content;
-		this.senderIdx		= fromServer.senderIdx;		
-		// X : receiversIdx 
-		
-		if(subType == Survey.TYPE_DEPARTED) {
-			this.received = false; 
-		} else if (subType == Survey.TYPE_RECEIVED) {
-			this.received = true;
-		}
-
-		this.TS			= fromServer.TS;
-		this.checked 	= c.getInt(c.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
-		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_CHECKED_TS));
-	}
-	*/
-	public Survey(Context context, String surveyIdx) {
-		SurveyDAO spm = DAO.survey(context);
-		Cursor cursor_surveyInfo = spm.getSurveyInfo(surveyIdx);
-		
-		String idx = surveyIdx;
-		cursor_surveyInfo.moveToFirst();
-		int subType = cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_TYPE));
-		
-		Survey fromServer = surveyFromServer(
-				context, 
-				idx, 
-				subType);
-		
-		if(fromServer == null) {
-			// TODO
-		}
-		
-		this.idx 			= idx;
-		this.type = Message.MESSAGE_TYPE_SURVEY * Message.MESSAGE_TYPE_DIVIDER + subType;
-		
-		this.title 			= fromServer.title;
-		this.content 		= fromServer.content;
-		this.senderIdx		= fromServer.senderIdx;		
-		// X : receiversIdx 
-		
-		if(subType == Survey.TYPE_DEPARTED) {
-			this.received = false; 
-		} else if (subType == Survey.TYPE_RECEIVED) {
-			this.received = true;
-		}
-
-		this.TS			= fromServer.TS;
-		this.checked 	= cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_CHECKED)) == 1 ? true : false;
-		this.checkTS	= cursor_surveyInfo.getLong(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_CHECKED_TS));
-
-		this.form = fromServer.form;
-	}
-
-	/*
-	public Survey(Parcel source) {
-		readRomParcel(source);
-	}
-	 */
 	
 	public Survey(
 			String				idx, 
@@ -188,17 +75,6 @@ public class Survey extends Message {// implements Parcelable{
 			) {
 		this(idx, type, title, content, senderIdx, receivers, received, TS, checked, checkTS);
 		this.form = form;
-	}
-
-	public static boolean isAnswered(Context context, String surveyIdx) {
-		Cursor cursor_surveyInfo = DAO.survey(context).getSurveyInfo(surveyIdx);
-		cursor_surveyInfo.moveToFirst();
-		
-		return (cursor_surveyInfo.getInt(cursor_surveyInfo.getColumnIndex(SurveyDAO.COLUMN_SURVEY_IS_ANSWERED))>0 ? true : false);
-	}
-	
-	public boolean isAnswered(Context context) {
-		return Survey.isAnswered(context, this.idx);
 	}
 	
 	public Survey clone() {

@@ -7,6 +7,7 @@ import kr.go.KNPA.Romeo.Member.MemberFavoriteListActivity;
 import kr.go.KNPA.Romeo.Member.MemberListActivity;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Util.CacheManager;
+import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +50,8 @@ public class MemberSearchActivity extends Activity implements MemberSearchActivi
 			
 
 		}
+		
+		mExcludeIdxs.add(UserInfo.getUserIdx(this));
 		
 		MemberSearchTextViewAdapter adapter = new MemberSearchTextViewAdapter(MemberSearchActivity.this, users);
 		

@@ -131,7 +131,7 @@
     <string name="labelSender">발신자 : </string>
     <string name="labelSurveyResponseStatus">설문현황 : </string>
     <string name="formatString_openDT">yyyy.MM.dd</string>
-    <string name="formatString_closeDT">yyyy.MM.dd</string>
+    <string name="formatString_closeDT">yyyy.MM.dd HH:00</string>
     <string name="formatString_regular">yyyy.MM.dd HH:mm:ss</string>
     <string name="formatString_FullDate">yyyy.MM.dd</string>
     <string name="loremIpsumShort">국회의원은 청렴의 의무가 있다. 국회의원은 국회에서 ...e</string>

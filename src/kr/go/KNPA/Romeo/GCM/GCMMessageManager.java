@@ -45,6 +45,7 @@ import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,6 +105,7 @@ public class GCMMessageManager {
 		// Payload
 		Bundle b = intent.getExtras();
 		String _payload = b.getString("payload");
+		Log.d("GCMMessageManager",_payload);
 		Payload payload = new Payload(_payload);
 
 		// Specify Event
@@ -250,7 +252,19 @@ public class GCMMessageManager {
 		DAO.survey(mContext).saveSurveyOnReceived(survey.idx);
 
 		if (isRunningProcess(mContext))
-			SurveyListFragment.receive(survey); // 리스트뷰에 notify
+		{
+			FragmentManager fm = MainActivity.sharedActivity().getSupportFragmentManager();
+			
+			SurveyListFragment surveyListFragment =  (SurveyListFragment) fm.findFragmentByTag(SurveyListFragment.class.getSimpleName());
+			
+			if (surveyListFragment != null )
+			{
+				surveyListFragment.receive(survey); // 리스트뷰에 notify
+				return;
+			}
+			
+		}
+			
 
 		notifyMessage(survey);
 	}
