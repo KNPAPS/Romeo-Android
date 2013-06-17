@@ -122,7 +122,19 @@
 
             </LinearLayout>
 
+            <EditText
+                android:id="@+id/chat_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/romeo_edittext_background"
+                android:ems="10"
+                android:inputType="none|textMultiLine"
+                android:nextFocusDown="@+id/questions"
+                android:textColor="@color/text" />
+
             <LinearLayout
+                android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -132,32 +144,23 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/title"
+                    android:visibility="gone"
                     android:textColor="@color/text" />
 
                 <CheckBox
                     android:id="@+id/isResultPublic"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="-4dp"
+                    android:layout_marginLeft="0dp"
                     android:layout_weight="1"
+                    android:paddingTop="0dp"
+                    android:layout_marginTop="-5dp"
+                    android:gravity="center"
                     android:focusable="false"
                     android:text="결과 공개 여부"
                     android:textColor="@color/text" />
             </LinearLayout>
-
-            <EditText
-                android:id="@+id/chat_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/romeo_edittext_background"
-                android:ems="10"
-                android:inputType="none|textMultiLine"
-                android:nextFocusDown="@+id/questions"
-                android:textColor="@color/text" />
-
+            
             <LinearLayout
                 android:id="@+id/questions"
                 android:layout_width="match_parent"
