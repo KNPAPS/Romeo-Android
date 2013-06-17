@@ -48,7 +48,7 @@ public class DocumentDetailFragment extends Fragment {
 	public void onPause()
 	{
 		super.onPause();
-		DocumentFragment.documentFragment(subType).getListView().refresh();
+		DocumentListFragment.documentFragment(subType).getListView().refresh();
 	}
 	
 	@Override

@@ -9,7 +9,7 @@ import kr.go.KNPA.Romeo.Chat.Room;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Survey.Survey;
 import kr.go.KNPA.Romeo.Survey.SurveyComposeFragment;
-import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Survey.SurveyListFragment;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.IndexPath;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
@@ -312,7 +312,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 									public void run() 
 									{
 										pd.dismiss();
-										SurveyFragment survFragment = new SurveyFragment(Survey.TYPE_DEPARTED);
+										SurveyListFragment survFragment = new SurveyListFragment(Survey.TYPE_DEPARTED);
 										MainActivity.sharedActivity().getSupportFragmentManager().beginTransaction()
 										.replace(R.id.content_frame, survFragment, survFragment.getClass().getSimpleName()).commit();
 										MainActivity.sharedActivity().getSlidingMenu().showContent();

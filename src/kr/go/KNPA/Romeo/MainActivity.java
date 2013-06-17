@@ -7,11 +7,11 @@ import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.Config.Constants;
 import kr.go.KNPA.Romeo.Config.KEY;
 import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Document.DocumentListFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
 import kr.go.KNPA.Romeo.Menu.MenuListFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Survey.SurveyListFragment;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
 import kr.go.KNPA.Romeo.Util.UserInfo;
 import android.content.DialogInterface;
@@ -178,13 +178,13 @@ public class MainActivity extends BaseActivity {
 
 	public void goDocumentFragment()
 	{
-		DocumentFragment docFragment = DocumentFragment.documentFragment(Document.TYPE_RECEIVED);
+		DocumentListFragment docFragment = DocumentListFragment.documentFragment(Document.TYPE_RECEIVED);
 		switchContent(docFragment);
 	}
 
 	public void goSurveyFragment()
 	{
-		SurveyFragment survFragment = new SurveyFragment(Survey.TYPE_RECEIVED);
+		SurveyListFragment survFragment = new SurveyListFragment(Survey.TYPE_RECEIVED);
 		switchContent(survFragment);
 	}
 

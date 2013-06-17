@@ -20,11 +20,11 @@ import kr.go.KNPA.Romeo.Connection.Payload;
 import kr.go.KNPA.Romeo.DB.ChatDAO;
 import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Document.DocumentListFragment;
 import kr.go.KNPA.Romeo.Member.MemberManager;
 import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Survey.SurveyListFragment;
 import kr.go.KNPA.Romeo.Util.Formatter;
 import kr.go.KNPA.Romeo.Util.ImageManager;
 import kr.go.KNPA.Romeo.Util.UserInfo;
@@ -240,7 +240,7 @@ public class GCMMessageManager {
 		DAO.document(mContext).saveDocumentOnReceived(document.idx, document.senderIdx, document.title, document.content, document.TS, document.forwards, document.files);
 
 		if (isRunningProcess(mContext))
-			DocumentFragment.receive(document); // 리스트뷰에 notify
+			DocumentListFragment.receive(document); // 리스트뷰에 notify
 
 		notifyMessage(document);
 	}
@@ -250,7 +250,7 @@ public class GCMMessageManager {
 		DAO.survey(mContext).saveSurveyOnReceived(survey.idx);
 
 		if (isRunningProcess(mContext))
-			SurveyFragment.receive(survey); // 리스트뷰에 notify
+			SurveyListFragment.receive(survey); // 리스트뷰에 notify
 
 		notifyMessage(survey);
 	}

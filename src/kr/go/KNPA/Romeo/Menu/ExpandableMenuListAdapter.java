@@ -12,7 +12,7 @@ import kr.go.KNPA.Romeo.Chat.Chat;
 import kr.go.KNPA.Romeo.Chat.RoomListFragment;
 import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Document.Document;
-import kr.go.KNPA.Romeo.Document.DocumentFragment;
+import kr.go.KNPA.Romeo.Document.DocumentListFragment;
 import kr.go.KNPA.Romeo.EBook.EBookFragment;
 import kr.go.KNPA.Romeo.Library.HandBookFragment;
 import kr.go.KNPA.Romeo.Member.MemberFragment;
@@ -20,7 +20,7 @@ import kr.go.KNPA.Romeo.Member.User;
 import kr.go.KNPA.Romeo.Settings.BugReportFragment;
 import kr.go.KNPA.Romeo.Settings.SettingsFragment;
 import kr.go.KNPA.Romeo.Survey.Survey;
-import kr.go.KNPA.Romeo.Survey.SurveyFragment;
+import kr.go.KNPA.Romeo.Survey.SurveyListFragment;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -256,23 +256,23 @@ public class ExpandableMenuListAdapter extends SimpleExpandableListAdapter imple
 
 		if (code.equals(CODE_DOCUMENT_FAVORITE))
 		{
-			fragment = DocumentFragment.documentFragment(Document.TYPE_FAVORITE);
+			fragment = DocumentListFragment.documentFragment(Document.TYPE_FAVORITE);
 		}
 		else if (code.equals(CODE_DOCUMENT_RECEIVED))
 		{
-			fragment = DocumentFragment.documentFragment(Document.TYPE_RECEIVED);
+			fragment = DocumentListFragment.documentFragment(Document.TYPE_RECEIVED);
 		}
 		else if (code.equals(CODE_DOCUMENT_DEPARTED))
 		{
-			fragment = DocumentFragment.documentFragment(Document.TYPE_DEPARTED);
+			fragment = DocumentListFragment.documentFragment(Document.TYPE_DEPARTED);
 		}
 		else if (code.equals(CODE_SURVEY_DEPARTED))
 		{
-			fragment = new SurveyFragment(Survey.TYPE_DEPARTED);
+			fragment = new SurveyListFragment(Survey.TYPE_DEPARTED);
 		}
 		else if (code.equals(CODE_SURVEY_RECEIVED))
 		{
-			fragment = new SurveyFragment(Survey.TYPE_RECEIVED);
+			fragment = new SurveyListFragment(Survey.TYPE_RECEIVED);
 		}
 		else if (code.equals(CODE_MEMBER_LIST))
 		{
