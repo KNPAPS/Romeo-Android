@@ -389,7 +389,8 @@ public class SurveyComposeFragment extends Fragment {
 			{
 				View oView = oViews.getChildAt(oi);
 				String option = ((EditText) oView.findViewById(R.id.title)).getText().toString();
-				question.addOption(option);
+				if( option.trim().length() > 0 )
+					question.addOption(option);
 			}
 
 			// title
@@ -400,7 +401,9 @@ public class SurveyComposeFragment extends Fragment {
 			boolean isMultiple = ((CheckBox) qView.findViewById(R.id.isMultiple)).isChecked() == true;
 			question.isMultiple(isMultiple);
 
-			questions.add(question);
+			// 비어있는 문항은 빼고 넣는다.
+			if(questionTitle.trim().length() > 0 && question.options().size() > 0)
+				questions.add(question);
 		}
 
 		form.put(KEY.SURVEY.QUESTIONS, questions);
