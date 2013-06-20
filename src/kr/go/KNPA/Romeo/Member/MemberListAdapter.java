@@ -236,7 +236,6 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 	
 			ArrayList<String> array = new ArrayList<String>();
 			array.add(context.getResources().getString(R.string.commandTitle));
-			array.add(context.getResources().getString(R.string.meetingTitle));
 			array.add(context.getResources().getString(R.string.surveyTitle));
 	
 			ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(context, R.layout.dialog_menu_cell2, array);
@@ -294,19 +293,6 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 								});
 								break;
 							case 1:
-								final Room room2 = new Room();
-								room2.addChatters(members);
-								room2.setType(Chat.TYPE_MEETING);
-								
-								mHandler.post(new Runnable(){
-									public void run() 
-									{
-										pd.dismiss();
-										MainActivity.sharedActivity().goRoomFragment(Chat.TYPE_MEETING, room2);
-									}
-								});
-								break;
-							case 2:
 								
 								mHandler.post(new Runnable(){
 									public void run() 

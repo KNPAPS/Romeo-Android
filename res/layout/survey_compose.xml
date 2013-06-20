@@ -18,155 +18,165 @@
             android:orientation="vertical"
             android:padding="@dimen/gap" >
 
-            <!-- android:paddingRight="5px" -->
-
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="56dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/title"
-                    android:textColor="@color/text" />
-
-                <EditText
-                    android:id="@+id/title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/romeo_edittext_background"
-                    android:ems="10"
-                    android:hint="@string/survey_title_placehold"
-                    android:inputType="text"
-                    android:nextFocusDown="@+id/open_year"
-                    android:padding="@dimen/gapSmall"
-                    android:textColor="@color/text"
-                    android:textSize="18sp" >
-
-                </EditText>
-            </LinearLayout>
-
-            <LinearLayout
+                android:id="@+id/ll_receiver_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp" >
+                android:layout_marginBottom="@dimen/gap"
+                android:orientation="vertical" >
 
                 <TextView
-                    android:layout_width="56dp"
+                    android:id="@+id/tv_receiver_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/receiver"
-                    android:textColor="@color/text" />
+                    android:layout_marginBottom="@dimen/gapSmall"
+                    android:text="설문 수신자"
+                    android:textColor="@color/text"
+                    android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/receivers"
-                    android:layout_width="0dp"
+                    android:id="@+id/tv_survey_receivers"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@drawable/romeo_edittext_background"
                     android:ems="10"
                     android:hint="@string/survey_receivers_placehold"
-                    android:inputType="text"
                     android:padding="@dimen/gapSmall"
-                    android:textSize="18sp" >
-
-                    <requestFocus />
+                    android:textColor="@color/text"
+                    android:textSize="20sp" >
                 </TextView>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="56dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center_horizontal"
-                    android:text="종료시간"
-                    android:textColor="@color/text" />
-
-                <TextView
-                    android:id="@+id/close_date"
-                    android:layout_width="130dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/romeo_edittext_background"
-                    android:ems="10"
-                    android:hint="2013년 6월 14일"
-                    android:nextFocusDown="@+id/close_month"
-                    android:padding="@dimen/gapSmall"
-                    android:textColor="@color/text"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/close_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:background="@drawable/romeo_edittext_background"
-                    android:ellipsize="end"
-                    android:ems="10"
-                    android:hint="오전 10:00시"
-                    android:maxLines="1"
-                    android:nextFocusDown="@+id/close_month"
-                    android:padding="@dimen/gapSmall"
-                    android:textColor="@color/text"
-                    android:textSize="15sp" />
-
-            </LinearLayout>
-
             <EditText
-                android:id="@+id/chat_content"
+                android:id="@+id/et_survey_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginBottom="@dimen/gapSmall"
                 android:background="@drawable/romeo_edittext_background"
                 android:ems="10"
-                android:inputType="none|textMultiLine"
-                android:nextFocusDown="@+id/questions"
-                android:textColor="@color/text" />
+                android:hint="@string/survey_title_placehold"
+                android:inputType="text"
+                android:nextFocusDown="@+id/open_year"
+                android:padding="@dimen/gapSmall"
+                android:textColor="@color/text"
+                android:textSize="20sp" >
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/et_survey_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gap"
+                android:background="@drawable/romeo_edittext_background"
+                android:ems="10"
+                android:gravity="top"
+                android:hint="설문에 대해 설명해주세요"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:nextFocusDown="@+id/ll_questions_container"
+                android:padding="@dimen/gapSmall"
+                android:textColor="@color/text"
+                android:textSize="20sp" />
 
             <LinearLayout
-                android:layout_marginBottom="5dp"
+                android:id="@+id/ll_close_date_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gapSmall"
+                android:orientation="vertical" >
 
                 <TextView
-                    android:layout_width="56dp"
+                    android:id="@+id/tv_close_datetime_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center_horizontal"
-                    android:visibility="gone"
-                    android:textColor="@color/text" />
+                    android:layout_marginBottom="@dimen/gapSmall"
+                    android:text="설문 마감 일시"
+                    android:textColor="@color/text"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_close_datetime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="1" >
+
+                    <TextView
+                        android:id="@+id/close_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:background="@drawable/romeo_edittext_background"
+                        android:ems="10"
+                        android:hint="마감일자"
+                        android:minLines="1"
+                        android:padding="@dimen/gapSmall"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/close_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/gapSmall"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/romeo_edittext_background"
+                        android:ems="10"
+                        android:hint="마감시간"
+                        android:maxLines="1"
+                        android:padding="@dimen/gapSmall"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/ll_result_public_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gapSmall"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/list_cell_highlight"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/gapSmall" >
+
+                <TextView
+                    android:id="@+id/tv_result_open_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/gapSmall"
+                    android:text="결과 공개"
+                    android:textColor="@color/text"
+                    android:textSize="18sp" />
 
                 <CheckBox
                     android:id="@+id/isResultPublic"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="-5dp"
-                    android:layout_weight="1"
-                    android:focusable="false"
-                    android:text="결과 공개 여부"
-                    android:textColor="@color/text" />
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:button="@drawable/checkbox"
+                    android:focusable="false" />
 
-            </LinearLayout>
-            
+                <TextView
+                    android:id="@+id/tv_result_open_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/tv_result_open_title"
+                    android:layout_toLeftOf="@id/isResultPublic"
+                    android:text="수신자들이 설문 결과를 볼 수 있게 합니다"
+                    android:textColor="@color/gray"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
             <LinearLayout
-                android:id="@+id/questions"
+                android:id="@+id/ll_questions_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/gap"
                 android:orientation="vertical" >
 
                 <include layout="@layout/survey_question_compose" />
@@ -175,10 +185,12 @@
             <Button
                 android:id="@+id/add_question"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="@dimen/gap"
-                android:background="@color/white"
-                android:text="@string/add_question" />
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/romeo_button_background_white"
+                android:text="@string/add_question"
+                android:textColor="@color/text"
+                android:textSize="20sp" />
         </LinearLayout>
     </ScrollView>
 

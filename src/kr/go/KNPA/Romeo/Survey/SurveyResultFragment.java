@@ -159,7 +159,7 @@ public class SurveyResultFragment extends Fragment {
 		TextView nRespondersTV = (TextView)surveyResponseStatusLL.findViewById(R.id.responderCount);
 		nRespondersTV.setText(""+nResponders);
 		
-		LinearLayout _questionsLL = (LinearLayout) this.view.findViewById(R.id.questions);
+		LinearLayout _questionsLL = (LinearLayout) this.view.findViewById(R.id.ll_questions_container);
 		ArrayList<Question> _questions = form.questions();
 		for (int qi = 0; qi < _questions.size(); qi++)
 		{

@@ -7,7 +7,10 @@ import kr.go.KNPA.Romeo.R;
 import kr.go.KNPA.Romeo.RomeoFragment;
 import kr.go.KNPA.Romeo.DB.DAO;
 import kr.go.KNPA.Romeo.Util.RomeoDialog;
+import kr.go.KNPA.Romeo.search.MemberSearchActivity;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -57,8 +60,8 @@ public class SurveyListFragment extends RomeoFragment {
 			@Override
 			public void onClick(View v)
 			{
-				SurveyComposeFragment f = new SurveyComposeFragment();
-				MainActivity.sharedActivity().pushContent(f);
+				Intent intent = new Intent(getActivity(), MemberSearchActivity.class);
+				startActivityForResult(intent, MemberSearchActivity.REQUEST_CODE);
 			}
 		};
 
@@ -182,6 +185,33 @@ public class SurveyListFragment extends RomeoFragment {
 					getListView().refresh();
 				}
 			});
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch (requestCode)
+		{
+		case MemberSearchActivity.REQUEST_CODE:
+			if (resultCode == Activity.RESULT_OK)
+			{
+				final ArrayList<String> receiversIdxs = data.getExtras().getStringArrayList(MemberSearchActivity.KEY_RESULT_IDXS);
+
+				if (receiversIdxs.size() == 0)
+				{
+					return;
+				}
+
+				SurveyComposeFragment fragment = new SurveyComposeFragment(receiversIdxs);
+				getActivity()
+					.getSupportFragmentManager()
+					.beginTransaction()
+					.addToBackStack(null)
+					.replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName())
+					.commit();
+			}
+			break;
 		}
 	}
 }

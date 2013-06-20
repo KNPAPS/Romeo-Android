@@ -49,7 +49,7 @@ import android.util.Pair;
  */
 
 public class Connection {
-	private static final String							TAG					= Connection.class.getName();
+	private static final String							TAG					= Connection.class.getSimpleName();
 	/**
 	 * @name settings 설정 변수들. 기본값은 ConnectionConfig에서 받아옴
 	 * @{

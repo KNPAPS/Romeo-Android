@@ -113,7 +113,7 @@ public class SurveyAnswerFragment extends Fragment {
 
 		contentTV.setText(content);
 
-		questionsLL = (LinearLayout) view.findViewById(R.id.questions);
+		questionsLL = (LinearLayout) view.findViewById(R.id.ll_questions_container);
 		ArrayList<Question> questions = survey.form.questions();
 
 		for (int qi = 0; qi < questions.size(); qi++)

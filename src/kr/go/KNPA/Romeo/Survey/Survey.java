@@ -111,9 +111,10 @@ public class Survey extends Message {// implements Parcelable{
 			}
 			
 		}  else {
-			// Failure
 		}
-		// TODO : Animation 처리
+		
+		MainActivity.sharedActivity().popContent();
+		
 		super.afterSend(context, successful);
 	}
 	
@@ -121,17 +122,6 @@ public class Survey extends Message {// implements Parcelable{
 		private static final long	serialVersionUID	= -3314722287756650866L;
 		private static final String TAG = Form.class.getName();
 
-		/*
-		X public static final String TITLE = KEY.SURVEY.QUESTION_TITLE;
-		X public static final String CONTENT = KEY.SURVEY.QUESTION_CONTENT;
-		public static final String OPEN_TS = KEY.SURVEY.OPEN_TS;
-		public static final String CLOSE_TS = KEY.SURVEY.CLOSE_TS;
-		
-		public static final String QUESTIONS = KEY.SURVEY.QUESTIONS;
-		public static final String OPTIONS = KEY.SURVEY.OPTIONS;
-		
-		public static final String IS_MULTIPLE = KEY.SURVEY.IS_MULTIPLE;
-		*/
 		public Form() {}
 		
 		public static Form parseForm(String json) {

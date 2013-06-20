@@ -1,3 +1,4 @@
+
 package kr.go.KNPA.Romeo.Survey;
 
 import java.text.ParseException;
@@ -118,23 +119,11 @@ public class SurveyComposeFragment extends Fragment {
 
 		ViewGroup rootLayout = (ViewGroup) view.findViewById(R.id.rootLayout);
 
-		titleET = (EditText) ((ViewGroup) rootLayout.getChildAt(0)).findViewById(R.id.title);
-		receiversTV = (TextView) ((ViewGroup) rootLayout.getChildAt(1)).findViewById(R.id.receivers);
+		titleET = (EditText) view.findViewById(R.id.et_survey_title);
+		receiversTV = (TextView) view.findViewById(R.id.tv_survey_receivers);
 
-		closeDate = (TextView) ((ViewGroup) rootLayout.getChildAt(2)).findViewById(R.id.close_date);
-		closeTime = (TextView) ((ViewGroup) rootLayout.getChildAt(2)).findViewById(R.id.close_time);
-
-		// Use the current time as the default values for the picker
-		final Calendar c = Calendar.getInstance();
-		int hour = c.get(Calendar.HOUR_OF_DAY);
-		int minute = c.get(Calendar.MINUTE);
-
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH);
-		int day = c.get(Calendar.DAY_OF_MONTH);
-
-		setCloseDate(year, month, day);
-		setCloseTime(hour, minute);
+		closeDate = (TextView) view.findViewById(R.id.close_date);
+		closeTime = (TextView) view.findViewById(R.id.close_time);
 
 		closeDate.setOnClickListener(new OnClickListener() {
 			@Override
@@ -154,12 +143,20 @@ public class SurveyComposeFragment extends Fragment {
 			}
 		});
 
-		contentET = (EditText) rootLayout.findViewById(R.id.chat_content);
+		contentET = (EditText) rootLayout.findViewById(R.id.et_survey_content);
+		
 		isResultPublicCB = (CheckBox) rootLayout.findViewById(R.id.isResultPublic);
-
+		view.findViewById(R.id.ll_result_public_container).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				isResultPublicCB.toggle();
+			}
+		});
+		
+		
 		ImageView hrIV = (ImageView) rootLayout.findViewById(R.id.hr);
 		hrIV.setVisibility(View.INVISIBLE);
-		// TODO 갯수차면 자동으로 넘어가도록.
 
 		addQuestionBT = (Button) rootLayout.findViewById(R.id.add_question);
 		addQuestionBT.setOnClickListener(addNewQuestion);
@@ -173,7 +170,7 @@ public class SurveyComposeFragment extends Fragment {
 		});
 
 		addQuestionBT.setOnClickListener(addNewQuestion);
-		questionsLL = (LinearLayout) rootLayout.findViewById(R.id.questions);
+		questionsLL = (LinearLayout) rootLayout.findViewById(R.id.ll_questions_container);
 
 		Button qControlBT = (Button) questionsLL.getChildAt(0).findViewById(R.id.control);
 		optionControlSetMode(qControlBT, MODE_ADD);
@@ -351,9 +348,15 @@ public class SurveyComposeFragment extends Fragment {
 		long openTS = System.currentTimeMillis() / 1000;
 		long closeTS = 0;
 
+		if (closeDate.getText().toString().isEmpty() || closeTime.getText().toString().isEmpty())
+		{
+			Toast.makeText(getActivity(), "설문 마감일시를 지정해주세요.", Toast.LENGTH_SHORT).show();
+			WaiterView.dismissDialog(getActivity());
+			return;
+		}
+		
 		String dateTime = closeDate.getTag().toString() + " " + closeTime.getTag().toString(); // YYYY-MM-DD
 																								// HH:00
-
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd HH:00", Locale.KOREA);
 		Date date;
 
@@ -388,12 +391,12 @@ public class SurveyComposeFragment extends Fragment {
 			for (int oi = 0; oi < oViews.getChildCount(); oi++)
 			{
 				View oView = oViews.getChildAt(oi);
-				String option = ((EditText) oView.findViewById(R.id.title)).getText().toString();
+				String option = ((EditText) oView.findViewById(R.id.et_survey_option)).getText().toString();
 				question.addOption(option);
 			}
 
 			// title
-			String questionTitle = ((EditText) qView.findViewById(R.id.title)).getText().toString();
+			String questionTitle = ((EditText) qView.findViewById(R.id.et_survey_question_title)).getText().toString();
 			question.title(questionTitle);
 
 			// isMultiple
@@ -415,8 +418,6 @@ public class SurveyComposeFragment extends Fragment {
 
 		InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		im.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-
-		MainActivity.sharedActivity().popContent();
 	}
 
 	protected void initNavigationBar(View parentView, String titleText, boolean lbbVisible, boolean rbbVisible, String lbbTitle, String rbbTitle, OnClickListener lbbOnClickListener,

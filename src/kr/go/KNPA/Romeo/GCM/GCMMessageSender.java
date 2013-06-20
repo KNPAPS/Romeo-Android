@@ -143,8 +143,6 @@ public class GCMMessageSender {
 				{
 					((Survey) _message).afterSend(context, false);
 				}
-
-				// for survey TODO
 				WaiterView.dismissDialog(context);
 
 			}
@@ -171,7 +169,6 @@ public class GCMMessageSender {
 				else
 				{
 					survey.afterSendAnswerSheet(context, answerSheet, false);
-					// TODO : 정상적으로 처리되지 않았을 때 대응
 				}
 			}
 		};

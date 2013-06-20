@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="1dp"
     android:background="@color/white"
-    android:padding="11dp"
     android:orientation="vertical" >
 
     <ImageView
@@ -13,42 +13,48 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="@dimen/gap"
         android:background="@drawable/hr"
-        android:layout_height="3dp" />
+        android:layout_height="3dp" android:contentDescription="hr"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:padding="@dimen/gapSmall" >
 
         <TextView
-            android:id="@+id/index"
-            android:layout_width="30dp"
+            android:id="@+id/tv_question_q"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="0dp"
             android:gravity="center_horizontal"
             android:text="@string/question_index"
             android:textColor="@color/text" />
 
         <EditText
-            android:id="@+id/title"
-            android:layout_width="0dp"
+            android:id="@+id/et_survey_question_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/gapSmall"
+            android:layout_marginRight="@dimen/gap"
+            android:layout_toRightOf="@id/tv_question_q"
+            android:background="@drawable/romeo_edittext_background"
             android:ems="10"
             android:hint="@string/question_title_placehold"
-            android:background="@drawable/romeo_edittext_background"
             android:inputType="text"
-            android:textColor="@color/text" >
+            android:textColor="@color/text"
+            android:textSize="20sp" >
 
         </EditText>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <CheckBox
         android:id="@+id/isMultiple"
-        android:layout_width="180dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="27dp"
-        android:layout_marginTop="-7dp"
+        android:layout_marginBottom="@dimen/gapSmall"
+        android:button="@drawable/checkbox"
         android:text="@string/question_is_multiple"
         android:textColor="@color/text" />
 
@@ -56,13 +62,9 @@
         android:id="@+id/options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-        <!-- 
-	        ViewGroup v = (ViewGroup)getLayoutInflater().inflate(R.layout.image_preview,vg);
-					ImageView imv = (ImageView) v.getChildAt(0);    
-					TextView dt = (TextView) v.getChildAt(1);
-					TextView ttl = (TextView) v.getChildAt(2);
-				-->
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/gap" >
+
 				<include layout="@layout/survey_option_compose"></include>
     </LinearLayout>
 

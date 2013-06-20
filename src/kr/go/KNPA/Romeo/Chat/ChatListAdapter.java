@@ -204,27 +204,18 @@ public class ChatListAdapter extends CursorAdapter {
 			{
 			case Chat.STATE_SENDING:
 
-				if (goUncheckedBT.getVisibility() != View.GONE)
-				{
-					WaiterView wv = new WaiterView(context);
-					wv.substituteView(goUncheckedBT);
-					mWaiterViews.put(listItem.getTag().toString(), wv);
-				}
+				goUncheckedBT.setBackgroundResource(R.drawable.progress_holo);
 
 				break;
 			case Chat.STATE_SUCCESS:
-
-				if (mWaiterViews.get(messageIdx) != null)
-				{
-					mWaiterViews.remove(messageIdx).restoreView();
-				}
-
+				
 				if (mRoom.getType() == Room.TYPE_COMMAND && !userIdx.equals(senderIdx))
 				{
 					goUncheckedBT.setVisibility(View.INVISIBLE);
 				}
 				else
 				{
+					goUncheckedBT.setBackgroundResource(R.drawable.bubble_active);
 					setUncheckerInfo(goUncheckedBT, arrivalTS);
 				}
 
