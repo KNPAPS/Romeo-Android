@@ -64,10 +64,17 @@
             android:id="@+id/tv_arrival_dt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/gapSmaller"
+            android:paddingLeft="@dimen/gapSmall"
+            android:paddingRight="@dimen/gapSmall"
             android:text="5월20일\n12:12"
             android:textColor="@color/black"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
+
+        <ProgressBar
+            android:id="@+id/pb_chat_sending"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="7dp"
+            style="@style/progress_spinner_18" />
 
         <Button
             android:id="@+id/goUnchecked"

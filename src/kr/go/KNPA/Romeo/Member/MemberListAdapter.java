@@ -236,6 +236,7 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 	
 			ArrayList<String> array = new ArrayList<String>();
 			array.add(context.getResources().getString(R.string.commandTitle));
+			array.add(context.getResources().getString(R.string.meetingTitle));
 			array.add(context.getResources().getString(R.string.surveyTitle));
 	
 			ArrayAdapter<String> arrayAdt = new ArrayAdapter<String>(context, R.layout.dialog_menu_cell2, array);
@@ -275,28 +276,57 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 									}
 								});
 								return;
-							}
-
-							switch(which)
-							{
-							case 0:
-								final Room room = new Room();
-								room.addChatters(members);
-								room.setType(Chat.TYPE_COMMAND);
-								
-								mHandler.post(new Runnable(){
-									public void run() 
+							} 
+							
+							mHandler.post(new Runnable(){
+								public void run() 
+								{
+									if (members.size()>20)
 									{
+										new RomeoDialog.Builder(context).setIcon(context.getResources().getDrawable(kr.go.KNPA.Romeo.R.drawable.icon_dialog)).setTitle("다On")// context.getString(kr.go.KNPA.Romeo.R.string.)
+										.setMessage("총 "+String.valueOf(members.size())+"명의 사용자에 대해 전송합니다.\n계속 진행하시겠습니까?").setPositiveButton(kr.go.KNPA.Romeo.R.string.ok, new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which)
+											{
+												dialog.dismiss();
+												go();
+
+											}
+										}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int whichButton)
+											{
+												dialog.dismiss();
+											}
+										}).show();
+									}
+									else
+									{
+										go();
+									}
+								}
+								
+								private void go()
+								{
+									switch(which)
+									{
+									case 0:
+										final Room room = new Room();
+										room.addChatters(members);
+										room.setType(Chat.TYPE_COMMAND);
 										pd.dismiss();
 										MainActivity.sharedActivity().goRoomFragment(Chat.TYPE_COMMAND, room);
-									}
-								});
-								break;
-							case 1:
+										break;
+									case 1:
+										final Room room2 = new Room();
+										room2.addChatters(members);
+										room2.setType(Chat.TYPE_MEETING);
 								
-								mHandler.post(new Runnable(){
-									public void run() 
-									{
+										pd.dismiss();
+										MainActivity.sharedActivity().goRoomFragment(Chat.TYPE_MEETING, room2);
+										break;
+									case 2:
+										
 										pd.dismiss();
 										SurveyListFragment survFragment = new SurveyListFragment(Survey.TYPE_DEPARTED);
 										MainActivity.sharedActivity().getSupportFragmentManager().beginTransaction()
@@ -312,13 +342,12 @@ public class MemberListAdapter extends CellNodeTreeAdapter implements OnItemClic
 										SurveyComposeFragment fragment = new SurveyComposeFragment(receiversIdx);
 										MainActivity.sharedActivity().getSupportFragmentManager().beginTransaction()
 										.replace(R.id.content_frame, fragment, fragment.getClass().getSimpleName()).commit();
+										
+										break;
 									}
-								});
-								
-								break;
-							}
-							
 
+								}
+							});
 							
 						}
 					}.start();

@@ -392,18 +392,29 @@ public class SurveyComposeFragment extends Fragment {
 			{
 				View oView = oViews.getChildAt(oi);
 				String option = ((EditText) oView.findViewById(R.id.et_survey_option)).getText().toString();
-				question.addOption(option);
+				if( !option.isEmpty() )
+					question.addOption(option);
 			}
 
 			// title
 			String questionTitle = ((EditText) qView.findViewById(R.id.et_survey_question_title)).getText().toString();
+			
+			if (questionTitle.isEmpty())
+			{
+				Toast.makeText(getActivity(), "질문 제목을 입력해주세요.", Toast.LENGTH_SHORT).show();
+				WaiterView.dismissDialog(getActivity());
+				return;
+			}
+			
 			question.title(questionTitle);
 
 			// isMultiple
 			boolean isMultiple = ((CheckBox) qView.findViewById(R.id.isMultiple)).isChecked() == true;
 			question.isMultiple(isMultiple);
 
-			questions.add(question);
+			// 비어있는 문항은 빼고 넣는다.
+			if(questionTitle.trim().length() > 0 && question.options().size() > 0)
+				questions.add(question);
 		}
 
 		form.put(KEY.SURVEY.QUESTIONS, questions);

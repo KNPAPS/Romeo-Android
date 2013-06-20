@@ -24,6 +24,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	@Override
+	public int onStartCommand(Intent intent, int flags, int startId)
+	{
+		return START_STICKY;
+	}
+	
+	@Override
 	protected void onError(Context context, String errorId) {			/**에러 발생시*/
 		GCMRegisterManager rm = GCMRegisterManager.sharedManager();
         rm.onError(context, errorId);

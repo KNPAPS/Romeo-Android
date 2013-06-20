@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ChatListAdapter extends CursorAdapter {
@@ -199,22 +200,25 @@ public class ChatListAdapter extends CursorAdapter {
 			 */
 			int chatStatus = c.getInt(c.getColumnIndex(ChatDAO.COLUMN_CHAT_STATE));
 			final Button goUncheckedBT = (Button) listItem.findViewById(R.id.goUnchecked);
-
+			final ProgressBar pb = (ProgressBar) listItem.findViewById(R.id.pb_chat_sending);
 			switch (chatStatus)
 			{
 			case Chat.STATE_SENDING:
 
-				goUncheckedBT.setBackgroundResource(R.drawable.progress_holo);
-
+				goUncheckedBT.setVisibility(View.GONE);
+				pb.setVisibility(View.VISIBLE);
 				break;
 			case Chat.STATE_SUCCESS:
 				
+				pb.setVisibility(View.GONE);
+				
 				if (mRoom.getType() == Room.TYPE_COMMAND && !userIdx.equals(senderIdx))
 				{
-					goUncheckedBT.setVisibility(View.INVISIBLE);
+					goUncheckedBT.setVisibility(View.GONE);
 				}
 				else
 				{
+					goUncheckedBT.setVisibility(View.VISIBLE);
 					goUncheckedBT.setBackgroundResource(R.drawable.bubble_active);
 					setUncheckerInfo(goUncheckedBT, arrivalTS);
 				}
@@ -222,6 +226,8 @@ public class ChatListAdapter extends CursorAdapter {
 				break;
 			case Chat.STATE_FAIL:
 
+				pb.setVisibility(View.GONE);
+				goUncheckedBT.setVisibility(View.VISIBLE);
 				goUncheckedBT.setBackgroundResource(R.drawable.chat_fail);
 				goUncheckedBT.setOnClickListener(new OnClickListener() {
 					@Override

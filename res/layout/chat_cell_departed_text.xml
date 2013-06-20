@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/chatBubbleDeparted"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/gapSmall"
     android:orientation="vertical"
     android:padding="@dimen/gapSmall" >
@@ -40,15 +40,22 @@
             android:gravity="center_vertical|center_horizontal"
             android:textSize="12sp" />
 
+        <ProgressBar
+            android:id="@+id/pb_chat_sending"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="7dp"
+            style="@style/progress_spinner_18" />
+
         <TextView
             android:id="@+id/tv_arrival_dt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/chat_content"
-            android:padding="@dimen/gapSmaller"
+            android:paddingLeft="@dimen/gapSmall"
+            android:paddingRight="@dimen/gapSmall"
             android:text="5월14일\n12:12"
             android:textColor="@color/text"
-            android:textSize="10sp" />
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </RelativeLayout>
