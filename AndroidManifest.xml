@@ -120,7 +120,6 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
                 <category android:name="kr.go.KNPA.Romeo" />
- <!-- 젤리빈 부터는 category 빼도 된다 -->
             </intent-filter>
         </receiver>
 
