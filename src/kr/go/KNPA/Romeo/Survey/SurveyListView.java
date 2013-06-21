@@ -17,6 +17,8 @@ import kr.go.KNPA.Romeo.SimpleSectionAdapter.SimpleSectionAdapter;
 import kr.go.KNPA.Romeo.Util.WaiterView;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.Toast;
@@ -161,7 +163,10 @@ public class SurveyListView extends RomeoListView {
 						
 						if (surveys.size()==0)
 						{
-							setBackground(getContext().getResources().getDrawable(R.drawable.empty_set_background));
+							if( VERSION.SDK_INT < 16)
+								setBackgroundResource(R.drawable.empty_set_background);
+							else
+								setBackground(getResources().getDrawable(R.drawable.empty_set_background));
 						}
 						
 						requestLayout();
