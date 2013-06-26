@@ -146,5 +146,6 @@
     <string name="library_fieldManual">집회시위 현장매뉴얼</string>
     <string name="library_socialEvilManual">4대 사회악 근절 전담부대 매뉴얼</string>
     <string name="bugReport">버그리포트</string>
+    <string name="survey_section_closed">마감된 설문</string>
     
 </resources>

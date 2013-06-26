@@ -58,12 +58,19 @@ public class SurveyListView extends RomeoListView {
 			Sectionizer<Survey> sectionizer = new Sectionizer<Survey>() {
 				@Override
 				public String getSectionTitleForItem(Survey c) {
-					boolean checked= false;
-					if ( c != null ) {
-						checked = c.checked;
-						return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
+					
+					Long closeTS = (Long) c.form.get(KEY.SURVEY.CLOSE_TS);
+					
+					if (closeTS < System.currentTimeMillis()/1000)
+					{
+						return getContext().getString(R.string.survey_section_closed);
 					}
-					return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));
+					else
+					{
+						boolean checked= false;
+						checked = c.checked;
+						return (checked ?  getContext().getString(R.string.checkedChat) : getContext().getString(R.string.unCheckedChat));	
+					}
 				}
 			};
 
